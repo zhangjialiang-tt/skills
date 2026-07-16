@@ -1,0 +1,21 @@
+{
+  "name": "smart-commit",
+  "version": "1.3.0",
+  "mode": "production",
+  "archetype": "scaffold",
+  "context_budget_tier": "production",
+  "description": "分析 git 暂存区生成规范 commit message；默认只生成不提交，仅在用户明确授权时执行 git commit。",
+  "owner": "zhangjl",
+  "review_cadence": "per-major-change",
+  "triggers": ["commit", "提交", "/commit", "生成 commit message", "写提交信息"],
+  "exclusions": ["amend", "rebase", "squash", "CHANGELOG", "未暂存变更", "签名", "自动提交"],
+  "factory_components": {
+    "scripts": ["scripts/analyze_staged.py"],
+    "references": [
+      "references/commit-format.md",
+      "references/diff-analysis.md",
+      "references/sensitive-scan.md",
+      "references/split-criteria.md"
+    ]
+  }
+}

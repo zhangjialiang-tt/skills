@@ -1,0 +1,45 @@
+{
+  "skill_name": "rtl-refactor-scan",
+  "evals": [
+    {
+      "id": 1,
+      "type": "smoke",
+      "prompt": "帮我评审这段 RTL，重点检查综合和时序风险",
+      "expected_output": "进入 Phase 1 确认范围后，按 5 大维度扫描，输出审计报告_<模块名>.md，含 A/B/C 风险列表与行号位置；默认不修改代码",
+      "files": [],
+      "expectations": [
+        "确认待分析文件路径与时钟/复位/接口（Phase 1）",
+        "覆盖 5 个维度（可综合性/可实现性/时序/仿真上板一致性/EDA LA 友好性）",
+        "风险按 A/B/C 三级分类",
+        "每个发现点含行号位置",
+        "产出审计报告而非直接改代码",
+        "报告可通过 scripts/scan_check.py 校验"
+      ]
+    },
+    {
+      "id": 2,
+      "type": "near-neighbor-boundary",
+      "prompt": "给这个 Verilog 模块加注释，说明每个状态机的职责",
+      "expected_output": "不应触发 rtl-refactor-scan；路由到 rtl-annotator（仅加注释、零功能修改）",
+      "files": [],
+      "expectations": [
+        "识别为注释增强请求，非系统性扫描/重构",
+        "不进入 Phase 2 扫描流程",
+        "建议改用 rtl-annotator skill"
+      ]
+    },
+    {
+      "id": 3,
+      "type": "near-neighbor-boundary",
+      "prompt": "扫描这个 8000 行的 TOP 模块，做完整成熟度评估",
+      "expected_output": "触发，但 Phase 1 判定模块 >5000 行，建议分模块扫描或只扫关键路径，而非一次性全量扫描",
+      "files": [],
+      "expectations": [
+        "正常触发扫描流程",
+        "Phase 1 识别模块规模超阈值（>5000 行）",
+        "建议拆分为分模块扫描或聚焦关键路径",
+        "不盲目一次性全量扫描导致维度覆盖不全"
+      ]
+    }
+  ]
+}

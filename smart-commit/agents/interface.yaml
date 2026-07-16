@@ -1,0 +1,80 @@
+# smart-commit — Portable Interface
+# yao-meta-skill compatible (Production mode)
+
+name: smart-commit
+version: "1.3.0"
+archetype: scaffold
+mode: production
+
+input_contract:
+  - description: "Git staging area with changes (git diff --cached must be non-empty)"
+    required: true
+  - description: "Optional user intent hint (e.g. 'bug fix', 'refactoring', 'new feature')"
+    required: false
+  - description: "Optional user instruction to actually execute git commit (e.g. 'commit it', '提交吧')"
+    required: false
+
+output_contract:
+  - "Repo status check result (inside-work-tree, current branch, protected-branch flag)"
+  - "Staging check result (empty → stop; else proceed)"
+  - "Layered change analysis (--stat / --name-status / --numstat, full diff only when small)"
+  - "Sensitive-information scan result (hit → stop commit, still generate message)"
+  - "Split suggestion when staged diff mixes unrelated change categories"
+  - "Generated commit header: <type>(<scope>?): <emoji> <short summary>"
+  - "Optional body: WHAT + WHY bullets, default Chinese"
+  - "DEFAULT: show message only — NO git commit executed"
+  - "git commit executed ONLY when user explicitly authorizes (e.g. 'commit it')"
+  - "Commit hash shown only if a commit was actually performed"
+
+deterministic_logic:
+  - path: "scripts/analyze_staged.py"
+    role: "Read-only staged analysis: repo/branch check, layered diff, binary detection, sensitive scan, split-signal detection"
+    runs_in: "repository root"
+    side_effects: "none (read-only)"
+
+references:
+  - "references/commit-format.md — type/emoji mapping, scope, language policy, examples"
+  - "references/diff-analysis.md — layered diff, binary/lock handling, thresholds"
+  - "references/sensitive-scan.md — sensitive-info patterns and procedure"
+  - "references/split-criteria.md — split decision standards"
+
+constraints:
+  - "Header max 72 chars; short summary max 50 chars (scope consumes budget)"
+  - "Summary must use imperative mood, lowercase first letter"
+  - "Type must be the most specific applicable (e.g. test over chore)"
+  - "Body lines max 72 chars each"
+  - "Body uses bullet format; default Chinese; header summary default English"
+  - "Analyze only 'git diff --cached', never guess unstaged changes"
+  - "Layered diff: use --stat/--name-status/--numstat before full diff"
+  - "Binary/lock/generated files judged by name/path/size, never by content"
+  - "Default is generate-only: never run git commit without explicit user authorization"
+  - "Stop if not inside a git repo; stop if staging area is empty"
+  - "Stop committing (still generate message) if sensitive info is detected"
+  - "Require extra explicit authorization to commit on a protected branch"
+
+exclusions:
+  - "Writing commit messages for unstaged changes"
+  - "Rewriting/amending existing commits (use git commit --amend manually)"
+  - "Interactive rebase message generation"
+  - "Multi-commit or squash planning"
+  - "CHANGELOG or release note generation"
+  - "Commit signing or GPG key management"
+  - "Branch creation, push, or merge"
+  - "Auto-executing git commit when the user only asked for a message"
+
+reports:
+  output-risk-profile: "reports/output-risk-profile.md"
+
+quality_gates:
+  - "Repo valid: git rev-parse --is-inside-work-tree succeeds"
+  - "Branch surfaced; protected branch needs extra explicit authorization"
+  - "Staging area empty → stop, never proceed"
+  - "Large diff handled via --stat/--name-status before full diff"
+  - "Sensitive scan passed (or blocked with warning) before any commit"
+  - "Unrelated change categories → split suggested, not a single message"
+  - "Type+emoji match the most specific change category"
+  - "Header obeys 50/72 char limits; scope used when module is clear"
+  - "Summary is imperative + lowercase first"
+  - "Language unified: header EN / body ZH unless user asks for all-Chinese"
+  - "DEFAULT generate-only: no git commit unless user explicitly authorized"
+  - "Body (if present) explains WHAT and WHY, uses bullet format"

@@ -1,0 +1,77 @@
+{
+  "skill_name": "smart-commit",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "生成一条 commit message，暂存区有代码重构的变更",
+      "expected_output": "检查仓库与暂存区状态，分层分析 diff，生成符合 <type>(<scope>?): <emoji> <summary> 格式的提交信息，默认只展示 message，不执行 git commit",
+      "files": [],
+      "expectations": [
+        "检查 git 仓库状态与当前分支",
+        "检查暂存区非空",
+        "根据变更类型选择合适的 type 和 emoji",
+        "生成的提交信息符合规范格式（含可选 scope）",
+        "默认只展示 message，未执行 git commit",
+        "仅当用户明确说'执行提交/commit it'时才提交"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "提交暂存区的变更",
+      "expected_output": "展示 message 后，由于用户说了'提交'，执行 git commit；若用户只说'生成'，则只展示不提交",
+      "files": [],
+      "expectations": [
+        "区分'生成 message'与'执行提交'两种意图",
+        "用户明确授权时才运行 git commit",
+        "捕获退出码并展示 hash 或 stderr"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "/commit - 暂存区为空",
+      "expected_output": "检测到暂存区为空，提示用户先使用 git add，不执行 git commit",
+      "files": [],
+      "expectations": [
+        "检查到暂存区为空",
+        "显示 git status",
+        "提示用户使用 git add",
+        "不执行 git commit"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "暂存区里既有 gvsp 模块的 bug 修复，又有 readme 大段重写，帮我写提交信息",
+      "expected_output": "识别为'代码修复 + 文档大改'的拆分信号，建议拆分为 fix(gvsp) 与 docs(readme) 两条提交，各自给出 message，默认不提交",
+      "files": [],
+      "expectations": [
+        "识别出多类不相关变更",
+        "建议拆分并提交顺序",
+        "为每组生成独立 message",
+        "默认不执行 git commit"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "暂存区改动里有个 .env 文件和一段 api_key=...，生成提交信息",
+      "expected_output": "敏感信息扫描命中，停止提交并提醒用户确认/移除，仍只生成 message",
+      "files": [],
+      "expectations": [
+        "扫描 diff 发现疑似敏感信息（.env / api_key）",
+        "停止 git commit 流程",
+        "提醒用户处理敏感内容",
+        "仍展示生成的 message"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "当前在 main 分支，暂存了一处 axi 的性能优化，提交一下",
+      "expected_output": "识别 main 为保护分支，展示 message 并高亮提醒；执行提交前需用户额外明确授权",
+      "files": [],
+      "expectations": [
+        "显示当前分支为 main 并标记保护分支",
+        "展示 message 并提示分支风险",
+        "执行提交需用户额外明确授权（不只是'提交'）"
+      ]
+    }
+  ]
+}

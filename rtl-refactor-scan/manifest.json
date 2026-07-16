@@ -1,0 +1,38 @@
+{
+  "name": "rtl-refactor-scan",
+  "version": "1.0.0",
+  "mode": "production",
+  "archetype": "library",
+  "context_budget_tier": "production",
+  "description": "RTL 工程成熟化扫描与小步重构。对 Verilog/SystemVerilog 模块执行五大维度（可综合性/可实现性/时序/仿真上板一致性/EDA调试友好性）成熟度评估，输出结构化审计报告并制定最小安全重构计划。快速语法检查/注释增强类请求请走 rtl-annotator。",
+  "owner": "zhangjl",
+  "review_cadence": "per-major-change",
+  "triggers": [
+    "RTL 检查",
+    "RTL 扫描",
+    "RTL 评审",
+    "代码成熟度",
+    "工程化检查",
+    "综合/时序问题诊断",
+    "小步重构",
+    "RTL 优化建议"
+  ],
+  "exclusions": [
+    "新功能开发",
+    "纯 testbench 编写",
+    "综合/布局布线执行",
+    "快速语法检查（走 rtl-annotator）",
+    "代码格式化"
+  ],
+  "factory_components": {
+    "scripts": ["scripts/scan_check.py"],
+    "references": [
+      "references/scan-checklist.md",
+      "references/risk-classification.md",
+      "references/refactor-patterns.md",
+      "references/output-format.md",
+      "references/trigger-eval.md",
+      "references/quality-gates.md"
+    ]
+  }
+}

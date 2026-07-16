@@ -1,0 +1,114 @@
+# rtl-refactor-scan — Portable Interface
+# yao-meta-skill compatible (Production / Library mode)
+# Skill IR: externalizes the recurring job, triggers, exclusions, near-neighbor
+# edge cases, workflow, decision points, failure modes, evals, output risk,
+# and trust boundary so a reviewer or adapter can answer the 6 IR questions
+# from one place.
+
+name: rtl-refactor-scan
+version: "1.0.0"
+archetype: library
+mode: production
+
+input_contract:
+  - description: "待分析的 Verilog/SystemVerilog 模块或目录路径（.v / .sv）"
+    required: true
+  - description: "相关 testbench 目录与回归命令（无则只能扫描，无法回归验证）"
+    required: false
+  - description: "时钟/复位方案、接口协议、功能行为描述（注释不足时需向用户询问）"
+    required: false
+  - description: "用户期望输出级别：仅报告 / 报告+计划 / 完整重构"
+    required: false
+
+output_contract:
+  - "审计报告_<模块名>.md — 五大维度扫描结果、A/B/C 三级风险列表、修改建议"
+  - "修改计划_<模块名>.md — 分阶段重构计划、回归测试命令、回退方案"
+  - "最终报告_<模块名>.md — 修改摘要、风险消除情况、剩余风险、下一步建议"
+  - "每个发现点必须记录：位置(行号)、分类(A/B/C)、描述、影响评估"
+  - "C 类风险只报告不修改"
+  - "默认不修改代码；进入修改前必须输出计划并等待用户确认（无计划不修改）"
+
+deterministic_logic:
+  - path: "scripts/scan_check.py"
+    role: "Read-only checker: validate a generated 审计报告 against the 5-dimension + A/B/C + required-section contract"
+    runs_in: "skill root"
+    side_effects: "none (read-only)"
+
+references:
+  - "references/scan-checklist.md — 五大维度详细检查清单 + 验证条件"
+  - "references/risk-classification.md — A/B/C 三级风险分类标准"
+  - "references/refactor-patterns.md — 7 种具体重构模式及代码示例"
+  - "references/output-format.md — 审计报告/修改计划/最终报告模板"
+  - "references/trigger-eval.md — 触发条件评估（应该/不应该/边界）"
+  - "references/quality-gates.md — 质量门控检查清单 + 100 分评分 rubric"
+
+constraints:
+  - "不改变模块外部接口"
+  - "不改变协议语义"
+  - "不修改已有 testbench / golden 数据"
+  - "不降低 testbench 覆盖率"
+  - "不为通过测试而削弱测试或屏蔽真实问题"
+  - "优先保持 Verilog-2001 风格，非必要不用 SystemVerilog 语法"
+  - "FPGA EDA 友好优先于代码短小；结构变更优先于静默 lint warning"
+  - "不做一步到位的大重构，遵循先分析→计划→小步修改→回归验证"
+  - "一次只做一个明确的优化主题，保持 diff 可读，不做无关格式化"
+  - "新增注释说明为什么这样写对综合/时序/上板更稳"
+  - "上板时序分析不在当前范围（如需单独提出）"
+
+exclusions:
+  - "新功能开发（非扫描/重构）"
+  - "纯 testbench 编写（无 RTL 修改）"
+  - "综合/布局布线执行（仅扫描分析）"
+  - "快速语法检查 / 注释增强 → 走 rtl-annotator skill"
+  - "代码格式化（非工程成熟度问题）"
+
+near_neighbor:
+  - skill: "rtl-annotator"
+    relation: "互补"
+    boundary: "rtl-annotator 仅加注释、零功能修改；本 skill 做系统性成熟度扫描 + 小步重构"
+    confusion: "用户说'快速看下这文件有没有低级问题'可能同时命中两者 → 由 trigger-eval.md 边界情况 #1 在 Phase 1 人工确认（quick vs systematic）兜底"
+  - skill: "skill-creator / writing-skills / yao-meta-skill"
+    relation: "无关"
+    boundary: "技能工程类，与 RTL 工作流无路由重叠"
+
+workflow_steps:
+  - "Phase 1: 定义扫描范围（模块路径/时钟/复位/接口/协议），不假设路径，先搜索确认"
+  - "Phase 2: 结构化扫描（5 维度 + A/B/C 三级风险，逐行对照风险清单）"
+  - "Phase 3: 输出审计报告（含行号位置、风险列表、修改建议）"
+  - "Phase 4: 最小安全重构计划（分阶段、可验证、可回退），等待用户确认"
+  - "Phase 5: 小步实施 + 回归验证（每阶段跑 testbench）"
+  - "Phase 6: 最终报告（修改摘要/风险消除/剩余风险/下一步）"
+  - "每个阶段必须先完成再进下一阶段，不能跳步"
+
+decision_points:
+  - "是否进入修改阶段：基于风险严重度与修改收益评估（Phase 3 末尾）"
+  - "是否拆分扫描：模块 >5000 行 → 建议分模块或只扫关键路径"
+  - "语言混合：Verilog + SystemVerilog 按文件类型分别处理，优先 Verilog-2001"
+  - "无 testbench：仍可扫描，但 Phase 5 回归验证降级为人工确认"
+
+failure_modes:
+  - mode: "路径假设错误"
+    guard: "Phase 1 先用 ls/find/rg 确认文件存在，不猜路径"
+  - mode: "误将 C 类标为 A 类（过度修改）"
+    guard: "Gate 3 风险分类准确性复核；C 类只报告不修改"
+  - mode: "修改改变外部接口/协议语义"
+    guard: "Gate 5 修改质量检查项（接口不变/协议不变/不降覆盖）"
+  - mode: "回归测试失败却屏蔽问题"
+    guard: "Gate 6 失败必须分析原因，禁止'屏蔽问题'通过"
+  - mode: "未确认即执行修改"
+    guard: "Phase 4 无计划不修改；计划需用户确认"
+
+evals:
+  - "evals/evals.json — 3 个用例（1 smoke + 2 近邻边界）"
+  - "evals/smoke_runner.py — 确定性 smoke runner（命令式，无外部模型凭证）"
+  - "scripts/scan_check.py — 输出契约机器校验"
+
+output_risk:
+  report: "reports/output-risk-profile.md"
+
+trust_boundary:
+  owner: "zhangjl"
+  maturity: "production (content-ready; packaged to library after evals evidence)"
+  review_cadence: "per-major-change"
+  rollback_boundary: "修改前必须输出计划 + 回退方案；每次小步修改可单独回退"
+  governed: false
