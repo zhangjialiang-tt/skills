@@ -1,0 +1,64 @@
+# Agent Interface — ai-plat-bridge
+# 定义 Skill 与 Agent 之间的接口契约
+
+name: ai-plat-bridge
+version: "2.0"
+
+interface:
+  inputs:
+    - name: user_request
+      type: string
+      description: "用户的原始请求"
+      required: true
+    - name: current_working_directory
+      type: string
+      description: "AI 当前工作目录"
+      required: true
+    - name: project_context
+      type: object
+      description: "项目上下文（AGENTS.md、README、已有约束等）"
+      required: false
+    - name: conversation_history
+      type: array
+      description: "本轮对话历史，避免重复询问"
+      required: false
+
+  outputs:
+    - name: operation_mode
+      type: enum
+      values: [read, write, none]
+      description: "操作模式：只读 / 写入 / 不触发"
+    - name: sync_level
+      type: enum
+      values: [lightweight, standard, deep, null]
+      description: "同步级别（仅写入模式）"
+    - name: target_project_file
+      type: string
+      description: "目标项目文件路径"
+    - name: write_actions
+      type: array
+      description: "写入操作列表（章节级）"
+    - name: verification_result
+      type: boolean
+      description: "写后验证结果"
+    - name: trigger_eval_passed
+      type: boolean
+      description: "是否通过触发评估"
+
+  behavior:
+    - "先判断是否在 vault 内，是则不触发"
+    - "再判断是只读还是写入"
+    - "写入时选择最轻量同步级别"
+    - "写入前必须读取目标文件"
+    - "仅做章节级、局部修改"
+    - "写后必须重新读取确认落盘"
+
+  error_handling:
+    - condition: "当前工作目录在 vault 内"
+      action: "不触发，直接按 AGENTS.md 操作"
+    - condition: "信息查询无工程动作"
+      action: "不触发，直接回答"
+    - condition: "无法唯一匹配目标项目"
+      action: "列出候选项目，不猜测"
+    - condition: "无实质内容可写入"
+      action: "说明'无可记录内容'并列出可写项"

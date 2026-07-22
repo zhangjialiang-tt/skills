@@ -1,0 +1,65 @@
+{
+  "skill_name": "ai-plat-bridge",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "记录到工作台：完成了 requirement-alignment 的 Production 升级",
+      "should_trigger": true,
+      "reason": "用户显式要求记录到工作台"
+    },
+    {
+      "id": 2,
+      "prompt": "查工作台，看看现在有哪些活跃任务",
+      "should_trigger": true,
+      "reason": "用户显式要求查询工作台"
+    },
+    {
+      "id": 3,
+      "prompt": "看今天干了什么",
+      "should_trigger": true,
+      "reason": "用户显式要求查看今日日志"
+    },
+    {
+      "id": 4,
+      "prompt": "查项目状态，zc29a 现在什么情况",
+      "should_trigger": true,
+      "reason": "用户显式要求查项目状态"
+    },
+    {
+      "id": 5,
+      "prompt": "帮我查一下 AGENTS.md 里怎么写工作台同步的",
+      "should_trigger": false,
+      "reason": "信息查询，无工程动作"
+    },
+    {
+      "id": 6,
+      "prompt": "解释一下什么是桥接模式",
+      "should_trigger": false,
+      "reason": "纯知识问答，无工程动作"
+    },
+    {
+      "id": 7,
+      "prompt": "当前工作目录在 AI-Plat vault 内，直接读取 10-Daily 日志",
+      "should_trigger": false,
+      "reason": "当前已在 vault 内，直接按 AGENTS.md 操作"
+    },
+    {
+      "id": 8,
+      "prompt": "更新项目文件，把 zc29a 的状态改为验证中",
+      "should_trigger": true,
+      "reason": "用户显式要求更新项目文件"
+    },
+    {
+      "id": 9,
+      "prompt": "今天天气怎么样",
+      "should_trigger": false,
+      "reason": "日常问候，无工程动作"
+    },
+    {
+      "id": 10,
+      "prompt": "更新项目记忆，记录 zc29a 的根因 5 结论",
+      "should_trigger": true,
+      "reason": "用户显式要求更新项目记忆"
+    }
+  ]
+}
