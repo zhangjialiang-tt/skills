@@ -1,0 +1,60 @@
+# Agent Interface — requirement-alignment
+# 定义 Skill 与 Agent 之间的接口契约
+
+name: requirement-alignment
+version: "2.0"
+
+interface:
+  inputs:
+    - name: user_request
+      type: string
+      description: "用户的原始请求"
+      required: true
+    - name: project_context
+      type: object
+      description: "项目上下文（AGENTS.md、README、已有约束等）"
+      required: false
+    - name: conversation_history
+      type: array
+      description: "本轮对话历史，避免重复询问"
+      required: false
+
+  outputs:
+    - name: alignment_summary
+      type: object
+      description: "需求对齐摘要"
+      fields:
+        - real_goal: string
+        - current_task: string
+        - scope_included: string
+        - scope_excluded: string
+        - must_preserve: list
+        - acceptance_criteria: list
+        - confirmed_decisions: list
+        - agent_assumptions: list
+        - next_step: enum [plan, execute, investigate]
+    - name: alignment_level
+      type: enum
+      values: [L0, L1, L2, L3]
+      description: "本次对齐使用的级别"
+    - name: questions_asked
+      type: array
+      description: "向用户提出的问题列表"
+    - name: trigger_eval_passed
+      type: boolean
+      description: "是否通过触发评估"
+
+  behavior:
+    - "先判断是否需要对齐（L0 直接通过）"
+    - "每轮最多 3 个问题，通常只进行一轮"
+    - "对齐后立即退出，不重复访谈"
+    - "不输出完整技术方案或 Plan"
+    - "不修改任何文件"
+
+  error_handling:
+    - condition: "请求清晰无歧义"
+      action: "L0 直接通过，不输出摘要"
+    - condition: "用户说'按你理解做'"
+      action: "低风险继续并声明假设；高风险仍需确认"
+    - condition: "用户回答后仍有歧义"
+      action: "如非阻塞则声明假设继续；如阻塞则再问 1 个问题"

@@ -1,0 +1,33 @@
+{
+  "name": "requirement-alignment",
+  "version": "2.0.0",
+  "mode": "production",
+  "archetype": "scaffold",
+  "context_budget_tier": "production",
+  "description": "复杂任务进入 Plan/实现前，识别高影响歧义并通过最少量关键澄清对齐需求，产出需求对齐摘要。不输出 Plan、不修改代码。",
+  "owner": "zhangjl",
+  "review_cadence": "per-major-change",
+  "triggers": [
+    "请求存在歧义或多种合理理解",
+    "优化/重构/支持 X，但 X 的具体对象不明",
+    "用户同时提多个目标且优先级不明",
+    "大范围删除/迁移/不可逆操作",
+    "用户说'先确认需求''先不要写代码''帮我梳理问题'"
+  ],
+  "exclusions": [
+    "单一、明确、低风险的修改",
+    "用户已给出目标、范围、约束和验收标准",
+    "纯知识问答、命令查询、语法解释",
+    "已生成并确认过需求对齐摘要",
+    "当前正在执行已批准的 Plan"
+  ],
+  "factory_components": {
+    "scripts": ["scripts/trigger_eval.py"],
+    "references": [
+      "references/near-neighbor-routing.md",
+      "references/failure-modes.md",
+      "references/examples.md",
+      "references/trigger-eval.md"
+    ]
+  }
+}

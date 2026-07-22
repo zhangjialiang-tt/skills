@@ -1,0 +1,65 @@
+{
+  "skill_name": "requirement-alignment",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "把 src/foo.py 中的超时时间从 10 秒改为 30 秒，并运行现有单元测试。",
+      "should_trigger": false,
+      "reason": "目标/范围/验收清楚，无需对齐"
+    },
+    {
+      "id": 2,
+      "prompt": "优化这个模块的性能。",
+      "should_trigger": true,
+      "reason": "目标缺少具体对象（性能指吞吐率/延迟/资源？）"
+    },
+    {
+      "id": 3,
+      "prompt": "给这个模块增加一个 FIFO，解决偶发丢帧。",
+      "should_trigger": true,
+      "reason": "手段可能为初步设想，需确认是否硬约束"
+    },
+    {
+      "id": 4,
+      "prompt": "重构 ir_compress_simple_top，让它支持 1280x1024 和 640x512 两种分辨率。",
+      "should_trigger": true,
+      "reason": "多目标、范围边界不清（是否包括上下游模块）"
+    },
+    {
+      "id": 5,
+      "prompt": "解释这段代码在做什么。",
+      "should_trigger": false,
+      "reason": "纯说明，无歧义"
+    },
+    {
+      "id": 6,
+      "prompt": "先确认需求，然后再开始写代码。",
+      "should_trigger": true,
+      "reason": "用户显式要求对齐"
+    },
+    {
+      "id": 7,
+      "prompt": "把 timeout 由 10s 改为 30s 并跑现有测试。",
+      "should_trigger": false,
+      "reason": "目标/范围/验收清楚"
+    },
+    {
+      "id": 8,
+      "prompt": "既要提升性能，又要降低资源，还要兼容旧版。",
+      "should_trigger": true,
+      "reason": "多目标优先级不明"
+    },
+    {
+      "id": 9,
+      "prompt": "删除定帧相关代码，只保留压缩帧。",
+      "should_trigger": true,
+      "reason": "大范围删除/不可逆操作"
+    },
+    {
+      "id": 10,
+      "prompt": "帮我梳理一下这个问题。",
+      "should_trigger": true,
+      "reason": "用户显式要求梳理/对齐"
+    }
+  ]
+}
