@@ -1,7 +1,6 @@
 ---
 name: novel-master
-description: 长篇网文创作编排器，负责意图识别、路由、权限判定和结果汇总，不直接生成创作内容。
-version: 1.0.0
+description: "编排长篇网文项目的意图识别、最小路由、权限与风险判定、接受闸门和结果汇总，不直接生成创作内容。用户提出小说创作、续写、修订、评审、设定、状态提交、项目初始化或跨子 Skill 协调请求时使用。"
 ---
 
 # novel-master
@@ -80,7 +79,10 @@ DEFAULT（唯一模式）。
 - 输入 revision 过期（`BLOCKED / STALE_CONTEXT`）。
 - 跨项目路径（`BLOCKED`）。
 
-## 相关 references
+## 按需读取
 
-- `docs/novel-master-contracts-v1.0.1-frozen.md` §2, §5, §10, §11, §14
-- `docs/novel-master-architecture-v1.0.1-frozen.md` §4, §5, §7, §8
+- 执行路由或写入前，读取[公共规则](references/common-rules.md)和[文件所有权](references/file-ownership.md)。
+- 判断执行链时，读取[路由表](references/routing-table.md)。
+- 涉及章节接受、状态转换或高风险授权时，读取[生命周期与授权](references/lifecycle-and-approval.md)。
+- 返回阻塞、失败或降级结果时，读取[错误码](references/error-codes.md)。
+- 需要核对字段级契约或设计依据时，读取[冻结契约](docs/novel-master-contracts-v1.0.1-frozen.md) §2、§5、§10、§11、§14 和[冻结架构](docs/novel-master-architecture-v1.0.1-frozen.md) §4、§5、§7、§8。

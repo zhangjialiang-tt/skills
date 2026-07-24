@@ -1,7 +1,6 @@
 ---
 name: chapter-planner
-description: 把大纲节点和当前状态转化为可执行章节卡，输出到 chapters/plans/。
-version: 1.0.0
+description: "把大纲节点和当前项目状态转化为可直接写作的章节卡并输出到 chapters/plans/。规划新章节、在续写或重写前重做章节计划，或连续创作多章时逐章拆解场景、状态变化和连续性约束时使用。"
 ---
 
 # chapter-planner
@@ -84,7 +83,9 @@ chapter_plan:
 - 上下文包缺失（`BLOCKED`）。
 - 章节卡与 Canon 存在未解决冲突（`NEEDS_DECISION`）。
 
-## 相关 references
+## 按需读取
 
-- `docs/novel-master-contracts-v1.0.1-frozen.md` §12.3
-- `docs/novel-master-architecture-v1.0.1-frozen.md` §4.2, §8.2
+- 执行前读取[公共规则](../references/common-rules.md)和[文件所有权](../references/file-ownership.md)。
+- 获取或校验 `context_pack` 时，读取[上下文提取规则](../references/context-retrieval-rules.md)。
+- 章节卡与 Canon 冲突或输入不足时，读取[错误码](../references/error-codes.md)。
+- 需要核对章节卡结构时，读取[冻结契约](../docs/novel-master-contracts-v1.0.1-frozen.md) §12.3 和[冻结架构](../docs/novel-master-architecture-v1.0.1-frozen.md) §4.2、§8.2。

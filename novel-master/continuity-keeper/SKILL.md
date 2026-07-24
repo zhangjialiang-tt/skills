@@ -1,7 +1,6 @@
 ---
 name: continuity-keeper
-description: 管理项目事实、时间线和连续性，是 state/ 唯一正式写入者。支持上下文提取、冲突检查、状态提交、影响分析和项目恢复。
-version: 1.0.0
+description: "管理长篇网文项目事实、时间线和连续性，并作为 state/ 唯一正式写入者。提取写作上下文、检查矛盾、提交已接受章节状态或已授权 Canon、执行高风险影响分析、生成摘要、恢复项目或重建派生状态时使用。"
 ---
 
 # continuity-keeper
@@ -125,7 +124,11 @@ continuity_result:
 - COMMIT_CANON 缺少有效 ApprovalRef（`BLOCKED / INVALID_APPROVAL`）。
 - ChangeSet 任一步骤失败（`FAILED / ROLLBACK_FAILED`）。
 
-## 相关 references
+## 按需读取
 
-- `docs/novel-master-contracts-v1.0.1-frozen.md` §12.6, §8, §9
-- `docs/novel-master-architecture-v1.0.1-frozen.md` §5, §6.1, §6.4, §9
+- 执行前读取[公共规则](../references/common-rules.md)和[文件所有权](../references/file-ownership.md)。
+- EXTRACT_CONTEXT 或依赖上下文包的模式读取[上下文提取规则](../references/context-retrieval-rules.md)。
+- 从正文或报告生成状态候选时，读取[事实提取规则](../references/fact-extraction-rules.md)。
+- COMMIT_CHAPTER_STATE、COMMIT_CANON、恢复写入或影响分析时，读取[生命周期与授权](../references/lifecycle-and-approval.md)。
+- 返回冲突、陈旧上下文、无效授权或事务失败时，读取[错误码](../references/error-codes.md)。
+- 需要核对状态、ChangeSet 或 ContextPack 字段时，读取[冻结契约](../docs/novel-master-contracts-v1.0.1-frozen.md) §12.6、§8、§9 和[冻结架构](../docs/novel-master-architecture-v1.0.1-frozen.md) §5、§6.1、§6.4、§9。

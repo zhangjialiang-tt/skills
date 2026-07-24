@@ -1,7 +1,7 @@
 # error-codes.md
 
 > 用途：统一错误码定义，所有子 Skill 和 novel-master 使用相同错误码。
-> 引用方式：所有 Skill 中 `include: references/error-codes.md`。
+> 读取时机：Skill 需要返回阻塞、失败、待决策或降级结果时，通过 SKILL.md 中的相对链接读取。
 > 来源：冻结契约 §13（异常与降级策略）。
 
 ## 错误码总表

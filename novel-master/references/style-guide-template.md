@@ -1,8 +1,13 @@
 # style-guide-template.md
 
 > 用途：项目 style_guide.md 的标准模板。用户创建新项目时基于此模板填写，chapter-writer 和 novel-reviewer 以此为风格约束。
-> 引用方式：novel-brief 初始化时生成；chapter-writer 写作时 `include: style_guide.md`。
+> 读取时机：novel-brief 初始化风格约束，或 chapter-writer、novel-reviewer 需要解释项目 `style_guide.md` 时，通过各自 SKILL.md 中的相对链接读取。
 > 说明：`{{占位符}}` 为用户需填写部分，不得固化某一题材的风格。
+
+## 目录
+
+- [模板](#模板)：叙事视角、叙事距离、句式节奏、描写密度、对话、角色声音、信息说明、字数、Hook、回顾、AI 腔规避和题材规则。
+- [使用约束](#使用约束)
 
 ## 模板
 

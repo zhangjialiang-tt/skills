@@ -1,0 +1,4 @@
+interface:
+  display_name: "网文连续性管理"
+  short_description: "管理长篇网文事实、时间线、上下文提取与正式状态提交流程"
+  default_prompt: "使用 $continuity-keeper 检查连续性并执行所需的上下文或状态操作。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "网文故事架构"
+  short_description: "以单一模式设计长篇网文的故事、人物、世界规则或大纲方案"
+  default_prompt: "使用 $story-architect 选择一个模式完成这项高层故事设计。"

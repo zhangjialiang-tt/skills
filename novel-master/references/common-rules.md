@@ -1,7 +1,7 @@
 # common-rules.md
 
 > 用途：所有子 Skill 必须遵守的最小规则集。
-> 引用方式：每个子 Skill 的 SKILL.md 中 `include: references/common-rules.md`。
+> 读取时机：各 Skill 在执行路由、读取或写入前，通过 SKILL.md 中的相对链接读取。
 
 ## 1. 信息状态定义与转换
 

@@ -1,7 +1,6 @@
 ---
 name: story-architect
-description: 按单一互斥模式完成高层故事、人物、世界或大纲设计。一次调用只激活一个模式。
-version: 1.0.0
+description: "按单一互斥模式完成长篇网文的故事结构、人物、世界或大纲设计。设计或修改主线与主题、人物档案与关系、世界规则与力量体系、整书或分卷大纲时使用；一次调用只激活 STORY、CHARACTER、WORLD、PLOT 之一。"
 ---
 
 # story-architect
@@ -83,7 +82,9 @@ version: 1.0.0
 - 必需输入文件缺失（`BLOCKED`）。
 - 目标路径跨越多个所有权区域（`BLOCKED / INVALID_SKILL_MODE`）。
 
-## 相关 references
+## 按需读取
 
-- `docs/novel-master-contracts-v1.0.1-frozen.md` §12.2
-- `docs/novel-master-architecture-v1.0.1-frozen.md` §4.2, §6.5
+- 执行前读取[公共规则](../references/common-rules.md)和[文件所有权](../references/file-ownership.md)。
+- 设计变更影响已确认 Canon 或需要用户授权时，读取[生命周期与授权](../references/lifecycle-and-approval.md)。
+- 模式无效、越权或发生冲突时，读取[错误码](../references/error-codes.md)。
+- 需要核对模式输出结构时，读取[冻结契约](../docs/novel-master-contracts-v1.0.1-frozen.md) §12.2 和[冻结架构](../docs/novel-master-architecture-v1.0.1-frozen.md) §4.2、§6.5。

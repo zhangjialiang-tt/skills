@@ -1,7 +1,7 @@
 # fact-extraction-rules.md
 
 > 用途：定义哪些内容应进入状态候选（state_change_proposals），指导 chapter-writer 和 continuity-keeper 的事实提取行为。
-> 引用方式：chapter-writer、continuity-keeper 中 `include: references/fact-extraction-rules.md`。
+> 读取时机：chapter-writer 报告新增事实、continuity-keeper 生成状态候选时，通过各自 SKILL.md 中的相对链接读取。
 > 来源：冻结契约 §6（SkillResult.state_change_proposals）、§8（ChangeSet）、§12.4（chapter_report）。
 
 ## 必须提取（进入 state_change_proposals）

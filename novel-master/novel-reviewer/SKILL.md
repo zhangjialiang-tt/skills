@@ -1,7 +1,6 @@
 ---
 name: novel-reviewer
-description: 基于文本证据进行只读诊断，不直接修改正文。仅在 artifact_persistence_allowed=true 时可写 reviews/。
-version: 1.0.0
+description: "基于文本证据只读诊断长篇网文，不直接修改正文；仅在 artifact_persistence_allowed=true 时保存 reviews/ 报告。用户要求分析、评审、诊断章节或正文，修改前定位问题、卷末复盘或讨论剧情合理性时使用。"
 ---
 
 # novel-reviewer
@@ -86,7 +85,10 @@ review_report:
 - 评审目标缺失或不可读（`BLOCKED`）。
 - 评审范围不明确且无法从上下文推断（`NEEDS_DECISION`）。
 
-## 相关 references
+## 按需读取
 
-- `docs/novel-master-contracts-v1.0.1-frozen.md` §12.5, §5.6
-- `docs/novel-master-architecture-v1.0.1-frozen.md` §6.3
+- 执行前读取[公共规则](../references/common-rules.md)和[文件所有权](../references/file-ownership.md)，严格保持只读边界。
+- 评估文风时，读取[风格指南模板](../references/style-guide-template.md)并以项目实际 `style_guide.md` 为证据。
+- 判断报告能否落盘、revision 是否匹配或后继编辑是否需授权时，读取[生命周期与授权](../references/lifecycle-and-approval.md)。
+- 返回阻塞或降级结果时，读取[错误码](../references/error-codes.md)。
+- 需要核对评审报告结构时，读取[冻结契约](../docs/novel-master-contracts-v1.0.1-frozen.md) §12.5、§5.6 和[冻结架构](../docs/novel-master-architecture-v1.0.1-frozen.md) §6.3。

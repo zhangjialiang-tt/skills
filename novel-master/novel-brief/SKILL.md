@@ -1,7 +1,6 @@
 ---
 name: novel-brief
-description: 将模糊创意转化为明确、可确认的作品定义，输出 project_brief.md。
-version: 1.0.0
+description: "将模糊创意转化为明确、可确认的作品定义并输出 project_brief.md。创建新小说项目、补齐缺失简报，或修改作品定位、目标读者、读者承诺和创作约束时使用。"
 ---
 
 # novel-brief
@@ -77,7 +76,10 @@ project_brief:
 
 - 用户输入过于模糊，无法提取任何有效信息（返回 `NEEDS_DECISION`）。
 
-## 相关 references
+## 按需读取
 
-- `docs/novel-master-contracts-v1.0.1-frozen.md` §12.1
-- `docs/novel-master-architecture-v1.0.1-frozen.md` §4.2
+- 执行前读取[公共规则](../references/common-rules.md)和[文件所有权](../references/file-ownership.md)。
+- 创建项目风格约束时，读取[风格指南模板](../references/style-guide-template.md)。
+- 涉及初始化确认、Canon 候选或授权时，读取[生命周期与授权](../references/lifecycle-and-approval.md)。
+- 返回阻塞或待决策结果时，读取[错误码](../references/error-codes.md)。
+- 需要核对输出结构时，读取[冻结契约](../docs/novel-master-contracts-v1.0.1-frozen.md) §12.1 和[冻结架构](../docs/novel-master-architecture-v1.0.1-frozen.md) §4.2。

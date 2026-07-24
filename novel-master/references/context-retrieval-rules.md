@@ -1,8 +1,21 @@
 # context-retrieval-rules.md
 
 > 用途：定义 continuity-keeper / EXTRACT_CONTEXT 的上下文提取策略，确保不遗漏关键信息且不只依赖关键词匹配。
-> 引用方式：continuity-keeper、chapter-writer、chapter-planner 中 `include: references/context-retrieval-rules.md`。
+> 读取时机：continuity-keeper 提取上下文，或 chapter-planner、chapter-writer 使用和校验 ContextPack 时，通过各自 SKILL.md 中的相对链接读取。
 > 来源：冻结契约 §9（ContextPack）。
+
+## 目录
+
+- [核心原则](#核心原则)
+- [必须结合的维度](#必须结合的维度)
+- [提取策略](#提取策略)
+  - [人物提取（非关键词）](#人物提取非关键词)
+  - [地点/规则提取](#地点规则提取)
+  - [剧情线提取](#剧情线提取)
+  - [时间线约束](#时间线约束)
+- [超限时截断优先级](#超限时截断优先级)
+- [retrieval_trace 结构](#retrieval_trace-结构)
+- [禁止行为](#禁止行为)
 
 ## 核心原则
 

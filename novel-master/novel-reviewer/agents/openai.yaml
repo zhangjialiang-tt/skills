@@ -1,0 +1,4 @@
+interface:
+  display_name: "网文文本评审"
+  short_description: "基于文本证据只读诊断长篇网文并给出可执行的修订建议"
+  default_prompt: "使用 $novel-reviewer 只读评审这段正文并给出证据化建议。"

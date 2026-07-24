@@ -1,0 +1,4 @@
+interface:
+  display_name: "网文章节写作"
+  short_description: "依据章节卡创作、续写或按授权等级修订长篇网文正文内容"
+  default_prompt: "使用 $chapter-writer 按章节卡创作、续写或修订正文。"

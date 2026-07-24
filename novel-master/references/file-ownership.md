@@ -1,7 +1,7 @@
 # file-ownership.md
 
 > 用途：定义每个 Skill 的文件读写权限边界，路径校验脚本必须与此表一致。
-> 引用方式：所有子 Skill 和 novel-master 中 `include: references/file-ownership.md`。
+> 读取时机：所有 Skill 在确定目标路径或执行写入前，通过 SKILL.md 中的相对链接读取。
 > 来源：冻结契约 §3.3。
 
 ## 所有权总表

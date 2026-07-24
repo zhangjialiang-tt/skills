@@ -1,8 +1,15 @@
 # routing-table.md
 
 > 用途：novel-master 路由决策的可测试规则表。
-> 引用方式：novel-master SKILL.md 中 `include: references/routing-table.md`。
+> 读取时机：novel-master 判断最小执行链、Approval Gate 和状态提交条件时，通过 SKILL.md 中的相对链接读取。
 > 来源：冻结契约 §10。
+
+## 目录
+
+- [路由优先级（从高到低）](#路由优先级从高到低)
+- [路由规则](#路由规则)
+- [项目阶段默认路由](#项目阶段默认路由)
+- [接受闸门规则](#接受闸门规则)
 
 ## 路由优先级（从高到低）
 
@@ -255,7 +262,4 @@ stage_routing:
 
 ## 接受闸门规则
 
-- 章节写作后必须经过接受闸门，不可省略。
-- 只有 ACCEPTED 或 PUBLISHED 的正式事实变化才能进入 COMMIT_CHAPTER_STATE。
-- DRAFT/REVIEWED 状态的变化只能进入 state_change_proposals。
-- 自动日更需预授权（覆盖项目、章节范围、偏离程度、失效条件）。
+章节接受、允许状态转换、提交资格和 ApprovalRef 校验统一见[生命周期与授权](lifecycle-and-approval.md)。路由器只决定何时插入闸门，不得在此另行定义授权语义。
