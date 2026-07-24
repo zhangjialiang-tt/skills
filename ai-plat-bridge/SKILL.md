@@ -1,139 +1,98 @@
 ---
 name: ai-plat-bridge
-version: "2.0"
-description: >
-  AI 工作台跨路径桥接。当 AI 当前工作目录不在 AI-Plat vault 时，响应对工作台的读写请求。
-  读取不要求工程变化；写入仅在状态变化、动作完成、结论形成、决策确定、阻塞点改变或任务推进时触发。
-  触发词：记录到工作台、查工作台、查项目状态、查今日日志、工作台同步、更新项目文件、写工作日志、更新项目记忆、看今天干了什么。
-  排除：当前工作目录已在 vault 内、纯聊天、信息查询无工程动作、未落地方案讨论、简单浏览、仅格式修改。
-output_contract:
-  artifacts:
-    - "工作台写入操作（章节级、局部修改）"
-    - "需求对齐摘要（仅读取时）"
-  format: "markdown"
-  constraints:
-    - "写入前必须先读取目标文件"
-    - "仅做章节级、局部修改"
-    - "写后必须重新读取确认落盘"
-    - "不写入密钥/密码/Token"
-triggers:
-  include:
-    - "记录到工作台 / 查工作台 / 查项目状态"
-    - "查今日日志 / 工作台同步 / 更新项目文件"
-    - "写工作日志 / 更新项目记忆 / 看今天干了什么"
-    - "AI 完成实质性工程工作后主动判断需同步"
-  exclude:
-    - "当前工作目录已在 vault 内（直接按 AGENTS.md 操作）"
-    - "纯聊天、日常问候"
-    - "信息查询（查文档、查语法、查 API）没有工程动作"
-    - "未落地的方案讨论、头脑风暴"
-    - "简单代码阅读、浏览文件"
-    - "仅格式或注释修改"
+description: 统一控制 AI-Plat Obsidian vault 内外的卡片访问。用于查询、搜索、创建、更新、追加或归档任务卡、知识卡、日志卡、项目卡，以及“查工作台”“工作台同步”“查项目状态”“查今日日志”“更新项目文件”“更新项目记忆”等兼容请求。所有访问必须先确定卡片类型，并限制在四类卡片目录；宽泛请求先澄清，显式写入后才允许按固定规则联动。
 ---
 
-# AI-Plat Bridge — 跨路径工作台桥接
+# AI-Plat Bridge
 
-当 WorkBuddy 当前工作目录不在 AI-Plat vault 时，通过本 skill 对工作台进行读写。
+通过四类卡片约定访问 AI-Plat vault。无论当前工作目录是否在 vault 内，都执行同一访问契约。
 
-## 常量
+## Vault
 
 ```text
-VAULT = C:\Users\zhangjl\Documents\obsidian-syncthing\AI-Plat\AI-Plat
+C:\Users\zhangjl\Documents\obsidian-syncthing\AI-Plat\AI-Plat
 ```
 
-本 skill 中所有路径均相对于 VAULT 根目录。目录结构见 [vault-structure.md](references/vault-structure.md)。
+所有目标路径都必须相对于该根目录解析。
 
-## 操作模式
+## 核心规则
 
-| 模式 | 触发条件 |
-|---|---|
-| **只读** | 用户要求查询工作台、项目状态、今日日志、任务或记忆 |
-| **写入** | 用户明确要求记录/同步，或 AI 完成实质性工程工作后主动判断 |
+1. 先确定 `card_type`，再访问文件：
+   - `task`：任务卡
+   - `knowledge`：知识卡
+   - `log`：日志卡
+   - `project`：项目卡
+2. 仅执行 `list | search | read | create | update | append | archive` 中该卡片允许的动作。
+3. 用户未明确卡片类型时，不访问 vault；先询问用户。
+4. 只有用户明确要求写入时才写入。不得因完成工程任务而主动同步。
+5. 主写入获授权后，按固定事件规则联动；不得自行扩大联动范围。
+6. 拒绝访问旧记忆体系、未分类目录和白名单外路径。
 
-## 工作流程
+完整路径、操作、模板、兼容别名和联动规则见
+[card-conventions.md](references/card-conventions.md)。执行任何文件访问前读取
+[safety.md](references/safety.md)。
 
-### 1. 判断是否触发
+## 工作流
 
-- 当前工作目录在 vault 内 → **不触发**，直接按 AGENTS.md 操作
-- 信息查询无工程动作 → **不触发**
-- 用户显式要求读写 → **触发**
-- AI 完成实质性工程工作 → 根据 [trigger-eval.md](references/trigger-eval.md) 判断
+### 1. 路由请求
 
-详见 [near-neighbor-routing.md](references/near-neighbor-routing.md)。
+输出或在内部确定：
 
-### 2. 选择同步级别（写入时）
+```text
+operation_mode: read | write | clarify | none
+card_type: task | knowledge | log | project | null
+action: list | search | read | create | update | append | archive | null
+```
 
-按信息价值和工程影响选择最轻量流程。决策树见 [sync-level-decision.md](references/sync-level-decision.md)。
+- “查工作台”“工作台同步”等宽泛请求且没有卡片线索：设为 `clarify`，不访问 vault。
+- 请求 `.workbuddy`、旧记忆文件、白名单外目录或越界路径：设为 `none`，拒绝访问并说明替代卡片。
+- 普通工程工作、聊天、方案讨论没有明确 vault 写入要求：设为 `none`。
 
-| 级别 | 适用场景 | 操作 |
-|---|---|---|
-| **轻量** | 小参数调整、局部修复、单次验证通过 | 追加今日日志 + 按需更新项目文件 |
-| **标准** | 状态/目标/阻塞点/关键结论变化 | 读取项目文件 → 更新相关章节 + 追加日志 |
-| **深度** | 独立任务、里程碑、架构决策、长期约定 | 更新项目文件 + 创建/归档任务卡片 + 追加日志 + 判断是否更新 MEMORY.md |
+### 2. 解析目标
 
-### 3. 确认目标项目文件
+- 只在对应卡片目录内列出或搜索候选。
+- 多个候选无法唯一确定时，列出候选并询问；不得猜测。
+- 创建任务卡或项目卡时，先读取各自的 vault 模板。
+- 任何解析后的目标都必须通过根路径和类型目录校验。
 
-定位顺序：
-1. 根据当前仓库名、路径和项目上下文匹配 `30-Projects/`
-2. 优先使用项目文件中的工程入口路径确认
-3. 无法唯一匹配时，列出候选项目并说明无法安全写入
+### 3. 执行读取
 
-### 4. 读取目标文件
+- `list`、`search`、`read` 只访问已确定类型的目录。
+- 不为生成“工作台概览”跨四类目录扫描。
+- 读取不触发任何写入或联动。
 
-**写入前必须先读取目标文件现有内容。** 不假设文件为空或内容已知。
+### 4. 准备写入
 
-### 5. 执行写入
+写入前：
 
-- 仅做章节级、局部修改
-- 新信息与已有记录冲突时，保留旧记录并追加变更标注
-- 不写入密钥、密码、Token、客户数据
+1. 确认用户已明确要求主写入。
+2. 根据事件联动矩阵计算 `linked_actions`。
+3. 向用户列出主目标和联动目标。
+4. 读取所有现有目标；检查重复、冲突和未提交修改。
+5. 目标或项目关联不明确时暂停，不创建猜测性的卡片。
 
-### 6. 写后验证
+### 5. 执行与验证
 
-完成写入后，必须：
-1. 重新读取被修改的目标章节，确认内容已正确落盘
-2. 检查是否出现重复标题、重复条目或格式破坏
-3. 确认未修改无关章节
-4. 只有验证成功后才能向用户报告"已同步"
+- 仅做局部修改，不整文件重写。
+- 日志卡只追加；更正历史时追加更正说明，不静默覆盖。
+- 不削弱已有证据、验证结果或待验证标记。
+- 写后重新读取每个目标，确认落盘、无重复、无无关修改。
+- 只有全部验证成功后才能报告“已同步”。
 
-## 读取操作速查
+## 输出
 
-| 操作 | 路径 |
-|---|---|
-| 查工作台整体状态 | 读取 `30-Projects/` 下所有 `.md` 的 frontmatter |
-| 查具体项目 | 读取 `30-Projects/<project>.md` |
-| 查今日日志 | 读取 `10-Daily/YYYY-MM-DD.md` |
-| 查活跃任务 | 列出 `20-Tasks/active/` |
-| 查项目记忆 | 读取 `.workbuddy/memory/MEMORY.md` |
-| 查每日记忆 | 读取 `.workbuddy/memory/YYYY-MM-DD.md` |
+读取时说明卡片类型、范围和结果。写入完成时使用：
 
-## 写入操作速查
+```text
+已更新：
+- <主卡片路径>：<局部改动>
+- <联动卡片路径>：<联动原因和局部改动>
 
-| 操作 | 路径 | 模板 |
-|---|---|---|
-| 追加今日日志 | `10-Daily/YYYY-MM-DD.md` | 见 [templates.md](references/templates.md) |
-| 更新项目文件 | `30-Projects/<project>.md` | 仅更新需要变更的节 |
-| 创建任务卡片 | `20-Tasks/active/<date>-<slug>.md` | 见 [templates.md](references/templates.md) |
-| 归档任务卡片 | 状态改 `resolved` 或移 `20-Tasks/done/` | 追加 `## 最终结果` |
-| 更新项目记忆 | `.workbuddy/memory/MEMORY.md` | 仅追加长期稳定信息 |
-| 追加每日记忆 | `.workbuddy/memory/YYYY-MM-DD.md` | 格式：`- <项目>：<动作/结论>` |
+未更新：
+- <跳过项>：<原因>
 
-## 输出风险防御
+验证：
+- 已重读目标并确认落盘
+```
 
-完整规则见 [output-risks.md](references/output-risks.md)。核心要点：
-- **写入前必须先读取目标文件**，仅做章节级、局部修改
-- 只有经过验证的结果才能进入 `已验证结论` 和 MEMORY.md
-- 新信息与已有记录冲突时，保留旧记录并追加变更标注
-- 不写入密钥、密码、Token、客户数据
-
-## 参考
-
-- [vault-structure.md](references/vault-structure.md) — 目录结构与基础约定
-- [templates.md](references/templates.md) — 日志/任务卡片模板
-- [output-risks.md](references/output-risks.md) — P0~P3 防御规则
-- [near-neighbor-routing.md](references/near-neighbor-routing.md) — 近邻路由表
-- [sync-level-decision.md](references/sync-level-decision.md) — 同步级别决策树
-- [trigger-eval.md](references/trigger-eval.md) — 触发评估
-- [agents/interface.yaml](agents/interface.yaml) — 输入输出契约
-- [evals/evals.json](evals/evals.json) — 行为评测用例
-- [reports/output-risk-profile.md](reports/output-risk-profile.md) — 输出风险矩阵
+不得报告未执行或未验证的操作。

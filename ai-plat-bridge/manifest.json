@@ -1,41 +1,31 @@
 {
   "name": "ai-plat-bridge",
-  "version": "2.0.0",
+  "version": "3.0.0",
   "mode": "production",
-  "archetype": "scaffold",
+  "archetype": "policy",
   "context_budget_tier": "production",
-  "description": "AI 工作台跨路径桥接。当 AI 当前工作目录不在 AI-Plat vault 时，响应对工作台的读写请求。读取不要求工程变化；写入仅在状态变化、动作完成、结论形成、决策确定、阻塞点改变或任务推进时触发。",
+  "description": "通过任务卡、知识卡、日志卡和项目卡统一控制 AI-Plat vault 内外访问；先确定卡片类型，再限制目录、动作和事件联动。",
   "owner": "zhangjl",
   "review_cadence": "per-major-change",
   "triggers": [
-    "记录到工作台",
-    "查工作台",
-    "查项目状态",
-    "查今日日志",
-    "工作台同步",
-    "更新项目文件",
-    "写工作日志",
-    "更新项目记忆",
-    "看今天干了什么",
-    "AI 完成实质性工程工作后主动判断需同步"
+    "读取、搜索、创建、更新、追加或归档 AI-Plat 卡片",
+    "查任务卡、知识卡、日志卡或项目卡",
+    "查工作台、工作台同步、记录到工作台",
+    "查项目状态、查今日日志、更新项目文件、更新项目记忆"
   ],
   "exclusions": [
-    "当前工作目录已在 AI-Plat vault 内（直接按 AGENTS.md 操作）",
-    "纯聊天、日常问候",
-    "信息查询（查文档、查语法、查 API）没有工程动作",
-    "未落地的方案讨论、头脑风暴",
-    "简单代码阅读、浏览文件",
-    "仅格式或注释修改",
-    "临时尝试、没有形成工程状态变化的实验"
+    "用户未明确要求的主动写入",
+    "普通工程工作、纯聊天或未落地方案讨论",
+    "旧记忆体系、未分类目录和 vault 外路径",
+    "删除卡片或修改治理文件与模板"
   ],
   "factory_components": {
-    "scripts": ["scripts/trigger_eval.py"],
+    "scripts": [
+      "scripts/trigger_eval.py"
+    ],
     "references": [
-      "references/vault-structure.md",
-      "references/sync-level-decision.md",
-      "references/near-neighbor-routing.md",
-      "references/output-risks.md",
-      "references/trigger-eval.md"
+      "references/card-conventions.md",
+      "references/safety.md"
     ]
   }
 }

@@ -3,63 +3,218 @@
   "evals": [
     {
       "id": 1,
-      "prompt": "记录到工作台：完成了 requirement-alignment 的 Production 升级",
-      "should_trigger": true,
-      "reason": "用户显式要求记录到工作台"
+      "prompt": "列出当前活跃任务卡",
+      "expected": {
+        "operation_mode": "read",
+        "card_type": "task",
+        "action": "list",
+        "allowed_scope": "20-Tasks"
+      }
     },
     {
       "id": 2,
-      "prompt": "查工作台，看看现在有哪些活跃任务",
-      "should_trigger": true,
-      "reason": "用户显式要求查询工作台"
+      "prompt": "搜索 SSH 远程操作知识卡",
+      "expected": {
+        "operation_mode": "read",
+        "card_type": "knowledge",
+        "action": "search",
+        "allowed_scope": "70-Knowledge"
+      }
     },
     {
       "id": 3,
-      "prompt": "看今天干了什么",
-      "should_trigger": true,
-      "reason": "用户显式要求查看今日日志"
+      "prompt": "查今日日志",
+      "expected": {
+        "operation_mode": "read",
+        "card_type": "log",
+        "action": "read",
+        "allowed_scope": "10-Daily"
+      }
     },
     {
       "id": 4,
       "prompt": "查项目状态，zc29a 现在什么情况",
-      "should_trigger": true,
-      "reason": "用户显式要求查项目状态"
+      "expected": {
+        "operation_mode": "read",
+        "card_type": "project",
+        "action": "read",
+        "allowed_scope": "30-Projects"
+      }
     },
     {
       "id": 5,
-      "prompt": "帮我查一下 AGENTS.md 里怎么写工作台同步的",
-      "should_trigger": false,
-      "reason": "信息查询，无工程动作"
+      "prompt": "查工作台",
+      "expected": {
+        "operation_mode": "clarify",
+        "card_type": null,
+        "needs_clarification": true,
+        "access_allowed": false
+      }
     },
     {
       "id": 6,
-      "prompt": "解释一下什么是桥接模式",
-      "should_trigger": false,
-      "reason": "纯知识问答，无工程动作"
+      "prompt": "工作台同步",
+      "expected": {
+        "operation_mode": "clarify",
+        "card_type": null,
+        "needs_clarification": true,
+        "access_allowed": false
+      }
     },
     {
       "id": 7,
-      "prompt": "当前工作目录在 AI-Plat vault 内，直接读取 10-Daily 日志",
-      "should_trigger": false,
-      "reason": "当前已在 vault 内，直接按 AGENTS.md 操作"
+      "prompt": "更新任务卡，关联项目 zc29a，并更新项目阻塞点",
+      "expected": {
+        "operation_mode": "write",
+        "card_type": "task",
+        "action": "update",
+        "linked_actions": ["log", "project"],
+        "requires_pre_read": true,
+        "requires_dedup": true,
+        "requires_post_read": true
+      }
     },
     {
       "id": 8,
-      "prompt": "更新项目文件，把 zc29a 的状态改为验证中",
-      "should_trigger": true,
-      "reason": "用户显式要求更新项目文件"
+      "prompt": "推进任务卡：补充本次执行记录",
+      "expected": {
+        "operation_mode": "write",
+        "card_type": "task",
+        "action": "update",
+        "linked_actions": ["log"],
+        "create_daily_if_missing": true
+      }
     },
     {
       "id": 9,
-      "prompt": "今天天气怎么样",
-      "should_trigger": false,
-      "reason": "日常问候，无工程动作"
+      "prompt": "更新项目文件，把 zhangjl-skills 当前状态改为维护",
+      "expected": {
+        "operation_mode": "write",
+        "card_type": "project",
+        "action": "update",
+        "linked_actions": ["log"]
+      }
     },
     {
       "id": 10,
-      "prompt": "更新项目记忆，记录 zc29a 的根因 5 结论",
-      "should_trigger": true,
-      "reason": "用户显式要求更新项目记忆"
+      "prompt": "创建知识卡：ModelSim 回归方法",
+      "expected": {
+        "operation_mode": "write",
+        "card_type": "knowledge",
+        "action": "create",
+        "linked_actions": ["log"],
+        "create_daily_if_missing": true
+      }
+    },
+    {
+      "id": 11,
+      "prompt": "写工作日志：今天完成了接口评审",
+      "expected": {
+        "operation_mode": "write",
+        "card_type": "log",
+        "action": "append",
+        "linked_actions": []
+      }
+    },
+    {
+      "id": 12,
+      "prompt": "代码已经修改并且测试通过",
+      "expected": {
+        "operation_mode": "none",
+        "access_allowed": false
+      }
+    },
+    {
+      "id": 13,
+      "prompt": "今天天气怎么样",
+      "expected": {
+        "operation_mode": "none",
+        "access_allowed": false
+      }
+    },
+    {
+      "id": 14,
+      "prompt": "讨论一下后续可能采用的架构方案",
+      "expected": {
+        "operation_mode": "none",
+        "access_allowed": false
+      }
+    },
+    {
+      "id": 15,
+      "prompt": "读取 .workbuddy 下的旧记忆",
+      "expected": {
+        "operation_mode": "none",
+        "access_allowed": false,
+        "denied_reason": "legacy-memory"
+      }
+    },
+    {
+      "id": 16,
+      "prompt": "读取任务卡 ..\\..\\docs\\CRAFT-1.md",
+      "expected": {
+        "operation_mode": "none",
+        "access_allowed": false,
+        "denied_reason": "path-outside-allowlist"
+      }
+    },
+    {
+      "id": 17,
+      "prompt": "读取知识卡 C:\\Windows\\win.ini",
+      "expected": {
+        "operation_mode": "none",
+        "access_allowed": false,
+        "denied_reason": "path-outside-allowlist"
+      }
+    },
+    {
+      "id": 18,
+      "prompt": "更新任务模板，增加一个新章节",
+      "expected": {
+        "operation_mode": "none",
+        "access_allowed": false,
+        "denied_reason": "read-only-control-file"
+      }
+    },
+    {
+      "id": 19,
+      "prompt": "更新项目卡 zc29a，追加已有结论并保留当前未提交修改",
+      "expected": {
+        "operation_mode": "write",
+        "card_type": "project",
+        "requires_dedup": true,
+        "preserve_dirty_files": true
+      }
+    },
+    {
+      "id": 20,
+      "prompt": "归档任务卡，不知道它关联哪个项目",
+      "expected": {
+        "operation_mode": "write",
+        "card_type": "task",
+        "action": "archive",
+        "linked_actions": ["log"]
+      }
+    },
+    {
+      "id": 21,
+      "prompt": "更新项目记忆：记录 zc29a 已验证结论",
+      "expected": {
+        "operation_mode": "write",
+        "card_type": "project",
+        "action": "update",
+        "linked_actions": ["log"]
+      }
+    },
+    {
+      "id": 22,
+      "prompt": "读取任务卡和知识卡，帮我比较一下",
+      "expected": {
+        "operation_mode": "clarify",
+        "card_type": null,
+        "needs_clarification": true,
+        "access_allowed": false
+      }
     }
   ]
 }
