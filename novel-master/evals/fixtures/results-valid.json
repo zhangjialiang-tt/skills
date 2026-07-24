@@ -1,0 +1,201 @@
+{
+  "fixture_type": "synthetic-contract-example",
+  "notice": "仅用于验证回归对比器，不代表真实模型运行结果。",
+  "results": [
+    {
+      "id": "NM-REG-001",
+      "actual": {
+        "route": {
+          "target_skill": "novel-reviewer"
+        },
+        "authority": {
+          "source_mutation_allowed": false,
+          "state_mutation_allowed": false,
+          "artifact_persistence_allowed": false
+        },
+        "actions": [
+          "diagnose"
+        ],
+        "result": {
+          "status": "COMPLETED"
+        }
+      }
+    },
+    {
+      "id": "NM-REG-002",
+      "actual": {
+        "route": {
+          "target_skill": "novel-reviewer"
+        },
+        "authority": {
+          "source_mutation_allowed": false,
+          "state_mutation_allowed": false,
+          "artifact_persistence_allowed": false
+        },
+        "actions": [
+          "diagnose"
+        ],
+        "result": {
+          "status": "COMPLETED"
+        }
+      }
+    },
+    {
+      "id": "NM-REG-003",
+      "actual": {
+        "route": {
+          "target_skill": "chapter-writer"
+        },
+        "authority": {
+          "source_mutation_allowed": true,
+          "state_mutation_allowed": false,
+          "artifact_persistence_allowed": true
+        },
+        "actions": [
+          "write_draft",
+          "request_acceptance"
+        ],
+        "result": {
+          "status": "COMPLETED",
+          "chapter_lifecycle_status": "DRAFT",
+          "committed_updates": []
+        }
+      }
+    },
+    {
+      "id": "NM-REG-004",
+      "actual": {
+        "route": {
+          "target_skill": "chapter-writer"
+        },
+        "actions": [
+          "report_conflict"
+        ],
+        "result": {
+          "status": "NEEDS_DECISION",
+          "issue_codes": [
+            "CANON_CONFLICT"
+          ]
+        }
+      }
+    },
+    {
+      "id": "NM-REG-005",
+      "actual": {
+        "route": {
+          "steps": [
+            "novel-reviewer/DEFAULT",
+            "chapter-writer/EDIT"
+          ]
+        },
+        "actions": [
+          "run_review_then_edit"
+        ],
+        "result": {
+          "status": "COMPLETED",
+          "reviewer_actions": [
+            "diagnose",
+            "recommend_edit_level"
+          ],
+          "writer_actions": [
+            "edit_text"
+          ]
+        }
+      }
+    },
+    {
+      "id": "NM-REG-006",
+      "actual": {
+        "route": {
+          "target_skill": "story-architect"
+        },
+        "actions": [
+          "request_single_mode"
+        ],
+        "result": {
+          "status": "BLOCKED",
+          "issue_codes": [
+            "INVALID_SKILL_MODE"
+          ],
+          "deliverables": []
+        }
+      }
+    },
+    {
+      "id": "NM-REG-007",
+      "actual": {
+        "route": {
+          "target_skill": "story-architect"
+        },
+        "actions": [
+          "request_single_mode"
+        ],
+        "result": {
+          "status": "BLOCKED",
+          "issue_codes": [
+            "INVALID_SKILL_MODE"
+          ],
+          "deliverables": []
+        }
+      }
+    },
+    {
+      "id": "NM-REG-008",
+      "actual": {
+        "route": {
+          "target_skill": "chapter-writer"
+        },
+        "actions": [
+          "edit_text"
+        ],
+        "result": {
+          "status": "COMPLETED",
+          "edit_level": "L2",
+          "semantic_impact": {
+            "fact_change": false,
+            "knowledge_change": false
+          },
+          "state_change_proposals": []
+        }
+      }
+    },
+    {
+      "id": "NM-REG-009",
+      "actual": {
+        "route": {
+          "target_skill": "continuity-keeper"
+        },
+        "actions": [
+          "extract_facts"
+        ],
+        "result": {
+          "status": "COMPLETED",
+          "state_change_proposals": [],
+          "state_change_dimensions": []
+        }
+      }
+    },
+    {
+      "id": "NM-REG-010",
+      "actual": {
+        "route": {
+          "target_skill": "continuity-keeper"
+        },
+        "actions": [
+          "extract_facts"
+        ],
+        "result": {
+          "status": "COMPLETED",
+          "state_change_types": [
+            "state_update"
+          ],
+          "state_change_dimensions": [
+            "knowledge_state"
+          ],
+          "evidence": "顾青亲耳听见城主承认自己伪造了王令。",
+          "committed_updates": []
+        }
+      }
+    }
+  ]
+}

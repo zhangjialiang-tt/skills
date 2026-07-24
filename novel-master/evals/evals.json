@@ -1,0 +1,380 @@
+{
+  "skill_name": "novel-master",
+  "version": "1.0.0",
+  "result_contract": {
+    "format": "normalized-observation-v1",
+    "description": "将一次真实 Skill 调用的可观察行为归一化后，交给 check_prompt_regressions.py 对比。"
+  },
+  "evals": [
+    {
+      "id": "NM-REG-001",
+      "title": "只分析时保持源文件与状态只读",
+      "prompt": "只分析这一章的人物动机问题，不要改原文。",
+      "context": {
+        "review_target": "chapters/drafts/chapter_012.md",
+        "artifact_persistence_requested": false
+      },
+      "assertions": [
+        {
+          "path": "route.target_skill",
+          "operator": "equals",
+          "expected": "novel-reviewer"
+        },
+        {
+          "path": "authority.source_mutation_allowed",
+          "operator": "equals",
+          "expected": false
+        },
+        {
+          "path": "authority.state_mutation_allowed",
+          "operator": "equals",
+          "expected": false
+        },
+        {
+          "path": "actions",
+          "operator": "not_contains",
+          "expected": "rewrite_source"
+        },
+        {
+          "path": "actions",
+          "operator": "not_contains",
+          "expected": "commit_state"
+        }
+      ],
+      "manual_checks": [
+        "诊断结论引用具体文本证据。",
+        "输出没有暗中改写原句或把建议伪装成已执行修改。"
+      ]
+    },
+    {
+      "id": "NM-REG-002",
+      "title": "禁止任何修改时不保存评审报告",
+      "prompt": "帮我看看这章哪里不对，但不要修改任何东西，也不要保存报告。",
+      "context": {
+        "review_target": "chapters/drafts/chapter_013.md"
+      },
+      "assertions": [
+        {
+          "path": "route.target_skill",
+          "operator": "equals",
+          "expected": "novel-reviewer"
+        },
+        {
+          "path": "authority.source_mutation_allowed",
+          "operator": "equals",
+          "expected": false
+        },
+        {
+          "path": "authority.state_mutation_allowed",
+          "operator": "equals",
+          "expected": false
+        },
+        {
+          "path": "authority.artifact_persistence_allowed",
+          "operator": "equals",
+          "expected": false
+        },
+        {
+          "path": "actions",
+          "operator": "not_contains",
+          "expected": "save_review"
+        }
+      ],
+      "manual_checks": [
+        "回答明确说明本次仅返回临时诊断。",
+        "没有创建 reviews/、workflow/ 或其他项目文件。"
+      ]
+    },
+    {
+      "id": "NM-REG-003",
+      "title": "Writer 不得把 DRAFT 直接提交状态",
+      "prompt": "按章节卡写完第十四章，写完后直接把新事实更新进 state。",
+      "context": {
+        "chapter_plan": "chapters/plans/chapter_014.md",
+        "source_lifecycle_status": "PLANNED"
+      },
+      "assertions": [
+        {
+          "path": "route.target_skill",
+          "operator": "equals",
+          "expected": "chapter-writer"
+        },
+        {
+          "path": "result.chapter_lifecycle_status",
+          "operator": "equals",
+          "expected": "DRAFT"
+        },
+        {
+          "path": "result.committed_updates",
+          "operator": "is_empty"
+        },
+        {
+          "path": "actions",
+          "operator": "not_contains",
+          "expected": "commit_state"
+        }
+      ],
+      "manual_checks": [
+        "新增事实只进入 state_change_proposals。",
+        "回答提示必须经过 ACCEPT_CHAPTER 闸门后才能提交状态。"
+      ]
+    },
+    {
+      "id": "NM-REG-004",
+      "title": "大纲与 Canon 冲突时请求决策",
+      "prompt": "继续写第十五章：让主角去参加父亲的葬礼。",
+      "context": {
+        "chapter_plan_fact": "主角父亲已经死亡",
+        "canon_fact": "主角父亲仍然存活"
+      },
+      "assertions": [
+        {
+          "path": "route.target_skill",
+          "operator": "equals",
+          "expected": "chapter-writer"
+        },
+        {
+          "path": "result.status",
+          "operator": "equals",
+          "expected": "NEEDS_DECISION"
+        },
+        {
+          "path": "result.issue_codes",
+          "operator": "contains",
+          "expected": "CANON_CONFLICT"
+        },
+        {
+          "path": "actions",
+          "operator": "not_contains",
+          "expected": "silent_plan_override"
+        }
+      ],
+      "manual_checks": [
+        "冲突报告同时保留章节卡和 Canon 的证据。",
+        "没有擅自判定父亲死亡或存活。"
+      ]
+    },
+    {
+      "id": "NM-REG-005",
+      "title": "Reviewer 只诊断不重写正文",
+      "prompt": "评审这段追逐戏，并把你认为拖沓的段落直接改好。",
+      "context": {
+        "review_target": "chapters/drafts/chapter_016.md",
+        "review_scope": "节奏与动作清晰度"
+      },
+      "assertions": [
+        {
+          "path": "route.steps",
+          "operator": "contains",
+          "expected": "novel-reviewer/DEFAULT"
+        },
+        {
+          "path": "route.steps",
+          "operator": "contains",
+          "expected": "chapter-writer/EDIT"
+        },
+        {
+          "path": "result.reviewer_actions",
+          "operator": "contains",
+          "expected": "diagnose"
+        },
+        {
+          "path": "result.reviewer_actions",
+          "operator": "not_contains",
+          "expected": "rewrite_source"
+        },
+        {
+          "path": "result.writer_actions",
+          "operator": "contains",
+          "expected": "edit_text"
+        }
+      ],
+      "manual_checks": [
+        "Reviewer 输出问题、证据、影响和建议编辑等级。",
+        "真正修改正文由独立的 chapter-writer / EDIT 步骤执行。"
+      ]
+    },
+    {
+      "id": "NM-REG-006",
+      "title": "Story Architect 未声明模式时拒绝",
+      "prompt": "帮我重新设计主角和世界力量体系。",
+      "context": {
+        "target_skill": "story-architect",
+        "skill_mode": null
+      },
+      "assertions": [
+        {
+          "path": "route.target_skill",
+          "operator": "equals",
+          "expected": "story-architect"
+        },
+        {
+          "path": "result.status",
+          "operator": "equals",
+          "expected": "BLOCKED"
+        },
+        {
+          "path": "result.issue_codes",
+          "operator": "contains",
+          "expected": "INVALID_SKILL_MODE"
+        },
+        {
+          "path": "result.deliverables",
+          "operator": "is_empty"
+        }
+      ],
+      "manual_checks": [
+        "回答要求在 CHARACTER 与 WORLD 中选择单一模式。",
+        "阻塞前没有写入 characters/ 或 world/。"
+      ]
+    },
+    {
+      "id": "NM-REG-007",
+      "title": "Story Architect 声明多个模式时拒绝",
+      "prompt": "用 CHARACTER 和 WORLD 两个模式一次完成角色与力量体系设计。",
+      "context": {
+        "target_skill": "story-architect",
+        "skill_mode": [
+          "CHARACTER",
+          "WORLD"
+        ]
+      },
+      "assertions": [
+        {
+          "path": "route.target_skill",
+          "operator": "equals",
+          "expected": "story-architect"
+        },
+        {
+          "path": "result.status",
+          "operator": "equals",
+          "expected": "BLOCKED"
+        },
+        {
+          "path": "result.issue_codes",
+          "operator": "contains",
+          "expected": "INVALID_SKILL_MODE"
+        },
+        {
+          "path": "result.deliverables",
+          "operator": "is_empty"
+        }
+      ],
+      "manual_checks": [
+        "回答说明一次调用只能激活一个模式。",
+        "建议由 novel-master 拆成两个顺序调用，而不是跨区写入。"
+      ]
+    },
+    {
+      "id": "NM-REG-008",
+      "title": "L2 润色不得改变事实",
+      "prompt": "按 L2 润色这段文字，让句子更流畅，但不要改变任何事实。",
+      "context": {
+        "source_text": "林岚不知道密钥藏在钟楼里。她在雨中离开了车站。",
+        "edit_level": "L2",
+        "must_preserve": [
+          "林岚不知道密钥位置",
+          "林岚在雨中离开车站"
+        ]
+      },
+      "assertions": [
+        {
+          "path": "route.target_skill",
+          "operator": "equals",
+          "expected": "chapter-writer"
+        },
+        {
+          "path": "result.edit_level",
+          "operator": "equals",
+          "expected": "L2"
+        },
+        {
+          "path": "result.semantic_impact.fact_change",
+          "operator": "equals",
+          "expected": false
+        },
+        {
+          "path": "result.semantic_impact.knowledge_change",
+          "operator": "equals",
+          "expected": false
+        },
+        {
+          "path": "result.state_change_proposals",
+          "operator": "is_empty"
+        }
+      ],
+      "manual_checks": [
+        "润色后林岚仍不知道密钥位于钟楼。",
+        "地点、天气、动作结果和人物知情范围均未改变。"
+      ]
+    },
+    {
+      "id": "NM-REG-009",
+      "title": "普通杯子不提取为状态候选",
+      "prompt": "提取这段正文产生的状态变化：他随手拿起桌上的普通杯子，喝完水又放回原处。",
+      "context": {
+        "source_lifecycle_status": "DRAFT",
+        "fact_extraction_mode": true
+      },
+      "assertions": [
+        {
+          "path": "route.target_skill",
+          "operator": "equals",
+          "expected": "continuity-keeper"
+        },
+        {
+          "path": "result.state_change_proposals",
+          "operator": "is_empty"
+        },
+        {
+          "path": "result.state_change_dimensions",
+          "operator": "not_contains",
+          "expected": "inventory"
+        }
+      ],
+      "manual_checks": [
+        "普通杯子被识别为无持续影响的过渡性道具。",
+        "没有虚构杯子的特殊属性或所有权变化。"
+      ]
+    },
+    {
+      "id": "NM-REG-010",
+      "title": "关键秘密进入 knowledge state 候选",
+      "prompt": "提取状态变化：密室里，顾青亲耳听见城主承认自己伪造了王令。",
+      "context": {
+        "source_lifecycle_status": "DRAFT",
+        "viewpoint_character": "顾青",
+        "fact_extraction_mode": true
+      },
+      "assertions": [
+        {
+          "path": "route.target_skill",
+          "operator": "equals",
+          "expected": "continuity-keeper"
+        },
+        {
+          "path": "result.state_change_types",
+          "operator": "contains",
+          "expected": "state_update"
+        },
+        {
+          "path": "result.state_change_dimensions",
+          "operator": "contains",
+          "expected": "knowledge_state"
+        },
+        {
+          "path": "result.evidence",
+          "operator": "is_not_empty"
+        },
+        {
+          "path": "result.committed_updates",
+          "operator": "is_empty"
+        }
+      ],
+      "manual_checks": [
+        "候选明确记录顾青得知城主伪造王令，而不是所有人物都知情。",
+        "因来源仍为 DRAFT，变化只进入 Proposal，不进入正式状态。"
+      ]
+    }
+  ]
+}

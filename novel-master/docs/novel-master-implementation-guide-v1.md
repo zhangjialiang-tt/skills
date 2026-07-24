@@ -15,6 +15,14 @@
 | JSON Schema / 测试框架 | jsonschema 4.24.0 + pytest 9.1.1 可用 |
 | 统一命令入口 | 无；脚本通过 `python scripts/<name>.py` 调用 |
 
+安装并验证：
+
+```text
+python -m pip install -r requirements.txt
+python -m pytest tests -q
+python scripts/check_prompt_regressions.py evals/evals.json
+```
+
 默认假设：
 
 - Skill 负责语义推理与创作生成。
@@ -30,7 +38,8 @@
 ```text
 LLM（Skill）：语义判断、创作生成、冲突识别、上下文提取、评审诊断。
 Python 脚本：JSON Schema 校验、路径越界检测、revision/hash 计算、
-             ApprovalRef 有效性校验、写锁管理、ChangeSet 事务执行。
+             ApprovalRef 有效性校验、写锁管理、ChangeSet 事务执行、
+             Prompt 回归集校验和规范化结果对比。
 ```
 
 Skill 不得声称自己完成了脚本负责的确定性校验。脚本不得做创作判断。
