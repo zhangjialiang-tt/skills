@@ -60,6 +60,18 @@
 - [ ] 仿真 testbench 是否掩盖了上板真实 backpressure
 - [ ] 是否存在 CDC 风险或复位跨域风险
 
+### §4.1 跨时钟域（CDC）专项检查
+
+当模块涉及多时钟域或异步接口时，必须逐项确认：
+
+- [ ] **单 bit 信号跨时钟**：是否使用双触发器同步（2-stage synchronizer），是否遗漏了 meta-stability 防护
+- [ ] **多 bit 总线跨时钟**：是否使用 async FIFO 或 handshake 同步，禁止直接打拍同步多 bit 控制总线
+- [ ] **脉冲跨时钟**：单周期脉冲是否通过 pulse synchronizer（toggle + 双触发器）传递，禁止直接同步窄脉冲
+- [ ] **复位跨时钟**：各时钟域的复位释放是否独立同步，避免复位释放顺序导致亚稳态
+- [ ] **CDC 路径是否有虚假收敛（re-convergence）**：经不同同步链到达目的时钟域的相关信号是否重新汇聚导致时序窗口不一致
+- [ ] **Gray 码 FIFO**：async FIFO 的读写指针是否使用 Gray 码编码，深度是否为 2 的幂次
+- [ ] **CDC 约束文件**：是否在综合/实现阶段提供了 `set_false_path` 或 `set_clock_groups` 约束，避免工具对 CDC 路径做无效时序优化
+
 ## §5 EDA LA 友好性
 
 - [ ] 不要依赖 EDA 直接探测深层内部数组

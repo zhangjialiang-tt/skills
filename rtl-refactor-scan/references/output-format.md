@@ -119,8 +119,8 @@ Stage A → Stage B → Stage C → Stage D
 
 | 阶段 | 命令 | PASS 判据 |
 |------|------|-----------|
-| 1 | `make sim` | mismatches=0 |
-| 2 | `make sim` | mismatches=0 |
+| 1 | `make sim`（或 Vivado/ModelSim/Verilator/VCS 对应命令） | mismatches=0 |
+| 2 | `make sim`（或 Vivado/ModelSim/Verilator/VCS 对应命令） | mismatches=0 |
 
 ### 回退方案
 

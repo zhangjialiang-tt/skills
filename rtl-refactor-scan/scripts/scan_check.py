@@ -34,8 +34,7 @@ DIMENSIONS = [
 # Required sections from references/output-format.md §1 template.
 REQUIRED_SECTIONS = [
     "模块功能概述",
-    "时钟",
-    "复位",
+    "时钟/复位",
     "数据流",
     "反压",
     "pipeline",
@@ -47,12 +46,42 @@ REQUIRED_SECTIONS = [
     "C 类",
     "上板不一致",
     "EDA",
-    "建议修改项",
-    "最小修改集合",
+    "最小安全重构计划",
+    "推荐回归测试列表",
     "是否建议进入修改阶段",
 ]
 
 RISK_TIERS = ["A 类", "B 类", "C 类"]
+
+
+LINE_REF_PATTERN = re.compile(r"(行\s*\d+|L\d+|:\s*\d+|line\s*\d+)", re.IGNORECASE)
+
+
+def _check_risk_table_rows(text):
+    """检查风险列表表格中的数据行是否都包含行号引用。"""
+    risk_start = text.find("## 七、风险列表")
+    if risk_start == -1:
+        return True, []
+
+    risk_section = text[risk_start:]
+    next_heading = re.search(r"\n## ", risk_section[1:])
+    if next_heading:
+        risk_section = risk_section[: next_heading.start() + 1]
+
+    issues = []
+    for line in risk_section.split("\n"):
+        stripped = line.strip()
+        # 只检查表格数据行：以 | 开头，且不是表头分隔线，也不是表头本身
+        if not stripped.startswith("|"):
+            continue
+        if re.match(r"^\|[-\s|]+\|$", stripped):
+            continue
+        if any(h in stripped for h in ["风险", "位置", "严重度", "说明", "#", "---"]):
+            continue
+        if not LINE_REF_PATTERN.search(stripped):
+            issues.append(stripped[:80])
+
+    return len(issues) == 0, issues
 
 
 def check(text):
@@ -61,15 +90,16 @@ def check(text):
     missing_sections = [s for s in REQUIRED_SECTIONS if s not in text]
 
     # Every risk finding should carry a line-number position like "行 123" / "L123" / ":123".
-    risk_block = text
-    line_ref_pattern = re.compile(r"(行\s*\d+|L\d+|:\s*\d+|line\s*\d+)", re.IGNORECASE)
-    has_any_position = bool(line_ref_pattern.search(risk_block))
+    has_any_position = bool(LINE_REF_PATTERN.search(text))
+
+    # Granular check: each risk table row should contain a line reference
+    risk_rows_ok, risk_row_issues = _check_risk_table_rows(text)
 
     tiers_present = [t for t in RISK_TIERS if t in text]
 
     covered = (not missing_dimensions) and (not missing_sections)
     has_tiers = len(tiers_present) >= 2  # at least two tiers actually used
-    passed = covered and has_tiers and has_any_position
+    passed = covered and has_tiers and has_any_position and risk_rows_ok
 
     return {
         "passed": passed,
@@ -77,11 +107,14 @@ def check(text):
         "missing_sections": missing_sections,
         "risk_tiers_present": tiers_present,
         "has_line_position": has_any_position,
+        "risk_rows_have_positions": risk_rows_ok,
+        "risk_row_issues": risk_row_issues,
         "score": (
             (100 if not missing_dimensions else 100 - 10 * len(missing_dimensions))
             + (0 if not missing_sections else -5 * len(missing_sections))
             + (0 if has_tiers else -10)
             + (0 if has_any_position else -10)
+            + (0 if risk_rows_ok else -10)
         ),
     }
 
@@ -110,7 +143,13 @@ def main():
         if result["missing_sections"]:
             print("  missing sections:", ", ".join(result["missing_sections"]))
         if not result["has_line_position"]:
-            print("  warning: no line-number position found in risk list")
+            print("  warning: no line-number position found in report")
+        if not result["risk_rows_have_positions"]:
+            print(f"  warning: {len(result['risk_row_issues'])} risk table row(s) lack line-number position")
+            for issue in result["risk_row_issues"][:3]:
+                print(f"    - {issue}")
+            if len(result["risk_row_issues"]) > 3:
+                print(f"    ... and {len(result['risk_row_issues']) - 3} more")
     return 0
 
 

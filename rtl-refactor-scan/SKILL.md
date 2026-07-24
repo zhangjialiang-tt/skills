@@ -53,6 +53,20 @@ triggers:
 
 ## Phase 1：定义扫描范围
 
+### 1.1 确认扫描深度模式
+
+进入 Phase 1 后，**先**与用户确认期望的输出深度。三种模式详见 `references/trigger-eval.md`：
+
+| 模式 | 关键词 | 流程范围 |
+|------|--------|----------|
+| 快速模式 | "快速看下"、"有没有低级错误" | Phase 1 + Phase 2 简化（仅 A 类） |
+| 报告模式（默认）| "扫描"、"评审"、"评估" | Phase 1 → Phase 3 |
+| 完整模式 | "重构 + 回归"、"帮我改" | Phase 1 → Phase 6 |
+
+**默认按报告模式启动**，Phase 1 末尾向用户确认是否升级到完整模式。
+
+### 1.2 确认扫描范围
+
 在与用户确认或从需求中明确：
 
 1. **待分析模块及源文件路径** — 不要假设路径，先搜索确认
@@ -66,10 +80,9 @@ triggers:
 
 ## Phase 2：结构化扫描
 
-按以下五个维度分别检查，每个维度的详细检查项见参考文档。
-每个发现点记录：位置(行号)、分类(A/B/C)、详细描述、影响评估。
+按以下**五大维度**分别检查，每个发现点记录：位置(行号)、分类(A/B/C)、详细描述、影响评估。风险分级标准见 `references/risk-classification.md`。
 
-### 检查维度
+### 五大检查维度
 
 | # | 维度 | 参考文档 | 说明 |
 |---|------|----------|------|
@@ -78,7 +91,6 @@ triggers:
 | 3 | 时序优化 | `references/scan-checklist.md` §3 | 组合路径/反压链/流水划分 |
 | 4 | 仿真与上板一致性 | `references/scan-checklist.md` §4 | CDC/reset/valid-就绪/跨帧残留 |
 | 5 | EDA LA 友好性 | `references/scan-checklist.md` §5 | debug bus / 数组探测 / 宽总线 |
-| 6 | 风险分类 | `references/risk-classification.md` | A/B/C 三级标记，C 类只报告不修改 |
 
 ### 检查方法
 
@@ -122,8 +134,8 @@ pipeline 阶段图或状态机描述
 
 ## 八、上板不一致风险
 ## 九、EDA LA/debug 不稳定写法
-## 十、建议修改项列表
-## 十一、推荐的最小修改集合
+## 十、最小安全重构计划
+## 十一、推荐回归测试列表
 ## 十二、是否建议进入修改阶段
 （基于风险严重度和修改收益评估）
 ```
@@ -167,7 +179,31 @@ pipeline 阶段图或状态机描述
 
 ### 修改后验证
 
+根据用户实际仿真环境执行回归测试。常见命令示例：
+
 ```bash
+# Vivado Simulator
+cd <tb-dir>/sim
+xvlog --sv <files>
+xelab <top>
+xsim <top> -runall
+
+# ModelSim / QuestaSim
+cd <tb-dir>/sim
+vlog <files>
+vsim -c <top> -do "run -all; quit -f"
+
+# Verilator
+cd <tb-dir>/sim
+verilator --cc --exe --build -j 0 -Wall <top>.v sim_main.cpp
+./obj_dir/V<top>
+
+# VCS
+cd <tb-dir>/sim
+vcs -sverilog -full64 <files>
+./simv
+
+# Makefile 封装（如果项目已提供）
 cd <tb-dir>/sim
 make sim
 ```
@@ -252,7 +288,7 @@ make sim
 | 修改计划 | `修改计划_<模块名>.md` | 分阶段重构计划、回归测试命令、回退方案 |
 | 最终报告 | `最终报告_<模块名>.md` | 修改摘要、风险消除情况、剩余风险、下一步建议 |
 
-**质量门控** — 每个阶段完成后必须检查：
+**质量门控** — 每个阶段完成后必须检查（详见 `references/quality-gates.md`）：
 
 | 门控 | 检查项 |
 |------|--------|
