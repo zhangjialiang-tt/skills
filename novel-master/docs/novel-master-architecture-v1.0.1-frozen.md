@@ -1,0 +1,609 @@
+---
+title: novel-master 工业级网文创作 Skill 架构总纲
+document_id: NM-ARCH
+version: 1.0.1
+status: FROZEN
+frozen_at: 2026-07-24
+applies_to: novel-master V1
+companion: novel-master-contracts-v1.0.1-frozen.md
+source_documents:
+  - inbox/craft-1.md
+  - inbox/craft-2.md
+  - inbox/craft-3.md
+  - revision-prompt-v1.0.1.md
+---
+
+# `novel-master` 工业级网文创作 Skill 架构总纲
+
+## 1. 文档定位
+
+本文是 `novel-master` V1 的架构冻结基线，规定系统目标、术语、职责边界、关键设计决策、V1 范围、实施顺序和验收方法。
+
+字段、路由、文件所有权和子 Skill 输入输出以配套文档
+[《`novel-master` V1 契约手册》](novel-master-contracts-v1.0.1-frozen.md)
+为唯一规范来源。本文不重复维护详细契约。
+
+### 1.1 目录
+
+- 1. 文档定位
+- 2. 系统目标
+- 3. 术语表
+- 4. 总体架构
+- 5. 系统级不变量
+- 6. 关键设计决策
+- 7. 用户权限与风险控制
+- 8. 标准工作流
+- 9. 长篇性能约束
+- 10. 失败模式与系统原则
+- 11. V1 实施计划
+- 12. 测试策略
+- 13. V1 验收标准
+- 14. 拆分信号
+- 15. 后续非 V1 范围
+- 16. 变更记录
+
+### 1.2 规范词
+
+- **必须**：不可省略的要求；违反即视为不合格。
+- **禁止**：不可执行的行为。
+- **应当**：默认遵守；偏离时必须说明理由和影响。
+- **可以**：可选能力，不影响最低验收。
+
+### 1.3 冻结规则
+
+`FROZEN` 表示本文作为 V1 实现基线，不再接受无记录的直接改写，并不表示永久不可变。
+
+变更必须同时满足：
+
+1. 说明变更原因和受影响范围。
+2. 标记是否破坏现有契约。
+3. 更新版本号和冻结日期。
+4. 同步更新配套契约、测试用例和变更记录。
+5. 重新执行受影响的回归测试。
+
+补丁版本可以包含错字、断链、排版修复，以及不改变 1+6 架构和顶层契约的向后兼容语义澄清。新增专业能力、破坏性字段变更或架构调整必须增加次版本或主版本号。
+
+## 2. 系统目标
+
+`novel-master` 是长篇网文创作 Skill 组的编排器。它把用户请求转化为最小、可追踪、可验证的专业工作流，并通过持久化项目状态维持跨章节一致性。
+
+系统必须做到：
+
+1. 识别用户的真实创作意图、范围和风险。
+2. 只调用完成任务所需的最小子 Skill 集合。
+3. 分离设计、规划、写作、评审和状态治理。
+4. 区分已确认事实、未确认建议和废弃内容。
+5. 让正式状态变更可追溯、可审计、可恢复。
+6. 在上下文不完整时暴露未知项，不伪造前文。
+7. 把重大创作决策留给作者。
+8. 支持长篇连载中的增量读取、更新和归档。
+
+系统不承诺：
+
+- 预测作品一定成功或成为爆款。
+- 取代作者决定主题、结局和主要人物命运。
+- 自动完成出版、平台运营、封面或 IP 改编。
+- 在没有项目证据时补造 Canon。
+- 用流程复杂度代替创作质量。
+
+## 3. 术语表
+
+| 术语 | 规范定义 | 示例 |
+| --- | --- | --- |
+| `Canon` | 已由作者、既有正式文档或明确授权确认，后续创作必须遵守的正式事实 | “主角出生于临海城” |
+| `Proposal` | AI 或子 Skill 提出、尚未被确认的建议，不得被当作事实消费 | “建议反派提前两章登场” |
+| `Deprecated` | 已被废弃或替代、仅用于追溯的内容，不得重新进入正文 | “旧版设定中主角有哥哥” |
+| 设定 | 世界规则、背景、力量体系等相对稳定的创作约束 | “施法会消耗精神力” |
+| 状态 | 某一时间点的人物、地点、道具、知识和关系情况 | “主角当前受伤并位于基地” |
+| 重大决策 | 会改变主题、主线、结局、核心规则或主要人物命运的高风险决定 | “将原定反派改为主角盟友” |
+| 状态提交 | 把已有证据正式写入 `state/` 的操作；不等于创造剧情 | 登记第 12 章已发生事件 |
+| 上下文包 | 为单次任务提取的最小、相关、带来源的项目快照 | 当前章涉及的角色和规则 |
+| 交付物 | 本次任务直接产出的文件或正文 | 章节卡、章节草稿、评审报告 |
+| 影响分析 | 在高风险改动前识别受影响文件、章节、状态和待重写范围 | 修改力量规则的波及清单 |
+| 章节生命周期 | 章节从计划、草稿、评审、接受到废弃或发布的受控状态序列 | `DRAFT → REVIEWED → ACCEPTED` |
+| 接受 | 用户或已批准工作流确认某个章节版本可作为正式状态来源 | 接受第 12 章修订版 |
+| `ApprovalRef` | 绑定请求、范围、文件版本和有效期的结构化授权凭据 | 一次性批准 L4 重写 |
+| `ChangeSet` | 一次状态提交中需要原子验证和写入的完整变更集合 | 同步更新时间线和人物状态 |
+| `RecoveryReport` | 只读恢复阶段从现有文件提取的证据、推断、冲突和未知项报告 | 从遗留正文恢复项目 |
+| 派生状态 | 可从已确认来源重新计算的索引，不构成新的 Canon | 时间线、人物当前状态索引 |
+
+## 4. 总体架构
+
+### 4.1 目标架构
+
+```text
+novel-master（编排与治理入口）
+│
+├─ 创作设计层
+│  ├─ novel-brief
+│  ├─ story-architect
+│  ├─ character-designer        [V1 合并]
+│  └─ world-builder             [V1 合并]
+│
+├─ 内容生产层
+│  ├─ plot-planner              [V1 合并]
+│  ├─ chapter-planner
+│  └─ chapter-writer
+│
+└─ 质量与状态层
+   ├─ novel-reviewer
+   ├─ novel-editor              [V1 合并]
+   └─ continuity-keeper
+```
+
+### 4.2 V1 运行架构
+
+V1 冻结为 **1 个编排器 + 6 个子 Skill**：
+
+| 组件 | V1 职责 |
+| --- | --- |
+| `novel-master` | 识别意图、确定风险、路由、汇总结果；不直接产出专业创作内容 |
+| `novel-brief` | 明确作品定位、读者承诺、篇幅和创作约束 |
+| `story-architect` | 通过不同模式承担故事结构、人物、世界和大纲设计 |
+| `chapter-planner` | 把大纲节点和当前状态转化为可执行章节卡 |
+| `chapter-writer` | 根据章节卡写正文；在明确修订模式下承担 V1 文本编辑 |
+| `novel-reviewer` | 只读诊断，不直接修改正文 |
+| `continuity-keeper` | 提取上下文、检查冲突、分析影响并独占正式状态提交权限 |
+
+V1 合并关系：
+
+| 目标 Skill | V1 临时归属 | 边界维持方式 |
+| --- | --- | --- |
+| `character-designer` | `story-architect / CHARACTER` | 只写人物设计文件，不改主线和正文 |
+| `world-builder` | `story-architect / WORLD` | 只写剧情所需规则，不无限扩展世界观 |
+| `plot-planner` | `story-architect / PLOT` | 只写主线、卷和阶段规划，不写正文 |
+| `novel-editor` | `chapter-writer / EDIT` | 必须声明编辑等级，不得超出授权范围 |
+
+合并只是部署方式变化，不取消目标架构中的职责边界。每种模式仍必须遵守独立输入、输出、文件权限和完成标准。
+
+## 5. 系统级不变量
+
+以下规则在所有模式和工作流中始终成立：
+
+1. `novel-master` 只编排，不替代专业子 Skill 完成交付物。
+2. `Proposal` 不得自动升级为 `Canon`。
+3. 只有 `continuity-keeper` 可以正式写入 `state/`。
+4. 状态提交必须有来源证据或明确授权。
+5. 正文中出现的新细节不天然成为 Canon。
+6. `novel-reviewer` 只诊断；执行修改由写作或编辑职责完成。
+7. 高风险改动必须先做影响分析，再由用户确认。
+8. 用户明确说“只分析”时，禁止修改源文件和状态；是否允许保存独立报告由细粒度权限决定。
+9. 缺少必要事实时标记 `Unknown`，禁止猜测补齐。
+10. 每个正式产物必须能够追踪到请求、输入和负责 Skill。
+11. 多项目必须按独立项目根目录隔离；单次任务禁止跨项目读取或写入。
+12. 任何子 Skill 都不得静默扩大任务范围。
+13. 用户明确说“不要修改任何东西”时，`source_mutation_allowed`、`artifact_persistence_allowed` 和 `state_mutation_allowed` 必须全部为 `false`；仅说“不要修改原文”时，也不得擅自保存报告。
+14. 只有 `ACCEPTED` 或 `PUBLISHED` 状态的章节才能执行 `COMMIT_CHAPTER_STATE`。
+15. 状态提交必须基于未过期的输入 revision，并通过完整 `ChangeSet` 事务；检测到陈旧上下文时禁止写入。
+
+章节生命周期、权限矩阵和事务字段分别以契约手册
+[第 4.3 节](novel-master-contracts-v1.0.1-frozen.md#nm-contract-chapter-lifecycle)、
+[第 5.6 节](novel-master-contracts-v1.0.1-frozen.md#nm-contract-authority)和
+[第 8 节](novel-master-contracts-v1.0.1-frozen.md#nm-contract-changeset)为准。
+
+## 6. 关键设计决策
+
+<a id="nm-arch-decision-single-writer"></a>
+
+### 6.1 决策：采用 Canon 单一写入者模型
+
+**背景**：多 Skill 都能修改状态时，容易出现覆盖、循环依赖和事实漂移。
+
+**选项**：
+
+- A. 多写入者，提交时解决冲突。
+- B. `continuity-keeper` 单一写入。
+- C. 每一项状态都由用户手工确认。
+
+**选择**：B。
+
+**理由**：集中一致性校验和来源追踪，降低子 Skill 耦合；用户只需介入重大决策和真实冲突。
+
+**风险**：`continuity-keeper` 可能成为瓶颈或误判来源。
+
+**缓解**：
+
+- 上下文提取和只读检查可以独立执行。
+- 每次提交采用增量变更，不重写整份状态。
+- 每次提交使用 `ChangeSet` 执行版本校验、临时写入、验证和原子替换。
+- 写入 `workflow/change_log.md`。
+- 误报允许由用户覆核，但必须保留审计记录。
+
+<a id="nm-arch-decision-writer-no-canon"></a>
+
+### 6.2 决策：`chapter-writer` 不修改 Canon
+
+**背景**：正文创作必然产生临时细节，若自动成为 Canon，会让即兴描写不断扩大系统约束。
+
+**选择**：`chapter-writer` 只报告新增事实、偏离计划和状态变化候选。
+
+**理由**：分离“创作表达”和“正式事实治理”，防止作者在不知情时失去创作控制。
+
+章节写完后默认仍是 `DRAFT`。只有用户明确接受，或命中仍有效的自动接受授权，章节才能成为 `ACCEPTED` 并作为状态提交来源。
+
+**计划不合理时**：
+
+1. 保留能够安全执行的部分。
+2. 把偏离需求写入 `deviations_from_plan`。
+3. 对改变剧情方向的方案输出 `Proposal`。
+4. 无法安全继续时返回 `NEEDS_DECISION`，禁止静默改写。
+
+<a id="nm-arch-decision-review-edit"></a>
+
+### 6.3 决策：评审和修改分离
+
+**背景**：同一 Skill 一边评审一边改写，容易把审美偏好包装成已经修复的客观问题。
+
+**选择**：`novel-reviewer` 保持只读；修改由 `chapter-writer / EDIT` 或后续 `novel-editor` 执行。
+
+**例外**：明确的 L1 校对可以跳过全面评审，但仍不得改变含义。
+
+<a id="nm-arch-decision-min-context"></a>
+
+### 6.4 决策：采用最小上下文包
+
+**背景**：长篇项目不能在每次创作时读取全部设定和章节。
+
+**选择**：由 `continuity-keeper / EXTRACT_CONTEXT` 按任务提取相关事实、状态、伏笔、禁区和来源。
+
+**理由**：降低 token 成本和无关信息干扰，同时通过来源引用保留按需回查能力。
+
+**风险**：遗漏远距离伏笔或隐含约束。
+
+**缓解**：上下文包必须列出活跃开放循环、当前任务的检索范围和来源；严格模式可以扩大检查范围。
+
+### 6.5 决策：V1 合并四个目标 Skill
+
+**背景**：一次实现完整 10 个子 Skill 会增加契约、测试和路由成本，尚无实际运行数据证明拆分必要。
+
+**选择**：人物、世界和大纲设计先作为 `story-architect` 的互斥模式；编辑先作为 `chapter-writer` 的独立模式。
+
+**理由**：先验证核心闭环，再以真实职责冲突驱动拆分。
+
+**边界**：不同模式禁止在一次调用中混合写入多个所有权区域；若任务跨模式，由 `novel-master` 拆成多个步骤。
+
+### 6.6 决策：V1 支持多项目隔离，不支持跨项目协作
+
+**选择**：每个小说项目拥有独立 `project_id` 和项目根目录；单次 TaskEnvelope 只允许一个 `project_id`。
+
+**理由**：避免 Canon、人物和路由日志串库。
+
+**非目标**：V1 不实现跨小说宇宙共享设定、联合检索或自动迁移。
+
+## 7. 用户权限与风险控制
+
+### 7.1 必须由用户决定的事项
+
+- 作品核心主题和价值立场。
+- 主角核心人格。
+- 主要人物死亡、背叛、退场或根本立场变化。
+- 主要感情关系的根本变化。
+- 主线目标和结局方向。
+- 核心世界规则。
+- 推翻已完成剧情。
+- 会导致多章返工的结构变更。
+
+新书初始化阶段的所有重大决策必须通过 `INITIALIZATION_REVIEW` 确认后才能提交为 Canon。只有存在覆盖对应初始化范围、绑定当前 revision 的有效自动授权时，才可以用明确的自动授权替代逐项人工确认。批准结构见契约手册
+[第 7 节](novel-master-contracts-v1.0.1-frozen.md#nm-contract-approval)。
+
+### 7.2 操作风险等级
+
+| 等级 | 典型操作 | 默认策略 |
+| --- | --- | --- |
+| 低 | 头脑风暴、标题建议、L1 校对、只读评审 | 可直接执行并报告 |
+| 中 | L2 文风、局部场景节奏（不改变事实或结果）、非核心人物补充 | 说明范围后执行；发现语义影响时重新推导风险 |
+| 高 | L3（改变事实、状态或结果）、L4、Canon 修改、大纲重构、主要关系变化 | 先影响分析，必须显式确认 |
+
+编辑等级不直接等于风险等级：仅场景内调整且 `semantic_impact.fact_change`、`semantic_impact.state_change`、`semantic_impact.plot_outcome_change` 均为 `false` 的 L3 为 `MEDIUM`；任一字段为 `true` 的 L3，以及所有 L4，均为 `HIGH`。详细推导规则见契约手册
+[第 5.7 节](novel-master-contracts-v1.0.1-frozen.md#nm-contract-risk-derivation)。
+
+模糊请求采用最低安全权限。若最低权限无法解决问题，应先诊断并说明需要扩权的原因。
+
+## 8. 标准工作流
+
+详细路由条件以契约手册为准。本节只定义稳定的高层流程。
+
+### 8.1 新书初始化
+
+```text
+novel-master
+  → novel-brief
+  → story-architect / STORY
+  → story-architect / CHARACTER
+  → story-architect / WORLD
+  → story-architect / PLOT
+  → INITIALIZATION_REVIEW（初始化摘要、revision 和待确认项）
+  → 用户确认或明确自动授权
+  → continuity-keeper / COMMIT_CANON
+```
+
+完成条件：
+
+- 项目定位、故事骨架、主要人物、必要世界规则和首阶段大纲存在。
+- 已确认项、待确认项和未知项明确分离。
+- `approval_gate` 覆盖全部初始化范围。
+- 初始 Canon 有来源、当前 revision 和有效 `ApprovalRef`。
+
+### 8.2 标准单章创作
+
+默认协作模式：
+
+```text
+novel-master
+  → continuity-keeper / EXTRACT_CONTEXT
+  → chapter-planner
+  → chapter-writer / WRITE
+  → 输出 DRAFT 和 state_change_proposals
+  → 用户确认并将当前 revision 标记为 ACCEPTED
+  → continuity-keeper / COMMIT_CHAPTER_STATE
+```
+
+自动日更模式仅在用户预先授权且授权仍覆盖当前章节 revision 时使用：
+
+```text
+novel-master
+  → continuity-keeper / EXTRACT_CONTEXT
+  → chapter-planner
+  → chapter-writer / WRITE
+  → novel-reviewer（可选）
+  → 自动接受闸门
+  → continuity-keeper / COMMIT_CHAPTER_STATE
+```
+
+自动接受不得跳过 Canon 冲突、高风险偏离或 stale revision 检查。
+
+### 8.3 严格单章创作
+
+```text
+novel-master
+  → continuity-keeper / EXTRACT_CONTEXT
+  → chapter-planner
+  → chapter-writer / WRITE
+  → novel-reviewer
+  → 必要时 chapter-writer / EDIT
+  → 用户接受最终 revision
+  → continuity-keeper / COMMIT_CHAPTER_STATE
+```
+
+### 8.4 章节修订
+
+```text
+novel-master
+  → novel-reviewer
+  → 高风险时 continuity-keeper / IMPACT_ANALYSIS
+  → chapter-writer / EDIT
+  → 用户接受最终 revision
+  → 含事实变化时 continuity-keeper / COMMIT_CHAPTER_STATE
+```
+
+### 8.5 断更恢复
+
+```text
+novel-master
+  → continuity-keeper / RESTORE_PROJECT / EXTRACT_EVIDENCE
+  → 输出 RecoveryReport（只读）
+  → novel-master 按所有权路由必要的重建任务
+  → 用户确认
+  → continuity-keeper / RESTORE_PROJECT / REBUILD_STATE 或 COMMIT_CANON
+  → chapter-planner（需要继续创作时）
+```
+
+证据提取与状态重建必须分为两次授权边界；恢复流程禁止把推断候选直接写成 Canon。
+
+## 9. 长篇性能约束
+
+### 9.1 上下文预算
+
+- `context_pack` 的实质内容目标不超过 2,000 个中文字符。
+- 完整序列化结果硬上限为 4,000 tokens；预计超限时必须降级。
+- 优先级顺序为：当前任务硬约束、相关 Canon、当前状态、知识范围、活跃伏笔、风格提示。
+- 被裁剪的信息必须保留来源引用，并标记为“需要时读取”。
+- `chapter-writer` 禁止因上下文包过大而改为读取整个项目。
+
+### 9.2 状态分层
+
+项目状态分为：
+
+- **活跃状态**：当前卷和最近章节直接需要的状态。
+- **历史归档**：已完成卷和非活跃信息的摘要与索引。
+
+满足以下任一条件时生成 `state/archives/summary_*.md`：
+
+- 当前卷结束。
+- 距离上次归档超过 50 章。
+- 任一活跃状态文件超过 10 KB 的默认预算阈值。
+- 状态检索性能明显下降，并由用户或维护者确认。
+- 用户手动触发。
+
+项目可以在 `project.yaml` 中调整文件大小阈值，但必须记录理由。归档后，活跃状态只保留仍未解决的开放循环、有效 Canon 和必要索引。
+
+### 9.3 增量更新
+
+- 状态提交只写入新增、变更和废弃项。
+- 禁止每章无差别重写完整 `state/`。
+- 章节报告只列本章新增事实和变化，不重复已知状态。
+- 每项变更必须携带来源章节或用户决策标识。
+
+## 10. 失败模式与系统原则
+
+具体降级动作见契约手册。本层只规定原则：
+
+1. **冲突不静默覆盖**：保留双方证据，生成待决策项。
+2. **损坏不盲目重建**：优先只读校验；重建结果标记来源和置信度。
+3. **超限不丢硬约束**：先裁剪历史细节，再降级为按需读取。
+4. **误报可覆核但不可抹除**：用户可以判定误报，原记录进入审计历史。
+5. **大范围变更分批提交**：先输出影响报告，再逐批修改和验证。
+6. **部分成功必须可见**：返回已完成、未完成和阻塞原因，不把部分结果包装成全部完成。
+7. **陈旧上下文禁止提交**：revision 不一致时返回 `BLOCKED / STALE_CONTEXT`，重新提取上下文后再执行。
+8. **恢复先证据后重建**：只读 `RecoveryReport` 与有副作用的状态重建必须分阶段。
+9. **事务失败必须回滚**：任一 ChangeSet 步骤失败时清理临时文件，不留下部分状态。
+
+## 11. V1 实施计划
+
+### 阶段 0：冻结基线
+
+- [x] 冻结架构总纲。
+- [x] 冻结契约手册。
+- [x] 建立版本和变更记录。
+
+完成标准：所有 V1 实现都能指向唯一的架构与契约来源。
+
+### 阶段 1：契约与项目骨架
+
+- [ ] 为 `TaskEnvelope`、`SkillResult`、`ContextPack`、`ApprovalRef`、`ChangeSet`、`RecoveryReport` 和 `MasterResult` 编写 JSON Schema。
+- [ ] 创建项目目录模板和最小初始文件。
+- [ ] 创建契约合法/非法样例。
+- [ ] 实现只读 schema 校验脚本。
+
+完成标准：合法样例全部通过，缺字段、越权操作和非法枚举全部失败。
+
+### 阶段 2：最小创作闭环
+
+- [ ] 实现 `continuity-keeper / EXTRACT_CONTEXT`。
+- [ ] 实现 `chapter-planner`。
+- [ ] 实现 `chapter-writer / WRITE`。
+- [ ] 实现章节生命周期与人工/自动接受闸门。
+- [ ] 实现 `continuity-keeper / COMMIT_CHAPTER_STATE`。
+- [ ] 实现 `novel-master` 的单章路由。
+
+完成标准：能从既有大纲生成章节卡、正文和可追溯的增量状态。
+
+### 阶段 3：项目初始化与只读评审
+
+- [ ] 实现 `novel-brief`。
+- [ ] 实现 `story-architect` 的四种 V1 模式。
+- [ ] 实现 `novel-reviewer`。
+- [ ] 实现 `chapter-writer / EDIT` 的 L1-L4 权限。
+
+完成标准：新项目初始化、只读评审和授权修订流程均可独立运行。
+
+### 阶段 4：异常、恢复与回归
+
+- [ ] 实现冲突检测、影响分析和两阶段断更恢复。
+- [ ] 实现 revision 检测和 ChangeSet 原子提交。
+- [ ] 实现 `REBUILD_DERIVED_STATE`。
+- [ ] 实现上下文超限降级和状态归档。
+- [ ] 建立固定回归集。
+- [ ] 形成可供人工审阅的对比输出。
+
+完成标准：所有系统级不变量和 V1 验收用例通过。
+
+## 12. 测试策略
+
+### 12.1 契约测试
+
+验证：
+
+- 必填字段、枚举和对象结构。
+- `COMMIT_STATE` 只能发给 `continuity-keeper`。
+- `READ_ONLY` 不修改源文件和状态；独立报告只在 `artifact_persistence_allowed: true` 时落盘。
+- `COMMIT_CHAPTER_STATE` 拒绝 `PLANNED`、`DRAFT`、`REVIEWED`、`SUPERSEDED` 和 `DEPRECATED` 章节。
+- `ApprovalRef` 必须覆盖目标范围和当前 revision。
+- 输入 revision 变化后返回 `BLOCKED / STALE_CONTEXT`。
+- ChangeSet 任一步骤失败时不留下部分提交。
+- Proposal 不会出现在 `committed_updates`。
+- 输出路径位于当前项目根目录及负责区域。
+
+### 12.2 子 Skill 测试
+
+| Skill | 最小测试 |
+| --- | --- |
+| `novel-brief` | 模糊创意输入后，已确认项、假设和待确认项分离 |
+| `story-architect` | 四种模式各自只写负责区域，跨模式内容作为 Proposal |
+| `chapter-planner` | 章节卡包含开始/结束状态、场景目标、冲突和结果 |
+| `chapter-writer` | 正文执行章节卡，并报告新增事实和偏离 |
+| `novel-reviewer` | 只读输出证据化问题，不修改原文 |
+| `continuity-keeper` | 识别冲突，拒绝无授权 Canon，并生成最小上下文包 |
+
+### 12.3 集成测试
+
+固定用例至少覆盖：
+
+1. 新书初始化后生成第 1 章并提交状态。
+2. 从既有大纲完成标准单章创作。
+3. 故意制造 Canon 冲突并验证拦截。
+4. 用户要求“只分析这一章”时仅在允许时生成独立评审报告，正文和状态保持不变。
+5. 用户要求“不要修改任何东西”时确认没有任何落盘。
+6. L2 编辑不得改变剧情和事实。
+7. L3 不改变结果时推导为 `MEDIUM`，改变结果时推导为 `HIGH`。
+8. 默认协作模式下 DRAFT 未接受前不得提交状态。
+9. 自动日更授权对 revision 或范围不匹配时自动失效。
+10. 连续生成 5 章后检查时间线、知识范围和伏笔状态。
+11. 断更恢复先输出 RecoveryReport，未授权前不重建状态。
+12. 两个项目并行时状态不串库。
+13. 上下文超限时保留硬约束并提供来源引用。
+14. 大纲重构先输出影响范围，未确认前不提交。
+15. 状态 revision 在写作期间变化时拒绝提交并重新提取上下文。
+16. ChangeSet 在 VERIFY 阶段失败时回滚全部临时变更。
+
+### 12.4 回归与人工评估
+
+- 每次修改 Skill、schema 或路由规则后运行固定回归集。
+- 客观项使用机器断言；文风、吸引力和叙事质量保留人工评估。
+- 必须比较有 Skill 与无 Skill 或上一冻结版本的输出。
+- 重点监控 Proposal 误升 Canon、越权写入、上下文遗漏和审稿改文。
+
+## 13. V1 验收标准
+
+满足以下全部条件才可宣布 V1 完成：
+
+- 1 个编排器和 6 个子 Skill 的职责可独立描述和测试。
+- `novel-master` 不直接写专业交付物。
+- 所有子 Skill 使用统一契约。
+- 每个文件区域有唯一主要负责人。
+- 只有 `continuity-keeper` 正式更新 `state/`。
+- Proposal、Canon 和 Deprecated 全链路可区分。
+- “只分析”和“完全不修改”的权限语义可区分且符合用户授权。
+- 只有 `ACCEPTED` 或 `PUBLISHED` 章节能够产生正式状态增量。
+- 高风险变化先影响分析、后用户确认。
+- 高风险授权绑定具体 scope 和 revision，过期后不能复用。
+- 状态提交通过可回滚的 ChangeSet 完成。
+- 缺少上下文时不会补造事实。
+- 最小上下文包满足预算和来源要求。
+- 状态归档不会丢失仍活跃的伏笔与约束。
+- 固定契约、单元和集成测试全部通过。
+- 测试结果保留真实 PASS/FAIL 证据。
+
+## 14. 拆分信号
+
+只有出现真实职责冲突并有测试证据时，才从 V1 合并组件拆出新 Skill。
+
+| 信号 | 建议阈值 | 动作 |
+| --- | --- | --- |
+| `story-architect` 主说明超过 500 行，且人物规则占比持续增加 | 连续 2 次迭代 | 拆出 `character-designer` |
+| 活跃主要人物超过 10 个或关系图频繁冲突 | 任一条件成立 | 拆出 `character-designer` |
+| 世界规则冲突成为回归主要失败来源 | 连续 3 个失败用例 | 拆出 `world-builder` |
+| 单卷大纲无法在上下文预算内稳定处理 | 连续 2 个真实项目 | 拆出 `plot-planner` |
+| 写作与修订模式出现权限或提示相互污染 | 2 个以上独立用例 | 拆出 `novel-editor` |
+
+阈值是启动评审的信号，不是自动拆分命令。拆分前必须确认收益大于新增路由和契约成本。
+
+## 15. 后续非 V1 范围
+
+以下能力保留为外围系统，不进入 V1 创作内核：
+
+- 市场研究和平台策略。
+- 书名、简介、封面和发布管理。
+- 读者评论分析和收益优化。
+- 小说转漫画、剧本和分镜。
+- 跨项目共享世界观。
+- 自动发布到第三方平台。
+
+这些能力未来可以消费冻结产物，但不得绕过 `novel-master` 的权限和状态治理。
+
+## 16. 变更记录
+
+### 1.0.1（2026-07-24）
+
+| 变更 | 原因 | 影响 |
+| --- | --- | --- |
+| 增加章节生命周期和接受闸门 | 防止草稿事实误提交 | 单章流程在状态提交前新增接受检查 |
+| 新书初始化增加 `INITIALIZATION_REVIEW` | 初始化包含重大创作决策 | 初始 Canon 提交必须绑定确认范围和 revision |
+| 按语义影响推导 L3 风险 | 消除 L3 风险等级冲突 | 不改变结果的 L3 可为 `MEDIUM` |
+| 拆分源文件、独立产物和状态写权限 | 区分“不改原文”和“完全只读” | 评审报告是否落盘由独立权限控制 |
+| 增加 ApprovalRef、revision 和 ChangeSet | 防止旧授权、陈旧上下文和部分提交 | 所有高风险写操作增加校验和事务边界 |
+| 恢复流程拆为证据提取与授权重建 | 防止推断直接进入 Canon | 恢复流程增加只读 RecoveryReport |
+| 区分摘要与派生状态重建 | 避免摘要操作隐式写状态 | 派生索引使用独立重建操作 |
+| 来源优先级和归档触发条件标准化 | 解决证据冲突和长篇状态膨胀 | 检索、冲突处理和归档更可执行 |
+
+本次为向后兼容的补丁修订：V1 的 1+6 架构、现有 Skill、主要模式和顶层契约字段均保持不变；新增字段在 1.0.1 中成为规范字段。
