@@ -1,0 +1,209 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "skill-result.schema.json",
+  "title": "SkillResult",
+  "description": "Unified output contract for novel-master V1 sub-skill results (Contract §6)",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "skill",
+    "skill_mode",
+    "request_id",
+    "status",
+    "summary",
+    "deliverables",
+    "completion"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "skill": {
+      "type": "string",
+      "minLength": 1
+    },
+    "skill_mode": {
+      "type": "string",
+      "minLength": 1
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "COMPLETED",
+        "COMPLETED_WITH_WARNINGS",
+        "NEEDS_DECISION",
+        "BLOCKED",
+        "FAILED"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "deliverables": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "type",
+          "content_summary",
+          "status",
+          "deliverable_id",
+          "revision",
+          "content_hash"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "minLength": 1
+          },
+          "path": {
+            "type": ["string", "null"]
+          },
+          "content_summary": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string",
+            "enum": ["draft", "confirmed", "revised"]
+          },
+          "deliverable_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revision": {
+            "type": "string",
+            "minLength": 1
+          },
+          "content_hash": {
+            "type": "string",
+            "minLength": 1
+          },
+          "supersedes": {
+            "type": ["string", "null"]
+          },
+          "chapter_lifecycle_status": {
+            "type": ["string", "null"],
+            "enum": [
+              "PLANNED",
+              "DRAFT",
+              "REVIEWED",
+              "ACCEPTED",
+              "SUPERSEDED",
+              "DEPRECATED",
+              "PUBLISHED",
+              null
+            ]
+          }
+        }
+      }
+    },
+    "state_change_proposals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "type",
+          "description",
+          "evidence",
+          "source_ref",
+          "risk_level",
+          "requires_user_confirmation"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["canon_candidate", "state_update", "deprecation", "contradiction"]
+          },
+          "description": { "type": "string" },
+          "evidence": { "type": "string" },
+          "source_ref": { "type": "string" },
+          "risk_level": {
+            "type": "string",
+            "enum": ["LOW", "MEDIUM", "HIGH"]
+          },
+          "requires_user_confirmation": { "type": "boolean" }
+        }
+      }
+    },
+    "proposals": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "description",
+          "rationale",
+          "impact_scope",
+          "recommended",
+          "requires_user_confirmation",
+          "proposal_type",
+          "source_ref"
+        ],
+        "properties": {
+          "description": { "type": "string" },
+          "rationale": { "type": "string" },
+          "impact_scope": { "type": "string" },
+          "recommended": { "type": "boolean" },
+          "requires_user_confirmation": { "type": "boolean" },
+          "proposal_type": {
+            "type": "string",
+            "enum": ["creative_option", "structural_change", "canon_change", "workflow_change"]
+          },
+          "source_ref": { "type": "string" }
+        }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["severity", "category", "description"],
+        "properties": {
+          "severity": {
+            "type": "string",
+            "enum": ["info", "warning", "blocker"]
+          },
+          "category": { "type": "string" },
+          "description": { "type": "string" },
+          "affected_files": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "suggested_resolution": { "type": "string" }
+        }
+      }
+    },
+    "handoff": {
+      "type": "object",
+      "properties": {
+        "recommended_next_skill": { "type": ["string", "null"] },
+        "recommended_next_mode": { "type": ["string", "null"] },
+        "reason": { "type": ["string", "null"] },
+        "required_context": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "completion": {
+      "type": "object",
+      "required": ["criteria_met", "criteria_unmet"],
+      "properties": {
+        "criteria_met": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "criteria_unmet": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  }
+}

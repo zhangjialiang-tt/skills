@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "recovery-report.schema.json",
+  "title": "RecoveryReport",
+  "description": "Recovery report contract for novel-master V1 continuity-keeper (Contract §12.6)",
+  "type": "object",
+  "required": [
+    "report_id",
+    "based_on_revision",
+    "confirmed_evidence",
+    "inferred_candidates",
+    "contradictions",
+    "unknowns",
+    "recommended_reconstruction_routes"
+  ],
+  "properties": {
+    "report_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "based_on_revision": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "confirmed_evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source_file",
+          "source_revision",
+          "evidence_type",
+          "content",
+          "confidence"
+        ],
+        "properties": {
+          "source_file": { "type": "string", "minLength": 1 },
+          "source_revision": { "type": "string", "minLength": 1 },
+          "evidence_type": {
+            "type": "string",
+            "enum": ["canon", "timeline", "character_state", "foreshadowing"]
+          },
+          "content": { "type": "string", "minLength": 1 },
+          "confidence": {
+            "type": "string",
+            "enum": ["high", "medium", "low"]
+          }
+        }
+      }
+    },
+    "inferred_candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["description", "evidence", "recommended_action"],
+        "properties": {
+          "description": { "type": "string" },
+          "evidence": { "type": "string" },
+          "recommended_action": { "type": "string" }
+        }
+      }
+    },
+    "contradictions": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "unknowns": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "recommended_reconstruction_routes": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  }
+}

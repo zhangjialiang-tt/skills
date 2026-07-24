@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "project": {
+    "project_id": "proj-dragon-ascension",
+    "root_path": "C:/novels/dragon-ascension"
+  },
+  "user_request": "根据大纲写第12章",
+  "task": {
+    "type": "WRITE_CHAPTER",
+    "scope": "CHAPTER",
+    "mode": "STANDARD",
+    "risk_level": "LOW",
+    "target_skill": "chapter-writer",
+    "skill_mode": "WRITE"
+  },
+  "authority": {
+    "operation": "CREATE_DRAFT",
+    "source_mutation_allowed": false,
+    "artifact_persistence_allowed": true,
+    "state_mutation_allowed": false
+  },
+  "context": {
+    "required_files": [],
+    "optional_files": []
+  },
+  "constraints": {
+    "must_preserve": [],
+    "must_include": [],
+    "must_avoid": []
+  },
+  "output": {
+    "expected_deliverables": ["chapter_draft"],
+    "target_paths": ["chapters/drafts/chapter_012.md"]
+  }
+}

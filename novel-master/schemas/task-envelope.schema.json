@@ -1,0 +1,276 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "task-envelope.schema.json",
+  "title": "TaskEnvelope",
+  "description": "Unified input contract for novel-master V1 sub-skill invocation (Contract §5)",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "request_id",
+    "project",
+    "user_request",
+    "task",
+    "authority",
+    "context",
+    "constraints",
+    "output"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project": {
+      "type": "object",
+      "required": ["project_id", "root_path"],
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "root_path": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "user_request": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task": {
+      "type": "object",
+      "required": ["type", "scope", "mode", "risk_level", "target_skill", "skill_mode"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "INIT_PROJECT",
+            "REFINE_BRIEF",
+            "DESIGN_STORY",
+            "DESIGN_CHARACTER",
+            "DESIGN_WORLD",
+            "PLAN_PLOT",
+            "PLAN_VOLUME",
+            "PLAN_CHAPTER",
+            "WRITE_CHAPTER",
+            "CONTINUE_CHAPTER",
+            "REVIEW_TEXT",
+            "EDIT_TEXT",
+            "CHECK_CONTINUITY",
+            "UPDATE_CANON",
+            "RETCON",
+            "RESUME_PROJECT",
+            "BRAINSTORM",
+            "SUMMARIZE_STATE"
+          ]
+        },
+        "scope": {
+          "type": "string",
+          "enum": [
+            "SNIPPET",
+            "SCENE",
+            "CHAPTER",
+            "MULTI_CHAPTER",
+            "ARC",
+            "VOLUME",
+            "PROJECT"
+          ]
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["FAST", "STANDARD", "STRICT", "ADVISORY"]
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH"]
+        },
+        "target_skill": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target_skill_mode": {
+          "type": "string"
+        },
+        "skill_mode": {
+          "type": "string",
+          "minLength": 1
+        },
+        "semantic_impact": {
+          "type": "object",
+          "properties": {
+            "fact_change": { "type": "boolean" },
+            "state_change": { "type": "boolean" },
+            "plot_outcome_change": { "type": "boolean" },
+            "downstream_scope": {
+              "type": "string",
+              "enum": ["NONE", "SCENE", "CHAPTER", "MULTI_CHAPTER"]
+            }
+          }
+        }
+      }
+    },
+    "authority": {
+      "type": "object",
+      "required": [
+        "operation",
+        "source_mutation_allowed",
+        "artifact_persistence_allowed",
+        "state_mutation_allowed"
+      ],
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "READ_ONLY",
+            "CREATE_DRAFT",
+            "EDIT_DRAFT",
+            "PROPOSE_CHANGE",
+            "COMMIT_STATE"
+          ]
+        },
+        "canon_change_allowed": { "type": "boolean" },
+        "structural_change_allowed": { "type": "boolean" },
+        "prose_change_allowed": { "type": "boolean" },
+        "source_mutation_allowed": { "type": "boolean" },
+        "artifact_persistence_allowed": { "type": "boolean" },
+        "state_mutation_allowed": { "type": "boolean" },
+        "max_edit_level": {
+          "type": "string",
+          "enum": ["NONE", "L1", "L2", "L3", "L4"]
+        },
+        "user_confirmation_ref": {
+          "type": ["string", "null"]
+        },
+        "approval_ref": {
+          "type": ["object", "null"]
+        }
+      }
+    },
+    "context": {
+      "type": "object",
+      "properties": {
+        "required_files": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/file_ref" }
+        },
+        "optional_files": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/file_ref" }
+        },
+        "context_pack": {
+          "type": ["object", "null"]
+        },
+        "base_revision": {
+          "type": ["object", "null"]
+        }
+      }
+    },
+    "constraints": {
+      "type": "object",
+      "properties": {
+        "must_preserve": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "must_include": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "must_avoid": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "target_length": {
+          "type": ["string", "null"]
+        },
+        "target_style": {
+          "type": ["string", "null"]
+        },
+        "viewpoint": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "properties": {
+        "expected_deliverables": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "target_paths": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "authority": {
+            "properties": {
+              "operation": { "const": "COMMIT_STATE" }
+            },
+            "required": ["operation"]
+          }
+        },
+        "required": ["authority"]
+      },
+      "then": {
+        "properties": {
+          "task": {
+            "properties": {
+              "target_skill": { "const": "continuity-keeper" }
+            },
+            "required": ["target_skill"]
+          }
+        },
+        "required": ["task"]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "authority": {
+            "properties": {
+              "operation": { "const": "READ_ONLY" }
+            },
+            "required": ["operation"]
+          }
+        },
+        "required": ["authority"]
+      },
+      "then": {
+        "properties": {
+          "authority": {
+            "properties": {
+              "source_mutation_allowed": { "const": false },
+              "state_mutation_allowed": { "const": false }
+            },
+            "required": ["source_mutation_allowed", "state_mutation_allowed"]
+          }
+        },
+        "required": ["authority"]
+      }
+    }
+  ],
+  "$defs": {
+    "file_ref": {
+      "type": "object",
+      "required": ["path", "revision"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "revision": { "type": "string", "minLength": 1 },
+        "hash": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "changeset.schema.json",
+  "title": "ChangeSet",
+  "description": "State commit transaction contract for novel-master V1 (Contract §8)",
+  "type": "object",
+  "required": [
+    "change_set_id",
+    "request_id",
+    "source_ref",
+    "base_revision",
+    "target_updates",
+    "status",
+    "created_at"
+  ],
+  "properties": {
+    "change_set_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "base_revision": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "target_updates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["target_file", "operation", "content"],
+        "properties": {
+          "target_file": {
+            "type": "string",
+            "minLength": 1
+          },
+          "operation": {
+            "type": "string",
+            "enum": ["ADD", "MODIFY", "DELETE"]
+          },
+          "content": {
+            "type": "string"
+          }
+        },
+        "not": {
+          "allOf": [
+            {
+              "properties": {
+                "operation": { "const": "DELETE" }
+              },
+              "required": ["operation"]
+            },
+            {
+              "properties": {
+                "target_file": {
+                  "pattern": "(state/canon\\.md|workflow/change_log\\.md)"
+                }
+              },
+              "required": ["target_file"]
+            }
+          ]
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": ["PREPARED", "VALIDATED", "COMMITTED", "ROLLED_BACK", "FAILED"]
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "committed_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    }
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "approval-ref.schema.json",
+  "title": "ApprovalRef",
+  "description": "Authorization contract for novel-master V1 operations (Contract §7)",
+  "type": "object",
+  "required": [
+    "approval_id",
+    "request_id",
+    "approved_by",
+    "approved_at",
+    "operation",
+    "approved_scope",
+    "based_on_revision",
+    "expires_after_use",
+    "status"
+  ],
+  "properties": {
+    "approval_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "approved_by": {
+      "type": "string",
+      "const": "user"
+    },
+    "approved_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "operation": {
+      "type": "string",
+      "enum": [
+        "COMMIT_CANON",
+        "RETCON",
+        "EDIT_L3",
+        "EDIT_L4",
+        "ACCEPT_CHAPTER",
+        "INIT_PROJECT"
+      ]
+    },
+    "approved_scope": {
+      "type": "object",
+      "required": ["files", "items"],
+      "properties": {
+        "files": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "items": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "based_on_revision": {
+      "type": "string",
+      "minLength": 1
+    },
+    "expires_after_use": {
+      "type": "boolean"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ACTIVE", "USED", "EXPIRED", "REVOKED"]
+    }
+  }
+}

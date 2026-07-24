@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0",
+  "skill": "chapter-writer",
+  "skill_mode": "WRITE",
+  "request_id": "req-20260724-001",
+  "status": "COMPLETED",
+  "summary": "已完成第12章正文创作，主角在秘境遭遇伏击并突破瓶颈，共4200字。",
+  "deliverables": [
+    {
+      "type": "chapter_draft",
+      "path": "chapters/drafts/chapter_012.md",
+      "content_summary": "主角林渊在秘境第三层遭遇暗影宗伏击，危急时刻突破灵脉封锁，击退敌人。",
+      "status": "draft",
+      "deliverable_id": "del-ch012-draft-001",
+      "revision": "rev-ch012-draft-1",
+      "content_hash": "sha256:9f8e7d6c5b4a3210",
+      "supersedes": null,
+      "chapter_lifecycle_status": "DRAFT"
+    }
+  ],
+  "state_change_proposals": [
+    {
+      "type": "state_update",
+      "description": "主角灵脉封锁解除，修为突破至凝气七层",
+      "evidence": "正文第3场景：林渊灵脉中淤积的暗劲在生死压力下被冲开",
+      "source_ref": "chapters/drafts/chapter_012.md#scene-3",
+      "risk_level": "LOW",
+      "requires_user_confirmation": false
+    }
+  ],
+  "proposals": [
+    {
+      "description": "在伏击者撤退时暗示其背后有更大势力",
+      "rationale": "为后续卷的反派升级做铺垫，增加悬念层次",
+      "impact_scope": "MULTI_CHAPTER",
+      "recommended": true,
+      "requires_user_confirmation": true,
+      "proposal_type": "creative_option",
+      "source_ref": "outline/volume_02.md#arc-3"
+    }
+  ],
+  "issues": [
+    {
+      "severity": "info",
+      "category": "continuity_note",
+      "description": "本章提及的暗影宗功法名称与第8章略有差异，建议统一",
+      "affected_files": ["chapters/drafts/chapter_008.md", "chapters/drafts/chapter_012.md"],
+      "suggested_resolution": "统一使用'噬魂暗劲'作为功法名称"
+    }
+  ],
+  "handoff": {
+    "recommended_next_skill": "novel-reviewer",
+    "recommended_next_mode": "DEFAULT",
+    "reason": "STANDARD模式下建议对正文进行评审",
+    "required_context": ["chapters/drafts/chapter_012.md", "chapters/plans/chapter_012.md"]
+  },
+  "completion": {
+    "criteria_met": [
+      "正文执行章节卡全部场景",
+      "视角、时间、人物动机符合上下文",
+      "新增事实和状态变化已报告",
+      "字数在目标范围内"
+    ],
+    "criteria_unmet": []
+  }
+}

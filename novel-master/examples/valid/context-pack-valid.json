@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "generated_for_request": "req-20260724-001",
+  "project_snapshot": {
+    "project_id": "proj-dragon-ascension",
+    "title": "龙渊录",
+    "genre": "玄幻",
+    "current_volume": "第一卷·秘境探索",
+    "current_chapter": "第12章",
+    "current_story_phase": "上升冲突"
+  },
+  "current_state": {
+    "time": "秘境探索第三天黄昏",
+    "location": "秘境第三层·幽暗峡谷",
+    "active_conflict": "暗影宗追杀主角，企图夺取龙渊血脉",
+    "protagonist_goal": "突破灵脉封锁，在秘境中存活并寻找传承"
+  },
+  "relevant_characters": [
+    {
+      "name": "林渊",
+      "current_status": "凝气六层，灵脉被封锁，轻伤",
+      "current_goal": "解除灵脉封锁，突破修为",
+      "known_information": ["秘境入口位置", "暗影宗在追杀自己", "龙渊血脉的存在"],
+      "relationship_changes": [],
+      "source_refs": ["state/character_state.md#linyuan"]
+    },
+    {
+      "name": "影七",
+      "current_status": "凝气九层，暗影宗外门执事",
+      "current_goal": "捕获林渊，提取龙渊血脉",
+      "known_information": ["林渊位置", "灵脉封锁已施加"],
+      "relationship_changes": [],
+      "source_refs": ["state/character_state.md#yingqi"]
+    }
+  ],
+  "relevant_canon": [
+    {
+      "id": "canon-038",
+      "statement": "灵脉封锁需要生死压力或外力冲击才能解除",
+      "source_ref": "state/canon.md#canon-038"
+    },
+    {
+      "id": "canon-041",
+      "statement": "秘境第三层存在上古传承遗迹",
+      "source_ref": "state/canon.md#canon-041"
+    }
+  ],
+  "active_open_loops": [
+    {
+      "id": "loop-007",
+      "description": "暗影宗为何知道林渊的龙渊血脉",
+      "urgency": "medium",
+      "source_ref": "state/open_loops.md#loop-007"
+    }
+  ],
+  "active_foreshadowing": [
+    {
+      "id": "fs-012",
+      "status": "planted",
+      "usage_constraint": "第12章只能暗示伏击者撤退有序，不得揭示幕后势力身份",
+      "source_ref": "state/foreshadowing.md#fs-012"
+    }
+  ],
+  "timeline_constraints": ["秘境探索从第一天清晨开始，当前为第三天黄昏"],
+  "prohibited_conflicts": ["不得引入与第一卷无关的新势力"],
+  "style_constraints": ["战斗描写紧凑，内心独白不超过3句连续"],
+  "unknowns": ["秘境第三层传承遗迹的具体内容"],
+  "source_refs": ["state/canon.md", "state/timeline.md", "state/character_state.md"],
+  "omitted_context_refs": ["world/factions.md#shadow-sect-detail"],
+  "budget": {
+    "substantive_characters": 1850,
+    "estimated_tokens": 3200,
+    "truncated": false
+  }
+}

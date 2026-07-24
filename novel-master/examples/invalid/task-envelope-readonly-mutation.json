@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "request_id": "req-20260724-005",
+  "project": {
+    "project_id": "proj-dragon-ascension",
+    "root_path": "C:/novels/dragon-ascension"
+  },
+  "user_request": "只分析第12章的节奏问题，不要修改任何东西",
+  "task": {
+    "type": "REVIEW_TEXT",
+    "scope": "CHAPTER",
+    "mode": "ADVISORY",
+    "risk_level": "LOW",
+    "target_skill": "novel-reviewer",
+    "skill_mode": "DEFAULT"
+  },
+  "authority": {
+    "operation": "READ_ONLY",
+    "source_mutation_allowed": true,
+    "artifact_persistence_allowed": true,
+    "state_mutation_allowed": false
+  },
+  "context": {
+    "required_files": [
+      {
+        "path": "chapters/drafts/chapter_012.md",
+        "revision": "rev-ch012-draft-1",
+        "hash": "sha256:9f8e7d6c5b4a3210"
+      }
+    ],
+    "optional_files": []
+  },
+  "constraints": {
+    "must_preserve": ["原文不做任何修改"],
+    "must_include": [],
+    "must_avoid": []
+  },
+  "output": {
+    "expected_deliverables": ["review_report"],
+    "target_paths": []
+  }
+}
