@@ -27,6 +27,7 @@
     },
     "project": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["project_id", "root_path"],
       "properties": {
         "project_id": {
@@ -45,6 +46,7 @@
     },
     "task": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["type", "scope", "mode", "risk_level", "target_skill", "skill_mode"],
       "properties": {
         "type": {
@@ -103,6 +105,7 @@
         },
         "semantic_impact": {
           "type": "object",
+          "additionalProperties": false,
           "properties": {
             "fact_change": { "type": "boolean" },
             "state_change": { "type": "boolean" },
@@ -117,6 +120,7 @@
     },
     "authority": {
       "type": "object",
+      "additionalProperties": false,
       "required": [
         "operation",
         "source_mutation_allowed",
@@ -148,12 +152,14 @@
           "type": ["string", "null"]
         },
         "approval_ref": {
-          "type": ["object", "null"]
+          "type": ["object", "null"],
+          "additionalProperties": true
         }
       }
     },
     "context": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "required_files": {
           "type": "array",
@@ -164,15 +170,21 @@
           "items": { "$ref": "#/$defs/file_ref" }
         },
         "context_pack": {
-          "type": ["object", "null"]
+          "type": ["object", "null"],
+          "additionalProperties": true
         },
         "base_revision": {
-          "type": ["object", "null"]
+          "type": ["object", "null"],
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^(?:[1-9][0-9]*|[A-Za-z][A-Za-z0-9._-]*[0-9])$"
+          }
         }
       }
     },
     "constraints": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "must_preserve": {
           "type": "array",
@@ -199,6 +211,7 @@
     },
     "output": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "expected_deliverables": {
           "type": "array",
@@ -265,11 +278,25 @@
   "$defs": {
     "file_ref": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["path", "revision"],
       "properties": {
         "path": { "type": "string", "minLength": 1 },
-        "revision": { "type": "string", "minLength": 1 },
-        "hash": { "type": ["string", "null"] }
+        "revision": {
+          "type": "string",
+          "pattern": "^(?:[1-9][0-9]*|[A-Za-z][A-Za-z0-9._-]*[0-9])$"
+        },
+        "hash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
       }
     }
   }

@@ -4,6 +4,7 @@
   "title": "ChangeSet",
   "description": "State commit transaction contract for novel-master V1 (Contract §8)",
   "type": "object",
+  "additionalProperties": false,
   "required": [
     "change_set_id",
     "request_id",
@@ -29,18 +30,20 @@
     "base_revision": {
       "type": "object",
       "additionalProperties": {
-        "type": "string"
+        "type": "string",
+        "pattern": "^(?:[1-9][0-9]*|[A-Za-z][A-Za-z0-9._-]*[0-9])$"
       }
     },
     "target_updates": {
       "type": "array",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": ["target_file", "operation", "content"],
         "properties": {
           "target_file": {
             "type": "string",
-            "minLength": 1
+            "pattern": "^(?!.*(?:^|/)\\.\\.(?:/|$))(?:state/.+|workflow/change_log\\.md)$"
           },
           "operation": {
             "type": "string",

@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
 import commit_changeset as changeset_module
+from compute_revision import compute_revision as compute_file_revision
 from commit_changeset import (
     ALLOWED_WRITE_PREFIXES,
     CANON_PREFIXES,
@@ -24,6 +25,7 @@ from commit_changeset import (
     execute_changeset,
     load_yaml_or_json,
     validate_changeset,
+    validate_source_deliverable,
 )
 
 
@@ -91,6 +93,50 @@ class TestChangeSetValidation:
         cs = self._make_changeset(status="INVALID_STATUS")
         errors = list(v.iter_errors(cs))
         assert len(errors) > 0, "非法 status 应被拒绝"
+
+    def test_source_deliverable_revision_uses_canonical_format(self):
+        """提交输入的 revision 语义校验必须与 Schema 使用同一格式。"""
+        changeset = self._make_changeset(
+            source_ref="chapter-001@rev bad 1"
+        )
+        errors = validate_source_deliverable(
+            changeset,
+            {
+                "deliverable_id": "chapter-001",
+                "revision": "rev bad 1",
+                "content_hash": "a" * 64,
+                "chapter_lifecycle_status": "ACCEPTED",
+            },
+        )
+        assert any("revision 格式" in error for error in errors)
+
+    def test_source_deliverable_must_match_accepted_record(self):
+        """来源 hash 与接受记录不一致时必须阻塞状态提交。"""
+        changeset = self._make_changeset(
+            source_ref="chapter-001@rev-1"
+        )
+        source_deliverable = {
+            "deliverable_id": "chapter-001",
+            "revision": "rev-1",
+            "content_hash": "a" * 64,
+            "chapter_lifecycle_status": "ACCEPTED",
+        }
+        accepted_record = {
+            "deliverable_id": "chapter-001",
+            "revision": "rev-1",
+            "content_hash": "b" * 64,
+            "chapter_lifecycle_status": "ACCEPTED",
+            "accepted_by": "user",
+            "acceptance_ref": "appr-accept-001",
+        }
+
+        errors = validate_source_deliverable(
+            changeset,
+            source_deliverable,
+            accepted_record=accepted_record,
+        )
+
+        assert any("content_hash 与接受记录不一致" in error for error in errors)
 
 
 class TestChangeSetTransaction:
@@ -163,7 +209,7 @@ class TestChangeSetTransaction:
 
         assert result["status"] == "COMMITTED"
         assert canon.read_text(encoding="utf-8") == "# Canon\n\n已提交的新内容。\n"
-        assert revisions["state/canon.md"]["revision"] == 2
+        assert revisions["state/canon.md"]["revision"] == "2"
 
     def test_add_creates_missing_state_file(self, tmp_path):
         """ADD 对不存在的状态文件创建内容并记录 revision。"""
@@ -709,6 +755,14 @@ class TestChangeSetTransaction:
                 "content_hash": "b" * 64,
                 "chapter_lifecycle_status": "ACCEPTED",
             },
+            accepted_record={
+                "deliverable_id": "chapter-009",
+                "revision": "rev-2",
+                "content_hash": "b" * 64,
+                "chapter_lifecycle_status": "ACCEPTED",
+                "accepted_by": "user",
+                "acceptance_ref": "appr-chapter-009",
+            },
         )
 
         assert result["status"] == "COMMITTED"
@@ -783,6 +837,16 @@ class TestChangeSetTransaction:
             json.dumps(source_deliverable, ensure_ascii=False),
             encoding="utf-8",
         )
+        accepted_record = {
+            **source_deliverable,
+            "accepted_by": "user",
+            "acceptance_ref": "appr-chapter-cli",
+        }
+        accepted_path = project / "workflow" / "accepted-record.json"
+        accepted_path.write_text(
+            json.dumps(accepted_record, ensure_ascii=False),
+            encoding="utf-8",
+        )
 
         completed = subprocess.run(
             [
@@ -798,6 +862,8 @@ class TestChangeSetTransaction:
                 "COMMIT_CHAPTER_STATE",
                 "--source-deliverable",
                 str(source_path),
+                "--accepted-record",
+                str(accepted_path),
             ],
             cwd=ROOT,
             env={**os.environ, "PYTHONUTF8": "1"},
@@ -863,6 +929,26 @@ class TestChangeSetTransaction:
         changeset["base_revision"]["state/canon.md"] = "999"
         errors = validate_changeset(changeset, project, "req-commit")
         assert any("STALE_CONTEXT" in error for error in errors)
+
+    def test_compute_revision_persists_canonical_strings(self, tmp_path):
+        """compute_revision 新建、变更和未变化都保持字符串 revision。"""
+        target = tmp_path / "state" / "timeline.md"
+        target.parent.mkdir()
+        target.write_text("初始时间线\n", encoding="utf-8")
+
+        first = compute_file_revision(target, tmp_path, update=True)
+        target.write_text("更新后的时间线\n", encoding="utf-8")
+        second = compute_file_revision(target, tmp_path, update=True)
+        unchanged = compute_file_revision(target, tmp_path, update=True)
+        revisions = json.loads(
+            (tmp_path / ".revisions.json").read_text(encoding="utf-8")
+        )
+
+        assert first["revision"] == "1"
+        assert second["revision"] == "2"
+        assert unchanged["revision"] == "2"
+        assert unchanged["changed"] is False
+        assert revisions["state/timeline.md"]["revision"] == "2"
 
     def test_backup_creation(self, tmp_path):
         """备份创建。"""

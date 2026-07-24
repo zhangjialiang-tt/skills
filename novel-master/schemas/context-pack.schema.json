@@ -4,6 +4,7 @@
   "title": "ContextPack",
   "description": "Minimal context package contract for novel-master V1 (Contract §9)",
   "type": "object",
+  "additionalProperties": false,
   "required": [
     "schema_version",
     "generated_for_request",
@@ -22,6 +23,7 @@
     },
     "project_snapshot": {
       "type": "object",
+      "additionalProperties": false,
       "required": [
         "project_id",
         "title",
@@ -41,6 +43,7 @@
     },
     "current_state": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["time", "location", "active_conflict", "protagonist_goal"],
       "properties": {
         "time": { "type": "string" },
@@ -53,6 +56,7 @@
       "type": "array",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": ["name", "current_status", "current_goal"],
         "properties": {
           "name": { "type": "string", "minLength": 1 },
@@ -77,6 +81,7 @@
       "type": "array",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": ["id", "statement", "source_ref"],
         "properties": {
           "id": { "type": "string", "minLength": 1 },
@@ -89,6 +94,7 @@
       "type": "array",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": ["id", "description", "urgency", "source_ref"],
         "properties": {
           "id": { "type": "string", "minLength": 1 },
@@ -105,6 +111,7 @@
       "type": "array",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": ["id", "status", "usage_constraint", "source_ref"],
         "properties": {
           "id": { "type": "string", "minLength": 1 },
@@ -143,6 +150,7 @@
     },
     "budget": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["substantive_characters", "estimated_tokens", "truncated"],
       "properties": {
         "substantive_characters": { "type": "integer", "minimum": 0 },

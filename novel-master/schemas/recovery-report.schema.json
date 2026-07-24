@@ -4,6 +4,7 @@
   "title": "RecoveryReport",
   "description": "Recovery report contract for novel-master V1 continuity-keeper (Contract §12.6)",
   "type": "object",
+  "additionalProperties": false,
   "required": [
     "report_id",
     "based_on_revision",
@@ -21,13 +22,15 @@
     "based_on_revision": {
       "type": "object",
       "additionalProperties": {
-        "type": "string"
+        "type": "string",
+        "pattern": "^(?:[1-9][0-9]*|[A-Za-z][A-Za-z0-9._-]*[0-9])$"
       }
     },
     "confirmed_evidence": {
       "type": "array",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "source_file",
           "source_revision",
@@ -37,7 +40,10 @@
         ],
         "properties": {
           "source_file": { "type": "string", "minLength": 1 },
-          "source_revision": { "type": "string", "minLength": 1 },
+          "source_revision": {
+            "type": "string",
+            "pattern": "^(?:[1-9][0-9]*|[A-Za-z][A-Za-z0-9._-]*[0-9])$"
+          },
           "evidence_type": {
             "type": "string",
             "enum": ["canon", "timeline", "character_state", "foreshadowing"]
@@ -54,6 +60,7 @@
       "type": "array",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": ["description", "evidence", "recommended_action"],
         "properties": {
           "description": { "type": "string" },

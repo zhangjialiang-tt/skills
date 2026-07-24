@@ -1,0 +1,30 @@
+{
+  "report_id": "recovery-20260725-001",
+  "based_on_revision": {
+    "state/canon.md": "rev-canon-42",
+    "state/timeline.md": "rev-timeline-18"
+  },
+  "confirmed_evidence": [
+    {
+      "source_file": "state/canon.md",
+      "source_revision": "rev-canon-42",
+      "evidence_type": "canon",
+      "content": "灵脉封锁需要生死压力或外力冲击才能解除。",
+      "confidence": "high"
+    }
+  ],
+  "inferred_candidates": [
+    {
+      "description": "暗影宗可能已掌握主角的血脉信息。",
+      "evidence": "第8章与第12章均出现定向追踪。",
+      "recommended_action": "保留为待确认候选，不直接写入 Canon。"
+    }
+  ],
+  "contradictions": [],
+  "unknowns": [
+    "暗影宗获知血脉信息的具体来源"
+  ],
+  "recommended_reconstruction_routes": [
+    "用户确认候选后生成 COMMIT_CANON ApprovalRef"
+  ]
+}

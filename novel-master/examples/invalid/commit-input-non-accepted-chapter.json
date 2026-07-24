@@ -1,0 +1,27 @@
+{
+  "operation": "COMMIT_CHAPTER_STATE",
+  "source_deliverable": {
+    "deliverable_id": "chapter-012",
+    "revision": "rev-ch012-draft-1",
+    "content_hash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+    "chapter_lifecycle_status": "DRAFT"
+  },
+  "change_set": {
+    "change_set_id": "cs-non-accepted",
+    "request_id": "req-non-accepted",
+    "source_ref": "chapter-012@rev-ch012-draft-1",
+    "base_revision": {
+      "state/canon.md": "rev-canon-42"
+    },
+    "target_updates": [
+      {
+        "target_file": "state/canon.md",
+        "operation": "MODIFY",
+        "content": "DRAFT 来源不得提交到正式状态。"
+      }
+    ],
+    "status": "PREPARED",
+    "created_at": "2026-07-25T09:00:00+08:00",
+    "committed_at": null
+  }
+}

@@ -37,12 +37,12 @@
       {
         "path": "chapters/plans/chapter_012.md",
         "revision": "rev-012-plan-3",
-        "hash": "sha256:a1b2c3d4e5f6"
+        "hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
       },
       {
         "path": "state/canon.md",
         "revision": "rev-canon-42",
-        "hash": "sha256:f6e5d4c3b2a1"
+        "hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
       }
     ],
     "optional_files": [

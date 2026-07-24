@@ -1,0 +1,29 @@
+{
+  "schema_version": "1.0",
+  "request_id": "req-wrong-write-zone",
+  "project": {
+    "project_id": "proj-dragon-ascension",
+    "root_path": "C:/novels/dragon-ascension"
+  },
+  "user_request": "让 chapter-writer 直接更新 Canon",
+  "task": {
+    "type": "WRITE_CHAPTER",
+    "scope": "CHAPTER",
+    "mode": "STANDARD",
+    "risk_level": "HIGH",
+    "target_skill": "chapter-writer",
+    "skill_mode": "WRITE"
+  },
+  "authority": {
+    "operation": "CREATE_DRAFT",
+    "source_mutation_allowed": false,
+    "artifact_persistence_allowed": true,
+    "state_mutation_allowed": false
+  },
+  "context": {},
+  "constraints": {},
+  "output": {
+    "expected_deliverables": ["chapter_draft"],
+    "target_paths": ["state/canon.md"]
+  }
+}

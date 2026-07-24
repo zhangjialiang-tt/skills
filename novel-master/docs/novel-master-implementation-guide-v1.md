@@ -93,13 +93,20 @@ diagnostics.log         — 脚本校验日志
 revision = 单调递增整数（字符串形式，如 "1", "2", "3"）
 ```
 
-每次文件内容变化时递增。内容未变化时不递增。
+新写入的 `.revisions.json` 使用上述规范格式。为兼容冻结文档及既有项目，
+输入校验也接受字母开头、数字结尾且不含空白的可递增 revision token，
+例如 `rev-canon-42`；下一版保持原前缀并递增为 `rev-canon-43`。
+
+每次文件内容变化时递增。内容未变化时不递增。旧整数记录在下一次更新时
+规范化为字符串。
 
 ### 3.2 content_hash
 
 ```text
 content_hash = SHA-256（hex 小写，64 字符）
 ```
+
+不使用 `sha256:` 前缀。
 
 ### 3.3 更新规则
 
@@ -156,16 +163,16 @@ V1 本地文件系统事务不是数据库级全局原子事务。通过备份 +
 ### 5.2 提交流程
 
 ```text
-1. 校验锁（必须持有当前 request_id 的锁）
-2. 校验 base_revision / hash（所有目标文件）
-3. 创建 PREPARED ChangeSet 记录
-4. 备份原文件到 workflow/backups/<change_set_id>/
-5. 写入 *.tmp 临时文件
-6. 校验临时文件（格式、内容、交叉一致性）
-7. 使用 os.replace() 逐文件替换正式文件
-8. 更新 revision / hash
-9. 更新 workflow/change_log.md
-10. 标记 COMMITTED
+1. 校验 ChangeSet Schema、路径和目标所有权
+2. 校验来源生命周期及接受记录中的 deliverable_id / revision / hash
+3. 校验 ApprovalRef、base_revision / hash
+4. 校验锁（必须持有当前 request_id 的锁）
+5. 备份目标文件、revision 清单、change_log 和一次性 ApprovalRef
+6. 写入 *.tmp 临时文件
+7. 校验临时文件 hash 和一次性授权状态
+8. 使用 os.replace() 逐文件替换正式文件
+9. 更新 revision / hash 和 workflow/change_log.md
+10. 全部成功后返回 COMMITTED；一次性授权变为 USED
 ```
 
 ### 5.3 失败处理
@@ -182,6 +189,9 @@ V1 本地文件系统事务不是数据库级全局原子事务。通过备份 +
 
 - Canon 项不允许通过 DELETE 移除（只能 DEPRECATED）。
 - `change_log.md` 与状态文件属于同一事务。
+- `COMMIT_CHAPTER_STATE` 只接受 `ACCEPTED/PUBLISHED`，且来源四元组
+  `deliverable_id / revision / content_hash / chapter_lifecycle_status`
+  必须与接受记录完全一致。
 - 回滚失败时保留诊断信息到 `workflow/runs/<request_id>/diagnostics.log`。
 
 ---

@@ -14,7 +14,6 @@ import argparse
 import hashlib
 import json
 import os
-import re
 import shutil
 import sys
 from datetime import datetime, timezone
@@ -26,7 +25,12 @@ import yaml
 from jsonschema import Draft202012Validator
 
 from validate_approval import load_approval, validate_approval
-from validate_contract import can_commit_chapter_state
+from validate_contract import (
+    can_commit_chapter_state,
+    is_valid_revision,
+    is_valid_sha256,
+    next_revision,
+)
 from validate_paths import normalize_path
 
 # 允许修改的路径前缀
@@ -54,19 +58,6 @@ def compute_sha256(file_path: Path) -> str:
         while chunk := f.read(8192):
             h.update(chunk)
     return h.hexdigest()
-
-
-def next_revision(current: Any) -> Any:
-    """递增整数、纯数字字符串或带数字后缀的 revision。"""
-    if isinstance(current, int):
-        return current + 1
-    if isinstance(current, str):
-        match = re.fullmatch(r"(.*?)(\d+)", current)
-        if match:
-            prefix, digits = match.groups()
-            incremented = str(int(digits) + 1).zfill(len(digits))
-            return f"{prefix}{incremented}"
-    raise ValueError(f"无法递增 revision: {current!r}")
 
 
 def load_yaml_or_json(path: Path) -> dict[str, Any]:
@@ -326,6 +317,7 @@ def validate_changeset(
 def validate_source_deliverable(
     changeset: dict[str, Any],
     source_deliverable: dict[str, Any] | None,
+    accepted_record: dict[str, Any] | None = None,
 ) -> list[str]:
     """校验 COMMIT_CHAPTER_STATE 的来源交付物。"""
     if source_deliverable is None:
@@ -341,12 +333,35 @@ def validate_source_deliverable(
         errors.append("source_deliverable.deliverable_id 不能为空")
     if not revision:
         errors.append("source_deliverable.revision 不能为空")
-    if not re.fullmatch(r"[0-9a-f]{64}", str(content_hash)):
+    elif not is_valid_revision(str(revision)):
+        errors.append("source_deliverable.revision 格式无效")
+    if not is_valid_sha256(str(content_hash)):
         errors.append("source_deliverable.content_hash 必须是 64 位小写 SHA-256")
     if not can_commit_chapter_state(str(lifecycle)):
         errors.append(
             "COMMIT_CHAPTER_STATE 来源章节必须是 ACCEPTED 或 PUBLISHED"
         )
+    elif accepted_record is None:
+        errors.append("COMMIT_CHAPTER_STATE 必须提供接受记录")
+    else:
+        if accepted_record.get("accepted_by") not in (
+            "user",
+            "approved_workflow",
+        ):
+            errors.append(
+                "接受记录 accepted_by 必须是 user 或 approved_workflow"
+            )
+        if not accepted_record.get("acceptance_ref"):
+            errors.append("接受记录 acceptance_ref 不能为空")
+
+        for field in (
+            "deliverable_id",
+            "revision",
+            "content_hash",
+            "chapter_lifecycle_status",
+        ):
+            if source_deliverable.get(field) != accepted_record.get(field):
+                errors.append(f"{field} 与接受记录不一致")
 
     expected_source_ref = f"{deliverable_id}@{revision}"
     if changeset.get("source_ref") != expected_source_ref:
@@ -655,6 +670,7 @@ def commit_changeset(
     approval_target_items: list[str] | None = None,
     approval_path: Path | None = None,
     source_deliverable: dict[str, Any] | None = None,
+    accepted_record: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """执行不可绕过的提交前校验，并在全部校验通过后提交。"""
     errors = validate_changeset(changeset, project_root, request_id)
@@ -665,7 +681,11 @@ def commit_changeset(
     ]
     if operation == "COMMIT_CHAPTER_STATE":
         errors.extend(
-            validate_source_deliverable(changeset, source_deliverable)
+            validate_source_deliverable(
+                changeset,
+                source_deliverable,
+                accepted_record=accepted_record,
+            )
         )
 
     if operation in APPROVAL_REQUIRED_OPERATIONS and approval is None:
@@ -783,6 +803,11 @@ def main() -> int:
         default=None,
         help="COMMIT_CHAPTER_STATE 的来源交付物 YAML/JSON 文件",
     )
+    parser.add_argument(
+        "--accepted-record",
+        default=None,
+        help="COMMIT_CHAPTER_STATE 的接受记录 YAML/JSON 文件",
+    )
     args = parser.parse_args()
 
     project_root = Path(args.project_root)
@@ -835,6 +860,20 @@ def main() -> int:
             )
             return 2
 
+    accepted_record = None
+    if args.accepted_record:
+        accepted_path = Path(args.accepted_record)
+        if not accepted_path.is_absolute():
+            accepted_path = project_root / accepted_path
+        try:
+            accepted_record = load_yaml_or_json(accepted_path)
+        except (yaml.YAMLError, json.JSONDecodeError, OSError) as error:
+            print(
+                f"ERROR: 加载 accepted_record 失败: {error}",
+                file=sys.stderr,
+            )
+            return 2
+
     result = commit_changeset(
         changeset,
         project_root,
@@ -845,6 +884,7 @@ def main() -> int:
         approval_target_items=args.approval_target_items,
         approval_path=approval_path,
         source_deliverable=source_deliverable,
+        accepted_record=accepted_record,
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))
 

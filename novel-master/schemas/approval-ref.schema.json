@@ -4,6 +4,7 @@
   "title": "ApprovalRef",
   "description": "Authorization contract for novel-master V1 operations (Contract §7)",
   "type": "object",
+  "additionalProperties": false,
   "required": [
     "approval_id",
     "request_id",
@@ -45,6 +46,7 @@
     },
     "approved_scope": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["files", "items"],
       "properties": {
         "files": {
@@ -59,7 +61,7 @@
     },
     "based_on_revision": {
       "type": "string",
-      "minLength": 1
+      "pattern": "^(?:[1-9][0-9]*|[A-Za-z][A-Za-z0-9._-]*[0-9])$"
     },
     "expires_after_use": {
       "type": "boolean"
@@ -68,5 +70,25 @@
       "type": "string",
       "enum": ["ACTIVE", "USED", "EXPIRED", "REVOKED"]
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "operation": {
+            "enum": ["EDIT_L4", "RETCON"]
+          }
+        },
+        "required": ["operation"]
+      },
+      "then": {
+        "properties": {
+          "expires_after_use": {
+            "const": true
+          }
+        },
+        "required": ["expires_after_use"]
+      }
+    }
+  ]
 }

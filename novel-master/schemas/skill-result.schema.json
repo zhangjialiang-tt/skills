@@ -4,6 +4,7 @@
   "title": "SkillResult",
   "description": "Unified output contract for novel-master V1 sub-skill results (Contract §6)",
   "type": "object",
+  "additionalProperties": false,
   "required": [
     "schema_version",
     "skill",
@@ -49,6 +50,7 @@
       "type": "array",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "type",
           "content_summary",
@@ -79,11 +81,11 @@
           },
           "revision": {
             "type": "string",
-            "minLength": 1
+            "pattern": "^(?:[1-9][0-9]*|[A-Za-z][A-Za-z0-9._-]*[0-9])$"
           },
           "content_hash": {
             "type": "string",
-            "minLength": 1
+            "pattern": "^[0-9a-f]{64}$"
           },
           "supersedes": {
             "type": ["string", "null"]
@@ -108,6 +110,7 @@
       "type": "array",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "type",
           "description",
@@ -136,6 +139,7 @@
       "type": "array",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": [
           "description",
           "rationale",
@@ -163,6 +167,7 @@
       "type": "array",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": ["severity", "category", "description"],
         "properties": {
           "severity": {
@@ -181,6 +186,7 @@
     },
     "handoff": {
       "type": "object",
+      "additionalProperties": false,
       "properties": {
         "recommended_next_skill": { "type": ["string", "null"] },
         "recommended_next_mode": { "type": ["string", "null"] },
@@ -193,6 +199,7 @@
     },
     "completion": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["criteria_met", "criteria_unmet"],
       "properties": {
         "criteria_met": {

@@ -116,10 +116,6 @@ def validate_approval(
         path = ".".join(str(part) for part in error.absolute_path) or "$"
         errors.append(f"Schema {path}: {error.message}")
 
-    # Schema 错误可能意味着下方字段类型不安全，避免派生异常。
-    if errors:
-        return errors
-
     # 2. 检查 status
     status = approval.get("status", "")
     if status != "ACTIVE":
@@ -144,8 +140,24 @@ def validate_approval(
 
     # 5. 检查 approved_scope 覆盖
     approved_scope = approval.get("approved_scope", {})
-    approved_files = approved_scope.get("files", [])
-    approved_items = approved_scope.get("items", [])
+    if isinstance(approved_scope, dict):
+        approved_files = approved_scope.get("files", [])
+        approved_items = approved_scope.get("items", [])
+    else:
+        approved_files = []
+        approved_items = []
+    if not isinstance(approved_files, list):
+        approved_files = []
+    else:
+        approved_files = [
+            scope for scope in approved_files if isinstance(scope, str)
+        ]
+    if not isinstance(approved_items, list):
+        approved_items = []
+    else:
+        approved_items = [
+            item for item in approved_items if isinstance(item, str)
+        ]
     if not approved_files:
         errors.append("approved_scope 为空，未授权任何文件")
     else:

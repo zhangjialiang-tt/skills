@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "skill": "continuity-keeper",
+  "skill_mode": "COMMIT_CHAPTER_STATE",
+  "request_id": "req-proposal-committed",
+  "status": "COMPLETED",
+  "summary": "错误地把提案放入正式提交结果。",
+  "deliverables": [],
+  "state_change_proposals": [
+    {
+      "type": "canon_candidate",
+      "description": "未经接受的新设定",
+      "evidence": "DRAFT 正文中的一句描述",
+      "source_ref": "chapters/drafts/chapter_012.md",
+      "risk_level": "HIGH",
+      "requires_user_confirmation": true
+    }
+  ],
+  "committed_updates": {
+    "canon": [
+      {
+        "proposal": "未经接受的新设定"
+      }
+    ]
+  },
+  "completion": {
+    "criteria_met": [],
+    "criteria_unmet": [
+      "Proposal 不得进入 committed_updates"
+    ]
+  }
+}

@@ -12,6 +12,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from validate_contract import next_revision
+
 
 def compute_sha256(file_path: Path) -> str:
     """计算文件的 SHA-256 哈希值（hex 小写，64 字符）。"""
@@ -72,7 +74,7 @@ def compute_revision(
 
     existing = revisions.get(rel_key)
     changed = True
-    revision: int = 1
+    revision = "1"
 
     if existing is not None:
         old_hash = existing.get("content_hash", "")
@@ -80,15 +82,15 @@ def compute_revision(
         if old_hash == content_hash:
             # 内容未变化，不递增
             changed = False
-            revision = old_revision
+            revision = str(old_revision)
         else:
             # 内容变化，revision +1
             changed = True
-            revision = old_revision + 1
+            revision = next_revision(old_revision)
     
     result: dict[str, Any] = {
         "path": rel_key,
-        "revision": str(revision),
+        "revision": revision,
         "content_hash": content_hash,
         "changed": changed,
     }

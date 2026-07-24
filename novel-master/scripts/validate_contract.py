@@ -7,6 +7,7 @@
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
@@ -28,6 +29,10 @@ ALLOWED_CHAPTER_TRANSITIONS = {
 }
 
 COMMIT_ELIGIBLE_CHAPTER_STATES = {"ACCEPTED", "PUBLISHED"}
+REVISION_PATTERN = re.compile(
+    r"^(?:[1-9][0-9]*|[A-Za-z][A-Za-z0-9._-]*[0-9])$"
+)
+SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 
 
 def is_valid_chapter_transition(from_state: str, to_state: str) -> bool:
@@ -38,6 +43,31 @@ def is_valid_chapter_transition(from_state: str, to_state: str) -> bool:
 def can_commit_chapter_state(status: str) -> bool:
     """检查章节是否可以作为 COMMIT_CHAPTER_STATE 来源。"""
     return status in COMMIT_ELIGIBLE_CHAPTER_STATES
+
+
+def is_valid_revision(revision: str) -> bool:
+    """检查 revision 是否可确定性比较和递增。"""
+    return REVISION_PATTERN.fullmatch(revision) is not None
+
+
+def is_valid_sha256(content_hash: str) -> bool:
+    """检查 hash 是否为 64 位小写 SHA-256。"""
+    return SHA256_PATTERN.fullmatch(content_hash) is not None
+
+
+def next_revision(current: Any) -> str:
+    """兼容旧整数记录并返回规范化的下一版字符串。"""
+    if isinstance(current, int):
+        if current < 0:
+            raise ValueError(f"无法递增 revision: {current!r}")
+        return str(current + 1)
+    if isinstance(current, str) and is_valid_revision(current):
+        match = re.fullmatch(r"(.*?)(\d+)", current)
+        if match:
+            prefix, digits = match.groups()
+            incremented = str(int(digits) + 1).zfill(len(digits))
+            return f"{prefix}{incremented}"
+    raise ValueError(f"无法递增 revision: {current!r}")
 
 
 def load_schema(schema_path: Path) -> dict[str, Any]:

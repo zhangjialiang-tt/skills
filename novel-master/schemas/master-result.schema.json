@@ -4,6 +4,7 @@
   "title": "MasterResult",
   "description": "Orchestrator output contract for novel-master V1 (Contract §14)",
   "type": "object",
+  "additionalProperties": false,
   "required": [
     "schema_version",
     "request_id",
@@ -37,6 +38,7 @@
       "type": "array",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": ["skill", "mode", "purpose", "status"],
         "properties": {
           "skill": { "type": "string", "minLength": 1 },
@@ -50,6 +52,7 @@
       "type": "array",
       "items": {
         "type": "object",
+        "additionalProperties": false,
         "required": ["name", "path", "summary"],
         "properties": {
           "name": { "type": "string", "minLength": 1 },
