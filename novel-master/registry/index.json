@@ -1,0 +1,19 @@
+{
+  "schema_version": "2.0",
+  "generated_at": "2026-07-25T00:00:00Z",
+  "package_count": 1,
+  "packages": [
+    {
+      "name": "novel-master",
+      "version": "1.1.0",
+      "maturity": "production",
+      "owner": "zhangjl",
+      "targets": [
+        "openai",
+        "generic"
+      ],
+      "package_metadata": "registry/packages/novel-master.json",
+      "package_sha256": "1abba7e9732a90639dfc09c67782d178d1e363c9c5efc2f5e61c133424a9760e"
+    }
+  ]
+}

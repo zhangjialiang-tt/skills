@@ -2,3 +2,5 @@ interface:
   display_name: "网文项目简报"
   short_description: "将模糊创意整理为可确认、可执行的长篇网文项目简报文档"
   default_prompt: "使用 $novel-brief 将我的创意整理成可确认的项目简报。"
+policy:
+  allow_implicit_invocation: false

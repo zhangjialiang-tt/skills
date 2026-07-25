@@ -1,0 +1,68 @@
+[
+  {
+    "name": "chapter-planner",
+    "path": "chapter-planner",
+    "missing": [
+      "owner",
+      "review_cadence",
+      "maturity"
+    ],
+    "actionable": false,
+    "scope": "embedded"
+  },
+  {
+    "name": "chapter-writer",
+    "path": "chapter-writer",
+    "missing": [
+      "owner",
+      "review_cadence",
+      "maturity"
+    ],
+    "actionable": false,
+    "scope": "embedded"
+  },
+  {
+    "name": "continuity-keeper",
+    "path": "continuity-keeper",
+    "missing": [
+      "owner",
+      "review_cadence",
+      "maturity"
+    ],
+    "actionable": false,
+    "scope": "embedded"
+  },
+  {
+    "name": "novel-brief",
+    "path": "novel-brief",
+    "missing": [
+      "owner",
+      "review_cadence",
+      "maturity"
+    ],
+    "actionable": false,
+    "scope": "embedded"
+  },
+  {
+    "name": "novel-reviewer",
+    "path": "novel-reviewer",
+    "missing": [
+      "owner",
+      "review_cadence",
+      "maturity"
+    ],
+    "actionable": false,
+    "scope": "embedded"
+  },
+  {
+    "name": "story-architect",
+    "path": "story-architect",
+    "missing": [
+      "owner",
+      "review_cadence",
+      "maturity"
+    ],
+    "actionable": false,
+    "scope": "embedded"
+  }
+]

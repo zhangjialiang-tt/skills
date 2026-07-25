@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "scope_rules": [
+    {
+      "path_prefix": "novel-brief",
+      "scope": "embedded",
+      "actionable": false,
+      "reason": "Embedded execution component; novel-master owns public routing and release governance."
+    },
+    {
+      "path_prefix": "story-architect",
+      "scope": "embedded",
+      "actionable": false,
+      "reason": "Embedded execution component; novel-master owns public routing and release governance."
+    },
+    {
+      "path_prefix": "chapter-planner",
+      "scope": "embedded",
+      "actionable": false,
+      "reason": "Embedded execution component; novel-master owns public routing and release governance."
+    },
+    {
+      "path_prefix": "chapter-writer",
+      "scope": "embedded",
+      "actionable": false,
+      "reason": "Embedded execution component; novel-master owns public routing and release governance."
+    },
+    {
+      "path_prefix": "novel-reviewer",
+      "scope": "embedded",
+      "actionable": false,
+      "reason": "Embedded execution component; novel-master owns public routing and release governance."
+    },
+    {
+      "path_prefix": "continuity-keeper",
+      "scope": "embedded",
+      "actionable": false,
+      "reason": "Embedded execution component; novel-master owns public routing and release governance."
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "schema_version": "2.0",
+  "name": "novel-master",
+  "version": "1.1.0",
+  "description": "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。",
+  "targets": [
+    "openai",
+    "generic"
+  ],
+  "maturity": "production",
+  "owner": "zhangjl",
+  "review_cadence": "per-release",
+  "trust_level": "local",
+  "license": "Proprietary - All Rights Reserved",
+  "checksums": {
+    "package_sha256": "1abba7e9732a90639dfc09c67782d178d1e363c9c5efc2f5e61c133424a9760e",
+    "archive_sha256": "78d226555b8415547407e44d9b0db974361d26c740b209f3c15b8458cded035c"
+  },
+  "compatibility": {
+    "openai": "pass",
+    "generic": "pass"
+  },
+  "source": {
+    "skill_dir": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master",
+    "skill_ir": "reports\\skill-ir.json",
+    "ir_schema_version": "2.0.0",
+    "canonical_metadata": "agents/interface.yaml"
+  },
+  "artifacts": {
+    "overview_html": "reports/skill-overview.html",
+    "review_studio_html": "reports/review-studio.html",
+    "trust_report": "reports/security_trust_report.md",
+    "conformance_matrix": "reports/conformance_matrix.md",
+    "compiled_targets": "reports/compiled_targets.md",
+    "package_verification": "reports/package_verification.md",
+    "install_simulation": "reports/install_simulation.md",
+    "adoption_drift": "reports/adoption_drift_report.md",
+    "review_waivers": "reports/review_waivers.md",
+    "review_annotations": "reports/review_annotations.md",
+    "package_metadata": "registry/packages/novel-master.json"
+  },
+  "distribution": {
+    "archive_verified": true,
+    "archive_sha256": "78d226555b8415547407e44d9b0db974361d26c740b209f3c15b8458cded035c",
+    "package_verification": "reports/package_verification.json",
+    "install_simulated": false,
+    "install_simulation": "reports/install_simulation.json"
+  },
+  "generated_at": "2026-07-25T00:00:00Z"
+}

@@ -1,0 +1,33 @@
+{
+  "nodes": [
+    {
+      "name": "chapter-planner",
+      "path": "chapter-planner"
+    },
+    {
+      "name": "chapter-writer",
+      "path": "chapter-writer"
+    },
+    {
+      "name": "continuity-keeper",
+      "path": "continuity-keeper"
+    },
+    {
+      "name": "novel-brief",
+      "path": "novel-brief"
+    },
+    {
+      "name": "novel-reviewer",
+      "path": "novel-reviewer"
+    },
+    {
+      "name": "novel-master",
+      "path": "."
+    },
+    {
+      "name": "story-architect",
+      "path": "story-architect"
+    }
+  ],
+  "shared_resources": []
+}

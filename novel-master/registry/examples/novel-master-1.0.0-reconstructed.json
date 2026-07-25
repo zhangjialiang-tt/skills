@@ -1,0 +1,25 @@
+{
+  "schema_version": "2.0",
+  "name": "novel-master",
+  "version": "1.0.0",
+  "description": "编排长篇网文项目的意图识别、最小路由、权限与风险判定、接受闸门和结果汇总，不直接生成创作内容。用户提出小说创作、续写、修订、评审、设定、状态提交、项目初始化或跨子 Skill 协调请求时使用。",
+  "targets": [
+    "openai"
+  ],
+  "maturity": "production",
+  "owner": "zhangjl",
+  "review_cadence": "per-release",
+  "trust_level": "local",
+  "license": "",
+  "checksums": {
+    "package_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "compatibility": {
+    "openai": "pass"
+  },
+  "source": {
+    "commit": "fa34b60",
+    "evidence_status": "reconstructed baseline; no archived 1.0.0 registry package exists"
+  },
+  "generated_at": "2026-07-25"
+}

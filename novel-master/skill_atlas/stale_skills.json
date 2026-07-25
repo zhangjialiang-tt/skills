@@ -1,0 +1,44 @@
+[
+  {
+    "name": "chapter-planner",
+    "path": "chapter-planner",
+    "reason": "missing updated_at",
+    "actionable": false,
+    "scope": "embedded"
+  },
+  {
+    "name": "chapter-writer",
+    "path": "chapter-writer",
+    "reason": "missing updated_at",
+    "actionable": false,
+    "scope": "embedded"
+  },
+  {
+    "name": "continuity-keeper",
+    "path": "continuity-keeper",
+    "reason": "missing updated_at",
+    "actionable": false,
+    "scope": "embedded"
+  },
+  {
+    "name": "novel-brief",
+    "path": "novel-brief",
+    "reason": "missing updated_at",
+    "actionable": false,
+    "scope": "embedded"
+  },
+  {
+    "name": "novel-reviewer",
+    "path": "novel-reviewer",
+    "reason": "missing updated_at",
+    "actionable": false,
+    "scope": "embedded"
+  },
+  {
+    "name": "story-architect",
+    "path": "story-architect",
+    "reason": "missing updated_at",
+    "actionable": false,
+    "scope": "embedded"
+  }
+]
