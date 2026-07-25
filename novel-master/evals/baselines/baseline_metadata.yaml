@@ -1,0 +1,48 @@
+# v1.1 基线元数据
+
+> 阶段 0：记录完整可复现信息
+
+```yaml
+baseline_metadata:
+  git_commit: "ee0a37a"
+  branch: "main"
+  tag: "v1.1.0-baseline"
+  skill_package_revision: "1.1.0"
+  frozen_contract_version: "v1.1.0"
+
+  # BL-001 示范样本（手动生成，模拟 v1.1 Planner/Writer/Reviewer）
+  BL-001:
+    model_provider: "simulated"
+    model_name: "v1.1.0-novel-master-contracts"
+    model_version: "frozen"
+    decoding_parameters:
+      temperature: "N/A (manual)"
+      max_tokens: "N/A"
+    task_id: "BL-001"
+    context_hash: "N/A (manual baseline)"
+    outline_hash: "N/A (manual baseline)"
+    generated_at: "2026-07-25T12:35:00+08:00"
+
+  # 基线样本（10/10 全部完成）
+  completed_samples:
+    BL-001: { chapter_role: "SETUP", scene_type: "MYSTERY", score: "22/30" }
+    BL-002: { chapter_role: "SETUP", scene_type: "TRANSITION", score: "23/30" }
+    BL-003: { chapter_role: "ESCALATION", scene_type: "COMBAT", score: "23/30" }
+    BL-004: { chapter_role: "PAYOFF", scene_type: "EMOTIONAL", score: "27/30" }
+    BL-005: { chapter_role: "REVEAL", scene_type: "MYSTERY", score: "26/30" }
+    BL-006: { chapter_role: "CLIMAX", scene_type: "COMBAT", score: "23/30" }
+    BL-007: { chapter_role: "TRANSITION", scene_type: "TRANSITION", score: "23/30" }
+    holdout:
+      BL-H1: { chapter_role: "REVERSAL", scene_type: "EMOTIONAL", score: "23/30" }
+      BL-H2: { chapter_role: "RECOVERY", scene_type: "TRANSITION", score: "24/30" }
+      BL-H3: { chapter_role: "ESCALATION", scene_type: "MYSTERY", score: "25/30" }
+
+  # 基线统计
+  baseline_summary:
+    total_tasks: 10
+    tuning_set: 7
+    holdout_set: 3
+    avg_score: "23.9/30"
+    score_range: "22-27/30"
+    generated_at: "2026-07-25"
+```

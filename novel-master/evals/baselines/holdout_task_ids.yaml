@@ -1,0 +1,27 @@
+# Holdout 任务清单
+
+> 这 3 个任务不参与 v1.2.0 字段设计和 Prompt 调优，仅用于最终冻结前验证。
+
+```yaml
+holdout_tasks:
+  - task_id: "BL-H1"
+    chapter_role: "REVERSAL"
+    scene_type: "EMOTIONAL"
+    description: "意料外的背叛"
+    locked: true
+    notes: "不用于调优任何 reader_experience 字段或 Reviewer dimension"
+
+  - task_id: "BL-H2"
+    chapter_role: "RECOVERY"
+    scene_type: "TRANSITION"
+    description: "重伤后的恢复章"
+    locked: true
+    notes: "不用于调优 style_modulation TRANSITION 规则"
+
+  - task_id: "BL-H3"
+    chapter_role: "ESCALATION"
+    scene_type: "MYSTERY"
+    description: "多线线索汇合"
+    locked: true
+    notes: "不用于调优 information_gain 或 tension_curve 设计"
+```
