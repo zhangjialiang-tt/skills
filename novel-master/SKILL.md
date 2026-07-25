@@ -1,6 +1,6 @@
 ---
 name: novel-master
-description: "编排长篇网文项目的意图识别、最小路由、权限与风险判定、接受闸门和结果汇总，不直接生成创作内容。用户提出小说创作、续写、修订、评审、设定、状态提交、项目初始化或跨子 Skill 协调请求时使用。"
+description: "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。"
 ---
 
 # novel-master
@@ -86,3 +86,9 @@ DEFAULT（唯一模式）。
 - 涉及章节接受、状态转换或高风险授权时，读取[生命周期与授权](references/lifecycle-and-approval.md)。
 - 返回阻塞、失败或降级结果时，读取[错误码](references/error-codes.md)。
 - 需要核对字段级契约或设计依据时，读取[冻结契约](docs/novel-master-contracts-v1.0.1-frozen.md) §2、§5、§10、§11、§14 和[冻结架构](docs/novel-master-architecture-v1.0.1-frozen.md) §4、§5、§7、§8。
+
+## 执行与质量资源
+
+- 契约校验、路径边界、revision、锁和提交逻辑复用 `scripts/`，不得在对话中重写确定性规则。
+- 路由或输出合同变更后运行 `evals/` 回归，并以 `schemas/`、`examples/` 和 `templates/` 作为可复现输入。
+- 交付前自检：路由是否最小、事实与 Proposal 是否分离、写入是否属于 owned zone、授权与 rollback boundary 是否可追溯。

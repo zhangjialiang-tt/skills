@@ -1,0 +1,29 @@
+{
+  "name": "novel-master",
+  "version": "1.1.0",
+  "owner": "zhangjl",
+  "updated_at": "2026-07-25",
+  "status": "active",
+  "maturity_tier": "production",
+  "lifecycle_stage": "production",
+  "context_budget_tier": "production",
+  "review_cadence": "per-release",
+  "target_platforms": [
+    "openai",
+    "generic"
+  ],
+  "factory_components": [
+    "references",
+    "scripts",
+    "schemas",
+    "templates",
+    "evals",
+    "examples",
+    "novel-brief",
+    "story-architect",
+    "chapter-planner",
+    "chapter-writer",
+    "novel-reviewer",
+    "continuity-keeper"
+  ]
+}

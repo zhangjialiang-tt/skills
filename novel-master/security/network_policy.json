@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0",
+  "default_policy": {
+    "require_https": true,
+    "custom_hosts": "deny",
+    "review_rule": "novel-master runtime scripts do not require network access; any future network-capable script requires an explicit per-script allowlist and reviewer approval."
+  },
+  "scripts": {}
+}

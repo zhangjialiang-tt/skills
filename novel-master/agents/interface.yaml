@@ -1,0 +1,22 @@
+interface:
+  display_name: "网文创作总控"
+  short_description: "统一编排长篇网文的创作、修订、评审、授权与状态治理流程"
+  default_prompt: "使用 $novel-master 编排这项网文创作请求，并按权限与风险返回结果。"
+compatibility:
+  canonical_format: "agent-skills"
+  adapter_targets:
+    - "openai"
+    - "generic"
+  activation:
+    mode: "implicit"
+    paths: []
+  execution:
+    context: "inline"
+    shell: "powershell"
+  trust:
+    source_tier: "local"
+    remote_inline_execution: "forbid"
+    remote_metadata_policy: "allow-metadata-only"
+  degradation:
+    openai: "metadata-adapter"
+    generic: "neutral-source"

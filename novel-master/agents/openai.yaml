@@ -2,3 +2,5 @@ interface:
   display_name: "网文创作总控"
   short_description: "统一编排长篇网文的创作、修订、评审、授权与状态治理流程"
   default_prompt: "使用 $novel-master 编排这项网文创作请求，并按权限与风险返回结果。"
+policy:
+  allow_implicit_invocation: true
