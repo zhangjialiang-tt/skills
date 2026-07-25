@@ -50,10 +50,12 @@
       "references\\style-guide-template.md"
     ],
     "scripts": [
+      "scripts\\build_planning_pack.py",
       "scripts\\check_prompt_regressions.py",
       "scripts\\commit_changeset.py",
       "scripts\\compute_revision.py",
       "scripts\\project_lock.py",
+      "scripts\\rebuild_plan_progress.py",
       "scripts\\validate_approval.py",
       "scripts\\validate_contract.py",
       "scripts\\validate_paths.py",

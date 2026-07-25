@@ -16,6 +16,7 @@
 | `outline/` | story-architect / PLOT | chapter-planner 只读 |
 | `style_guide.md` | novel-style | 只读或 Proposal |
 | `chapters/plans/` | chapter-planner | chapter-writer 只读 |
+| `chapters/batches/` | chapter-planner | chapter-writer 只读 |
 | `chapters/drafts/` | chapter-writer | 其他子 Skill 只读 |
 | `reviews/` | novel-reviewer | 其他子 Skill 只读 |
 | `state/` | continuity-keeper | 禁止直接写入 |
@@ -59,7 +60,7 @@
 - 禁止：写正文、写状态、跨区域写入、固化某一题材默认风格、模仿特定在世作者文风
 
 ### chapter-planner
-- 可写：`chapters/plans/chapter_*.md`
+- 可写：`chapters/plans/chapter_*.md`、`chapters/batches/batch_*.md`
 - 可读：`outline/`、`state/`、`architecture/`、`characters/`、`world/`、`style_guide.md`（只读，节奏与字数参考）
 - 禁止：修改总纲、写正文、写状态、增加未授权规则
 
