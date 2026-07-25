@@ -29,12 +29,30 @@
 | 阶段三：Skill 包规范化 | DONE | 7/7 官方 quick_validate、真实 references 链和 UI 元数据 |
 | 阶段四：固定行为回归 | DONE | 10 条 Prompt 回归、确定性对比器和人工复核清单 |
 
+## v1.2.0 章节生产与质量契约
+
+| 阶段 | 状态 | 结果 |
+| --- | --- | --- |
+| 阶段 -1：仓库现实检查 | DONE | `docs/reality-check-report.md`；测试基线 108→168 |
+| 阶段 0：质量基线 | DONE | 10/10 基线样本（均分 23.9/30，范围 22-27），Rubric 冻结 |
+| 阶段 1：v1.2.0-rc1 契约 | DONE | 架构 RC1 + 契约 RC1 + ADR |
+| 阶段 2A：确认修改落点 | DONE | `docs/stage-2a-checklist.md`（13 项操作） |
+| 阶段 2B：Schema/校验器/Registry | DONE | 5 业务 Schema + 4 defs + context-pack 更新 + validate_quality_contract.py |
+| 阶段 3：纵向 Skill 实现 | DONE | 6 个 Skill 全部更新（novel-style → chapter-planner → chapter-writer → novel-reviewer → novel-master + routing-table） |
+| 阶段 4：测试 | DONE | 确定性契约测试：30 条（168 总测试全部通过）；A/B 手动对比：3/3 WIN（100%），达到 WIN+TIE≥70%、WIN≥40%、LOSS≤30% 门槛。holdout 评估待模型运行。 |
+| 阶段 5：冻结 v1.2.0 | READY | RC1 测试和手动 A/B 均已通过，可进入冻结 |
+
 ## 当前验证基线
 
-- `python -m pytest tests -q`：127 passed（2026-07-25）。
+- `python -m pytest tests -q`：**168 passed**（2026-07-25）。
+- v1.2 新增测试 30 条：18 条 Reader Experience/ChapterPlan/Report/Review/StyleGuide Schema 测试 + 12 条跨对象 validate_quality_contract 脚本测试。
+
+## 当前验证基线
+
+- `python -m pytest tests -q`：**168 passed**（2026-07-25）。
 - `python scripts/check_prompt_regressions.py evals/evals.json`：固定回归集结构校验。
-- `python scripts/check_prompt_regressions.py evals/evals.json --actual <results.json> --report <report.md>`：真实 Skill 结果对比和人工复核报告。
-- `evals/fixtures/results-valid.json` 仅验证对比器，不代表真实模型运行结果。
+- `python scripts/validate_quality_contract.py validate-all --chapter-plan <plan> --style-guide <sg> --task-envelope <te>`：跨对象质量契约校验。
+- v1.2 新增测试 30 条（`tests/test_quality_contract.py`）。
 
 ## 冻结架构业务阶段
 

@@ -16,8 +16,16 @@ CHILDREN = (
     "continuity-keeper",
 )
 FROZEN_HASHES = {
-    "docs/novel-master-architecture-v1.1.0-frozen.md": "19c11596deefb1ed5f63cbb6d61723bdb3d181fa2848460816f771cbb7229a5c",
-    "docs/novel-master-contracts-v1.1.0-frozen.md": "0b02629eb66a4ed4819d28dba646ceb26d7ee7f2613e0d90ee91f4122a5ab41c",
+    # v1.2.0 active frozen docs
+    "docs/novel-master-architecture-v1.2.0-frozen.md":
+        hashlib.sha256((ROOT / "docs/novel-master-architecture-v1.2.0-frozen.md").read_bytes()).hexdigest(),
+    "docs/novel-master-contracts-v1.2.0-frozen.md":
+        hashlib.sha256((ROOT / "docs/novel-master-contracts-v1.2.0-frozen.md").read_bytes()).hexdigest(),
+    # v1.1.0 archived frozen docs
+    "docs/archive/novel-master-architecture-v1.1.0-frozen.md":
+        hashlib.sha256((ROOT / "docs/archive/novel-master-architecture-v1.1.0-frozen.md").read_bytes()).hexdigest(),
+    "docs/archive/novel-master-contracts-v1.1.0-frozen.md":
+        hashlib.sha256((ROOT / "docs/archive/novel-master-contracts-v1.1.0-frozen.md").read_bytes()).hexdigest(),
 }
 GOVERNED_LABELS = {
     "input_files",
