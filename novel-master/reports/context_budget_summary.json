@@ -1,0 +1,30 @@
+{
+  "generated_at": "2026-07-25",
+  "targets": [
+    {
+      "label": "root",
+      "path": ".",
+      "budget_tier": "production",
+      "budget_limit": 1000,
+      "initial_tokens": 712,
+      "skill_body_tokens": 527,
+      "deferred_resource_tokens": 30705,
+      "large_deferred_resource_dirs": [],
+      "deferred_resource_governance": {
+        "status": "not-required",
+        "large_dir_count": 0,
+        "governed_large_dir_count": 0,
+        "directories": [],
+        "summary": "No large deferred resource directory exceeds the per-dir threshold."
+      },
+      "quality_density": 175.6,
+      "unused_resource_dirs": [
+        "reports"
+      ],
+      "ok": true,
+      "warnings": [
+        "reports/ contains files but is not referenced in SKILL.md or declared in manifest factory_components."
+      ]
+    }
+  ]
+}

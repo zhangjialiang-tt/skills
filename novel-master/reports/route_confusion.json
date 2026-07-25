@@ -1,0 +1,1205 @@
+{
+  "summary": {
+    "total_cases": 15,
+    "correct_cases": 15,
+    "accuracy": 1.0,
+    "ambiguous_case_count": 0,
+    "margin_warning_threshold": 0.06,
+    "misroute_count": 0,
+    "no_route_accuracy": 1.0
+  },
+  "route_stats": {
+    "novel-master": {
+      "expected_count": 6,
+      "predicted_count": 6,
+      "correct_count": 6,
+      "precision": 1.0,
+      "recall": 1.0,
+      "average_margin": 0.254
+    },
+    "novel-brief": {
+      "expected_count": 1,
+      "predicted_count": 1,
+      "correct_count": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "average_margin": 0.708
+    },
+    "story-architect": {
+      "expected_count": 1,
+      "predicted_count": 1,
+      "correct_count": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "average_margin": 0.782
+    },
+    "chapter-planner": {
+      "expected_count": 1,
+      "predicted_count": 1,
+      "correct_count": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "average_margin": 0.737
+    },
+    "chapter-writer": {
+      "expected_count": 1,
+      "predicted_count": 1,
+      "correct_count": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "average_margin": 0.737
+    },
+    "novel-reviewer": {
+      "expected_count": 1,
+      "predicted_count": 1,
+      "correct_count": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "average_margin": 0.782
+    },
+    "continuity-keeper": {
+      "expected_count": 1,
+      "predicted_count": 1,
+      "correct_count": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "average_margin": 0.96
+    },
+    "no_route": {
+      "expected_count": 3,
+      "predicted_count": 3,
+      "correct_count": 3,
+      "precision": 1.0,
+      "recall": 1.0,
+      "average_margin": null
+    }
+  },
+  "confusion_matrix": {
+    "novel-master": {
+      "novel-master": 6,
+      "novel-brief": 0,
+      "story-architect": 0,
+      "chapter-planner": 0,
+      "chapter-writer": 0,
+      "novel-reviewer": 0,
+      "continuity-keeper": 0,
+      "no_route": 0
+    },
+    "novel-brief": {
+      "novel-master": 0,
+      "novel-brief": 1,
+      "story-architect": 0,
+      "chapter-planner": 0,
+      "chapter-writer": 0,
+      "novel-reviewer": 0,
+      "continuity-keeper": 0,
+      "no_route": 0
+    },
+    "story-architect": {
+      "novel-master": 0,
+      "novel-brief": 0,
+      "story-architect": 1,
+      "chapter-planner": 0,
+      "chapter-writer": 0,
+      "novel-reviewer": 0,
+      "continuity-keeper": 0,
+      "no_route": 0
+    },
+    "chapter-planner": {
+      "novel-master": 0,
+      "novel-brief": 0,
+      "story-architect": 0,
+      "chapter-planner": 1,
+      "chapter-writer": 0,
+      "novel-reviewer": 0,
+      "continuity-keeper": 0,
+      "no_route": 0
+    },
+    "chapter-writer": {
+      "novel-master": 0,
+      "novel-brief": 0,
+      "story-architect": 0,
+      "chapter-planner": 0,
+      "chapter-writer": 1,
+      "novel-reviewer": 0,
+      "continuity-keeper": 0,
+      "no_route": 0
+    },
+    "novel-reviewer": {
+      "novel-master": 0,
+      "novel-brief": 0,
+      "story-architect": 0,
+      "chapter-planner": 0,
+      "chapter-writer": 0,
+      "novel-reviewer": 1,
+      "continuity-keeper": 0,
+      "no_route": 0
+    },
+    "continuity-keeper": {
+      "novel-master": 0,
+      "novel-brief": 0,
+      "story-architect": 0,
+      "chapter-planner": 0,
+      "chapter-writer": 0,
+      "novel-reviewer": 0,
+      "continuity-keeper": 1,
+      "no_route": 0
+    },
+    "no_route": {
+      "novel-master": 0,
+      "novel-brief": 0,
+      "story-architect": 0,
+      "chapter-planner": 0,
+      "chapter-writer": 0,
+      "novel-reviewer": 0,
+      "continuity-keeper": 0,
+      "no_route": 3
+    }
+  },
+  "ambiguous_cases": [],
+  "misroutes": [],
+  "cases": [
+    {
+      "family": "public_init",
+      "prompt": "帮我初始化一个长篇网文项目。",
+      "expected_route": "novel-master",
+      "predicted_route": "novel-master",
+      "correct": true,
+      "margin": 0.252,
+      "ambiguous": false,
+      "ranked_routes": [
+        {
+          "name": "novel-master",
+          "score": 0.252,
+          "passed_threshold": true,
+          "threshold": 0.17,
+          "matched_desired_concepts": [
+            "novel_project"
+          ],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-brief",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "story-architect",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-planner",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-writer",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-reviewer",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "continuity-keeper",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        }
+      ]
+    },
+    {
+      "family": "public_architecture",
+      "prompt": "为我的连载设计人物、世界观和主线大纲。",
+      "expected_route": "novel-master",
+      "predicted_route": "novel-master",
+      "correct": true,
+      "margin": 0.47,
+      "ambiguous": false,
+      "ranked_routes": [
+        {
+          "name": "novel-master",
+          "score": 0.47,
+          "passed_threshold": true,
+          "threshold": 0.17,
+          "matched_desired_concepts": [
+            "novel_project",
+            "story_design"
+          ],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-brief",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "story-architect",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-planner",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-writer",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-reviewer",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "continuity-keeper",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        }
+      ]
+    },
+    {
+      "family": "public_plan",
+      "prompt": "根据大纲规划下一章。",
+      "expected_route": "novel-master",
+      "predicted_route": "novel-master",
+      "correct": true,
+      "margin": 0.223,
+      "ambiguous": false,
+      "ranked_routes": [
+        {
+          "name": "novel-master",
+          "score": 0.223,
+          "passed_threshold": true,
+          "threshold": 0.17,
+          "matched_desired_concepts": [
+            "chapter_production"
+          ],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-brief",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "story-architect",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-planner",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-writer",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-reviewer",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "continuity-keeper",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        }
+      ]
+    },
+    {
+      "family": "public_write",
+      "prompt": "按章节卡续写正文。",
+      "expected_route": "novel-master",
+      "predicted_route": "novel-master",
+      "correct": true,
+      "margin": 0.223,
+      "ambiguous": false,
+      "ranked_routes": [
+        {
+          "name": "novel-master",
+          "score": 0.223,
+          "passed_threshold": true,
+          "threshold": 0.17,
+          "matched_desired_concepts": [
+            "chapter_production"
+          ],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-brief",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "story-architect",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-planner",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-writer",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-reviewer",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "continuity-keeper",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        }
+      ]
+    },
+    {
+      "family": "public_review",
+      "prompt": "评审这一章并给出修订建议。",
+      "expected_route": "novel-master",
+      "predicted_route": "novel-master",
+      "correct": true,
+      "margin": 0.178,
+      "ambiguous": false,
+      "ranked_routes": [
+        {
+          "name": "novel-master",
+          "score": 0.178,
+          "passed_threshold": true,
+          "threshold": 0.17,
+          "matched_desired_concepts": [
+            "review_continuity"
+          ],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-brief",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "story-architect",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-planner",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-writer",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-reviewer",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "continuity-keeper",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        }
+      ]
+    },
+    {
+      "family": "public_continuity",
+      "prompt": "检查时间线冲突并更新连续性状态。",
+      "expected_route": "novel-master",
+      "predicted_route": "novel-master",
+      "correct": true,
+      "margin": 0.178,
+      "ambiguous": false,
+      "ranked_routes": [
+        {
+          "name": "novel-master",
+          "score": 0.178,
+          "passed_threshold": true,
+          "threshold": 0.17,
+          "matched_desired_concepts": [
+            "review_continuity"
+          ],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-brief",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "story-architect",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-planner",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-writer",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-reviewer",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "continuity-keeper",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        }
+      ]
+    },
+    {
+      "family": "explicit_brief",
+      "prompt": "显式使用 $novel-brief 把创意整理成项目简报。",
+      "expected_route": "novel-brief",
+      "predicted_route": "novel-brief",
+      "correct": true,
+      "margin": 0.708,
+      "ambiguous": false,
+      "ranked_routes": [
+        {
+          "name": "novel-brief",
+          "score": 0.96,
+          "passed_threshold": true,
+          "threshold": 0.5,
+          "matched_desired_concepts": [
+            "explicit_novel_brief"
+          ],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-master",
+          "score": 0.252,
+          "passed_threshold": true,
+          "threshold": 0.17,
+          "matched_desired_concepts": [
+            "novel_project"
+          ],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "story-architect",
+          "score": 0.14,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-planner",
+          "score": 0.14,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-writer",
+          "score": 0.14,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-reviewer",
+          "score": 0.14,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "continuity-keeper",
+          "score": 0.14,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        }
+      ]
+    },
+    {
+      "family": "explicit_architect",
+      "prompt": "显式使用 $story-architect 设计世界规则。",
+      "expected_route": "story-architect",
+      "predicted_route": "story-architect",
+      "correct": true,
+      "margin": 0.782,
+      "ambiguous": false,
+      "ranked_routes": [
+        {
+          "name": "story-architect",
+          "score": 0.96,
+          "passed_threshold": true,
+          "threshold": 0.5,
+          "matched_desired_concepts": [
+            "explicit_story_architect"
+          ],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-master",
+          "score": 0.178,
+          "passed_threshold": true,
+          "threshold": 0.17,
+          "matched_desired_concepts": [
+            "story_design"
+          ],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-brief",
+          "score": 0.12,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-planner",
+          "score": 0.12,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-writer",
+          "score": 0.12,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-reviewer",
+          "score": 0.12,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "continuity-keeper",
+          "score": 0.12,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        }
+      ]
+    },
+    {
+      "family": "explicit_planner",
+      "prompt": "显式使用 $chapter-planner 生成章节卡。",
+      "expected_route": "chapter-planner",
+      "predicted_route": "chapter-planner",
+      "correct": true,
+      "margin": 0.737,
+      "ambiguous": false,
+      "ranked_routes": [
+        {
+          "name": "chapter-planner",
+          "score": 0.96,
+          "passed_threshold": true,
+          "threshold": 0.5,
+          "matched_desired_concepts": [
+            "explicit_chapter_planner"
+          ],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-master",
+          "score": 0.223,
+          "passed_threshold": true,
+          "threshold": 0.17,
+          "matched_desired_concepts": [
+            "chapter_production"
+          ],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-writer",
+          "score": 0.14,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-brief",
+          "score": 0.12,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "story-architect",
+          "score": 0.12,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-reviewer",
+          "score": 0.12,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "continuity-keeper",
+          "score": 0.12,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        }
+      ]
+    },
+    {
+      "family": "explicit_writer",
+      "prompt": "显式使用 $chapter-writer 写正文。",
+      "expected_route": "chapter-writer",
+      "predicted_route": "chapter-writer",
+      "correct": true,
+      "margin": 0.737,
+      "ambiguous": false,
+      "ranked_routes": [
+        {
+          "name": "chapter-writer",
+          "score": 0.96,
+          "passed_threshold": true,
+          "threshold": 0.5,
+          "matched_desired_concepts": [
+            "explicit_chapter_writer"
+          ],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-master",
+          "score": 0.223,
+          "passed_threshold": true,
+          "threshold": 0.17,
+          "matched_desired_concepts": [
+            "chapter_production"
+          ],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-planner",
+          "score": 0.14,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-brief",
+          "score": 0.12,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "story-architect",
+          "score": 0.12,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-reviewer",
+          "score": 0.12,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "continuity-keeper",
+          "score": 0.12,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        }
+      ]
+    },
+    {
+      "family": "explicit_reviewer",
+      "prompt": "显式使用 $novel-reviewer 做只读评审。",
+      "expected_route": "novel-reviewer",
+      "predicted_route": "novel-reviewer",
+      "correct": true,
+      "margin": 0.782,
+      "ambiguous": false,
+      "ranked_routes": [
+        {
+          "name": "novel-reviewer",
+          "score": 0.96,
+          "passed_threshold": true,
+          "threshold": 0.5,
+          "matched_desired_concepts": [
+            "explicit_novel_reviewer"
+          ],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-master",
+          "score": 0.178,
+          "passed_threshold": true,
+          "threshold": 0.17,
+          "matched_desired_concepts": [
+            "review_continuity"
+          ],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-brief",
+          "score": 0.14,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "story-architect",
+          "score": 0.14,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-planner",
+          "score": 0.14,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-writer",
+          "score": 0.14,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "continuity-keeper",
+          "score": 0.14,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        }
+      ]
+    },
+    {
+      "family": "explicit_keeper",
+      "prompt": "显式使用 $continuity-keeper 提交状态。",
+      "expected_route": "continuity-keeper",
+      "predicted_route": "continuity-keeper",
+      "correct": true,
+      "margin": 0.96,
+      "ambiguous": false,
+      "ranked_routes": [
+        {
+          "name": "continuity-keeper",
+          "score": 0.96,
+          "passed_threshold": true,
+          "threshold": 0.5,
+          "matched_desired_concepts": [
+            "explicit_continuity_keeper"
+          ],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-brief",
+          "score": 0.12,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "story-architect",
+          "score": 0.12,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-planner",
+          "score": 0.12,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-writer",
+          "score": 0.12,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-reviewer",
+          "score": 0.12,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-master",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.17,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        }
+      ]
+    },
+    {
+      "family": "no_route_polish",
+      "prompt": "润色这封商务邮件。",
+      "expected_route": "no_route",
+      "predicted_route": "no_route",
+      "correct": true,
+      "margin": null,
+      "ambiguous": false,
+      "ranked_routes": [
+        {
+          "name": "novel-master",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.17,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": [
+            "plain_polish"
+          ]
+        },
+        {
+          "name": "novel-brief",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "story-architect",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-planner",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-writer",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-reviewer",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "continuity-keeper",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        }
+      ]
+    },
+    {
+      "family": "no_route_recommend",
+      "prompt": "推荐十本小说。",
+      "expected_route": "no_route",
+      "predicted_route": "no_route",
+      "correct": true,
+      "margin": null,
+      "ambiguous": false,
+      "ranked_routes": [
+        {
+          "name": "novel-master",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.17,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-brief",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "story-architect",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-planner",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-writer",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-reviewer",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "continuity-keeper",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        }
+      ]
+    },
+    {
+      "family": "no_route_code",
+      "prompt": "修复这个 Python bug。",
+      "expected_route": "no_route",
+      "predicted_route": "no_route",
+      "correct": true,
+      "margin": null,
+      "ambiguous": false,
+      "ranked_routes": [
+        {
+          "name": "novel-master",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.17,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-brief",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "story-architect",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-planner",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "chapter-writer",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "novel-reviewer",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        },
+        {
+          "name": "continuity-keeper",
+          "score": 0.0,
+          "passed_threshold": false,
+          "threshold": 0.5,
+          "matched_desired_concepts": [],
+          "matched_negative_concepts": []
+        }
+      ]
+    }
+  ]
+}

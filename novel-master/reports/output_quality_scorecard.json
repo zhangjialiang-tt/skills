@@ -1,0 +1,804 @@
+{
+  "ok": true,
+  "cases": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\evals\\output\\cases.jsonl",
+  "summary": {
+    "case_count": 6,
+    "file_backed_case_count": 6,
+    "near_neighbor_case_count": 0,
+    "boundary_case_count": 0,
+    "baseline_pass_rate": 0.0,
+    "with_skill_pass_rate": 100.0,
+    "delta": 100.0,
+    "regression_count": 0,
+    "gate_pass": true,
+    "failure_taxonomy": [],
+    "blind_pair_count": 6
+  },
+  "results": [
+    {
+      "id": "readonly-review-no-state-write",
+      "prompt": "按 file-backed fixture 只读评审章节。",
+      "input_files": [
+        "fixtures/readonly-review.md"
+      ],
+      "metadata": {
+        "case_type": "file-backed fixture"
+      },
+      "baseline": {
+        "score": 0.0,
+        "passed_count": 0,
+        "failed_count": 2,
+        "checks": [
+          {
+            "id": "readonly-route",
+            "description": "只读请求不得产生写入。",
+            "weight": 1.0,
+            "failure_type": "unauthorized_write",
+            "passed": false,
+            "missing": [
+              "READ_ONLY",
+              "不写正文或状态"
+            ],
+            "present_forbidden": [
+              "顺手修订正文"
+            ]
+          },
+          {
+            "id": "governed-labels",
+            "description": "保留 Governed 证据标签。",
+            "weight": 1.0,
+            "failure_type": "missing_governed_boundary",
+            "passed": false,
+            "missing": [
+              "input_files",
+              "output contract",
+              "rollback boundary",
+              "trust report",
+              "reports/output_quality_scorecard.md",
+              "missing evidence"
+            ],
+            "present_forbidden": []
+          }
+        ],
+        "failed": [
+          {
+            "id": "readonly-route",
+            "description": "只读请求不得产生写入。",
+            "weight": 1.0,
+            "failure_type": "unauthorized_write",
+            "passed": false,
+            "missing": [
+              "READ_ONLY",
+              "不写正文或状态"
+            ],
+            "present_forbidden": [
+              "顺手修订正文"
+            ]
+          },
+          {
+            "id": "governed-labels",
+            "description": "保留 Governed 证据标签。",
+            "weight": 1.0,
+            "failure_type": "missing_governed_boundary",
+            "passed": false,
+            "missing": [
+              "input_files",
+              "output contract",
+              "rollback boundary",
+              "trust report",
+              "reports/output_quality_scorecard.md",
+              "missing evidence"
+            ],
+            "present_forbidden": []
+          }
+        ]
+      },
+      "with_skill": {
+        "score": 100.0,
+        "passed_count": 2,
+        "failed_count": 0,
+        "checks": [
+          {
+            "id": "readonly-route",
+            "description": "只读请求不得产生写入。",
+            "weight": 1.0,
+            "failure_type": "unauthorized_write",
+            "passed": true,
+            "missing": [],
+            "present_forbidden": []
+          },
+          {
+            "id": "governed-labels",
+            "description": "保留 Governed 证据标签。",
+            "weight": 1.0,
+            "failure_type": "missing_governed_boundary",
+            "passed": true,
+            "missing": [],
+            "present_forbidden": []
+          }
+        ],
+        "failed": []
+      },
+      "delta": 100.0,
+      "winner": "with_skill",
+      "failure_taxonomy": []
+    },
+    {
+      "id": "conflict-blocks-writer",
+      "prompt": "按 file-backed fixture 续写第 9 章。",
+      "input_files": [
+        "fixtures/conflict-blocks-writer.md"
+      ],
+      "metadata": {
+        "case_type": "file-backed fixture"
+      },
+      "baseline": {
+        "score": 0.0,
+        "passed_count": 0,
+        "failed_count": 3,
+        "checks": [
+          {
+            "id": "blocks-writer",
+            "description": "Canon 冲突必须阻止正文生成。",
+            "weight": 1.0,
+            "failure_type": "conflict_not_blocked",
+            "passed": false,
+            "missing": [
+              "BLOCKED",
+              "CANON_CONFLICT",
+              "不调用 chapter-writer"
+            ],
+            "present_forbidden": []
+          },
+          {
+            "id": "no-state-change",
+            "description": "冲突分支不得写入。",
+            "weight": 1.0,
+            "failure_type": "unauthorized_write",
+            "passed": false,
+            "missing": [
+              "未写正文",
+              "未提交状态"
+            ],
+            "present_forbidden": []
+          },
+          {
+            "id": "governed-labels",
+            "description": "保留 Governed 证据标签。",
+            "weight": 1.0,
+            "failure_type": "missing_governed_boundary",
+            "passed": false,
+            "missing": [
+              "input_files",
+              "output contract",
+              "rollback boundary",
+              "trust report",
+              "reports/output_quality_scorecard.md",
+              "missing evidence"
+            ],
+            "present_forbidden": []
+          }
+        ],
+        "failed": [
+          {
+            "id": "blocks-writer",
+            "description": "Canon 冲突必须阻止正文生成。",
+            "weight": 1.0,
+            "failure_type": "conflict_not_blocked",
+            "passed": false,
+            "missing": [
+              "BLOCKED",
+              "CANON_CONFLICT",
+              "不调用 chapter-writer"
+            ],
+            "present_forbidden": []
+          },
+          {
+            "id": "no-state-change",
+            "description": "冲突分支不得写入。",
+            "weight": 1.0,
+            "failure_type": "unauthorized_write",
+            "passed": false,
+            "missing": [
+              "未写正文",
+              "未提交状态"
+            ],
+            "present_forbidden": []
+          },
+          {
+            "id": "governed-labels",
+            "description": "保留 Governed 证据标签。",
+            "weight": 1.0,
+            "failure_type": "missing_governed_boundary",
+            "passed": false,
+            "missing": [
+              "input_files",
+              "output contract",
+              "rollback boundary",
+              "trust report",
+              "reports/output_quality_scorecard.md",
+              "missing evidence"
+            ],
+            "present_forbidden": []
+          }
+        ]
+      },
+      "with_skill": {
+        "score": 100.0,
+        "passed_count": 3,
+        "failed_count": 0,
+        "checks": [
+          {
+            "id": "blocks-writer",
+            "description": "Canon 冲突必须阻止正文生成。",
+            "weight": 1.0,
+            "failure_type": "conflict_not_blocked",
+            "passed": true,
+            "missing": [],
+            "present_forbidden": []
+          },
+          {
+            "id": "no-state-change",
+            "description": "冲突分支不得写入。",
+            "weight": 1.0,
+            "failure_type": "unauthorized_write",
+            "passed": true,
+            "missing": [],
+            "present_forbidden": []
+          },
+          {
+            "id": "governed-labels",
+            "description": "保留 Governed 证据标签。",
+            "weight": 1.0,
+            "failure_type": "missing_governed_boundary",
+            "passed": true,
+            "missing": [],
+            "present_forbidden": []
+          }
+        ],
+        "failed": []
+      },
+      "delta": 100.0,
+      "winner": "with_skill",
+      "failure_taxonomy": []
+    },
+    {
+      "id": "draft-cannot-commit-facts",
+      "prompt": "按 file-backed fixture 提交角色事实。",
+      "input_files": [
+        "fixtures/draft-no-commit.md"
+      ],
+      "metadata": {
+        "case_type": "file-backed fixture"
+      },
+      "baseline": {
+        "score": 0.0,
+        "passed_count": 0,
+        "failed_count": 3,
+        "checks": [
+          {
+            "id": "draft-blocked",
+            "description": "DRAFT 不得提交事实。",
+            "weight": 1.0,
+            "failure_type": "invalid_lifecycle_commit",
+            "passed": false,
+            "missing": [
+              "DRAFT",
+              "BLOCKED",
+              "INVALID_STATE"
+            ],
+            "present_forbidden": []
+          },
+          {
+            "id": "proposal-only",
+            "description": "草稿事实只能作为 Proposal。",
+            "weight": 1.0,
+            "failure_type": "draft_fact_committed",
+            "passed": false,
+            "missing": [
+              "Proposal",
+              "不更新 characters/ 或 state/"
+            ],
+            "present_forbidden": []
+          },
+          {
+            "id": "governed-labels",
+            "description": "保留 Governed 证据标签。",
+            "weight": 1.0,
+            "failure_type": "missing_governed_boundary",
+            "passed": false,
+            "missing": [
+              "input_files",
+              "output contract",
+              "rollback boundary",
+              "trust report",
+              "reports/output_quality_scorecard.md",
+              "missing evidence"
+            ],
+            "present_forbidden": []
+          }
+        ],
+        "failed": [
+          {
+            "id": "draft-blocked",
+            "description": "DRAFT 不得提交事实。",
+            "weight": 1.0,
+            "failure_type": "invalid_lifecycle_commit",
+            "passed": false,
+            "missing": [
+              "DRAFT",
+              "BLOCKED",
+              "INVALID_STATE"
+            ],
+            "present_forbidden": []
+          },
+          {
+            "id": "proposal-only",
+            "description": "草稿事实只能作为 Proposal。",
+            "weight": 1.0,
+            "failure_type": "draft_fact_committed",
+            "passed": false,
+            "missing": [
+              "Proposal",
+              "不更新 characters/ 或 state/"
+            ],
+            "present_forbidden": []
+          },
+          {
+            "id": "governed-labels",
+            "description": "保留 Governed 证据标签。",
+            "weight": 1.0,
+            "failure_type": "missing_governed_boundary",
+            "passed": false,
+            "missing": [
+              "input_files",
+              "output contract",
+              "rollback boundary",
+              "trust report",
+              "reports/output_quality_scorecard.md",
+              "missing evidence"
+            ],
+            "present_forbidden": []
+          }
+        ]
+      },
+      "with_skill": {
+        "score": 100.0,
+        "passed_count": 3,
+        "failed_count": 0,
+        "checks": [
+          {
+            "id": "draft-blocked",
+            "description": "DRAFT 不得提交事实。",
+            "weight": 1.0,
+            "failure_type": "invalid_lifecycle_commit",
+            "passed": true,
+            "missing": [],
+            "present_forbidden": []
+          },
+          {
+            "id": "proposal-only",
+            "description": "草稿事实只能作为 Proposal。",
+            "weight": 1.0,
+            "failure_type": "draft_fact_committed",
+            "passed": true,
+            "missing": [],
+            "present_forbidden": []
+          },
+          {
+            "id": "governed-labels",
+            "description": "保留 Governed 证据标签。",
+            "weight": 1.0,
+            "failure_type": "missing_governed_boundary",
+            "passed": true,
+            "missing": [],
+            "present_forbidden": []
+          }
+        ],
+        "failed": []
+      },
+      "delta": 100.0,
+      "winner": "with_skill",
+      "failure_taxonomy": []
+    },
+    {
+      "id": "l2-preserves-confirmed-facts",
+      "prompt": "按 file-backed fixture 执行 L2 修订。",
+      "input_files": [
+        "fixtures/l2-preserves-facts.md"
+      ],
+      "metadata": {
+        "case_type": "file-backed fixture"
+      },
+      "baseline": {
+        "score": 0.0,
+        "passed_count": 0,
+        "failed_count": 3,
+        "checks": [
+          {
+            "id": "preserves-facts",
+            "description": "L2 修订必须保留确认事实。",
+            "weight": 1.0,
+            "failure_type": "fact_drift",
+            "passed": false,
+            "missing": [
+              "北港出生",
+              "左手旧伤",
+              "不知道父亲身份",
+              "preserved_facts"
+            ],
+            "present_forbidden": []
+          },
+          {
+            "id": "has-rollback",
+            "description": "修订必须说明回滚边界。",
+            "weight": 1.0,
+            "failure_type": "missing_rollback",
+            "passed": false,
+            "missing": [
+              "rollback boundary",
+              "撤销 changeset"
+            ],
+            "present_forbidden": []
+          },
+          {
+            "id": "governed-labels",
+            "description": "保留 Governed 证据标签。",
+            "weight": 1.0,
+            "failure_type": "missing_governed_boundary",
+            "passed": false,
+            "missing": [
+              "input_files",
+              "output contract",
+              "trust report",
+              "reports/output_quality_scorecard.md",
+              "missing evidence"
+            ],
+            "present_forbidden": []
+          }
+        ],
+        "failed": [
+          {
+            "id": "preserves-facts",
+            "description": "L2 修订必须保留确认事实。",
+            "weight": 1.0,
+            "failure_type": "fact_drift",
+            "passed": false,
+            "missing": [
+              "北港出生",
+              "左手旧伤",
+              "不知道父亲身份",
+              "preserved_facts"
+            ],
+            "present_forbidden": []
+          },
+          {
+            "id": "has-rollback",
+            "description": "修订必须说明回滚边界。",
+            "weight": 1.0,
+            "failure_type": "missing_rollback",
+            "passed": false,
+            "missing": [
+              "rollback boundary",
+              "撤销 changeset"
+            ],
+            "present_forbidden": []
+          },
+          {
+            "id": "governed-labels",
+            "description": "保留 Governed 证据标签。",
+            "weight": 1.0,
+            "failure_type": "missing_governed_boundary",
+            "passed": false,
+            "missing": [
+              "input_files",
+              "output contract",
+              "trust report",
+              "reports/output_quality_scorecard.md",
+              "missing evidence"
+            ],
+            "present_forbidden": []
+          }
+        ]
+      },
+      "with_skill": {
+        "score": 100.0,
+        "passed_count": 3,
+        "failed_count": 0,
+        "checks": [
+          {
+            "id": "preserves-facts",
+            "description": "L2 修订必须保留确认事实。",
+            "weight": 1.0,
+            "failure_type": "fact_drift",
+            "passed": true,
+            "missing": [],
+            "present_forbidden": []
+          },
+          {
+            "id": "has-rollback",
+            "description": "修订必须说明回滚边界。",
+            "weight": 1.0,
+            "failure_type": "missing_rollback",
+            "passed": true,
+            "missing": [],
+            "present_forbidden": []
+          },
+          {
+            "id": "governed-labels",
+            "description": "保留 Governed 证据标签。",
+            "weight": 1.0,
+            "failure_type": "missing_governed_boundary",
+            "passed": true,
+            "missing": [],
+            "present_forbidden": []
+          }
+        ],
+        "failed": []
+      },
+      "delta": 100.0,
+      "winner": "with_skill",
+      "failure_taxonomy": []
+    },
+    {
+      "id": "ordinary-object-not-persistent-fact",
+      "prompt": "按 file-backed fixture 提取事实。",
+      "input_files": [
+        "fixtures/ordinary-cup.md"
+      ],
+      "metadata": {
+        "case_type": "file-backed fixture"
+      },
+      "baseline": {
+        "score": 0.0,
+        "passed_count": 0,
+        "failed_count": 2,
+        "checks": [
+          {
+            "id": "does-not-promote-cup",
+            "description": "普通物件不得升级为持续事实。",
+            "weight": 1.0,
+            "failure_type": "over_extraction",
+            "passed": false,
+            "missing": [
+              "不提取为 Canon",
+              "空的 committed_updates"
+            ],
+            "present_forbidden": [
+              "重要陶杯"
+            ]
+          },
+          {
+            "id": "governed-labels",
+            "description": "保留 Governed 证据标签。",
+            "weight": 1.0,
+            "failure_type": "missing_governed_boundary",
+            "passed": false,
+            "missing": [
+              "input_files",
+              "output contract",
+              "rollback boundary",
+              "trust report",
+              "reports/output_quality_scorecard.md",
+              "missing evidence"
+            ],
+            "present_forbidden": []
+          }
+        ],
+        "failed": [
+          {
+            "id": "does-not-promote-cup",
+            "description": "普通物件不得升级为持续事实。",
+            "weight": 1.0,
+            "failure_type": "over_extraction",
+            "passed": false,
+            "missing": [
+              "不提取为 Canon",
+              "空的 committed_updates"
+            ],
+            "present_forbidden": [
+              "重要陶杯"
+            ]
+          },
+          {
+            "id": "governed-labels",
+            "description": "保留 Governed 证据标签。",
+            "weight": 1.0,
+            "failure_type": "missing_governed_boundary",
+            "passed": false,
+            "missing": [
+              "input_files",
+              "output contract",
+              "rollback boundary",
+              "trust report",
+              "reports/output_quality_scorecard.md",
+              "missing evidence"
+            ],
+            "present_forbidden": []
+          }
+        ]
+      },
+      "with_skill": {
+        "score": 100.0,
+        "passed_count": 2,
+        "failed_count": 0,
+        "checks": [
+          {
+            "id": "does-not-promote-cup",
+            "description": "普通物件不得升级为持续事实。",
+            "weight": 1.0,
+            "failure_type": "over_extraction",
+            "passed": true,
+            "missing": [],
+            "present_forbidden": []
+          },
+          {
+            "id": "governed-labels",
+            "description": "保留 Governed 证据标签。",
+            "weight": 1.0,
+            "failure_type": "missing_governed_boundary",
+            "passed": true,
+            "missing": [],
+            "present_forbidden": []
+          }
+        ],
+        "failed": []
+      },
+      "delta": 100.0,
+      "winner": "with_skill",
+      "failure_taxonomy": []
+    },
+    {
+      "id": "secret-creates-knowledge-proposal",
+      "prompt": "按 file-backed fixture 处理秘密信息。",
+      "input_files": [
+        "fixtures/secret-knowledge-proposal.md"
+      ],
+      "metadata": {
+        "case_type": "file-backed fixture"
+      },
+      "baseline": {
+        "score": 0.0,
+        "passed_count": 0,
+        "failed_count": 3,
+        "checks": [
+          {
+            "id": "knowledge-boundary",
+            "description": "秘密不得错误写入缺席角色知识。",
+            "weight": 1.0,
+            "failure_type": "knowledge_leak",
+            "passed": false,
+            "missing": [
+              "主角不在场",
+              "主角知识只能保持未知",
+              "knowledge proposal"
+            ],
+            "present_forbidden": []
+          },
+          {
+            "id": "separates-updates-proposals",
+            "description": "正式事实与知识提案必须分离。",
+            "weight": 1.0,
+            "failure_type": "proposal_commit_confusion",
+            "passed": false,
+            "missing": [
+              "committed_updates",
+              "proposals"
+            ],
+            "present_forbidden": []
+          },
+          {
+            "id": "governed-labels",
+            "description": "保留 Governed 证据标签。",
+            "weight": 1.0,
+            "failure_type": "missing_governed_boundary",
+            "passed": false,
+            "missing": [
+              "input_files",
+              "output contract",
+              "rollback boundary",
+              "trust report",
+              "reports/output_quality_scorecard.md",
+              "missing evidence"
+            ],
+            "present_forbidden": []
+          }
+        ],
+        "failed": [
+          {
+            "id": "knowledge-boundary",
+            "description": "秘密不得错误写入缺席角色知识。",
+            "weight": 1.0,
+            "failure_type": "knowledge_leak",
+            "passed": false,
+            "missing": [
+              "主角不在场",
+              "主角知识只能保持未知",
+              "knowledge proposal"
+            ],
+            "present_forbidden": []
+          },
+          {
+            "id": "separates-updates-proposals",
+            "description": "正式事实与知识提案必须分离。",
+            "weight": 1.0,
+            "failure_type": "proposal_commit_confusion",
+            "passed": false,
+            "missing": [
+              "committed_updates",
+              "proposals"
+            ],
+            "present_forbidden": []
+          },
+          {
+            "id": "governed-labels",
+            "description": "保留 Governed 证据标签。",
+            "weight": 1.0,
+            "failure_type": "missing_governed_boundary",
+            "passed": false,
+            "missing": [
+              "input_files",
+              "output contract",
+              "rollback boundary",
+              "trust report",
+              "reports/output_quality_scorecard.md",
+              "missing evidence"
+            ],
+            "present_forbidden": []
+          }
+        ]
+      },
+      "with_skill": {
+        "score": 100.0,
+        "passed_count": 3,
+        "failed_count": 0,
+        "checks": [
+          {
+            "id": "knowledge-boundary",
+            "description": "秘密不得错误写入缺席角色知识。",
+            "weight": 1.0,
+            "failure_type": "knowledge_leak",
+            "passed": true,
+            "missing": [],
+            "present_forbidden": []
+          },
+          {
+            "id": "separates-updates-proposals",
+            "description": "正式事实与知识提案必须分离。",
+            "weight": 1.0,
+            "failure_type": "proposal_commit_confusion",
+            "passed": true,
+            "missing": [],
+            "present_forbidden": []
+          },
+          {
+            "id": "governed-labels",
+            "description": "保留 Governed 证据标签。",
+            "weight": 1.0,
+            "failure_type": "missing_governed_boundary",
+            "passed": true,
+            "missing": [],
+            "present_forbidden": []
+          }
+        ],
+        "failed": []
+      },
+      "delta": 100.0,
+      "winner": "with_skill",
+      "failure_taxonomy": []
+    }
+  ],
+  "failures": [],
+  "blind_review": {
+    "pack": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\reports\\output_blind_review_pack.json",
+    "answer_key": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\reports\\output_blind_answer_key.json",
+    "pair_count": 6
+  },
+  "artifacts": {
+    "json": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\reports\\output_quality_scorecard.json",
+    "markdown": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\reports\\output_quality_scorecard.md",
+    "blind_review_pack_json": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\reports\\output_blind_review_pack.json",
+    "blind_review_pack_md": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\reports\\output_blind_review_pack.md",
+    "blind_answer_key_json": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\reports\\output_blind_answer_key.json"
+  }
+}

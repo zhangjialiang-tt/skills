@@ -1,0 +1,177 @@
+{
+  "schema_version": "2.0.0",
+  "name": "novel-master",
+  "title": "网文创作总控",
+  "job_to_be_done": "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。",
+  "trigger_surface": {
+    "description": "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。",
+    "should_trigger": [
+      "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。"
+    ],
+    "should_not_trigger": [
+      "one-off adjacent requests that do not match the recurring job",
+      "private local material that was not intentionally included"
+    ],
+    "edge_cases": []
+  },
+  "workflow": {
+    "steps": [
+      "Understand the request.",
+      "Execute the main task.",
+      "Validate the result."
+    ],
+    "decision_points": [
+      "Ask one focused clarification when the real job, output, or exclusion boundary is unclear.",
+      "Escalate visible tradeoffs when benchmark patterns conflict with local privacy, naming, or governance constraints.",
+      "Do not silently broaden the skill into adjacent jobs just because the examples are nearby."
+    ],
+    "failure_modes": [
+      "Tables can render as dense grids with weak hierarchy or poor mobile readability.",
+      "Long bullets can make the output look complete while hiding the actual decision logic.",
+      "Commands can omit environment assumptions, working directory, or rollback notes.",
+      "Code snippets can look runnable while missing required inputs.",
+      "Footnote markers or dense citation notes can interrupt the reading flow.",
+      "Evidence can be over-attached to obvious statements and under-attached to risky claims.",
+      "Users start invoking the skill for adjacent one-off or explanation-only requests.",
+      "Outputs remain valid but become generic, cluttered, or weakly aligned with the user's domain.",
+      "Borrowed benchmark patterns no longer fit the local job or add ceremony without payoff.",
+      "Skill usage becomes team-critical while ownership, review cadence, or rollback evidence stays informal."
+    ]
+  },
+  "resources": {
+    "references": [
+      "references\\common-rules.md",
+      "references\\context-retrieval-rules.md",
+      "references\\error-codes.md",
+      "references\\fact-extraction-rules.md",
+      "references\\file-ownership.md",
+      "references\\lifecycle-and-approval.md",
+      "references\\routing-table.md",
+      "references\\style-guide-template.md"
+    ],
+    "scripts": [
+      "scripts\\check_prompt_regressions.py",
+      "scripts\\commit_changeset.py",
+      "scripts\\compute_revision.py",
+      "scripts\\project_lock.py",
+      "scripts\\validate_approval.py",
+      "scripts\\validate_contract.py",
+      "scripts\\validate_paths.py"
+    ],
+    "assets": [
+      "templates\\novel-project\\architecture\\.gitkeep",
+      "templates\\novel-project\\chapters\\drafts\\.gitkeep",
+      "templates\\novel-project\\chapters\\plans\\.gitkeep",
+      "templates\\novel-project\\characters\\.gitkeep",
+      "templates\\novel-project\\outline\\.gitkeep",
+      "templates\\novel-project\\project.yaml",
+      "templates\\novel-project\\project_brief.md",
+      "templates\\novel-project\\reviews\\.gitkeep",
+      "templates\\novel-project\\state\\.gitkeep",
+      "templates\\novel-project\\state\\archives\\.gitkeep",
+      "templates\\novel-project\\style_guide.md",
+      "templates\\novel-project\\workflow\\approvals\\.gitkeep",
+      "templates\\novel-project\\workflow\\backups\\.gitkeep",
+      "templates\\novel-project\\workflow\\change_log.md",
+      "templates\\novel-project\\workflow\\changesets\\.gitkeep",
+      "templates\\novel-project\\workflow\\pending_decisions.md",
+      "templates\\novel-project\\workflow\\route_log.md",
+      "templates\\novel-project\\workflow\\runs\\.gitkeep",
+      "templates\\novel-project\\world\\.gitkeep"
+    ],
+    "reports": [
+      "reports/intent-context.json",
+      "reports/intent-confidence.json",
+      "reports/intent-confidence.md",
+      "reports/reference-synthesis.json",
+      "reports/reference-synthesis.md",
+      "reports/output-risk-profile.json",
+      "reports/output-risk-profile.md",
+      "reports/artifact-design-profile.json",
+      "reports/artifact-design-profile.md",
+      "reports/prompt-quality-profile.json",
+      "reports/prompt-quality-profile.md",
+      "reports/system-model.json",
+      "reports/system-model.md",
+      "reports/iteration-directions.json",
+      "reports/iteration-directions.md",
+      "reports/skill-overview.json",
+      "reports/skill-overview.html",
+      "reports/output_quality_scorecard.json",
+      "reports/output_quality_scorecard.md",
+      "reports/output_execution_runs.json",
+      "reports/output_execution_runs.md",
+      "reports/output_blind_review_pack.json",
+      "reports/output_blind_review_pack.md",
+      "reports/output_blind_answer_key.json",
+      "reports/review_annotations.json",
+      "reports/review_annotations.md",
+      "reports/conformance_matrix.json",
+      "reports/conformance_matrix.md",
+      "reports/security_trust_report.json",
+      "reports/security_trust_report.md",
+      "reports/runtime_permission_probes.json",
+      "reports/runtime_permission_probes.md",
+      "reports/skill_atlas.json",
+      "reports/skill_atlas.html"
+    ]
+  },
+  "eval_plan": {
+    "trigger": [
+      "evals\\adversarial\\trigger_cases.json",
+      "evals\\blind_holdout\\trigger_cases.json",
+      "evals\\confusion\\explicit_children_semantic_config.json",
+      "evals\\confusion\\route_cases.json",
+      "evals\\dev\\trigger_cases.json",
+      "evals\\evals.json",
+      "evals\\fixtures\\results-valid.json",
+      "evals\\holdout\\trigger_cases.json",
+      "evals\\output\\cases.jsonl",
+      "evals\\output\\fixtures\\conflict-blocks-writer.md",
+      "evals\\output\\fixtures\\draft-no-commit.md",
+      "evals\\output\\fixtures\\l2-preserves-facts.md",
+      "evals\\output\\fixtures\\ordinary-cup.md",
+      "evals\\output\\fixtures\\readonly-review.md",
+      "evals\\output\\fixtures\\secret-knowledge-proposal.md",
+      "evals\\packaging_expectations.json",
+      "evals\\reports\\forward-test-2026-07-25.md",
+      "evals\\semantic_config.json"
+    ],
+    "output": [
+      "evals\\output\\cases.jsonl",
+      "evals\\output\\fixtures\\conflict-blocks-writer.md",
+      "evals\\output\\fixtures\\draft-no-commit.md",
+      "evals\\output\\fixtures\\l2-preserves-facts.md",
+      "evals\\output\\fixtures\\ordinary-cup.md",
+      "evals\\output\\fixtures\\readonly-review.md",
+      "evals\\output\\fixtures\\secret-knowledge-proposal.md"
+    ],
+    "adversarial": [
+      "evals\\adversarial\\trigger_cases.json"
+    ],
+    "baseline": "without_skill"
+  },
+  "risk": {
+    "output_risk": "medium",
+    "execution_risk": "medium",
+    "trust_boundary": "team"
+  },
+  "governance": {
+    "owner": "zhangjl",
+    "maturity": "production",
+    "review_cadence": "per-release",
+    "review_due": ""
+  },
+  "targets": [
+    "openai",
+    "generic"
+  ],
+  "source_files": [
+    "SKILL.md",
+    "manifest.json",
+    "agents/interface.yaml",
+    "reports/intent-context.json",
+    "reports/output-risk-profile.json",
+    "reports/system-model.json"
+  ]
+}

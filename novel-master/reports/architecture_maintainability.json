@@ -1,0 +1,160 @@
+{
+  "schema_version": "1.0",
+  "ok": true,
+  "generated_at": "2026-07-25T00:00:00Z",
+  "skill_dir": ".",
+  "summary": {
+    "python_file_count": 14,
+    "script_file_count": 0,
+    "test_file_count": 0,
+    "internal_module_count": 0,
+    "cli_script_count": 7,
+    "command_handler_count": 0,
+    "entrypoint_command_handler_count": 0,
+    "command_module_count": 0,
+    "warn_line_threshold": 900,
+    "watch_line_threshold": 720,
+    "early_watch_line_threshold": 600,
+    "block_line_threshold": 1500,
+    "largest_file_lines": 1042,
+    "watchlist_count": 0,
+    "early_watchlist_count": 0,
+    "hotspot_count": 2,
+    "blocker_count": 0,
+    "decision": "watch-maintainability-hotspots"
+  },
+  "largest_files": [
+    {
+      "path": "tests\\test_changeset.py",
+      "lines": 1042,
+      "kind": "test",
+      "severity": "warn",
+      "early_watch": false,
+      "recommendation": "Watch this file before adding new responsibilities; extract a helper module when one concern dominates."
+    },
+    {
+      "path": "scripts\\commit_changeset.py",
+      "lines": 906,
+      "kind": "cli-script",
+      "severity": "warn",
+      "early_watch": false,
+      "recommendation": "Watch this file before adding new responsibilities; extract a helper module when one concern dominates."
+    },
+    {
+      "path": "scripts\\check_prompt_regressions.py",
+      "lines": 350,
+      "kind": "cli-script",
+      "severity": "pass",
+      "early_watch": false,
+      "recommendation": "Watch this file before adding new responsibilities; extract a helper module when one concern dominates."
+    },
+    {
+      "path": "tests\\test_schemas.py",
+      "lines": 335,
+      "kind": "test",
+      "severity": "pass",
+      "early_watch": false,
+      "recommendation": "Watch this file before adding new responsibilities; extract a helper module when one concern dominates."
+    },
+    {
+      "path": "scripts\\validate_approval.py",
+      "lines": 261,
+      "kind": "cli-script",
+      "severity": "pass",
+      "early_watch": false,
+      "recommendation": "Watch this file before adding new responsibilities; extract a helper module when one concern dominates."
+    },
+    {
+      "path": "scripts\\project_lock.py",
+      "lines": 253,
+      "kind": "cli-script",
+      "severity": "pass",
+      "early_watch": false,
+      "recommendation": "Watch this file before adding new responsibilities; extract a helper module when one concern dominates."
+    },
+    {
+      "path": "scripts\\validate_paths.py",
+      "lines": 185,
+      "kind": "cli-script",
+      "severity": "pass",
+      "early_watch": false,
+      "recommendation": "Watch this file before adding new responsibilities; extract a helper module when one concern dominates."
+    },
+    {
+      "path": "scripts\\validate_contract.py",
+      "lines": 165,
+      "kind": "cli-script",
+      "severity": "pass",
+      "early_watch": false,
+      "recommendation": "Watch this file before adding new responsibilities; extract a helper module when one concern dominates."
+    },
+    {
+      "path": "scripts\\compute_revision.py",
+      "lines": 151,
+      "kind": "cli-script",
+      "severity": "pass",
+      "early_watch": false,
+      "recommendation": "Watch this file before adding new responsibilities; extract a helper module when one concern dominates."
+    },
+    {
+      "path": "tests\\test_approval.py",
+      "lines": 147,
+      "kind": "test",
+      "severity": "pass",
+      "early_watch": false,
+      "recommendation": "Watch this file before adding new responsibilities; extract a helper module when one concern dominates."
+    },
+    {
+      "path": "tests\\test_paths.py",
+      "lines": 132,
+      "kind": "test",
+      "severity": "pass",
+      "early_watch": false,
+      "recommendation": "Watch this file before adding new responsibilities; extract a helper module when one concern dominates."
+    },
+    {
+      "path": "tests\\test_prompt_regressions.py",
+      "lines": 122,
+      "kind": "test",
+      "severity": "pass",
+      "early_watch": false,
+      "recommendation": "Watch this file before adding new responsibilities; extract a helper module when one concern dominates."
+    }
+  ],
+  "watchlist": [],
+  "early_watchlist": [],
+  "hotspots": [
+    {
+      "path": "tests\\test_changeset.py",
+      "lines": 1042,
+      "kind": "test",
+      "severity": "warn",
+      "early_watch": false,
+      "recommendation": "Watch this file before adding new responsibilities; extract a helper module when one concern dominates."
+    },
+    {
+      "path": "scripts\\commit_changeset.py",
+      "lines": 906,
+      "kind": "cli-script",
+      "severity": "warn",
+      "early_watch": false,
+      "recommendation": "Watch this file before adding new responsibilities; extract a helper module when one concern dominates."
+    }
+  ],
+  "actions": [
+    {
+      "path": "tests\\test_changeset.py",
+      "severity": "warn",
+      "action": "Watch this file before adding new responsibilities; extract a helper module when one concern dominates."
+    },
+    {
+      "path": "scripts\\commit_changeset.py",
+      "severity": "warn",
+      "action": "Watch this file before adding new responsibilities; extract a helper module when one concern dominates."
+    }
+  ],
+  "artifacts": {
+    "json": "reports/architecture_maintainability.json",
+    "markdown": "reports/architecture_maintainability.md"
+  }
+}

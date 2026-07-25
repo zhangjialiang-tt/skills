@@ -1,0 +1,287 @@
+{
+  "ok": true,
+  "skill_dir": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master",
+  "summary": {
+    "scanned_files": 58,
+    "script_count": 7,
+    "internal_module_count": 0,
+    "secret_findings": 0,
+    "dependency_files": [
+      "requirements-ci.txt",
+      "requirements.txt"
+    ],
+    "network_script_count": 0,
+    "network_policy_covered_count": 0,
+    "network_policy_missing_count": 0,
+    "file_write_script_count": 4,
+    "permission_required_count": 1,
+    "permission_approved_count": 0,
+    "permission_missing_count": 1,
+    "permission_invalid_count": 0,
+    "permission_expired_count": 0,
+    "help_smoke_checked_count": 7,
+    "help_smoke_failed_count": 0,
+    "interactive_script_count": 0,
+    "package_hash_scope": "source-contract-without-generated-reports",
+    "package_hash_file_count": 58,
+    "package_sha256": "1abba7e9732a90639dfc09c67782d178d1e363c9c5efc2f5e61c133424a9760e"
+  },
+  "failures": [],
+  "warnings": [
+    "Permission approvals missing: file_write"
+  ],
+  "secrets": [],
+  "scripts": [
+    {
+      "path": "scripts\\check_prompt_regressions.py",
+      "interface": "cli",
+      "interface_declared": false,
+      "interface_reason": "Default CLI classification; add SCRIPT_INTERFACE for internal modules.",
+      "has_argparse": true,
+      "has_main_guard": true,
+      "uses_input": false,
+      "uses_network": false,
+      "uses_file_write": true,
+      "uses_subprocess": false,
+      "network_urls": [],
+      "network_hosts": []
+    },
+    {
+      "path": "scripts\\commit_changeset.py",
+      "interface": "cli",
+      "interface_declared": false,
+      "interface_reason": "Default CLI classification; add SCRIPT_INTERFACE for internal modules.",
+      "has_argparse": true,
+      "has_main_guard": true,
+      "uses_input": false,
+      "uses_network": false,
+      "uses_file_write": true,
+      "uses_subprocess": false,
+      "network_urls": [],
+      "network_hosts": []
+    },
+    {
+      "path": "scripts\\compute_revision.py",
+      "interface": "cli",
+      "interface_declared": false,
+      "interface_reason": "Default CLI classification; add SCRIPT_INTERFACE for internal modules.",
+      "has_argparse": true,
+      "has_main_guard": true,
+      "uses_input": false,
+      "uses_network": false,
+      "uses_file_write": true,
+      "uses_subprocess": false,
+      "network_urls": [],
+      "network_hosts": []
+    },
+    {
+      "path": "scripts\\project_lock.py",
+      "interface": "cli",
+      "interface_declared": false,
+      "interface_reason": "Default CLI classification; add SCRIPT_INTERFACE for internal modules.",
+      "has_argparse": true,
+      "has_main_guard": true,
+      "uses_input": false,
+      "uses_network": false,
+      "uses_file_write": true,
+      "uses_subprocess": false,
+      "network_urls": [],
+      "network_hosts": []
+    },
+    {
+      "path": "scripts\\validate_approval.py",
+      "interface": "cli",
+      "interface_declared": false,
+      "interface_reason": "Default CLI classification; add SCRIPT_INTERFACE for internal modules.",
+      "has_argparse": true,
+      "has_main_guard": true,
+      "uses_input": false,
+      "uses_network": false,
+      "uses_file_write": false,
+      "uses_subprocess": false,
+      "network_urls": [],
+      "network_hosts": []
+    },
+    {
+      "path": "scripts\\validate_contract.py",
+      "interface": "cli",
+      "interface_declared": false,
+      "interface_reason": "Default CLI classification; add SCRIPT_INTERFACE for internal modules.",
+      "has_argparse": true,
+      "has_main_guard": true,
+      "uses_input": false,
+      "uses_network": false,
+      "uses_file_write": false,
+      "uses_subprocess": false,
+      "network_urls": [],
+      "network_hosts": []
+    },
+    {
+      "path": "scripts\\validate_paths.py",
+      "interface": "cli",
+      "interface_declared": false,
+      "interface_reason": "Default CLI classification; add SCRIPT_INTERFACE for internal modules.",
+      "has_argparse": true,
+      "has_main_guard": true,
+      "uses_input": false,
+      "uses_network": false,
+      "uses_file_write": false,
+      "uses_subprocess": false,
+      "network_urls": [],
+      "network_hosts": []
+    }
+  ],
+  "dependencies": {
+    "present": [
+      "requirements-ci.txt",
+      "requirements.txt"
+    ],
+    "pinned": [
+      "PyYAML==6.0.3",
+      "jsonschema==4.26.0",
+      "pytest==9.1.1"
+    ],
+    "unpinned": []
+  },
+  "network_policy": {
+    "present": true,
+    "path": "security/network_policy.json",
+    "schema_version": "1.0",
+    "network_script_count": 0,
+    "covered_scripts": [],
+    "missing_scripts": [],
+    "mismatches": [],
+    "default_policy": {
+      "require_https": true,
+      "custom_hosts": "deny",
+      "review_rule": "novel-master runtime scripts do not require network access; any future network-capable script requires an explicit per-script allowlist and reviewer approval."
+    }
+  },
+  "help_smoke": {
+    "enabled": true,
+    "timeout_seconds": 5.0,
+    "candidate_count": 7,
+    "checked_count": 7,
+    "passed_count": 7,
+    "failed_count": 0,
+    "skipped_count": 0,
+    "failed_scripts": [],
+    "results": [
+      {
+        "path": "scripts\\check_prompt_regressions.py",
+        "command": "python3 scripts\\check_prompt_regressions.py --help",
+        "returncode": 0,
+        "timed_out": false,
+        "passed": true,
+        "has_help_text": true,
+        "stdout_excerpt": "usage: check_prompt_regressions.py [-h] [--actual ACTUAL] [--report REPORT]\n                                   suite\n\n校验 Prompt 回归集并对比规范化实际结果。\n\npositional arguments:\n  suite            evals.json 路径\n\noptions:\n  -h, --help       show this he",
+        "stderr_excerpt": ""
+      },
+      {
+        "path": "scripts\\commit_changeset.py",
+        "command": "python3 scripts\\commit_changeset.py --help",
+        "returncode": 0,
+        "timed_out": false,
+        "passed": true,
+        "has_help_text": true,
+        "stdout_excerpt": "usage: commit_changeset.py [-h] --project-root PROJECT_ROOT --changeset\n                           CHANGESET --request-id REQUEST_ID\n                           [--operation OPERATION] [--approval APPROVAL]\n                           [--appr",
+        "stderr_excerpt": ""
+      },
+      {
+        "path": "scripts\\compute_revision.py",
+        "command": "python3 scripts\\compute_revision.py --help",
+        "returncode": 0,
+        "timed_out": false,
+        "passed": true,
+        "has_help_text": true,
+        "stdout_excerpt": "usage: compute_revision.py [-h] --file FILE [--project-root PROJECT_ROOT]\n                           [--update]\n\n计算文件 SHA-256 和 revision\n\noptions:\n  -h, --help            show this help message and exit\n  --file FILE           目标文件路径\n  --pr",
+        "stderr_excerpt": ""
+      },
+      {
+        "path": "scripts\\project_lock.py",
+        "command": "python3 scripts\\project_lock.py --help",
+        "returncode": 0,
+        "timed_out": false,
+        "passed": true,
+        "has_help_text": true,
+        "stdout_excerpt": "usage: project_lock.py [-h] --project-root PROJECT_ROOT\n                       (--acquire | --release | --status)\n                       [--request-id REQUEST_ID] [--force] [--reason REASON]\n\n项目写锁管理\n\noptions:\n  -h, --help            show th",
+        "stderr_excerpt": ""
+      },
+      {
+        "path": "scripts\\validate_approval.py",
+        "command": "python3 scripts\\validate_approval.py --help",
+        "returncode": 0,
+        "timed_out": false,
+        "passed": true,
+        "has_help_text": true,
+        "stdout_excerpt": "usage: validate_approval.py [-h] --approval APPROVAL --operation OPERATION\n                            --target-files TARGET_FILES [TARGET_FILES ...]\n                            --current-revision CURRENT_REVISION\n                          ",
+        "stderr_excerpt": ""
+      },
+      {
+        "path": "scripts\\validate_contract.py",
+        "command": "python3 scripts\\validate_contract.py --help",
+        "returncode": 0,
+        "timed_out": false,
+        "passed": true,
+        "has_help_text": true,
+        "stdout_excerpt": "usage: validate_contract.py [-h] --schema SCHEMA --input INPUT\n\n校验 YAML/JSON 文件是否符合指定 JSON Schema\n\noptions:\n  -h, --help       show this help message and exit\n  --schema SCHEMA  JSON Schema 文件路径\n  --input INPUT    待校验的 YAML/JSON 输入文件路径",
+        "stderr_excerpt": ""
+      },
+      {
+        "path": "scripts\\validate_paths.py",
+        "command": "python3 scripts\\validate_paths.py --help",
+        "returncode": 0,
+        "timed_out": false,
+        "passed": true,
+        "has_help_text": true,
+        "stdout_excerpt": "usage: validate_paths.py [-h] --root ROOT [--skill SKILL] --paths PATHS\n                         [PATHS ...]\n\n校验路径安全性和 Skill 所有权\n\noptions:\n  -h, --help            show this help message and exit\n  --root ROOT           项目根目录路径\n  --skill SKI",
+        "stderr_excerpt": ""
+      }
+    ],
+    "skipped": []
+  },
+  "permission_governance": {
+    "present": false,
+    "path": "security/permission_policy.json",
+    "schema_version": "",
+    "reviewed_at": "",
+    "required_capabilities": [
+      "file_write"
+    ],
+    "approved_capabilities": [],
+    "missing_capabilities": [
+      "file_write"
+    ],
+    "invalid_capabilities": [],
+    "expired_capabilities": [],
+    "approval_count": 0,
+    "required_count": 1,
+    "missing_count": 1,
+    "invalid_count": 0,
+    "expired_count": 0,
+    "approvals": [
+      {
+        "capability": "file_write",
+        "status": "missing",
+        "scripts": [
+          "scripts\\check_prompt_regressions.py",
+          "scripts\\commit_changeset.py",
+          "scripts\\compute_revision.py",
+          "scripts\\project_lock.py"
+        ],
+        "validation": [
+          "approval entry is missing"
+        ]
+      }
+    ]
+  },
+  "trust_metadata": {
+    "source_tier": "local",
+    "remote_inline_execution": "forbid",
+    "remote_metadata_policy": "allow-metadata-only"
+  },
+  "artifacts": {
+    "json": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\reports\\security_trust_report.json",
+    "markdown": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\reports\\security_trust_report.md"
+  }
+}

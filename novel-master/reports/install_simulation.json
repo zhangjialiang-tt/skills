@@ -1,0 +1,156 @@
+{
+  "ok": false,
+  "schema_version": "2.0",
+  "generated_at": "2026-07-25T00:00:00Z",
+  "skill_dir": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master",
+  "package_dir": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\dist",
+  "install_root": "[temporary-install-root]",
+  "installed_skill_dir": "[temporary-install-root]/novel-master",
+  "summary": {
+    "archive_present": true,
+    "archive_entry_count": 219,
+    "archive_extracted": true,
+    "entrypoint_loaded": true,
+    "manifest_loaded": true,
+    "interface_loaded": true,
+    "adapter_count": 2,
+    "installer_permission_enforced_count": 0,
+    "installer_permission_failure_count": 5,
+    "permission_target_count": 2,
+    "permission_capability_count": 1,
+    "install_root_is_temp": true,
+    "failure_count": 5,
+    "warning_count": 0
+  },
+  "checks": [
+    {
+      "id": "archive-present",
+      "status": "pass",
+      "detail": "Package archive exists: C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\dist\\novel-master.zip"
+    },
+    {
+      "id": "archive-safe-paths",
+      "status": "pass",
+      "detail": "Archive has no absolute or parent-traversal entries"
+    },
+    {
+      "id": "single-top-level",
+      "status": "pass",
+      "detail": "Archive top-level directory is novel-master"
+    },
+    {
+      "id": "entrypoint-load",
+      "status": "pass",
+      "detail": "Installed SKILL.md frontmatter is readable"
+    },
+    {
+      "id": "entrypoint-name",
+      "status": "pass",
+      "detail": "Installed SKILL.md name matches package directory"
+    },
+    {
+      "id": "entrypoint-description",
+      "status": "pass",
+      "detail": "Installed SKILL.md description is present"
+    },
+    {
+      "id": "manifest-load",
+      "status": "pass",
+      "detail": "Installed manifest.json is readable"
+    },
+    {
+      "id": "manifest-name",
+      "status": "pass",
+      "detail": "Installed manifest name matches package manifest"
+    },
+    {
+      "id": "manifest-version",
+      "status": "pass",
+      "detail": "Installed manifest version matches package manifest"
+    },
+    {
+      "id": "interface-load",
+      "status": "pass",
+      "detail": "Installed agents/interface.yaml is readable"
+    },
+    {
+      "id": "overview-report",
+      "status": "pass",
+      "detail": "Installed overview report is present"
+    },
+    {
+      "id": "review-studio-report",
+      "status": "pass",
+      "detail": "Installed Review Studio report is present"
+    },
+    {
+      "id": "adapter-generic",
+      "status": "pass",
+      "detail": "generic adapter is readable after package install simulation"
+    },
+    {
+      "id": "adapter-generic-name",
+      "status": "pass",
+      "detail": "generic adapter name matches package manifest"
+    },
+    {
+      "id": "adapter-openai",
+      "status": "pass",
+      "detail": "openai adapter is readable after package install simulation"
+    },
+    {
+      "id": "adapter-openai-name",
+      "status": "pass",
+      "detail": "openai adapter name matches package manifest"
+    },
+    {
+      "id": "permission-policy-load",
+      "status": "fail",
+      "detail": "Installed permission policy is readable"
+    },
+    {
+      "id": "permission-generic-contract",
+      "status": "pass",
+      "detail": "generic adapter exposes target permission contract for installer enforcement"
+    },
+    {
+      "id": "permission-generic-file_write-approved",
+      "status": "fail",
+      "detail": "generic capability file_write has active reviewer approval"
+    },
+    {
+      "id": "permission-generic-file_write-target-enforcement",
+      "status": "fail",
+      "detail": "generic capability file_write has target enforcement note"
+    },
+    {
+      "id": "permission-openai-contract",
+      "status": "pass",
+      "detail": "openai adapter exposes target permission contract for installer enforcement"
+    },
+    {
+      "id": "permission-openai-file_write-approved",
+      "status": "fail",
+      "detail": "openai capability file_write has active reviewer approval"
+    },
+    {
+      "id": "permission-openai-file_write-target-enforcement",
+      "status": "fail",
+      "detail": "openai capability file_write has target enforcement note"
+    }
+  ],
+  "failures": [
+    "Installed permission policy is readable",
+    "generic capability file_write has active reviewer approval",
+    "generic capability file_write has target enforcement note",
+    "openai capability file_write has active reviewer approval",
+    "openai capability file_write has target enforcement note"
+  ],
+  "warnings": [],
+  "artifacts": {
+    "archive": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\dist\\novel-master.zip",
+    "package_manifest": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\dist\\manifest.json",
+    "json": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\reports\\install_simulation.json",
+    "markdown": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\reports\\install_simulation.md"
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "reviewer": "",
+  "reviewed_at": "",
+  "review_integrity": {
+    "blind_pack_sha256": "4fc441c38e9de2ab140da7bfdd08aeb4773dec4e80f51c9969ddfb0e27d8a8ab",
+    "case_count": 6,
+    "case_ids": [
+      "readonly-review-no-state-write",
+      "conflict-blocks-writer",
+      "draft-cannot-commit-facts",
+      "l2-preserves-confirmed-facts",
+      "ordinary-object-not-persistent-fact",
+      "secret-creates-knowledge-proposal"
+    ],
+    "prompt_sha256_by_case": {
+      "readonly-review-no-state-write": "71a1014c08a25760c0172b7b59aff74687f89074178d0ab464f9804de494f918",
+      "conflict-blocks-writer": "ee0774f1eb4371d4bc34555efb3fd68bd30334726622d2f800ecaa36f2b7c5ec",
+      "draft-cannot-commit-facts": "347c0c7a6895006c12d7ee35e6c77a446ff73a85913dffa19f09942f4600c88d",
+      "l2-preserves-confirmed-facts": "5f02b3fc4b062a488bd2d7225633908afcc0b3ae13eb125531a1a855242a39ac",
+      "ordinary-object-not-persistent-fact": "ee3fc5e08ece49775ad1ffc3fa5a6b0e0f8360638b5dd20af65998a03d98b8d6",
+      "secret-creates-knowledge-proposal": "c5f924a51ee15919017c339cf698e942245c628cae9c124b79fd6a899446f9f8"
+    }
+  },
+  "reviewer_attestation": {
+    "blind_review_completed_before_answer_key": false,
+    "answer_key_not_opened_before_decisions": false,
+    "raw_content_excluded": true,
+    "reviewer_reason_required": true
+  },
+  "decision_contract": {
+    "winner_variant": "Use A or B after reading the blind review pack. Leave blank when pending.",
+    "confidence": "Optional number from 0 to 1.",
+    "reason": "Required reviewer rationale. Do not reveal baseline or with-skill labels before adjudication.",
+    "reviewer_attestation": "Set blind_review_completed_before_answer_key and answer_key_not_opened_before_decisions to true only after a real blind review."
+  },
+  "decisions": [
+    {
+      "case_id": "readonly-review-no-state-write",
+      "winner_variant": "",
+      "confidence": null,
+      "reason": ""
+    },
+    {
+      "case_id": "conflict-blocks-writer",
+      "winner_variant": "",
+      "confidence": null,
+      "reason": ""
+    },
+    {
+      "case_id": "draft-cannot-commit-facts",
+      "winner_variant": "",
+      "confidence": null,
+      "reason": ""
+    },
+    {
+      "case_id": "l2-preserves-confirmed-facts",
+      "winner_variant": "",
+      "confidence": null,
+      "reason": ""
+    },
+    {
+      "case_id": "ordinary-object-not-persistent-fact",
+      "winner_variant": "",
+      "confidence": null,
+      "reason": ""
+    },
+    {
+      "case_id": "secret-creates-knowledge-proposal",
+      "winner_variant": "",
+      "confidence": null,
+      "reason": ""
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "ok": true,
+  "skill_dir": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master",
+  "source": "reports\\review_annotations_input.json",
+  "summary": {
+    "annotation_count": 2,
+    "open_count": 2,
+    "resolved_count": 0,
+    "deferred_count": 0,
+    "open_blocker_count": 2,
+    "open_warning_count": 0,
+    "linked_gate_count": 2,
+    "target_missing_count": 0,
+    "failure_count": 0
+  },
+  "annotations": [
+    {
+      "id": "governed-file-write-approval-missing",
+      "gate_key": "permission-gates",
+      "target_path": "security/permission_policy.md",
+      "line": null,
+      "severity": "blocker",
+      "status": "open",
+      "reviewer": "automated-governance-check",
+      "created_at": "2026-07-25",
+      "body": "Governed promotion is blocked because file_write has no real human approval, expiry, evidence, or target enforcement record; this is missing evidence, not an approved permission.",
+      "suggested_action": "A real reviewer must create security/permission_policy.json with the required bounded approval fields.",
+      "evidence": "reports/security_trust_report.md",
+      "target_exists": true,
+      "source_excerpt": ""
+    },
+    {
+      "id": "governed-blind-review-missing",
+      "gate_key": "output-lab",
+      "target_path": "reports/output_review_kit.md",
+      "line": null,
+      "severity": "blocker",
+      "status": "open",
+      "reviewer": "automated-governance-check",
+      "created_at": "2026-07-25",
+      "body": "Governed promotion is blocked because all six blind A/B decisions and reviewer metadata remain missing evidence; recorded_fixture results are not human adjudication.",
+      "suggested_action": "A human reviewer must complete the blind decision template and run output-review adjudication.",
+      "evidence": "reports/output_execution_runs.md",
+      "target_exists": true,
+      "source_excerpt": ""
+    }
+  ],
+  "failures": [],
+  "template_written": false,
+  "artifacts": {
+    "json": "reports\\review_annotations.json",
+    "markdown": "reports\\review_annotations.md"
+  }
+}

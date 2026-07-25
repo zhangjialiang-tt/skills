@@ -1,0 +1,154 @@
+{
+  "skill_name": "novel-master",
+  "description": "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。",
+  "systems_doctrine": "Structure drives behavior: improve the boundary, feedback loops, drift watch, and leverage points before adding weight.",
+  "stability": {
+    "score": 72,
+    "band": "needs-boundary-tuning"
+  },
+  "boundary_map": {
+    "owned_job": "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。",
+    "input_boundary": [
+      "user-provided workflow notes, prompts, docs, or examples"
+    ],
+    "output_boundary": "a reusable skill output",
+    "non_goals": [
+      "one-off adjacent requests that do not match the recurring job",
+      "private local material that was not intentionally included"
+    ],
+    "constraints": [],
+    "standards": [],
+    "human_judgment_boundary": [
+      "Ask one focused clarification when the real job, output, or exclusion boundary is unclear.",
+      "Escalate visible tradeoffs when benchmark patterns conflict with local privacy, naming, or governance constraints.",
+      "Do not silently broaden the skill into adjacent jobs just because the examples are nearby."
+    ],
+    "maturity_assumption": "production"
+  },
+  "feedback_loops": [
+    {
+      "name": "Intent boundary loop",
+      "signal": "Intent confidence score is 0/100.",
+      "response": "Ask only the highest-leverage clarification before adding package weight.",
+      "evidence": "reports/intent-confidence.md and reports/intent-dialogue.md"
+    },
+    {
+      "name": "Reference synthesis loop",
+      "signal": "Benchmark patterns are useful only after they are abstracted into borrow and avoid guidance.",
+      "response": "Borrow one pattern at a time and keep the rest as reviewer-visible evidence.",
+      "evidence": "reports/reference-synthesis.md",
+      "current_patterns": []
+    },
+    {
+      "name": "Output quality loop",
+      "signal": "Generated output may fail in recurring domain-specific ways.",
+      "response": "Apply predicted output-risk families as self-repair checks before final output.",
+      "evidence": "reports/output-risk-profile.md",
+      "current_risk_families": [
+        "Markdown readability",
+        "Code and command safety",
+        "Citation and footnote clutter"
+      ]
+    },
+    {
+      "name": "Reviewer feedback loop",
+      "signal": "Human review catches drift that static checks miss.",
+      "response": "Capture lightweight feedback and turn repeated findings into gates or references.",
+      "evidence": "reports/review-viewer.html and feedback records"
+    },
+    {
+      "name": "Lifecycle loop",
+      "signal": "As reuse grows, the skill needs stronger gates, ownership, and regression evidence.",
+      "response": "Promote only when the next gate improves reliability more than context cost.",
+      "evidence": "manifest.json, reports/iteration-directions.md, and governance checks"
+    }
+  ],
+  "drift_watch": [
+    {
+      "name": "Trigger drift",
+      "watch_signal": "Users start invoking the skill for adjacent one-off or explanation-only requests.",
+      "countermeasure": "Add near-neighbor exclusions and route evals before expanding workflow steps.",
+      "cadence": "per trigger or description change"
+    },
+    {
+      "name": "Output drift",
+      "watch_signal": "Outputs remain valid but become generic, cluttered, or weakly aligned with the user's domain.",
+      "countermeasure": "Refresh output-risk and artifact-design profiles, then add one self-repair check.",
+      "cadence": "after the first 3-5 real uses",
+      "risk_families": [
+        "Markdown readability",
+        "Code and command safety",
+        "Citation and footnote clutter"
+      ]
+    },
+    {
+      "name": "Reference drift",
+      "watch_signal": "Borrowed benchmark patterns no longer fit the local job or add ceremony without payoff.",
+      "countermeasure": "Re-run reference synthesis and keep only patterns that improve the current boundary.",
+      "cadence": "per material benchmark or product assumption change"
+    },
+    {
+      "name": "Governance drift",
+      "watch_signal": "Skill usage becomes team-critical while ownership, review cadence, or rollback evidence stays informal.",
+      "countermeasure": "Promote maturity tier and add reviewer-visible lifecycle evidence.",
+      "cadence": "monthly"
+    }
+  ],
+  "failure_pattern_map": [
+    {
+      "family": "Boundary failure",
+      "symptom": "The skill handles nearby requests that were never part of the recurring job.",
+      "repair": "Narrow the description and add explicit non-goals before adding more execution steps."
+    },
+    {
+      "family": "Feedback gap",
+      "symptom": "The skill has rules but no signal telling authors which rule should change after use.",
+      "repair": "Turn repeated reviewer feedback into one eval, one reference note, or one self-repair check."
+    },
+    {
+      "family": "Output degradation",
+      "symptom": "The result is structurally correct but generic, cluttered, or weakly matched to the user's domain.",
+      "repair": "Use output-risk families as pre-final checks.",
+      "current_risk_families": [
+        "Markdown readability",
+        "Code and command safety",
+        "Citation and footnote clutter"
+      ]
+    },
+    {
+      "family": "Prompt-behavior mismatch",
+      "symptom": "The role, task, and format are copied from a prompt instead of becoming stable skill behavior.",
+      "repair": "Convert reusable role/task/format assumptions into workflow, reports, or references.",
+      "watch_axes": [
+        "Specificity"
+      ]
+    }
+  ],
+  "leverage_points": [
+    {
+      "rank": 1,
+      "point": "Clarify the real job boundary",
+      "why": "Intent uncertainty creates downstream trigger, output, and governance errors.",
+      "move": "Ask one focused question and update intent context before adding assets."
+    },
+    {
+      "rank": 2,
+      "point": "Tune the frontmatter description",
+      "why": "The description is the highest-leverage routing surface.",
+      "move": "Name the recurring job, expected input, output, and strongest non-goal in compact language."
+    },
+    {
+      "rank": 3,
+      "point": "Install output self-repair checks",
+      "why": "The likely failure families are: Markdown readability, Code and command safety, Citation and footnote clutter.",
+      "move": "Add only the checks that prevent recurring output mistakes."
+    },
+    {
+      "rank": 5,
+      "point": "Close the lifecycle loop",
+      "why": "Team-reused skills need visible ownership, review cadence, and regression evidence.",
+      "move": "Keep manifest, review viewer, and iteration directions aligned after each material change."
+    }
+  ],
+  "reviewer_rule": "Reviewer should ask whether the skill's structure will keep producing the desired behavior after repeated real use."
+}

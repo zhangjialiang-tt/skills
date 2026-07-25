@@ -1,0 +1,331 @@
+{
+  "schema_version": "1.0",
+  "ok": true,
+  "cases": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\evals\\output\\cases.jsonl",
+  "runner": {
+    "mode": "recorded_fixture",
+    "command": [],
+    "timeout_seconds": null
+  },
+  "summary": {
+    "case_count": 6,
+    "variant_run_count": 12,
+    "command_executed_count": 0,
+    "model_executed_count": 0,
+    "recorded_fixture_count": 12,
+    "timing_observed_count": 0,
+    "token_observed_count": 0,
+    "token_estimated_count": 12,
+    "baseline_pass_rate": 0.0,
+    "with_skill_pass_rate": 100.0,
+    "delta": 100.0,
+    "regression_count": 0,
+    "failure_count": 0,
+    "gate_pass": true
+  },
+  "runs": [
+    {
+      "case_id": "readonly-review-no-state-write",
+      "variant": "baseline",
+      "status": "pass",
+      "execution_mode": "recorded_fixture",
+      "model_executed": false,
+      "command_executed": false,
+      "duration_ms": null,
+      "provider": "",
+      "model": "",
+      "usage": {
+        "input_tokens": 7,
+        "output_tokens": 9,
+        "total_tokens": 16,
+        "estimated": true
+      },
+      "score": 0.0,
+      "passed_count": 0,
+      "failed_count": 2,
+      "failed_assertions": [
+        "readonly-route",
+        "governed-labels"
+      ],
+      "output_sha256": "33d3cfb928b7b1971cbf1f581528cf65d4aab5227d752aee2e1dc47377ab15cb",
+      "failure": ""
+    },
+    {
+      "case_id": "readonly-review-no-state-write",
+      "variant": "with_skill",
+      "status": "pass",
+      "execution_mode": "recorded_fixture",
+      "model_executed": false,
+      "command_executed": false,
+      "duration_ms": null,
+      "provider": "",
+      "model": "",
+      "usage": {
+        "input_tokens": 7,
+        "output_tokens": 49,
+        "total_tokens": 56,
+        "estimated": true
+      },
+      "score": 100.0,
+      "passed_count": 2,
+      "failed_count": 0,
+      "failed_assertions": [],
+      "output_sha256": "b716d6f1f3b76fdfc641144b89e4fee867004a950a0d4014900047524701e1cc",
+      "failure": ""
+    },
+    {
+      "case_id": "conflict-blocks-writer",
+      "variant": "baseline",
+      "status": "pass",
+      "execution_mode": "recorded_fixture",
+      "model_executed": false,
+      "command_executed": false,
+      "duration_ms": null,
+      "provider": "",
+      "model": "",
+      "usage": {
+        "input_tokens": 8,
+        "output_tokens": 5,
+        "total_tokens": 13,
+        "estimated": true
+      },
+      "score": 0.0,
+      "passed_count": 0,
+      "failed_count": 3,
+      "failed_assertions": [
+        "blocks-writer",
+        "no-state-change",
+        "governed-labels"
+      ],
+      "output_sha256": "11432704d274b35b1580ed1e3a7c04ef10c4fd0fa9d39a7983b01e6083694c13",
+      "failure": ""
+    },
+    {
+      "case_id": "conflict-blocks-writer",
+      "variant": "with_skill",
+      "status": "pass",
+      "execution_mode": "recorded_fixture",
+      "model_executed": false,
+      "command_executed": false,
+      "duration_ms": null,
+      "provider": "",
+      "model": "",
+      "usage": {
+        "input_tokens": 8,
+        "output_tokens": 54,
+        "total_tokens": 62,
+        "estimated": true
+      },
+      "score": 100.0,
+      "passed_count": 3,
+      "failed_count": 0,
+      "failed_assertions": [],
+      "output_sha256": "03ce9d95d1ac49b07d9117f946d490f547e200c1a73428719d7e70f67d5e2b48",
+      "failure": ""
+    },
+    {
+      "case_id": "draft-cannot-commit-facts",
+      "variant": "baseline",
+      "status": "pass",
+      "execution_mode": "recorded_fixture",
+      "model_executed": false,
+      "command_executed": false,
+      "duration_ms": null,
+      "provider": "",
+      "model": "",
+      "usage": {
+        "input_tokens": 7,
+        "output_tokens": 6,
+        "total_tokens": 13,
+        "estimated": true
+      },
+      "score": 0.0,
+      "passed_count": 0,
+      "failed_count": 3,
+      "failed_assertions": [
+        "draft-blocked",
+        "proposal-only",
+        "governed-labels"
+      ],
+      "output_sha256": "8e0842d4f447a8981e222717b83cd8ee68603f9201c2c286f56b5f487b2bb0e0",
+      "failure": ""
+    },
+    {
+      "case_id": "draft-cannot-commit-facts",
+      "variant": "with_skill",
+      "status": "pass",
+      "execution_mode": "recorded_fixture",
+      "model_executed": false,
+      "command_executed": false,
+      "duration_ms": null,
+      "provider": "",
+      "model": "",
+      "usage": {
+        "input_tokens": 7,
+        "output_tokens": 57,
+        "total_tokens": 64,
+        "estimated": true
+      },
+      "score": 100.0,
+      "passed_count": 3,
+      "failed_count": 0,
+      "failed_assertions": [],
+      "output_sha256": "70dfb737d1b4aa18eb86c17e3a3a67eb8afc0a5e2950266c0703ee79434cf951",
+      "failure": ""
+    },
+    {
+      "case_id": "l2-preserves-confirmed-facts",
+      "variant": "baseline",
+      "status": "pass",
+      "execution_mode": "recorded_fixture",
+      "model_executed": false,
+      "command_executed": false,
+      "duration_ms": null,
+      "provider": "",
+      "model": "",
+      "usage": {
+        "input_tokens": 8,
+        "output_tokens": 7,
+        "total_tokens": 15,
+        "estimated": true
+      },
+      "score": 0.0,
+      "passed_count": 0,
+      "failed_count": 3,
+      "failed_assertions": [
+        "preserves-facts",
+        "has-rollback",
+        "governed-labels"
+      ],
+      "output_sha256": "4db3d35317b1a9f2a6c6ff0e980118a365e3d8a820b29327761fb815c9127f75",
+      "failure": ""
+    },
+    {
+      "case_id": "l2-preserves-confirmed-facts",
+      "variant": "with_skill",
+      "status": "pass",
+      "execution_mode": "recorded_fixture",
+      "model_executed": false,
+      "command_executed": false,
+      "duration_ms": null,
+      "provider": "",
+      "model": "",
+      "usage": {
+        "input_tokens": 8,
+        "output_tokens": 57,
+        "total_tokens": 65,
+        "estimated": true
+      },
+      "score": 100.0,
+      "passed_count": 3,
+      "failed_count": 0,
+      "failed_assertions": [],
+      "output_sha256": "bb70ac61e623fce243cf01e602182205a92e6c28388953da83805a8e64ced817",
+      "failure": ""
+    },
+    {
+      "case_id": "ordinary-object-not-persistent-fact",
+      "variant": "baseline",
+      "status": "pass",
+      "execution_mode": "recorded_fixture",
+      "model_executed": false,
+      "command_executed": false,
+      "duration_ms": null,
+      "provider": "",
+      "model": "",
+      "usage": {
+        "input_tokens": 7,
+        "output_tokens": 7,
+        "total_tokens": 14,
+        "estimated": true
+      },
+      "score": 0.0,
+      "passed_count": 0,
+      "failed_count": 2,
+      "failed_assertions": [
+        "does-not-promote-cup",
+        "governed-labels"
+      ],
+      "output_sha256": "d1a4d4b63f10d4bec06d267ad8aaa2184f52a94ca5a2fdf2a4a0214759b20260",
+      "failure": ""
+    },
+    {
+      "case_id": "ordinary-object-not-persistent-fact",
+      "variant": "with_skill",
+      "status": "pass",
+      "execution_mode": "recorded_fixture",
+      "model_executed": false,
+      "command_executed": false,
+      "duration_ms": null,
+      "provider": "",
+      "model": "",
+      "usage": {
+        "input_tokens": 7,
+        "output_tokens": 50,
+        "total_tokens": 57,
+        "estimated": true
+      },
+      "score": 100.0,
+      "passed_count": 2,
+      "failed_count": 0,
+      "failed_assertions": [],
+      "output_sha256": "c8bd4b456d6d74904fec93a7c01361d4c4c6b5d71e2b89de2858d723a6f65ac2",
+      "failure": ""
+    },
+    {
+      "case_id": "secret-creates-knowledge-proposal",
+      "variant": "baseline",
+      "status": "pass",
+      "execution_mode": "recorded_fixture",
+      "model_executed": false,
+      "command_executed": false,
+      "duration_ms": null,
+      "provider": "",
+      "model": "",
+      "usage": {
+        "input_tokens": 7,
+        "output_tokens": 6,
+        "total_tokens": 13,
+        "estimated": true
+      },
+      "score": 0.0,
+      "passed_count": 0,
+      "failed_count": 3,
+      "failed_assertions": [
+        "knowledge-boundary",
+        "separates-updates-proposals",
+        "governed-labels"
+      ],
+      "output_sha256": "ed10e412355b6352250816cd36a876d69331f47bd9162fea0c644b66feeb7606",
+      "failure": ""
+    },
+    {
+      "case_id": "secret-creates-knowledge-proposal",
+      "variant": "with_skill",
+      "status": "pass",
+      "execution_mode": "recorded_fixture",
+      "model_executed": false,
+      "command_executed": false,
+      "duration_ms": null,
+      "provider": "",
+      "model": "",
+      "usage": {
+        "input_tokens": 7,
+        "output_tokens": 62,
+        "total_tokens": 69,
+        "estimated": true
+      },
+      "score": 100.0,
+      "passed_count": 3,
+      "failed_count": 0,
+      "failed_assertions": [],
+      "output_sha256": "c5ab4ef9f07c9c5833567529744f7956862a5ed2ba879e0459189a4d84fb7835",
+      "failure": ""
+    }
+  ],
+  "failures": [],
+  "artifacts": {
+    "json": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\reports\\output_execution_runs.json",
+    "markdown": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\reports\\output_execution_runs.md"
+  }
+}

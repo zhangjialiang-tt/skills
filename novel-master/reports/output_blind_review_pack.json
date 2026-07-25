@@ -1,0 +1,217 @@
+{
+  "schema_version": "1.0",
+  "seed": "yao-output-eval-blind-v1",
+  "summary": {
+    "pair_count": 6,
+    "answer_key_separate": true,
+    "with_skill_hidden_count": 6
+  },
+  "pairs": [
+    {
+      "case_id": "readonly-review-no-state-write",
+      "prompt": "按 file-backed fixture 只读评审章节。",
+      "input_files": [
+        "fixtures/readonly-review.md"
+      ],
+      "metadata": {
+        "case_type": "file-backed fixture"
+      },
+      "review_instruction": "Pick A or B based only on the rubric. Do not infer which output came from the skill.",
+      "rubric": [
+        {
+          "id": "readonly-route",
+          "description": "只读请求不得产生写入。",
+          "weight": 1.0
+        },
+        {
+          "id": "governed-labels",
+          "description": "保留 Governed 证据标签。",
+          "weight": 1.0
+        }
+      ],
+      "variant_a": {
+        "blind_id": "readonly-review-no-state-write:A",
+        "output": "我会评审章节，并顺手修订正文和更新 timeline，确保问题被直接解决。"
+      },
+      "variant_b": {
+        "blind_id": "readonly-review-no-state-write:B",
+        "output": "读取 input_files 后路由至 novel-reviewer 的 READ_ONLY 评审；output contract 是证据化诊断和修订建议，不写正文或状态。rollback boundary：本次无写入、无需回滚。trust report 与 reports/output_quality_scorecard.md 作为发布证据；人工盲评为 missing evidence。"
+      }
+    },
+    {
+      "case_id": "conflict-blocks-writer",
+      "prompt": "按 file-backed fixture 续写第 9 章。",
+      "input_files": [
+        "fixtures/conflict-blocks-writer.md"
+      ],
+      "metadata": {
+        "case_type": "file-backed fixture"
+      },
+      "review_instruction": "Pick A or B based only on the rubric. Do not infer which output came from the skill.",
+      "rubric": [
+        {
+          "id": "blocks-writer",
+          "description": "Canon 冲突必须阻止正文生成。",
+          "weight": 1.0
+        },
+        {
+          "id": "no-state-change",
+          "description": "冲突分支不得写入。",
+          "weight": 1.0
+        },
+        {
+          "id": "governed-labels",
+          "description": "保留 Governed 证据标签。",
+          "weight": 1.0
+        }
+      ],
+      "variant_a": {
+        "blind_id": "conflict-blocks-writer:A",
+        "output": "input_files 显示章节卡与角色知识边界冲突，先返回 BLOCKED / CANON_CONFLICT，不调用 chapter-writer。output contract 是冲突证据、受影响事实和待决策项；rollback boundary：未写正文、未提交状态。trust report 与 reports/output_quality_scorecard.md 可审计，人工裁决为 missing evidence。"
+      },
+      "variant_b": {
+        "blind_id": "conflict-blocks-writer:B",
+        "output": "直接续写，让主角根据赤门计划找到入口。"
+      }
+    },
+    {
+      "case_id": "draft-cannot-commit-facts",
+      "prompt": "按 file-backed fixture 提交角色事实。",
+      "input_files": [
+        "fixtures/draft-no-commit.md"
+      ],
+      "metadata": {
+        "case_type": "file-backed fixture"
+      },
+      "review_instruction": "Pick A or B based only on the rubric. Do not infer which output came from the skill.",
+      "rubric": [
+        {
+          "id": "draft-blocked",
+          "description": "DRAFT 不得提交事实。",
+          "weight": 1.0
+        },
+        {
+          "id": "proposal-only",
+          "description": "草稿事实只能作为 Proposal。",
+          "weight": 1.0
+        },
+        {
+          "id": "governed-labels",
+          "description": "保留 Governed 证据标签。",
+          "weight": 1.0
+        }
+      ],
+      "variant_a": {
+        "blind_id": "draft-cannot-commit-facts:A",
+        "output": "更新人物卡和时间线，把失去左眼写成正式事实。"
+      },
+      "variant_b": {
+        "blind_id": "draft-cannot-commit-facts:B",
+        "output": "input_files 表明章节仍为 DRAFT，返回 BLOCKED / INVALID_STATE；只保留事实 Proposal，不更新 characters/ 或 state/。output contract 是阻塞原因与待接受提案；rollback boundary：没有正式状态写入。trust report 和 reports/output_quality_scorecard.md 已列入审查，章节接受证据为 missing evidence。"
+      }
+    },
+    {
+      "case_id": "l2-preserves-confirmed-facts",
+      "prompt": "按 file-backed fixture 执行 L2 修订。",
+      "input_files": [
+        "fixtures/l2-preserves-facts.md"
+      ],
+      "metadata": {
+        "case_type": "file-backed fixture"
+      },
+      "review_instruction": "Pick A or B based only on the rubric. Do not infer which output came from the skill.",
+      "rubric": [
+        {
+          "id": "preserves-facts",
+          "description": "L2 修订必须保留确认事实。",
+          "weight": 1.0
+        },
+        {
+          "id": "has-rollback",
+          "description": "修订必须说明回滚边界。",
+          "weight": 1.0
+        },
+        {
+          "id": "governed-labels",
+          "description": "保留 Governed 证据标签。",
+          "weight": 1.0
+        }
+      ],
+      "variant_a": {
+        "blind_id": "l2-preserves-confirmed-facts:A",
+        "output": "增强冲突时可以把主角改成南城出生，并让他知道父亲身份。"
+      },
+      "variant_b": {
+        "blind_id": "l2-preserves-confirmed-facts:B",
+        "output": "input_files 给出 L2 边界：允许调整表达、节奏和场景时间，但必须保持北港出生、左手旧伤、不知道父亲身份三项已确认事实。output contract 是修订正文与 preserved_facts 清单；rollback boundary：若事实校验失败则撤销 changeset。trust report 与 reports/output_quality_scorecard.md 可复核，人工文本质量判断为 missing evidence。"
+      }
+    },
+    {
+      "case_id": "ordinary-object-not-persistent-fact",
+      "prompt": "按 file-backed fixture 提取事实。",
+      "input_files": [
+        "fixtures/ordinary-cup.md"
+      ],
+      "metadata": {
+        "case_type": "file-backed fixture"
+      },
+      "review_instruction": "Pick A or B based only on the rubric. Do not infer which output came from the skill.",
+      "rubric": [
+        {
+          "id": "does-not-promote-cup",
+          "description": "普通物件不得升级为持续事实。",
+          "weight": 1.0
+        },
+        {
+          "id": "governed-labels",
+          "description": "保留 Governed 证据标签。",
+          "weight": 1.0
+        }
+      ],
+      "variant_a": {
+        "blind_id": "ordinary-object-not-persistent-fact:A",
+        "output": "input_files 中的陶杯只是一次性场景物件，不满足持续性或后续约束条件，不提取为 Canon。output contract 是空的 committed_updates 与排除理由；rollback boundary：无状态写入。trust report 和 reports/output_quality_scorecard.md 可审计，真实后续影响数据为 missing evidence。"
+      },
+      "variant_b": {
+        "blind_id": "ordinary-object-not-persistent-fact:B",
+        "output": "新增持续事实：角色拥有一个重要陶杯，后续章节必须保持。"
+      }
+    },
+    {
+      "case_id": "secret-creates-knowledge-proposal",
+      "prompt": "按 file-backed fixture 处理秘密信息。",
+      "input_files": [
+        "fixtures/secret-knowledge-proposal.md"
+      ],
+      "metadata": {
+        "case_type": "file-backed fixture"
+      },
+      "review_instruction": "Pick A or B based only on the rubric. Do not infer which output came from the skill.",
+      "rubric": [
+        {
+          "id": "knowledge-boundary",
+          "description": "秘密不得错误写入缺席角色知识。",
+          "weight": 1.0
+        },
+        {
+          "id": "separates-updates-proposals",
+          "description": "正式事实与知识提案必须分离。",
+          "weight": 1.0
+        },
+        {
+          "id": "governed-labels",
+          "description": "保留 Governed 证据标签。",
+          "weight": 1.0
+        }
+      ],
+      "variant_a": {
+        "blind_id": "secret-creates-knowledge-proposal:A",
+        "output": "章节已接受，把地下水道入口写入主角知识状态。"
+      },
+      "variant_b": {
+        "blind_id": "secret-creates-knowledge-proposal:B",
+        "output": "input_files 证明主角不在场；可提交世界事实“地下水道入口存在”，但主角知识只能保持未知。另生成 knowledge proposal，等待未来获取证据。output contract 分离 committed_updates 与 proposals；rollback boundary：知识边界校验失败则拒绝 changeset。trust report 与 reports/output_quality_scorecard.md 可追踪，人工盲评为 missing evidence。"
+      }
+    }
+  ]
+}

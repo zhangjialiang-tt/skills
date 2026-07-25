@@ -1,0 +1,83 @@
+{
+  "ok": true,
+  "schema_version": "2.0",
+  "generated_at": "2026-07-25T00:00:00Z",
+  "previous": {
+    "name": "novel-master",
+    "version": "1.0.0",
+    "targets": [
+      "openai"
+    ]
+  },
+  "current": {
+    "name": "novel-master",
+    "version": "1.1.0",
+    "targets": [
+      "openai",
+      "generic"
+    ]
+  },
+  "summary": {
+    "declared_bump": "minor",
+    "recommended_bump": "minor",
+    "breaking_change_count": 0,
+    "added_target_count": 1,
+    "metadata_change_count": 2,
+    "checksum_change_count": 2,
+    "failure_count": 0,
+    "warning_count": 0
+  },
+  "upgrade_diff": {
+    "name_changed": false,
+    "added_targets": [
+      "generic"
+    ],
+    "removed_targets": [],
+    "compatibility_changes": [
+      {
+        "target": "generic",
+        "from": "missing",
+        "to": "pass",
+        "direction": "improved"
+      }
+    ],
+    "metadata_changes": [
+      {
+        "field": "description",
+        "from": "编排长篇网文项目的意图识别、最小路由、权限与风险判定、接受闸门和结果汇总，不直接生成创作内容。用户提出小说创作、续写、修订、评审、设定、状态提交、项目初始化或跨子 Skill 协调请求时使用。",
+        "to": "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。"
+      },
+      {
+        "field": "license",
+        "from": "",
+        "to": "Proprietary - All Rights Reserved"
+      }
+    ],
+    "checksum_changes": [
+      {
+        "field": "archive_sha256",
+        "from": "",
+        "to": "78d226555b8415547407e44d9b0db974361d26c740b209f3c15b8458cded035c"
+      },
+      {
+        "field": "package_sha256",
+        "from": "0000000000000000000000000000000000000000000000000000000000000000",
+        "to": "1abba7e9732a90639dfc09c67782d178d1e363c9c5efc2f5e61c133424a9760e"
+      }
+    ]
+  },
+  "release_notes": [
+    "Recommended version bump: minor.",
+    "Added targets: generic.",
+    "Package or archive checksum changed; reviewers should verify package artifacts before release.",
+    "Package verification evidence: reports/package_verification.md."
+  ],
+  "failures": [],
+  "warnings": [],
+  "artifacts": {
+    "previous_package": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\registry\\examples\\novel-master-1.0.0-reconstructed.json",
+    "current_package": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\reports\\registry_audit.json",
+    "json": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\reports\\upgrade_check.json",
+    "markdown": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\reports\\upgrade_check.md"
+  }
+}

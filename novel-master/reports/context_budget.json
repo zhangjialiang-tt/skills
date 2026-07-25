@@ -1,0 +1,53 @@
+{
+  "ok": true,
+  "failures": [],
+  "warnings": [
+    "reports/ contains files but is not referenced in SKILL.md or declared in manifest factory_components."
+  ],
+  "stats": {
+    "context_budget_tier": "production",
+    "context_budget_limit": 1000,
+    "skill_body_tokens": 527,
+    "other_text_tokens": 197035,
+    "estimated_initial_load_tokens": 712,
+    "estimated_total_text_tokens": 197562,
+    "deferred_resource_tokens": 30705,
+    "deferred_resource_warn_threshold": 120000,
+    "deferred_resource_dirs": [
+      {
+        "path": "scripts",
+        "estimated_tokens": 17621,
+        "file_count": 7
+      },
+      {
+        "path": "evals",
+        "estimated_tokens": 6778,
+        "file_count": 19
+      },
+      {
+        "path": "references",
+        "estimated_tokens": 5888,
+        "file_count": 8
+      },
+      {
+        "path": "templates",
+        "estimated_tokens": 418,
+        "file_count": 19
+      }
+    ],
+    "large_deferred_resource_dirs": [],
+    "deferred_resource_governance": {
+      "status": "not-required",
+      "large_dir_count": 0,
+      "governed_large_dir_count": 0,
+      "directories": [],
+      "summary": "No large deferred resource directory exceeds the per-dir threshold."
+    },
+    "relevant_file_count": 132,
+    "unused_resource_dirs": [
+      "reports"
+    ],
+    "quality_signal_points": 125,
+    "quality_density": 175.6
+  }
+}

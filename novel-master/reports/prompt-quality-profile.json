@@ -1,0 +1,141 @@
+{
+  "skill_name": "novel-master",
+  "relevance": "prompt-aware",
+  "primary_task_family": {
+    "key": "analytical_reasoning",
+    "label": "Analytical reasoning",
+    "matched_keywords": [
+      "decision",
+      "分析",
+      "决策"
+    ]
+  },
+  "task_families": [
+    {
+      "key": "analytical_reasoning",
+      "label": "Analytical reasoning",
+      "score": 3,
+      "matched_keywords": [
+        "decision",
+        "分析",
+        "决策"
+      ],
+      "role_guidance": "Use an analyst role that separates evidence, inference, uncertainty, and recommendation.",
+      "task_guidance": "State assumptions, compare alternatives, and make the decision path inspectable.",
+      "format_guidance": "Return findings, evidence, tradeoffs, recommendation, and residual risks."
+    },
+    {
+      "key": "execution_operation",
+      "label": "Execution operation",
+      "score": 3,
+      "matched_keywords": [
+        "workflow",
+        "操作",
+        "执行"
+      ],
+      "role_guidance": "Use an operator role with explicit boundaries, inputs, outputs, and failure handling.",
+      "task_guidance": "Convert the job into ordered steps with validation checks and stop conditions.",
+      "format_guidance": "Return a runbook-like handoff with commands, checks, owners, and next actions when relevant."
+    },
+    {
+      "key": "creative_generation",
+      "label": "Creative generation",
+      "score": 1,
+      "matched_keywords": [
+        "内容"
+      ],
+      "role_guidance": "Use a taste-aware creator role with clear audience, tone, and originality boundaries.",
+      "task_guidance": "Generate variants, explain selection logic, and preserve the user's distinctive constraints.",
+      "format_guidance": "Return options with rationale, selection criteria, and refinement paths."
+    },
+    {
+      "key": "dialogue_interaction",
+      "label": "Dialogue interaction",
+      "score": 1,
+      "matched_keywords": [
+        "对话"
+      ],
+      "role_guidance": "Use a conversational role that asks only high-leverage questions and remembers the user's goal.",
+      "task_guidance": "Clarify intent, resolve uncertainty, and converge toward a recommendation instead of a long option list.",
+      "format_guidance": "Return concise prompts, decision points, and reviewer-visible assumptions."
+    }
+  ],
+  "complexity": {
+    "band": "complex",
+    "score": 6,
+    "reason": "multiple inputs, constraints, or task families require tradeoff handling"
+  },
+  "need_model": {
+    "explicit_need": "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。",
+    "implicit_need": "The reusable skill needs a stable role, task, and output contract rather than a one-off prompt.",
+    "scenario": "not yet explicit",
+    "user_level": "infer from examples and standards; ask only if it changes output depth",
+    "success_standard": "usable output with clear validation cues"
+  },
+  "rtf_to_skill": {
+    "role": "Use an analyst role that separates evidence, inference, uncertainty, and recommendation.",
+    "task": "State assumptions, compare alternatives, and make the decision path inspectable.",
+    "format": "Return findings, evidence, tradeoffs, recommendation, and residual risks."
+  },
+  "quality_matrix": [
+    {
+      "key": "completeness",
+      "label": "Completeness",
+      "score": 80,
+      "matched_signals": [
+        "example",
+        "输入",
+        "输出",
+        "标准"
+      ],
+      "repair": "Name missing inputs, outputs, constraints, or success standards before deepening the package."
+    },
+    {
+      "key": "clarity",
+      "label": "Clarity",
+      "score": 80,
+      "matched_signals": [],
+      "repair": "Replace broad verbs with observable actions and define what done means."
+    },
+    {
+      "key": "consistency",
+      "label": "Consistency",
+      "score": 90,
+      "matched_signals": [
+        "boundary",
+        "边界"
+      ],
+      "repair": "Check that role, task, format, exclusions, and examples do not contradict each other."
+    },
+    {
+      "key": "practicality",
+      "label": "Practicality",
+      "score": 95,
+      "matched_signals": [
+        "use",
+        "workflow",
+        "执行",
+        "使用"
+      ],
+      "repair": "Add runnable steps, examples, or verification cues instead of abstract advice."
+    },
+    {
+      "key": "specificity",
+      "label": "Specificity",
+      "score": 75,
+      "matched_signals": [
+        "用户"
+      ],
+      "repair": "Anchor wording in the user's audience, domain nouns, and target outcome."
+    }
+  ],
+  "overall_quality_score": 84.0,
+  "self_repair_checks": [
+    "Check explicit need, implicit need, scenario, user level, and success standard before deepening.",
+    "Map Role, Task, and Format into skill behavior, not decorative prompt labels.",
+    "Ask one focused clarification only when missing information changes the package boundary.",
+    "Add tests or examples for prompt-heavy behavior before treating it as reusable.",
+    "Keep prompt methodology in references and reports instead of bloating SKILL.md."
+  ],
+  "reviewer_note": "Use this profile when the package depends on prompt behavior, role design, output contracts, or conversation quality."
+}

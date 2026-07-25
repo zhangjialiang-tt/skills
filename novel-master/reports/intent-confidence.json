@@ -1,0 +1,53 @@
+{
+  "score": 100,
+  "band": "high",
+  "gate_passed": true,
+  "strengths": [
+    "The recurring job is concrete enough to anchor the package.",
+    "Real input shape is explicit.",
+    "The hand-back output is concrete.",
+    "Boundary exclusions are already explicit.",
+    "Operational constraints are visible."
+  ],
+  "gaps": [],
+  "follow_up_questions": [],
+  "anchor_sentence": "统一编排长篇网文项目从初始化、架构设计、章节生产、只读评审到连续性状态提交和恢复的可审计工作流。Route every long-form web-novel project request through one governed creation lifecycle. Primary output: 经过权限、风险、生命周期和事实边界校验的 MasterResult，以及由最小子 Skill 集合产生的项目交付物。Return a validated MasterResult with routed deliverables, confirmed changes, proposals, conflicts, warnings, and next actions.. Exclusions: 普通文本润色, 第三方作品分析, 阅读推荐, 诗歌或一次性短篇灵感, 非小说任务.",
+  "recommended_action": "Intent is clear enough to package the first routeable version.",
+  "context": {
+    "job": "统一编排长篇网文项目从初始化、架构设计、章节生产、只读评审到连续性状态提交和恢复的可审计工作流。Route every long-form web-novel project request through one governed creation lifecycle.",
+    "real_inputs": [
+      "用户原始创作请求",
+      "project.yaml 与 project_brief.md",
+      "人物、世界、故事和章节文件",
+      "workflow 中的 revision、approval、lock 和 changeset",
+      "子 Skill 返回的 SkillResult"
+    ],
+    "primary_output": "经过权限、风险、生命周期和事实边界校验的 MasterResult，以及由最小子 Skill 集合产生的项目交付物。Return a validated MasterResult with routed deliverables, confirmed changes, proposals, conflicts, warnings, and next actions.",
+    "description": "novel-master 是唯一公共入口；六个子 Skill 只接受主控路由或显式调用。",
+    "exclusions": [
+      "普通文本润色",
+      "第三方作品分析",
+      "阅读推荐",
+      "诗歌或一次性短篇灵感",
+      "非小说任务"
+    ],
+    "constraints": [
+      "不得跨项目读取或写入",
+      "只有 owned zone 可以写入",
+      "DRAFT 不产生正式事实状态",
+      "高风险操作需要有效 approval",
+      "OpenAI 与 Generic 语义必须一致"
+    ],
+    "standards": [
+      "可审计",
+      "可恢复",
+      "事实与 Proposal 分离",
+      "确定性合同可由脚本和 Schema 复验"
+    ],
+    "correction": "Governed 人工审批和盲评尚未完成，当前只能作为 production 级 Governed 候选。",
+    "user_references": [
+      "docs/novel-master-architecture-v1.0.1-frozen.md",
+      "docs/novel-master-contracts-v1.0.1-frozen.md"
+    ]
+  }
+}

@@ -1,0 +1,1104 @@
+{
+  "schema_version": "1.0",
+  "ok": true,
+  "generated_at": "2026-07-25T00:00:00Z",
+  "skill_dir": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master",
+  "summary": {
+    "target_count": 2,
+    "pass_count": 2,
+    "warn_count": 0,
+    "block_count": 0,
+    "failure_count": 0,
+    "warning_count": 0
+  },
+  "targets": [
+    {
+      "schema_version": "1.0",
+      "target": "openai",
+      "status": "pass",
+      "compiler": {
+        "name": "yao-skill-ir-compiler",
+        "schema_version": "1.0",
+        "source": "skill-ir",
+        "ir_source": "reports\\skill-ir.json",
+        "ir_schema_version": "2.0.0"
+      },
+      "source": {
+        "skill_dir": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master",
+        "canonical_metadata": "agents/interface.yaml",
+        "declared_targets": [
+          "openai",
+          "generic"
+        ]
+      },
+      "compiled_contract": {
+        "name": "novel-master",
+        "title": "网文创作总控",
+        "version": "1.1.0",
+        "description": "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。",
+        "job_to_be_done": "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。",
+        "trigger": {
+          "description": "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。",
+          "should_trigger": [
+            "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。"
+          ],
+          "should_not_trigger": [
+            "one-off adjacent requests that do not match the recurring job",
+            "private local material that was not intentionally included"
+          ],
+          "edge_cases": []
+        },
+        "workflow": {
+          "steps": [
+            "Understand the request.",
+            "Execute the main task.",
+            "Validate the result."
+          ],
+          "decision_points": [
+            "Ask one focused clarification when the real job, output, or exclusion boundary is unclear.",
+            "Escalate visible tradeoffs when benchmark patterns conflict with local privacy, naming, or governance constraints.",
+            "Do not silently broaden the skill into adjacent jobs just because the examples are nearby."
+          ],
+          "failure_modes": [
+            "Tables can render as dense grids with weak hierarchy or poor mobile readability.",
+            "Long bullets can make the output look complete while hiding the actual decision logic.",
+            "Commands can omit environment assumptions, working directory, or rollback notes.",
+            "Code snippets can look runnable while missing required inputs.",
+            "Footnote markers or dense citation notes can interrupt the reading flow.",
+            "Evidence can be over-attached to obvious statements and under-attached to risky claims.",
+            "Users start invoking the skill for adjacent one-off or explanation-only requests.",
+            "Outputs remain valid but become generic, cluttered, or weakly aligned with the user's domain.",
+            "Borrowed benchmark patterns no longer fit the local job or add ceremony without payoff.",
+            "Skill usage becomes team-critical while ownership, review cadence, or rollback evidence stays informal."
+          ]
+        },
+        "resources": {
+          "references": [
+            "references\\common-rules.md",
+            "references\\context-retrieval-rules.md",
+            "references\\error-codes.md",
+            "references\\fact-extraction-rules.md",
+            "references\\file-ownership.md",
+            "references\\lifecycle-and-approval.md",
+            "references\\routing-table.md",
+            "references\\style-guide-template.md"
+          ],
+          "scripts": [
+            "scripts\\check_prompt_regressions.py",
+            "scripts\\commit_changeset.py",
+            "scripts\\compute_revision.py",
+            "scripts\\project_lock.py",
+            "scripts\\validate_approval.py",
+            "scripts\\validate_contract.py",
+            "scripts\\validate_paths.py"
+          ],
+          "assets": [
+            "templates\\novel-project\\architecture\\.gitkeep",
+            "templates\\novel-project\\chapters\\drafts\\.gitkeep",
+            "templates\\novel-project\\chapters\\plans\\.gitkeep",
+            "templates\\novel-project\\characters\\.gitkeep",
+            "templates\\novel-project\\outline\\.gitkeep",
+            "templates\\novel-project\\project.yaml",
+            "templates\\novel-project\\project_brief.md",
+            "templates\\novel-project\\reviews\\.gitkeep",
+            "templates\\novel-project\\state\\.gitkeep",
+            "templates\\novel-project\\state\\archives\\.gitkeep",
+            "templates\\novel-project\\style_guide.md",
+            "templates\\novel-project\\workflow\\approvals\\.gitkeep",
+            "templates\\novel-project\\workflow\\backups\\.gitkeep",
+            "templates\\novel-project\\workflow\\change_log.md",
+            "templates\\novel-project\\workflow\\changesets\\.gitkeep",
+            "templates\\novel-project\\workflow\\pending_decisions.md",
+            "templates\\novel-project\\workflow\\route_log.md",
+            "templates\\novel-project\\workflow\\runs\\.gitkeep",
+            "templates\\novel-project\\world\\.gitkeep"
+          ],
+          "reports": [
+            "reports/intent-context.json",
+            "reports/intent-confidence.json",
+            "reports/intent-confidence.md",
+            "reports/reference-synthesis.json",
+            "reports/reference-synthesis.md",
+            "reports/output-risk-profile.json",
+            "reports/output-risk-profile.md",
+            "reports/artifact-design-profile.json",
+            "reports/artifact-design-profile.md",
+            "reports/prompt-quality-profile.json",
+            "reports/prompt-quality-profile.md",
+            "reports/system-model.json",
+            "reports/system-model.md",
+            "reports/iteration-directions.json",
+            "reports/iteration-directions.md",
+            "reports/skill-overview.json",
+            "reports/skill-overview.html",
+            "reports/output_quality_scorecard.json",
+            "reports/output_quality_scorecard.md",
+            "reports/output_execution_runs.json",
+            "reports/output_execution_runs.md",
+            "reports/output_blind_review_pack.json",
+            "reports/output_blind_review_pack.md",
+            "reports/output_blind_answer_key.json",
+            "reports/review_annotations.json",
+            "reports/review_annotations.md",
+            "reports/conformance_matrix.json",
+            "reports/conformance_matrix.md",
+            "reports/security_trust_report.json",
+            "reports/security_trust_report.md",
+            "reports/runtime_permission_probes.json",
+            "reports/runtime_permission_probes.md",
+            "reports/skill_atlas.json",
+            "reports/skill_atlas.html"
+          ],
+          "counts": {
+            "references": 8,
+            "scripts": 7,
+            "assets": 19,
+            "reports": 34
+          }
+        },
+        "eval_plan": {
+          "trigger": [
+            "evals\\adversarial\\trigger_cases.json",
+            "evals\\blind_holdout\\trigger_cases.json",
+            "evals\\confusion\\explicit_children_semantic_config.json",
+            "evals\\confusion\\route_cases.json",
+            "evals\\dev\\trigger_cases.json",
+            "evals\\evals.json",
+            "evals\\fixtures\\results-valid.json",
+            "evals\\holdout\\trigger_cases.json",
+            "evals\\output\\cases.jsonl",
+            "evals\\output\\fixtures\\conflict-blocks-writer.md",
+            "evals\\output\\fixtures\\draft-no-commit.md",
+            "evals\\output\\fixtures\\l2-preserves-facts.md",
+            "evals\\output\\fixtures\\ordinary-cup.md",
+            "evals\\output\\fixtures\\readonly-review.md",
+            "evals\\output\\fixtures\\secret-knowledge-proposal.md",
+            "evals\\packaging_expectations.json",
+            "evals\\reports\\forward-test-2026-07-25.md",
+            "evals\\semantic_config.json"
+          ],
+          "output": [
+            "evals\\output\\cases.jsonl",
+            "evals\\output\\fixtures\\conflict-blocks-writer.md",
+            "evals\\output\\fixtures\\draft-no-commit.md",
+            "evals\\output\\fixtures\\l2-preserves-facts.md",
+            "evals\\output\\fixtures\\ordinary-cup.md",
+            "evals\\output\\fixtures\\readonly-review.md",
+            "evals\\output\\fixtures\\secret-knowledge-proposal.md"
+          ],
+          "adversarial": [
+            "evals\\adversarial\\trigger_cases.json"
+          ],
+          "baseline": "without_skill",
+          "counts": {
+            "trigger": 18,
+            "output": 7,
+            "adversarial": 1,
+            "baseline": 1
+          }
+        },
+        "risk": {
+          "output_risk": "medium",
+          "execution_risk": "medium",
+          "trust_boundary": "team"
+        },
+        "governance": {
+          "owner": "zhangjl",
+          "maturity": "production",
+          "review_cadence": "per-release",
+          "review_due": ""
+        },
+        "runtime": {
+          "activation": {
+            "mode": "implicit",
+            "paths": []
+          },
+          "execution": {
+            "context": "inline",
+            "shell": "powershell"
+          },
+          "trust": {
+            "source_tier": "local",
+            "remote_inline_execution": "forbid",
+            "remote_metadata_policy": "allow-metadata-only"
+          },
+          "adapter_targets": [
+            "openai",
+            "generic"
+          ],
+          "canonical_format": "agent-skills"
+        },
+        "permissions": {
+          "schema_version": "1.0",
+          "source": "reports\\security_trust_report.json",
+          "source_available": true,
+          "declared_capabilities": [
+            "file_write"
+          ],
+          "review_required": true,
+          "capabilities": {
+            "network": {
+              "required": false,
+              "script_count": 0,
+              "scripts": [],
+              "review_reason": ""
+            },
+            "file_write": {
+              "required": true,
+              "script_count": 4,
+              "scripts": [
+                "scripts\\check_prompt_regressions.py",
+                "scripts\\commit_changeset.py",
+                "scripts\\compute_revision.py",
+                "scripts\\project_lock.py"
+              ],
+              "review_reason": "Scripts write local files or generated artifacts."
+            },
+            "subprocess": {
+              "required": false,
+              "script_count": 0,
+              "scripts": [],
+              "review_reason": ""
+            },
+            "interactive": {
+              "required": false,
+              "script_count": 0,
+              "scripts": [],
+              "review_reason": ""
+            }
+          },
+          "network_policy": {
+            "source": "security/network_policy.json",
+            "covered_scripts": [],
+            "missing_scripts": [],
+            "mismatches": []
+          },
+          "help_smoke": {
+            "enabled": true,
+            "checked_count": 7,
+            "failed_count": 0,
+            "failed_scripts": []
+          },
+          "trust_summary": {
+            "secret_findings": 0,
+            "network_script_count": 0,
+            "file_write_script_count": 4,
+            "subprocess_script_count": 0,
+            "interactive_script_count": 0,
+            "help_smoke_failed_count": 0
+          }
+        },
+        "source_files_count": 6,
+        "target": "openai",
+        "target_permission_contract": {
+          "schema_version": "1.0",
+          "target": "openai",
+          "permission_model": "metadata-only",
+          "native_enforcement": false,
+          "representation": "targets/openai/agents/openai.yaml::compatibility.permission_contract plus adapter.json",
+          "review_required": true,
+          "declared_capabilities": [
+            "file_write"
+          ],
+          "capability_counts": {
+            "network": 0,
+            "file_write": 4,
+            "subprocess": 0,
+            "interactive": 0
+          },
+          "evidence": "reports\\security_trust_report.json",
+          "operator_note": "OpenAI target carries permission metadata for reviewer visibility; host enforcement remains outside the package."
+        },
+        "target_native_contract": {
+          "schema_version": "1.0",
+          "target": "openai",
+          "native_surface": "OpenAI-style interface metadata plus neutral Agent Skills source",
+          "activation": {
+            "policy": "Use frontmatter description for catalog routing and targets/openai/agents/openai.yaml for display name, default prompt, and compatibility metadata.",
+            "trigger_description": "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。",
+            "manual_activation_supported": true,
+            "automatic_activation_note": "Depends on the target client route/catalog implementation."
+          },
+          "resources": {
+            "strategy": "Ship the neutral source tree and expose OpenAI-facing interface metadata as a generated companion file.",
+            "counts": {
+              "references": 8,
+              "scripts": 7,
+              "assets": 19,
+              "reports": 34
+            },
+            "generated_files": [
+              "targets/openai/adapter.json",
+              "targets/openai/agents/openai.yaml"
+            ]
+          },
+          "scripts": {
+            "strategy": "Keep scripts as local package resources; expose help-smoke and permission metadata for reviewer approval before execution.",
+            "script_count": 7,
+            "help_smoke_failed_count": 0
+          },
+          "permissions": {
+            "enforcement": "metadata-only",
+            "native_enforcement": false,
+            "declared_capabilities": [
+              "file_write"
+            ],
+            "review_required": true
+          },
+          "review": {
+            "artifacts": [
+              "targets/openai/agents/openai.yaml",
+              "targets/openai/adapter.json",
+              "reports/review-studio.html"
+            ],
+            "fallback_behavior": "If OpenAI-native metadata is ignored, the package remains readable as neutral Agent Skills source.",
+            "unsupported_native_features": [
+              "client-native permission prompts",
+              "provider-executed scripts",
+              "client-native script permission prompts are represented as permission contract metadata"
+            ]
+          },
+          "install_scope": "plugin or skill package consumer"
+        },
+        "degradation_strategy": "metadata-adapter",
+        "target_runtime": {
+          "adapter_mode": "metadata-adapter",
+          "generated_files": [
+            "targets/openai/adapter.json",
+            "targets/openai/agents/openai.yaml"
+          ],
+          "metadata_mapping": {
+            "display_name": "targets/openai/agents/openai.yaml::interface.display_name",
+            "default_prompt": "targets/openai/agents/openai.yaml::interface.default_prompt",
+            "activation": "targets/openai/agents/openai.yaml::compatibility.activation_mode",
+            "execution": "targets/openai/agents/openai.yaml::compatibility.execution_context",
+            "trust": "targets/openai/agents/openai.yaml::compatibility.trust_level",
+            "permissions": "targets/openai/agents/openai.yaml::compatibility.permission_contract",
+            "degradation": "targets/openai/agents/openai.yaml::compatibility.degradation_strategy"
+          },
+          "preserved_semantics": [
+            "trigger",
+            "workflow-counts",
+            "resources",
+            "eval-plan",
+            "risk",
+            "governance",
+            "runtime",
+            "trust",
+            "permissions"
+          ],
+          "native_surface": "OpenAI-style interface metadata plus neutral Agent Skills source"
+        }
+      },
+      "permission_contract": {
+        "schema_version": "1.0",
+        "source": "reports\\security_trust_report.json",
+        "source_available": true,
+        "declared_capabilities": [
+          "file_write"
+        ],
+        "review_required": true,
+        "capabilities": {
+          "network": {
+            "required": false,
+            "script_count": 0,
+            "scripts": [],
+            "review_reason": ""
+          },
+          "file_write": {
+            "required": true,
+            "script_count": 4,
+            "scripts": [
+              "scripts\\check_prompt_regressions.py",
+              "scripts\\commit_changeset.py",
+              "scripts\\compute_revision.py",
+              "scripts\\project_lock.py"
+            ],
+            "review_reason": "Scripts write local files or generated artifacts."
+          },
+          "subprocess": {
+            "required": false,
+            "script_count": 0,
+            "scripts": [],
+            "review_reason": ""
+          },
+          "interactive": {
+            "required": false,
+            "script_count": 0,
+            "scripts": [],
+            "review_reason": ""
+          }
+        },
+        "network_policy": {
+          "source": "security/network_policy.json",
+          "covered_scripts": [],
+          "missing_scripts": [],
+          "mismatches": []
+        },
+        "help_smoke": {
+          "enabled": true,
+          "checked_count": 7,
+          "failed_count": 0,
+          "failed_scripts": []
+        },
+        "trust_summary": {
+          "secret_findings": 0,
+          "network_script_count": 0,
+          "file_write_script_count": 4,
+          "subprocess_script_count": 0,
+          "interactive_script_count": 0,
+          "help_smoke_failed_count": 0
+        }
+      },
+      "target_permission_contract": {
+        "schema_version": "1.0",
+        "target": "openai",
+        "permission_model": "metadata-only",
+        "native_enforcement": false,
+        "representation": "targets/openai/agents/openai.yaml::compatibility.permission_contract plus adapter.json",
+        "review_required": true,
+        "declared_capabilities": [
+          "file_write"
+        ],
+        "capability_counts": {
+          "network": 0,
+          "file_write": 4,
+          "subprocess": 0,
+          "interactive": 0
+        },
+        "evidence": "reports\\security_trust_report.json",
+        "operator_note": "OpenAI target carries permission metadata for reviewer visibility; host enforcement remains outside the package."
+      },
+      "target_native_contract": {
+        "schema_version": "1.0",
+        "target": "openai",
+        "native_surface": "OpenAI-style interface metadata plus neutral Agent Skills source",
+        "activation": {
+          "policy": "Use frontmatter description for catalog routing and targets/openai/agents/openai.yaml for display name, default prompt, and compatibility metadata.",
+          "trigger_description": "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。",
+          "manual_activation_supported": true,
+          "automatic_activation_note": "Depends on the target client route/catalog implementation."
+        },
+        "resources": {
+          "strategy": "Ship the neutral source tree and expose OpenAI-facing interface metadata as a generated companion file.",
+          "counts": {
+            "references": 8,
+            "scripts": 7,
+            "assets": 19,
+            "reports": 34
+          },
+          "generated_files": [
+            "targets/openai/adapter.json",
+            "targets/openai/agents/openai.yaml"
+          ]
+        },
+        "scripts": {
+          "strategy": "Keep scripts as local package resources; expose help-smoke and permission metadata for reviewer approval before execution.",
+          "script_count": 7,
+          "help_smoke_failed_count": 0
+        },
+        "permissions": {
+          "enforcement": "metadata-only",
+          "native_enforcement": false,
+          "declared_capabilities": [
+            "file_write"
+          ],
+          "review_required": true
+        },
+        "review": {
+          "artifacts": [
+            "targets/openai/agents/openai.yaml",
+            "targets/openai/adapter.json",
+            "reports/review-studio.html"
+          ],
+          "fallback_behavior": "If OpenAI-native metadata is ignored, the package remains readable as neutral Agent Skills source.",
+          "unsupported_native_features": [
+            "client-native permission prompts",
+            "provider-executed scripts",
+            "client-native script permission prompts are represented as permission contract metadata"
+          ]
+        },
+        "install_scope": "plugin or skill package consumer"
+      },
+      "target_transform": {
+        "target": "openai",
+        "adapter_mode": "metadata-adapter",
+        "generated_files": [
+          "targets/openai/adapter.json",
+          "targets/openai/agents/openai.yaml"
+        ],
+        "metadata_mapping": {
+          "display_name": "targets/openai/agents/openai.yaml::interface.display_name",
+          "default_prompt": "targets/openai/agents/openai.yaml::interface.default_prompt",
+          "activation": "targets/openai/agents/openai.yaml::compatibility.activation_mode",
+          "execution": "targets/openai/agents/openai.yaml::compatibility.execution_context",
+          "trust": "targets/openai/agents/openai.yaml::compatibility.trust_level",
+          "permissions": "targets/openai/agents/openai.yaml::compatibility.permission_contract",
+          "degradation": "targets/openai/agents/openai.yaml::compatibility.degradation_strategy"
+        },
+        "preserved_semantics": [
+          "trigger",
+          "workflow-counts",
+          "resources",
+          "eval-plan",
+          "risk",
+          "governance",
+          "runtime",
+          "trust",
+          "permissions"
+        ],
+        "degradation_strategy": "metadata-adapter",
+        "permission_representation": "targets/openai/agents/openai.yaml::compatibility.permission_contract plus adapter.json",
+        "native_surface": "OpenAI-style interface metadata plus neutral Agent Skills source",
+        "activation_policy": "Use frontmatter description for catalog routing and targets/openai/agents/openai.yaml for display name, default prompt, and compatibility metadata.",
+        "resource_strategy": "Ship the neutral source tree and expose OpenAI-facing interface metadata as a generated companion file.",
+        "script_strategy": "Keep scripts as local package resources; expose help-smoke and permission metadata for reviewer approval before execution.",
+        "permission_enforcement": "metadata-only"
+      },
+      "unsupported_features": [
+        "client-native script permission prompts are represented as permission contract metadata"
+      ],
+      "warnings": [],
+      "failures": []
+    },
+    {
+      "schema_version": "1.0",
+      "target": "generic",
+      "status": "pass",
+      "compiler": {
+        "name": "yao-skill-ir-compiler",
+        "schema_version": "1.0",
+        "source": "skill-ir",
+        "ir_source": "reports\\skill-ir.json",
+        "ir_schema_version": "2.0.0"
+      },
+      "source": {
+        "skill_dir": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master",
+        "canonical_metadata": "agents/interface.yaml",
+        "declared_targets": [
+          "openai",
+          "generic"
+        ]
+      },
+      "compiled_contract": {
+        "name": "novel-master",
+        "title": "网文创作总控",
+        "version": "1.1.0",
+        "description": "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。",
+        "job_to_be_done": "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。",
+        "trigger": {
+          "description": "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。",
+          "should_trigger": [
+            "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。"
+          ],
+          "should_not_trigger": [
+            "one-off adjacent requests that do not match the recurring job",
+            "private local material that was not intentionally included"
+          ],
+          "edge_cases": []
+        },
+        "workflow": {
+          "steps": [
+            "Understand the request.",
+            "Execute the main task.",
+            "Validate the result."
+          ],
+          "decision_points": [
+            "Ask one focused clarification when the real job, output, or exclusion boundary is unclear.",
+            "Escalate visible tradeoffs when benchmark patterns conflict with local privacy, naming, or governance constraints.",
+            "Do not silently broaden the skill into adjacent jobs just because the examples are nearby."
+          ],
+          "failure_modes": [
+            "Tables can render as dense grids with weak hierarchy or poor mobile readability.",
+            "Long bullets can make the output look complete while hiding the actual decision logic.",
+            "Commands can omit environment assumptions, working directory, or rollback notes.",
+            "Code snippets can look runnable while missing required inputs.",
+            "Footnote markers or dense citation notes can interrupt the reading flow.",
+            "Evidence can be over-attached to obvious statements and under-attached to risky claims.",
+            "Users start invoking the skill for adjacent one-off or explanation-only requests.",
+            "Outputs remain valid but become generic, cluttered, or weakly aligned with the user's domain.",
+            "Borrowed benchmark patterns no longer fit the local job or add ceremony without payoff.",
+            "Skill usage becomes team-critical while ownership, review cadence, or rollback evidence stays informal."
+          ]
+        },
+        "resources": {
+          "references": [
+            "references\\common-rules.md",
+            "references\\context-retrieval-rules.md",
+            "references\\error-codes.md",
+            "references\\fact-extraction-rules.md",
+            "references\\file-ownership.md",
+            "references\\lifecycle-and-approval.md",
+            "references\\routing-table.md",
+            "references\\style-guide-template.md"
+          ],
+          "scripts": [
+            "scripts\\check_prompt_regressions.py",
+            "scripts\\commit_changeset.py",
+            "scripts\\compute_revision.py",
+            "scripts\\project_lock.py",
+            "scripts\\validate_approval.py",
+            "scripts\\validate_contract.py",
+            "scripts\\validate_paths.py"
+          ],
+          "assets": [
+            "templates\\novel-project\\architecture\\.gitkeep",
+            "templates\\novel-project\\chapters\\drafts\\.gitkeep",
+            "templates\\novel-project\\chapters\\plans\\.gitkeep",
+            "templates\\novel-project\\characters\\.gitkeep",
+            "templates\\novel-project\\outline\\.gitkeep",
+            "templates\\novel-project\\project.yaml",
+            "templates\\novel-project\\project_brief.md",
+            "templates\\novel-project\\reviews\\.gitkeep",
+            "templates\\novel-project\\state\\.gitkeep",
+            "templates\\novel-project\\state\\archives\\.gitkeep",
+            "templates\\novel-project\\style_guide.md",
+            "templates\\novel-project\\workflow\\approvals\\.gitkeep",
+            "templates\\novel-project\\workflow\\backups\\.gitkeep",
+            "templates\\novel-project\\workflow\\change_log.md",
+            "templates\\novel-project\\workflow\\changesets\\.gitkeep",
+            "templates\\novel-project\\workflow\\pending_decisions.md",
+            "templates\\novel-project\\workflow\\route_log.md",
+            "templates\\novel-project\\workflow\\runs\\.gitkeep",
+            "templates\\novel-project\\world\\.gitkeep"
+          ],
+          "reports": [
+            "reports/intent-context.json",
+            "reports/intent-confidence.json",
+            "reports/intent-confidence.md",
+            "reports/reference-synthesis.json",
+            "reports/reference-synthesis.md",
+            "reports/output-risk-profile.json",
+            "reports/output-risk-profile.md",
+            "reports/artifact-design-profile.json",
+            "reports/artifact-design-profile.md",
+            "reports/prompt-quality-profile.json",
+            "reports/prompt-quality-profile.md",
+            "reports/system-model.json",
+            "reports/system-model.md",
+            "reports/iteration-directions.json",
+            "reports/iteration-directions.md",
+            "reports/skill-overview.json",
+            "reports/skill-overview.html",
+            "reports/output_quality_scorecard.json",
+            "reports/output_quality_scorecard.md",
+            "reports/output_execution_runs.json",
+            "reports/output_execution_runs.md",
+            "reports/output_blind_review_pack.json",
+            "reports/output_blind_review_pack.md",
+            "reports/output_blind_answer_key.json",
+            "reports/review_annotations.json",
+            "reports/review_annotations.md",
+            "reports/conformance_matrix.json",
+            "reports/conformance_matrix.md",
+            "reports/security_trust_report.json",
+            "reports/security_trust_report.md",
+            "reports/runtime_permission_probes.json",
+            "reports/runtime_permission_probes.md",
+            "reports/skill_atlas.json",
+            "reports/skill_atlas.html"
+          ],
+          "counts": {
+            "references": 8,
+            "scripts": 7,
+            "assets": 19,
+            "reports": 34
+          }
+        },
+        "eval_plan": {
+          "trigger": [
+            "evals\\adversarial\\trigger_cases.json",
+            "evals\\blind_holdout\\trigger_cases.json",
+            "evals\\confusion\\explicit_children_semantic_config.json",
+            "evals\\confusion\\route_cases.json",
+            "evals\\dev\\trigger_cases.json",
+            "evals\\evals.json",
+            "evals\\fixtures\\results-valid.json",
+            "evals\\holdout\\trigger_cases.json",
+            "evals\\output\\cases.jsonl",
+            "evals\\output\\fixtures\\conflict-blocks-writer.md",
+            "evals\\output\\fixtures\\draft-no-commit.md",
+            "evals\\output\\fixtures\\l2-preserves-facts.md",
+            "evals\\output\\fixtures\\ordinary-cup.md",
+            "evals\\output\\fixtures\\readonly-review.md",
+            "evals\\output\\fixtures\\secret-knowledge-proposal.md",
+            "evals\\packaging_expectations.json",
+            "evals\\reports\\forward-test-2026-07-25.md",
+            "evals\\semantic_config.json"
+          ],
+          "output": [
+            "evals\\output\\cases.jsonl",
+            "evals\\output\\fixtures\\conflict-blocks-writer.md",
+            "evals\\output\\fixtures\\draft-no-commit.md",
+            "evals\\output\\fixtures\\l2-preserves-facts.md",
+            "evals\\output\\fixtures\\ordinary-cup.md",
+            "evals\\output\\fixtures\\readonly-review.md",
+            "evals\\output\\fixtures\\secret-knowledge-proposal.md"
+          ],
+          "adversarial": [
+            "evals\\adversarial\\trigger_cases.json"
+          ],
+          "baseline": "without_skill",
+          "counts": {
+            "trigger": 18,
+            "output": 7,
+            "adversarial": 1,
+            "baseline": 1
+          }
+        },
+        "risk": {
+          "output_risk": "medium",
+          "execution_risk": "medium",
+          "trust_boundary": "team"
+        },
+        "governance": {
+          "owner": "zhangjl",
+          "maturity": "production",
+          "review_cadence": "per-release",
+          "review_due": ""
+        },
+        "runtime": {
+          "activation": {
+            "mode": "implicit",
+            "paths": []
+          },
+          "execution": {
+            "context": "inline",
+            "shell": "powershell"
+          },
+          "trust": {
+            "source_tier": "local",
+            "remote_inline_execution": "forbid",
+            "remote_metadata_policy": "allow-metadata-only"
+          },
+          "adapter_targets": [
+            "openai",
+            "generic"
+          ],
+          "canonical_format": "agent-skills"
+        },
+        "permissions": {
+          "schema_version": "1.0",
+          "source": "reports\\security_trust_report.json",
+          "source_available": true,
+          "declared_capabilities": [
+            "file_write"
+          ],
+          "review_required": true,
+          "capabilities": {
+            "network": {
+              "required": false,
+              "script_count": 0,
+              "scripts": [],
+              "review_reason": ""
+            },
+            "file_write": {
+              "required": true,
+              "script_count": 4,
+              "scripts": [
+                "scripts\\check_prompt_regressions.py",
+                "scripts\\commit_changeset.py",
+                "scripts\\compute_revision.py",
+                "scripts\\project_lock.py"
+              ],
+              "review_reason": "Scripts write local files or generated artifacts."
+            },
+            "subprocess": {
+              "required": false,
+              "script_count": 0,
+              "scripts": [],
+              "review_reason": ""
+            },
+            "interactive": {
+              "required": false,
+              "script_count": 0,
+              "scripts": [],
+              "review_reason": ""
+            }
+          },
+          "network_policy": {
+            "source": "security/network_policy.json",
+            "covered_scripts": [],
+            "missing_scripts": [],
+            "mismatches": []
+          },
+          "help_smoke": {
+            "enabled": true,
+            "checked_count": 7,
+            "failed_count": 0,
+            "failed_scripts": []
+          },
+          "trust_summary": {
+            "secret_findings": 0,
+            "network_script_count": 0,
+            "file_write_script_count": 4,
+            "subprocess_script_count": 0,
+            "interactive_script_count": 0,
+            "help_smoke_failed_count": 0
+          }
+        },
+        "source_files_count": 6,
+        "target": "generic",
+        "target_permission_contract": {
+          "schema_version": "1.0",
+          "target": "generic",
+          "permission_model": "agent-skills-compatible-metadata",
+          "native_enforcement": false,
+          "representation": "targets/generic/adapter.json::target_permission_contract",
+          "review_required": true,
+          "declared_capabilities": [
+            "file_write"
+          ],
+          "capability_counts": {
+            "network": 0,
+            "file_write": 4,
+            "subprocess": 0,
+            "interactive": 0
+          },
+          "evidence": "reports\\security_trust_report.json",
+          "operator_note": "Generic target exposes permission metadata for downstream clients to enforce or review."
+        },
+        "target_native_contract": {
+          "schema_version": "1.0",
+          "target": "generic",
+          "native_surface": "Agent Skills compatible neutral package",
+          "activation": {
+            "policy": "Use SKILL.md name and description; consumers decide automatic or manual activation.",
+            "trigger_description": "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。",
+            "manual_activation_supported": true,
+            "automatic_activation_note": "Depends on the target client route/catalog implementation."
+          },
+          "resources": {
+            "strategy": "Preserve references, scripts, assets, evals, reports, and adapter metadata as relative package resources.",
+            "counts": {
+              "references": 8,
+              "scripts": 7,
+              "assets": 19,
+              "reports": 34
+            },
+            "generated_files": [
+              "targets/generic/adapter.json"
+            ]
+          },
+          "scripts": {
+            "strategy": "Expose script and permission metadata for downstream clients or installers to enforce.",
+            "script_count": 7,
+            "help_smoke_failed_count": 0
+          },
+          "permissions": {
+            "enforcement": "consumer-enforced-or-metadata-only",
+            "native_enforcement": false,
+            "declared_capabilities": [
+              "file_write"
+            ],
+            "review_required": true
+          },
+          "review": {
+            "artifacts": [
+              "targets/generic/adapter.json",
+              "reports/review-studio.html"
+            ],
+            "fallback_behavior": "Neutral source is the runtime fallback.",
+            "unsupported_native_features": []
+          },
+          "install_scope": "generic Agent Skills compatible root"
+        },
+        "degradation_strategy": "neutral-source",
+        "target_runtime": {
+          "adapter_mode": "agent-skills-compatible",
+          "generated_files": [
+            "targets/generic/adapter.json"
+          ],
+          "metadata_mapping": {
+            "display_name": "targets/generic/adapter.json::display_name",
+            "default_prompt": "targets/generic/adapter.json::default_prompt",
+            "activation": "targets/generic/adapter.json::activation_mode",
+            "execution": "targets/generic/adapter.json::execution_context",
+            "trust": "targets/generic/adapter.json::trust_level",
+            "permissions": "targets/generic/adapter.json::target_permission_contract",
+            "degradation": "targets/generic/adapter.json::degradation_strategy"
+          },
+          "preserved_semantics": [
+            "trigger",
+            "workflow-counts",
+            "resources",
+            "eval-plan",
+            "risk",
+            "governance",
+            "runtime",
+            "trust",
+            "permissions"
+          ],
+          "native_surface": "Agent Skills compatible neutral package"
+        }
+      },
+      "permission_contract": {
+        "schema_version": "1.0",
+        "source": "reports\\security_trust_report.json",
+        "source_available": true,
+        "declared_capabilities": [
+          "file_write"
+        ],
+        "review_required": true,
+        "capabilities": {
+          "network": {
+            "required": false,
+            "script_count": 0,
+            "scripts": [],
+            "review_reason": ""
+          },
+          "file_write": {
+            "required": true,
+            "script_count": 4,
+            "scripts": [
+              "scripts\\check_prompt_regressions.py",
+              "scripts\\commit_changeset.py",
+              "scripts\\compute_revision.py",
+              "scripts\\project_lock.py"
+            ],
+            "review_reason": "Scripts write local files or generated artifacts."
+          },
+          "subprocess": {
+            "required": false,
+            "script_count": 0,
+            "scripts": [],
+            "review_reason": ""
+          },
+          "interactive": {
+            "required": false,
+            "script_count": 0,
+            "scripts": [],
+            "review_reason": ""
+          }
+        },
+        "network_policy": {
+          "source": "security/network_policy.json",
+          "covered_scripts": [],
+          "missing_scripts": [],
+          "mismatches": []
+        },
+        "help_smoke": {
+          "enabled": true,
+          "checked_count": 7,
+          "failed_count": 0,
+          "failed_scripts": []
+        },
+        "trust_summary": {
+          "secret_findings": 0,
+          "network_script_count": 0,
+          "file_write_script_count": 4,
+          "subprocess_script_count": 0,
+          "interactive_script_count": 0,
+          "help_smoke_failed_count": 0
+        }
+      },
+      "target_permission_contract": {
+        "schema_version": "1.0",
+        "target": "generic",
+        "permission_model": "agent-skills-compatible-metadata",
+        "native_enforcement": false,
+        "representation": "targets/generic/adapter.json::target_permission_contract",
+        "review_required": true,
+        "declared_capabilities": [
+          "file_write"
+        ],
+        "capability_counts": {
+          "network": 0,
+          "file_write": 4,
+          "subprocess": 0,
+          "interactive": 0
+        },
+        "evidence": "reports\\security_trust_report.json",
+        "operator_note": "Generic target exposes permission metadata for downstream clients to enforce or review."
+      },
+      "target_native_contract": {
+        "schema_version": "1.0",
+        "target": "generic",
+        "native_surface": "Agent Skills compatible neutral package",
+        "activation": {
+          "policy": "Use SKILL.md name and description; consumers decide automatic or manual activation.",
+          "trigger_description": "编排长篇网文项目的初始化、设定与人物/情节设计、章节规划与正文创作/续写/修订、文本评审、连续性维护、状态提交和恢复；负责意图识别、最小子 Skill 路由、权限风险与接受闸门，不直接替代子 Skill 生成内容。用户要求创建或持续维护网文项目、跨阶段协调或治理事实状态时使用；普通文本润色、第三方作品分析、阅读推荐、诗歌/一次性短篇灵感及非小说任务不使用。",
+          "manual_activation_supported": true,
+          "automatic_activation_note": "Depends on the target client route/catalog implementation."
+        },
+        "resources": {
+          "strategy": "Preserve references, scripts, assets, evals, reports, and adapter metadata as relative package resources.",
+          "counts": {
+            "references": 8,
+            "scripts": 7,
+            "assets": 19,
+            "reports": 34
+          },
+          "generated_files": [
+            "targets/generic/adapter.json"
+          ]
+        },
+        "scripts": {
+          "strategy": "Expose script and permission metadata for downstream clients or installers to enforce.",
+          "script_count": 7,
+          "help_smoke_failed_count": 0
+        },
+        "permissions": {
+          "enforcement": "consumer-enforced-or-metadata-only",
+          "native_enforcement": false,
+          "declared_capabilities": [
+            "file_write"
+          ],
+          "review_required": true
+        },
+        "review": {
+          "artifacts": [
+            "targets/generic/adapter.json",
+            "reports/review-studio.html"
+          ],
+          "fallback_behavior": "Neutral source is the runtime fallback.",
+          "unsupported_native_features": []
+        },
+        "install_scope": "generic Agent Skills compatible root"
+      },
+      "target_transform": {
+        "target": "generic",
+        "adapter_mode": "agent-skills-compatible",
+        "generated_files": [
+          "targets/generic/adapter.json"
+        ],
+        "metadata_mapping": {
+          "display_name": "targets/generic/adapter.json::display_name",
+          "default_prompt": "targets/generic/adapter.json::default_prompt",
+          "activation": "targets/generic/adapter.json::activation_mode",
+          "execution": "targets/generic/adapter.json::execution_context",
+          "trust": "targets/generic/adapter.json::trust_level",
+          "permissions": "targets/generic/adapter.json::target_permission_contract",
+          "degradation": "targets/generic/adapter.json::degradation_strategy"
+        },
+        "preserved_semantics": [
+          "trigger",
+          "workflow-counts",
+          "resources",
+          "eval-plan",
+          "risk",
+          "governance",
+          "runtime",
+          "trust",
+          "permissions"
+        ],
+        "degradation_strategy": "neutral-source",
+        "permission_representation": "targets/generic/adapter.json::target_permission_contract",
+        "native_surface": "Agent Skills compatible neutral package",
+        "activation_policy": "Use SKILL.md name and description; consumers decide automatic or manual activation.",
+        "resource_strategy": "Preserve references, scripts, assets, evals, reports, and adapter metadata as relative package resources.",
+        "script_strategy": "Expose script and permission metadata for downstream clients or installers to enforce.",
+        "permission_enforcement": "consumer-enforced-or-metadata-only"
+      },
+      "unsupported_features": [],
+      "warnings": [],
+      "failures": []
+    }
+  ],
+  "failures": [],
+  "warnings": [],
+  "artifacts": {
+    "json": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\reports\\compiled_targets.json",
+    "markdown": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\novel-master\\reports\\compiled_targets.md"
+  }
+}
