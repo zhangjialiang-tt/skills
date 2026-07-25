@@ -6,17 +6,27 @@
     {"text": "根据当前大纲和状态生成第十二章章节卡。", "family": "chapter_plan"},
     {"text": "按已确认章节卡续写下一章正文。", "family": "chapter_write"},
     {"text": "评审这一章并给出证据化修订建议，不直接改正文。", "family": "review"},
-    {"text": "检查人物年龄与时间线冲突，准备连续性状态提案。", "family": "continuity"}
+    {"text": "检查人物年龄与时间线冲突，准备连续性状态提案。", "family": "continuity"},
+    {"text": "帮我写一本修仙小说。", "family": "natural_project"},
+    {"text": "我想写个玄幻网文，从设定开始。", "family": "genre_design"},
+    {"text": "能帮我构思一下主角的人设吗？", "family": "character_design"},
+    {"text": "这个开头怎么写比较好？", "family": "opening"},
+    {"text": "续写第三章，主角刚进入秘境。", "family": "continue_chapter"},
+    {"text": "帮我看看这章写得怎么样，有什么问题？", "family": "casual_review"}
   ],
   "should_not_trigger": [
     {"text": "润色这封商务邮件，让语气更正式。", "family": "plain_polish"},
     {"text": "分析《百年孤独》的叙事结构并写读后感。", "family": "third_party_analysis"},
     {"text": "推荐十本最近值得读的科幻小说。", "family": "recommendation"},
-    {"text": "帮我调试这个 Python 脚本。", "family": "non_novel"}
+    {"text": "帮我调试这个 Python 脚本。", "family": "non_novel"},
+    {"text": "分析一下这本玄幻小说的写作手法。", "family": "third_party_analysis_genre"},
+    {"text": "帮我总结一下这本小说的主要内容。", "family": "novel_summary"}
   ],
   "near_neighbor": [
     {"text": "给我一个一次性短篇灵感，不需要建立小说项目。", "family": "one_off_short"},
     {"text": "写一首关于月亮的现代诗。", "family": "poem"},
-    {"text": "只润色下面一段文字，不做网文项目管理。", "family": "polish_only"}
+    {"text": "只润色下面一段文字，不做网文项目管理。", "family": "polish_only"},
+    {"text": "模仿网文风格写一段打斗场景，不建项目。", "family": "style_imitation_no_project"},
+    {"text": "修仙小说里常见的力量体系有哪些类型？", "family": "genre_question_not_creation"}
   ]
 }

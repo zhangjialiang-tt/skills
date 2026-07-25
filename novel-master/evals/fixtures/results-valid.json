@@ -247,6 +247,100 @@
           ]
         }
       }
+    },
+    {
+      "id": "NM-REG-013",
+      "actual": {
+        "route": {
+          "steps": [
+            "novel-brief/DEFAULT",
+            "story-architect/STORY",
+            "story-architect/CHARACTER",
+            "story-architect/WORLD",
+            "story-architect/PLOT",
+            "novel-style/DEFAULT",
+            "novel-master/INITIALIZATION_REVIEW"
+          ]
+        },
+        "actions": [
+          "run_init_chain",
+          "guide_user"
+        ],
+        "result": {
+          "status": "NEEDS_DECISION",
+          "recommended_next_action": "用户确认项目简报后继续设定设计"
+        }
+      }
+    },
+    {
+      "id": "NM-REG-014",
+      "actual": {
+        "route": {
+          "target_skill": "chapter-writer",
+          "task_mode": "DEFAULT"
+        },
+        "actions": [
+          "write_draft"
+        ],
+        "result": {
+          "status": "COMPLETED",
+          "chapter_lifecycle_status": "DRAFT"
+        }
+      }
+    },
+    {
+      "id": "NM-REG-015",
+      "actual": {
+        "route": {
+          "target_skill": "chapter-writer"
+        },
+        "actions": [
+          "write_draft",
+          "request_acceptance"
+        ],
+        "result": {
+          "status": "COMPLETED",
+          "chapter_lifecycle_status": "DRAFT"
+        },
+        "warnings": [
+          "DRAFT 状态不能直接发布，请先经 REVIEWED → ACCEPTED 流程"
+        ]
+      }
+    },
+    {
+      "id": "NM-REG-016",
+      "actual": {
+        "route": {
+          "steps": [
+            "novel-master/INTENT_DIALOGUE"
+          ]
+        },
+        "actions": [
+          "guide_user"
+        ],
+        "result": {
+          "status": "NEEDS_DECISION",
+          "recommended_next_action": "从 novel-brief 开始，先确定类型、读者和基本创意方向"
+        }
+      }
+    },
+    {
+      "id": "NM-REG-017",
+      "actual": {
+        "route": {
+          "target_skill": "chapter-writer"
+        },
+        "actions": [
+          "write_draft"
+        ],
+        "result": {
+          "status": "COMPLETED",
+          "chapter_lifecycle_status": "DRAFT"
+        },
+        "warnings": [
+          "直接调用子 Skill 跳过了 novel-master 编排，状态一致性、文件所有权和审批流程可能受影响"
+        ]
+      }
     }
   ]
 }

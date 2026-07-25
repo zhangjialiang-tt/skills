@@ -2,14 +2,17 @@
   "recommended_threshold": 0.17,
   "should_trigger": [
     {"text": "把现有角色卡、世界观和十五章草稿纳入一个可持续维护的网文工程。", "family": "blind_ingest_project"},
-    {"text": "续写前先检查伏笔、角色知识边界和上一章产生的状态变化。", "family": "blind_prewrite_continuity"}
+    {"text": "续写前先检查伏笔、角色知识边界和上一章产生的状态变化。", "family": "blind_prewrite_continuity"},
+    {"text": "给我这本小说搭个完整的世界观和力量体系。", "family": "blind_world_building"}
   ],
   "should_not_trigger": [
     {"text": "比较两本出版小说的主题表达。", "family": "blind_literary_analysis"},
-    {"text": "把会议纪要整理成周报。", "family": "blind_non_novel"}
+    {"text": "把会议纪要整理成周报。", "family": "blind_non_novel"},
+    {"text": "评价一下这本小说的文笔和叙事技巧。", "family": "blind_novel_critique"}
   ],
   "near_neighbor": [
     {"text": "只想试写一个独立场景，不创建项目也不维护后续状态。", "family": "blind_one_off_scene"},
-    {"text": "给这段广告文案做普通润色。", "family": "blind_copy_polish"}
+    {"text": "给这段广告文案做普通润色。", "family": "blind_copy_polish"},
+    {"text": "随便想一个修仙的短篇脑洞，不用建项目。", "family": "blind_genre_one_off"}
   ]
 }

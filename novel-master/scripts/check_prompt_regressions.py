@@ -23,11 +23,12 @@ from pathlib import Path
 from typing import Any
 
 
-REQUIRED_CASE_IDS = [f"NM-REG-{index:03d}" for index in range(1, 13)]
+REQUIRED_CASE_IDS = [f"NM-REG-{index:03d}" for index in range(1, 18)]
 ALLOWED_OPERATORS = {
     "equals",
     "contains",
     "not_contains",
+    "not_equals",
     "is_empty",
     "is_not_empty",
 }
@@ -89,7 +90,7 @@ def validate_suite(suite: dict[str, Any]) -> list[str]:
                         f"{assertion_location}.operator 非法: {operator}"
                     )
                 if (
-                    operator in {"equals", "contains", "not_contains"}
+                    operator in {"equals", "not_equals", "contains", "not_contains"}
                     and "expected" not in assertion
                 ):
                     issues.append(
@@ -148,6 +149,8 @@ def _assertion_passes(actual: Any, assertion: dict[str, Any]) -> bool:
         return False
     if operator == "equals":
         return actual == expected
+    if operator == "not_equals":
+        return actual != expected
     if operator == "contains":
         return (
             isinstance(actual, (list, str))

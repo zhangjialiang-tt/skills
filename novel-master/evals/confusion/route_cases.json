@@ -16,6 +16,10 @@
     {"family": "public_write", "expected_route": "novel-master", "text": "按章节卡续写正文。"},
     {"family": "public_review", "expected_route": "novel-master", "text": "评审这一章并给出修订建议。"},
     {"family": "public_continuity", "expected_route": "novel-master", "text": "检查时间线冲突并更新连续性状态。"},
+    {"family": "natural_write", "expected_route": "novel-master", "text": "帮我写一本修仙小说。"},
+    {"family": "natural_chapter", "expected_route": "novel-master", "text": "续写我的都市小说的下一章。"},
+    {"family": "natural_design", "expected_route": "novel-master", "text": "我想写个玄幻，帮我搭世界观和主角设定。"},
+    {"family": "natural_review", "expected_route": "novel-master", "text": "帮我看看这章写得怎么样。"},
     {"family": "explicit_brief", "expected_route": "novel-brief", "text": "显式使用 $novel-brief 把创意整理成项目简报。"},
     {"family": "explicit_architect", "expected_route": "story-architect", "text": "显式使用 $story-architect 设计世界规则。"},
     {"family": "explicit_planner", "expected_route": "chapter-planner", "text": "显式使用 $chapter-planner 生成章节卡。"},
@@ -24,6 +28,8 @@
     {"family": "explicit_keeper", "expected_route": "continuity-keeper", "text": "显式使用 $continuity-keeper 提交状态。"},
     {"family": "no_route_polish", "expected_route": "no_route", "text": "润色这封商务邮件。"},
     {"family": "no_route_recommend", "expected_route": "no_route", "text": "推荐十本小说。"},
-    {"family": "no_route_code", "expected_route": "no_route", "text": "修复这个 Python bug。"}
+    {"family": "no_route_code", "expected_route": "no_route", "text": "修复这个 Python bug。"},
+    {"family": "no_route_analysis", "expected_route": "no_route", "text": "分析一下《凡人修仙传》的叙事结构。"},
+    {"family": "no_route_genre_rec", "expected_route": "no_route", "text": "推荐几本好看的都市小说。"}
   ]
 }
