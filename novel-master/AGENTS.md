@@ -1,17 +1,18 @@
 # 仓库指南
 
-novel-master v1.1.0 — 工业级长篇网文多 Agent 编排 Skill。将用户意图路由到最小必要子 Skill 集合，执行文件所有权隔离，通过可审计的事务协议治理 Canon/状态。纯 Python，仅 pip 管理，无异步，无类抽象。
+novel-master v1.2.0 — 工业级长篇网文多 Agent 编排 Skill。将用户意图路由到最小必要子 Skill 集合，执行文件所有权隔离，通过可审计的事务协议治理 Canon/状态。纯 Python，仅 pip 管理，无异步，无类抽象。
 
 ## 项目概述
 
 `novel-master` 是一个**编排器 Skill** — 本身不生成内容。它负责识别用户意图、路由到最小必要子 Skill 集合、执行权限边界检查、在高风险操作前插入审批闸门，最终返回 `MasterResult` 汇总变更内容与待确认提案。
 
-管理的六个子 Skill：
+管理的七个子 Skill：
 
 | Skill | 职责 | 可写区域 |
 |---|---|---|
 | `novel-brief` | 项目定位、卖点、读者画像 | `project_brief.md` |
 | `story-architect` | 故事/人物/世界/情节架构 | `architecture/`、`characters/`、`world/`、`outline/` |
+| `novel-style` | 风格指南、叙事约束 | `style_guide.md` |
 | `chapter-planner` | 章节规划、节拍、目标 | `chapters/plans/` |
 | `chapter-writer` | 正文创作、续写、修订 | `chapters/drafts/` |
 | `novel-reviewer` | 一致性、节奏、风格评审 | `reviews/` |
@@ -33,7 +34,7 @@ novel-master v1.1.0 — 工业级长篇网文多 Agent 编排 Skill。将用户�
 
 **三层架构**：编排器（路由/审批/治理）→ 子 Skill（领域工作）+ references/schemas（共享契约与脚本）。
 
-**13 条系统不变量**已冻结在 `docs/novel-master-architecture-v1.0.1-frozen.md`。编排器是唯一可写入 `project.yaml`、`workflow/route_log.md`、`workflow/pending_decisions.md`、`workflow/change_log.md` 的组件。
+**13 条系统不变量**已冻结在 `docs/novel-master-architecture-v1.1.0-frozen.md`。编排器是唯一可写入 `project.yaml`、`workflow/route_log.md`、`workflow/pending_decisions.md`、`workflow/change_log.md` 的组件。
 
 关键设计决策：
 - **单一 Canon 写入者** — 仅 `continuity-keeper` 可写入 `state/`
@@ -47,7 +48,7 @@ novel-master v1.1.0 — 工业级长篇网文多 Agent 编排 Skill。将用户�
 ```
 novel-master/
 ├── SKILL.md                        # 编排器入口（路由逻辑、I/O 契约）
-├── manifest.json                   # v1.1.0 包清单
+├── manifest.json                   # v1.2.0 包清单
 ├── agents/                         # Agent 接口配置（interface.yaml、openai.yaml）
 ├── references/                     # 8 份共享规则文档（路由、所有权、生命周期等）
 ├── schemas/                        # 7 个 JSON Schema Draft 2020-12 定义
@@ -57,6 +58,7 @@ novel-master/
 ├── evals/                          # 10 个回归用例（NM-REG-001..010）+ fixtures
 ├── docs/                           # 冻结架构、契约、实施指南
 ├── novel-brief/                    # 子 Skill：项目简报
+├── novel-style/                    # 子 Skill：风格指南
 ├── chapter-planner/                # 子 Skill：章节规划
 ├── chapter-writer/                 # 子 Skill：正文创作
 ├── novel-reviewer/                 # 子 Skill：文本评审
@@ -162,8 +164,8 @@ PREPARE → VALIDATE → APPLY → VERIFY → COMMIT
 | `schemas/approvalref.schema.json` | 审批令牌（作用域、版本绑定、一次性过期） |
 | `schemas/context-pack.schema.json` | 发送给子 Skill 的受限上下文（≤2000 字符 / ≤4000 tokens） |
 | `schemas/master-result.schema.json` | 编排器最终输出给用户 |
-| `docs/novel-master-architecture-v1.0.1-frozen.md` | 冻结架构基线（610 行、13 条不变量） |
-| `docs/novel-master-contracts-v1.0.1-frozen.md` | 冻结字段级契约（1577 行，唯一真相源） |
+| `docs/novel-master-architecture-v1.1.0-frozen.md` | 冻结架构基线（13 条不变量） |
+| `docs/novel-master-contracts-v1.1.0-frozen.md` | 冻结字段级契约（唯一真相源） |
 | `docs/novel-master-implementation-guide-v1.md` | 实施顺序、已知限制（未冻结） |
 
 ## 运行时与工具偏好

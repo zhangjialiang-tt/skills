@@ -1,6 +1,6 @@
 {
   "name": "novel-master",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "owner": "zhangjl",
   "updated_at": "2026-07-25",
   "status": "active",
@@ -21,6 +21,7 @@
     "examples",
     "novel-brief",
     "story-architect",
+    "novel-style",
     "chapter-planner",
     "chapter-writer",
     "novel-reviewer",
