@@ -56,7 +56,26 @@
       "scripts\\project_lock.py",
       "scripts\\validate_approval.py",
       "scripts\\validate_contract.py",
-      "scripts\\validate_paths.py"
+      "scripts\\validate_paths.py",
+      "scripts\\validate_quality_contract.py"
+    ],
+    "schemas": [
+      "schemas\\approval-ref.schema.json",
+      "schemas\\changeset.schema.json",
+      "schemas\\chapter-plan.schema.json",
+      "schemas\\chapter-report.schema.json",
+      "schemas\\context-pack.schema.json",
+      "schemas\\master-result.schema.json",
+      "schemas\\recovery-report.schema.json",
+      "schemas\\review-request.schema.json",
+      "schemas\\review-report.schema.json",
+      "schemas\\skill-result.schema.json",
+      "schemas\\style-guide.schema.json",
+      "schemas\\task-envelope.schema.json",
+      "schemas\\defs\\contract-meta.schema.json",
+      "schemas\\defs\\evidence-ref.schema.json",
+      "schemas\\defs\\reader-experience.schema.json",
+      "schemas\\defs\\review-dimensions.schema.json"
     ],
     "assets": [
       "templates\\novel-project\\architecture\\.gitkeep",
