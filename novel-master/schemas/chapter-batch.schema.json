@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chapter-batch.schema.json",
+  "title": "ChapterBatch",
+  "description": "v1.3 ChapterBatch — pre-planned chapter sequence for an Arc.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["planning_artifact_meta", "chapter_batch"],
+  "properties": {
+    "planning_artifact_meta": { "$ref": "planning-artifact-meta.schema.json#/properties/planning_artifact_meta" },
+    "chapter_batch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["batch_id", "arc_ref", "target_range", "batch_goal", "required_arc_beats", "chapter_slots", "refresh_trigger"],
+      "properties": {
+        "batch_id": { "type": "string", "minLength": 1 },
+        "arc_ref": { "$ref": "defs/plan-ref.schema.json#/definitions/plan_ref" },
+        "target_range": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["start_chapter", "end_chapter"],
+          "properties": {
+            "start_chapter": { "type": "string", "minLength": 1 },
+            "end_chapter": { "type": "string", "minLength": 1 }
+          }
+        },
+        "batch_goal": { "type": "string", "minLength": 1 },
+        "required_arc_beats": {
+          "type": "array",
+          "items": { "$ref": "defs/plan-ref.schema.json#/definitions/plan_ref" }
+        },
+        "payoff_plan": {
+          "type": "array",
+          "items": { "$ref": "defs/plan-ref.schema.json#/definitions/plan_ref" }
+        },
+        "chapter_slots": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["slot_id", "status", "intended_function", "beat_refs", "flexibility"],
+            "properties": {
+              "slot_id": { "type": "string", "minLength": 1 },
+              "status": { "type": "string", "enum": ["PLANNED", "ASSIGNED", "COMPLETED", "SKIPPED", "SUPERSEDED"] },
+              "intended_function": { "type": "string", "enum": ["SETUP", "ESCALATION", "PAYOFF", "CLIMAX", "TRANSITION"] },
+              "assigned_chapter_refs": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "beat_refs": {
+                "type": "array",
+                "items": { "$ref": "defs/plan-ref.schema.json#/definitions/plan_ref" }
+              },
+              "flexibility": { "type": "string", "enum": ["HIGH", "MEDIUM", "LOW"] },
+              "superseded_by": { "type": ["string", "null"] }
+            }
+          }
+        },
+        "refresh_trigger": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["after_chapters", "on_tactical_deviation"],
+          "properties": {
+            "after_chapters": { "type": "integer", "minimum": 1 },
+            "on_tactical_deviation": { "type": "boolean" }
+          }
+        }
+      }
+    }
+  }
+}

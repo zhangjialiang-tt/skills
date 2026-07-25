@@ -41,7 +41,9 @@
         "EDIT_L3",
         "EDIT_L4",
         "ACCEPT_CHAPTER",
-        "INIT_PROJECT"
+        "INIT_PROJECT",
+        "REPLAN_ARC",
+        "REPLAN_VOLUME"
       ]
     },
     "approved_scope": {

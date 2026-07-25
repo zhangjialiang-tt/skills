@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "defs/plan-ref.schema.json",
+  "title": "PlanRef & ItemRef",
+  "description": "Structured references to planning artifacts and their nested items.",
+  "definitions": {
+    "plan_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_type", "artifact_id", "path", "revision", "content_hash"],
+      "properties": {
+        "artifact_type": {
+          "type": "string",
+          "enum": ["STORY_ENGINE", "PROJECT_SPINE", "VOLUME_ARC", "ARC_PLAN", "CHAPTER_BATCH"]
+        },
+        "artifact_id": { "type": "string", "minLength": 1 },
+        "path": { "type": "string", "minLength": 1 },
+        "revision": { "type": "string", "minLength": 1 },
+        "content_hash": { "type": "string", "minLength": 64, "maxLength": 64 }
+      }
+    },
+    "item_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["item_type", "item_id", "json_pointer"],
+      "properties": {
+        "item_type": {
+          "type": "string",
+          "enum": ["PHASE", "MILESTONE", "ARC_BEAT", "BATCH_SLOT", "PAYOFF"]
+        },
+        "item_id": { "type": "string", "minLength": 1 },
+        "json_pointer": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

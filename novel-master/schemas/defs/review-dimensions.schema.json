@@ -6,7 +6,7 @@
   "definitions": {
     "review_dimension": {
       "type": "string",
-      "enum": ["CONTRACT_COMPLIANCE", "NARRATIVE_SOUNDNESS", "READER_EXPERIENCE", "CRAFT_EXECUTION"]
+      "enum": ["CONTRACT_COMPLIANCE", "NARRATIVE_SOUNDNESS", "READER_EXPERIENCE", "CRAFT_EXECUTION", "PLAN_ALIGNMENT"]
     },
     "guardrail_item": {
       "type": "string",

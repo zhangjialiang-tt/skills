@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "story-engine.schema.json",
+  "title": "StoryEngine",
+  "description": "v1.3 StoryEngine — core narrative cycle and escalation axes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["planning_artifact_meta", "story_engine"],
+  "properties": {
+    "planning_artifact_meta": { "$ref": "planning-artifact-meta.schema.json#/properties/planning_artifact_meta" },
+    "story_engine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary_cycle", "escalation_axes", "refresh_mechanisms"],
+      "properties": {
+        "primary_cycle": { "type": "string", "minLength": 1 },
+        "escalation_axes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["axis", "escalation"],
+            "properties": {
+              "axis": { "type": "string", "minLength": 1 },
+              "escalation": { "type": "string", "minLength": 1 }
+            }
+          }
+        },
+        "refresh_mechanisms": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["mechanism", "purpose"],
+            "properties": {
+              "mechanism": { "type": "string", "minLength": 1 },
+              "purpose": { "type": "string", "minLength": 1 }
+            }
+          }
+        }
+      }
+    }
+  }
+}

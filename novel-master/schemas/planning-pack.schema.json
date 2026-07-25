@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "planning-pack.schema.json",
+  "title": "PlanningPack",
+  "description": "v1.3 planning context package.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "generated_for_request", "active_phase", "active_volume", "active_arc", "active_batch", "current_progress"],
+  "properties": {
+    "schema_version": { "type": "string", "enum": ["1.0"] },
+    "generated_for_request": { "type": "string", "minLength": 1 },
+    "active_phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "core_question", "non_negotiable_milestones"],
+      "properties": {
+        "ref": { "$ref": "defs/plan-ref.schema.json#/definitions/plan_ref" },
+        "core_question": { "type": "string" },
+        "non_negotiable_milestones": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "active_volume": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "core_question", "irreversible_change", "reader_payoff"],
+      "properties": {
+        "ref": { "$ref": "defs/plan-ref.schema.json#/definitions/plan_ref" },
+        "core_question": { "type": "string" },
+        "irreversible_change": { "type": "string" },
+        "reader_payoff": { "type": "string" }
+      }
+    },
+    "active_arc": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "arc_goal", "dramatic_question", "required_beats"],
+      "properties": {
+        "ref": { "$ref": "defs/plan-ref.schema.json#/definitions/plan_ref" },
+        "arc_goal": { "type": "string" },
+        "dramatic_question": { "type": "string" },
+        "required_beats": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "active_batch": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["ref", "remaining_slots"],
+          "properties": {
+            "ref": { "$ref": "defs/plan-ref.schema.json#/definitions/plan_ref" },
+            "remaining_slots": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["slot_id", "intended_function"],
+                "properties": {
+                  "slot_id": { "type": "string" },
+                  "intended_function": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        { "type": "null" }
+      ]
+    },
+    "current_progress": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["completed_beat_refs", "delayed_beat_refs", "deviation_summary"],
+      "properties": {
+        "completed_beat_refs": { "type": "array", "items": { "$ref": "defs/plan-ref.schema.json#/definitions/plan_ref" } },
+        "delayed_beat_refs": { "type": "array", "items": { "$ref": "defs/plan-ref.schema.json#/definitions/plan_ref" } },
+        "deviation_summary": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "prohibited_strategic_changes": { "type": "array", "items": { "type": "string" } },
+    "unknowns": { "type": "array", "items": { "type": "string" } }
+  }
+}

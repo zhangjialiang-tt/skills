@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "planning-readiness.schema.json",
+  "title": "PlanningReadiness",
+  "description": "v1.3 INITIALIZATION_REVIEW planning readiness assessment.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["assessment_id", "assessed_at", "dimensions", "overall_status"],
+  "properties": {
+    "assessment_id": { "type": "string", "minLength": 1 },
+    "assessed_at": { "type": "string" },
+    "dimensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reader_contract", "story_engine", "project_spine", "volume_arc", "arc_plan", "style_guide"],
+      "properties": {
+        "reader_contract": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "findings"],
+          "properties": {
+            "status": { "type": "string", "enum": ["PASS", "WARNING", "FAIL", "BLOCKED"] },
+            "findings": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "story_engine": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "findings"],
+          "properties": {
+            "status": { "type": "string", "enum": ["PASS", "WARNING", "FAIL", "BLOCKED"] },
+            "findings": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "project_spine": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "findings"],
+          "properties": {
+            "status": { "type": "string", "enum": ["PASS", "WARNING", "FAIL", "BLOCKED"] },
+            "findings": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "volume_arc": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "findings"],
+          "properties": {
+            "status": { "type": "string", "enum": ["PASS", "WARNING", "FAIL", "BLOCKED"] },
+            "findings": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "arc_plan": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "findings"],
+          "properties": {
+            "status": { "type": "string", "enum": ["PASS", "WARNING", "FAIL", "BLOCKED"] },
+            "findings": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "style_guide": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "findings"],
+          "properties": {
+            "status": { "type": "string", "enum": ["PASS", "WARNING", "FAIL", "BLOCKED"] },
+            "findings": { "type": "array", "items": { "type": "string" } }
+          }
+        }
+      }
+    },
+    "overall_status": { "type": "string", "enum": ["READY", "NEEDS_WORK", "BLOCKED"] }
+  }
+}

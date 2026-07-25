@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "planning-artifact-meta.schema.json",
+  "title": "Planning Artifact Metadata",
+  "description": "Self-identifying metadata for all v1.3 planning artifacts.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["planning_artifact_meta"],
+  "properties": {
+    "planning_artifact_meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_id", "schema_version", "artifact_type", "artifact_id", "revision", "lifecycle_status"],
+      "properties": {
+        "schema_id": { "type": "string", "minLength": 1 },
+        "schema_version": { "type": "string", "enum": ["1.3.0"] },
+        "artifact_type": {
+          "type": "string",
+          "enum": ["STORY_ENGINE", "PROJECT_SPINE", "VOLUME_ARC", "ARC_PLAN", "CHAPTER_BATCH"]
+        },
+        "artifact_id": { "type": "string", "minLength": 1 },
+        "revision": { "type": "string", "minLength": 1 },
+        "lifecycle_status": {
+          "type": "string",
+          "enum": ["DRAFT", "APPROVED", "ACTIVE", "SUPERSEDED", "COMPLETED", "DEPRECATED"]
+        }
+      }
+    }
+  }
+}

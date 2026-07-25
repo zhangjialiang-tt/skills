@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "plan-progress.schema.json",
+  "title": "PlanProgress",
+  "description": "v1.3 novel-master plan progress tracking. Idempotent, rebuildable.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["last_processed_acceptance_ref", "active_phase_ref", "active_volume_ref", "active_arc_ref", "active_batch_ref", "completed_milestones", "deviations", "arc_health"],
+  "properties": {
+    "last_processed_acceptance_ref": { "type": "string" },
+    "processed_updates": { "type": "array", "items": { "type": "string" } },
+    "active_phase_ref": { "$ref": "defs/plan-ref.schema.json#/definitions/plan_ref" },
+    "active_volume_ref": { "$ref": "defs/plan-ref.schema.json#/definitions/plan_ref" },
+    "active_arc_ref": { "$ref": "defs/plan-ref.schema.json#/definitions/plan_ref" },
+    "active_batch_ref": { "oneOf": [{"$ref": "defs/plan-ref.schema.json#/definitions/plan_ref"}, {"type": "null"}] },
+    "completed_milestones": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["milestone_ref", "completed_by_acceptance_ref"],
+        "properties": {
+          "milestone_ref": { "$ref": "defs/plan-ref.schema.json#/definitions/plan_ref" },
+          "completed_by_acceptance_ref": { "type": "string" },
+          "completed_at_chapter_ref": { "type": "object", "additionalProperties": true }
+        }
+      }
+    },
+    "deviations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["deviation_id", "source_acceptance_ref", "resolution_status"],
+        "properties": {
+          "deviation_id": { "type": "string" },
+          "source_acceptance_ref": { "type": "string" },
+          "assessment": { "type": "object", "additionalProperties": true },
+          "resolution_status": { "type": "string", "enum": ["RECORDED", "REPLANNED", "APPROVED", "REJECTED"] }
+        }
+      }
+    },
+    "arc_health": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["planned_chapter_count", "used_chapter_count", "total_required_beats", "completed_required_beats", "overdue_beats", "tactical_deviation_count", "unresolved_strategic_deviation_count", "derived"],
+      "properties": {
+        "planned_chapter_count": { "type": "integer" },
+        "used_chapter_count": { "type": "integer" },
+        "total_required_beats": { "type": "integer" },
+        "completed_required_beats": { "type": "integer" },
+        "overdue_beats": { "type": "integer" },
+        "tactical_deviation_count": { "type": "integer" },
+        "unresolved_strategic_deviation_count": { "type": "integer" },
+        "derived": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["beat_completion_ratio", "chapter_consumption_ratio", "drift_score", "status"],
+          "properties": {
+            "beat_completion_ratio": { "type": "number" },
+            "chapter_consumption_ratio": { "type": "number" },
+            "drift_score": { "type": "number" },
+            "status": { "type": "string", "enum": ["ON_TRACK", "AT_RISK", "DELAYED", "REPLAN_REQUIRED"] }
+          }
+        }
+      }
+    }
+  }
+}

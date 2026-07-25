@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "planning-activation.schema.json",
+  "title": "PlanningActivation",
+  "description": "v1.3 atomic activation protocol for planning artifacts.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["activation_id", "artifact_id", "previous_active_ref", "new_active_ref", "base_revisions", "status"],
+  "properties": {
+    "activation_id": { "type": "string", "minLength": 1 },
+    "artifact_id": { "type": "string", "minLength": 1 },
+    "previous_active_ref": {
+      "oneOf": [
+        { "$ref": "defs/plan-ref.schema.json#/definitions/plan_ref" },
+        { "type": "null" }
+      ]
+    },
+    "new_active_ref": { "$ref": "defs/plan-ref.schema.json#/definitions/plan_ref" },
+    "base_revisions": { "type": "object", "additionalProperties": true, "minProperties": 1 },
+    "status": { "type": "string", "enum": ["PREPARED", "VALIDATED", "COMMITTED", "ROLLED_BACK", "FAILED"] }
+  }
+}

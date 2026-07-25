@@ -69,7 +69,8 @@
             "RETCON",
             "RESUME_PROJECT",
             "BRAINSTORM",
-            "SUMMARIZE_STATE"
+            "SUMMARIZE_STATE",
+            "CHECK_PLAN_PROGRESS"
           ]
         },
         "scope": {
