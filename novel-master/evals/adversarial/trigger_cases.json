@@ -1,0 +1,16 @@
+{
+  "recommended_threshold": 0.17,
+  "should_trigger": [
+    {"text": "不要直接写答案：先为我的三百万字连载定位项目、检查授权，再路由章节续写和状态提交。", "family": "adversarial_governed_write"},
+    {"text": "虽然只是改一章，但这会推翻核心设定；请按高风险网文修订流程处理。", "family": "adversarial_high_risk_revision"}
+  ],
+  "should_not_trigger": [
+    {"text": "这本长篇网文很好看，请只写一篇文学赏析，不是我的创作项目。", "family": "adversarial_novel_analysis"},
+    {"text": "帮我写代码扫描小说文本中的词频。", "family": "adversarial_code_with_novel"},
+    {"text": "推荐网文并说明阅读顺序，不需要创作或项目管理。", "family": "adversarial_recommendation"}
+  ],
+  "near_neighbor": [
+    {"text": "模仿网文口吻润色一句宣传语，仅此一次。", "family": "adversarial_style_polish"},
+    {"text": "先头脑风暴一个短篇点子，不建立角色、世界或连续性档案。", "family": "adversarial_brainstorm"}
+  ]
+}

@@ -1,0 +1,211 @@
+{
+  "optimizer_hints": {
+    "capability": "编排和治理长篇网文项目的完整创作生命周期",
+    "inputs": [
+      "网文创意",
+      "项目简报",
+      "人物设定",
+      "世界设定",
+      "故事大纲",
+      "章节卡",
+      "正文",
+      "评审意见",
+      "连续性状态"
+    ],
+    "trigger_actions": [
+      "初始化网文项目",
+      "设计人物或世界",
+      "规划章节",
+      "写作或续写正文",
+      "修订或评审网文",
+      "维护连续性",
+      "提交事实状态",
+      "恢复项目"
+    ],
+    "exclusions": [
+      "普通文本润色",
+      "第三方作品分析",
+      "阅读推荐",
+      "诗歌或一次性短篇灵感",
+      "非小说任务"
+    ],
+    "artifacts": [
+      "project brief",
+      "story architecture",
+      "chapter plan",
+      "chapter draft",
+      "review report",
+      "canon state",
+      "MasterResult"
+    ]
+  },
+  "fallback_positive_concepts": [
+    "novel_project",
+    "story_design",
+    "chapter_production",
+    "review_continuity"
+  ],
+  "positive_concepts": {
+    "novel_project": {
+      "weight": 0.34,
+      "phrases": [
+        "长篇网文",
+        "网文项目",
+        "小说项目",
+        "开一本小说",
+        "初始化项目",
+        "项目简报",
+        "连载项目",
+        "连载",
+        "小说工程",
+        "项目中断",
+        "接手这个连载项目",
+        "novel project",
+        "web novel"
+      ]
+    },
+    "story_design": {
+      "weight": 0.24,
+      "phrases": [
+        "人物设定",
+        "世界设定",
+        "故事架构",
+        "情节设计",
+        "主线大纲",
+        "角色弧光",
+        "主角弧光",
+        "世界规则",
+        "世界观",
+        "角色卡",
+        "重构第二卷情节",
+        "核心设定",
+        "高风险网文修订",
+        "story architecture",
+        "worldbuilding"
+      ]
+    },
+    "chapter_production": {
+      "weight": 0.3,
+      "phrases": [
+        "章节规划",
+        "章节卡",
+        "写一章",
+        "续写正文",
+        "修订正文",
+        "网文正文",
+        "下一章",
+        "续写",
+        "正文",
+        "章节",
+        "十五章草稿",
+        "只改一章",
+        "chapter plan",
+        "write chapter",
+        "continue the novel"
+      ]
+    },
+    "review_continuity": {
+      "weight": 0.24,
+      "phrases": [
+        "文本评审",
+        "审稿",
+        "评审",
+        "修订建议",
+        "连续性",
+        "时间线",
+        "事实状态",
+        "canon",
+        "状态提交",
+        "恢复项目",
+        "状态提案",
+        "状态变化",
+        "人物年龄",
+        "伏笔",
+        "知识边界",
+        "未完成运行"
+      ]
+    },
+    "governance": {
+      "weight": 0.12,
+      "phrases": [
+        "权限",
+        "授权",
+        "接受闸门",
+        "路由",
+        "proposal",
+        "revision",
+        "changeset"
+      ]
+    }
+  },
+  "negative_concepts": {
+    "plain_polish": {
+      "weight": 0.46,
+      "exclusive": true,
+      "phrases": [
+        "普通润色",
+        "只润色",
+        "普通文本润色",
+        "润色这句话",
+        "广告文案",
+        "改病句",
+        "商务邮件",
+        "简历",
+        "plain text polish"
+      ]
+    },
+    "third_party_analysis": {
+      "weight": 0.48,
+      "exclusive": true,
+      "phrases": [
+        "分析这本已出版小说",
+        "文学赏析",
+        "读后感",
+        "第三方作品",
+        "literary analysis",
+        "book report"
+      ]
+    },
+    "recommendation": {
+      "weight": 0.44,
+      "exclusive": true,
+      "phrases": [
+        "推荐小说",
+        "书单",
+        "阅读推荐",
+        "哪本书好看",
+        "book recommendation"
+      ]
+    },
+    "one_off_non_project": {
+      "weight": 0.38,
+      "exclusive": true,
+      "phrases": [
+        "写一首诗",
+        "一次性短篇灵感",
+        "随便想个段子",
+        "不建项目",
+        "不创建项目",
+        "不做网文项目管理",
+        "不维护后续状态",
+        "仅此一次",
+        "不建立角色",
+        "one-off poem",
+        "single short-story idea"
+      ]
+    },
+    "non_novel": {
+      "weight": 0.5,
+      "exclusive": true,
+      "phrases": [
+        "写代码",
+        "删除文件",
+        "做表格",
+        "写周报",
+        "调试程序",
+        "code review",
+        "spreadsheet"
+      ]
+    }
+  }
+}

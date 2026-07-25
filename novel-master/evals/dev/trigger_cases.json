@@ -1,0 +1,22 @@
+{
+  "recommended_threshold": 0.17,
+  "should_trigger": [
+    {"text": "我有一个修仙创意，帮我初始化成长篇网文项目。", "family": "project_init"},
+    {"text": "为这部长篇小说设计主角弧光、世界规则和三卷主线。", "family": "story_design"},
+    {"text": "根据当前大纲和状态生成第十二章章节卡。", "family": "chapter_plan"},
+    {"text": "按已确认章节卡续写下一章正文。", "family": "chapter_write"},
+    {"text": "评审这一章并给出证据化修订建议，不直接改正文。", "family": "review"},
+    {"text": "检查人物年龄与时间线冲突，准备连续性状态提案。", "family": "continuity"}
+  ],
+  "should_not_trigger": [
+    {"text": "润色这封商务邮件，让语气更正式。", "family": "plain_polish"},
+    {"text": "分析《百年孤独》的叙事结构并写读后感。", "family": "third_party_analysis"},
+    {"text": "推荐十本最近值得读的科幻小说。", "family": "recommendation"},
+    {"text": "帮我调试这个 Python 脚本。", "family": "non_novel"}
+  ],
+  "near_neighbor": [
+    {"text": "给我一个一次性短篇灵感，不需要建立小说项目。", "family": "one_off_short"},
+    {"text": "写一首关于月亮的现代诗。", "family": "poem"},
+    {"text": "只润色下面一段文字，不做网文项目管理。", "family": "polish_only"}
+  ]
+}

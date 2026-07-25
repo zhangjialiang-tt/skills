@@ -1,0 +1,29 @@
+{
+  "margin_warning_threshold": 0.06,
+  "routes": [
+    {"name": "novel-master", "description_file": "SKILL.md", "semantic_config": "evals/semantic_config.json", "threshold": 0.17},
+    {"name": "novel-brief", "description_file": "novel-brief/SKILL.md", "semantic_config": "evals/confusion/explicit_children_semantic_config.json", "threshold": 0.5},
+    {"name": "story-architect", "description_file": "story-architect/SKILL.md", "semantic_config": "evals/confusion/explicit_children_semantic_config.json", "threshold": 0.5},
+    {"name": "chapter-planner", "description_file": "chapter-planner/SKILL.md", "semantic_config": "evals/confusion/explicit_children_semantic_config.json", "threshold": 0.5},
+    {"name": "chapter-writer", "description_file": "chapter-writer/SKILL.md", "semantic_config": "evals/confusion/explicit_children_semantic_config.json", "threshold": 0.5},
+    {"name": "novel-reviewer", "description_file": "novel-reviewer/SKILL.md", "semantic_config": "evals/confusion/explicit_children_semantic_config.json", "threshold": 0.5},
+    {"name": "continuity-keeper", "description_file": "continuity-keeper/SKILL.md", "semantic_config": "evals/confusion/explicit_children_semantic_config.json", "threshold": 0.5}
+  ],
+  "cases": [
+    {"family": "public_init", "expected_route": "novel-master", "text": "帮我初始化一个长篇网文项目。"},
+    {"family": "public_architecture", "expected_route": "novel-master", "text": "为我的连载设计人物、世界观和主线大纲。"},
+    {"family": "public_plan", "expected_route": "novel-master", "text": "根据大纲规划下一章。"},
+    {"family": "public_write", "expected_route": "novel-master", "text": "按章节卡续写正文。"},
+    {"family": "public_review", "expected_route": "novel-master", "text": "评审这一章并给出修订建议。"},
+    {"family": "public_continuity", "expected_route": "novel-master", "text": "检查时间线冲突并更新连续性状态。"},
+    {"family": "explicit_brief", "expected_route": "novel-brief", "text": "显式使用 $novel-brief 把创意整理成项目简报。"},
+    {"family": "explicit_architect", "expected_route": "story-architect", "text": "显式使用 $story-architect 设计世界规则。"},
+    {"family": "explicit_planner", "expected_route": "chapter-planner", "text": "显式使用 $chapter-planner 生成章节卡。"},
+    {"family": "explicit_writer", "expected_route": "chapter-writer", "text": "显式使用 $chapter-writer 写正文。"},
+    {"family": "explicit_reviewer", "expected_route": "novel-reviewer", "text": "显式使用 $novel-reviewer 做只读评审。"},
+    {"family": "explicit_keeper", "expected_route": "continuity-keeper", "text": "显式使用 $continuity-keeper 提交状态。"},
+    {"family": "no_route_polish", "expected_route": "no_route", "text": "润色这封商务邮件。"},
+    {"family": "no_route_recommend", "expected_route": "no_route", "text": "推荐十本小说。"},
+    {"family": "no_route_code", "expected_route": "no_route", "text": "修复这个 Python bug。"}
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "fallback_positive_concepts": [
+    "explicit_novel_brief",
+    "explicit_story_architect",
+    "explicit_chapter_planner",
+    "explicit_chapter_writer",
+    "explicit_novel_reviewer",
+    "explicit_continuity_keeper"
+  ],
+  "positive_concepts": {
+    "explicit_novel_brief": {
+      "weight": 1.0,
+      "phrases": ["$novel-brief"]
+    },
+    "explicit_story_architect": {
+      "weight": 1.0,
+      "phrases": ["$story-architect"]
+    },
+    "explicit_chapter_planner": {
+      "weight": 1.0,
+      "phrases": ["$chapter-planner"]
+    },
+    "explicit_chapter_writer": {
+      "weight": 1.0,
+      "phrases": ["$chapter-writer"]
+    },
+    "explicit_novel_reviewer": {
+      "weight": 1.0,
+      "phrases": ["$novel-reviewer"]
+    },
+    "explicit_continuity_keeper": {
+      "weight": 1.0,
+      "phrases": ["$continuity-keeper"]
+    }
+  },
+  "negative_concepts": {}
+}

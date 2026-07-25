@@ -1,0 +1,18 @@
+{
+  "recommended_threshold": 0.17,
+  "should_trigger": [
+    {"text": "接手这个连载项目，先读取 project.yaml 再判断下一步应该走哪个创作环节。", "family": "project_resume"},
+    {"text": "重构第二卷情节，但先分析对人物状态和后续章节的影响。", "family": "high_risk_revision"},
+    {"text": "章节已接受，请把新事实通过 changeset 提交到连续性状态。", "family": "state_commit"},
+    {"text": "项目中断后需要恢复，请核对 revision、锁和未完成运行。", "family": "recovery"}
+  ],
+  "should_not_trigger": [
+    {"text": "把这段产品说明改得更通顺。", "family": "plain_polish"},
+    {"text": "列一个经典武侠小说阅读书单。", "family": "recommendation"},
+    {"text": "审查这个 Git pull request。", "family": "non_novel"}
+  ],
+  "near_neighbor": [
+    {"text": "分析一篇网络小说为什么受欢迎，但不要创建或维护我的小说。", "family": "third_party_analysis"},
+    {"text": "随便给三个短篇脑洞，不保存项目状态。", "family": "one_off_ideas"}
+  ]
+}
