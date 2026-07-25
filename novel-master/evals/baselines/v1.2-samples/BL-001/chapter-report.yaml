@@ -1,0 +1,97 @@
+# v1.2 样本：BL-001 — Chapter Report（含 target_execution + evidence_ref）
+
+> 对应正文与 v1.1 BL-001 样本相同（第十二章 幽冥祭坛），此处仅展示 v1.2 新增的 reader_experience_execution
+
+```yaml
+chapter_report:
+  reader_experience_execution:
+    target_execution:
+      - target_ref: "/reader_experience/promise"
+        execution: PRESENT
+        evidence_ref:
+          source_type: CHAPTER_DRAFT
+          deliverable_id: "ch012-draft-001"
+          revision: "1"
+          scene_id: "12-01"
+          paragraph_start: 14
+          paragraph_end: 19
+          excerpt: "它不是阵法……更像是一群混乱的符号被某种力量强行编织在一起。"
+        unplanned_effects: []
+
+      - target_ref: "/reader_experience/information_gain/INFO-12-001"
+        execution: PRESENT
+        evidence_ref:
+          source_type: CHAPTER_DRAFT
+          deliverable_id: "ch012-draft-001"
+          revision: "1"
+          scene_id: "12-01"
+          paragraph_start: 14
+          paragraph_end: 15
+          excerpt: "它不属于任何常见的修仙流派——道纹、佛印、魔痕、古篆，全都不像。"
+
+      - target_ref: "/reader_experience/information_gain/INFO-12-002"
+        execution: PRESENT
+        evidence_ref:
+          source_type: CHAPTER_DRAFT
+          deliverable_id: "ch012-draft-001"
+          revision: "1"
+          scene_id: "12-01"
+          paragraph_start: 18
+          paragraph_end: 18
+          excerpt: "这段纹路重复了六次，六次排列都不相同……指向祭坛里面——它在压着下面的东西。"
+
+      - target_ref: "/reader_experience/information_gain/INFO-12-003"
+        execution: PRESENT
+        evidence_ref:
+          source_type: CHAPTER_DRAFT
+          deliverable_id: "ch012-draft-001"
+          revision: "1"
+          scene_id: "12-03"
+          paragraph_start: 42
+          paragraph_end: 43
+          excerpt: "那个声音的节奏和他完全一致。"
+
+      - target_ref: "/reader_experience/emotional_arc"
+        execution: PRESENT
+        evidence_ref:
+          source_type: CHAPTER_DRAFT
+          deliverable_id: "ch012-draft-001"
+          revision: "1"
+          scene_id: "12-01"
+          paragraph_start: 3
+          paragraph_end: 4
+          excerpt: "林辰靠在枯死的古树上……每次呼吸都像在烧灼。"
+        notes: "开场即进入不安基调。好奇心通过苏晚晴逐条解读符文来推进。"
+
+      - target_ref: "/reader_experience/continuation_drive"
+        execution: PRESENT
+        evidence_ref:
+          source_type: CHAPTER_DRAFT
+          deliverable_id: "ch012-draft-001"
+          revision: "1"
+          scene_id: "12-03"
+          paragraph_start: 47
+          paragraph_end: 48
+          excerpt: "不是风声。是心跳。……那个声音的节奏和他完全一致。"
+
+    deviations: []
+    unplanned_effects: []
+
+  contract_meta:
+    schema_id: "novel-master/chapter-report"
+    schema_version: "1.2.0"
+```
+
+## 对比 v1.1
+
+| 维度 | v1.1 chapter_report | v1.2 reader_experience_execution |
+| --- | --- | --- |
+| 目标追踪 | executed_plan_items 仅列"做了什么" | target_execution 逐项报告每项目标是否兑现 + 正文段落引用 |
+| 证据格式 | 自由文本 | evidence_ref 结构化（source_type/deliverable_id/revision/paragraph_start/end/excerpt） |
+| 可验证性 | Reviewer 需要全文去定位 | Reviewer 可直接跳转到段落 |
+
+## 质量评分
+
+| D1 | D2 | D3 | D4 | D5 | D6 | 总分 |
+| --- | --- | --- | --- | --- | --- | --- |
+| N/A | 5 | 5 | 5 | 5 | 5 | 20/20 |

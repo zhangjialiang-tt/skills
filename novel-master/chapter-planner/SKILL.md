@@ -45,11 +45,13 @@ DEFAULT（唯一模式）。
 
 1. 读取大纲片段和上下文包。
 2. 确定章节功能、视角人物、时间地点。
-3. 定义开始状态和结束状态（必须不同）。
-4. 拆分场景：每个场景有目标、冲突、行动、信息揭示、状态变化和转场。
-5. 标注必需元素、禁止揭示、活跃伏笔。
-6. 识别连续性风险。
-7. 输出章节卡。
+3. 定义本章的读者体验目标（`reader_experience`）：确定 chapter_role（primary + secondary）、本章向读者兑现的 promise、payoff 模式和 emotional_arc。
+4. 定义开始状态和结束状态（必须不同）。
+5. 拆分场景：每个场景有目标、冲突、行动、信息揭示、状态变化和转场。
+6. 为每个 scene 选择 style_modulation_ref（引用 style_guide.scene_modulations 中的 modulation_id，无特殊调制时引用 DEFAULT；STANDARD/STRICT 下必填）。
+7. 标注必需元素、禁止揭示、活跃伏笔。
+8. 识别连续性风险。
+9. 输出章节卡（含 reader_experience、style_modulation_ref 和 contract_meta）。
 
 ## 禁止事项
 
@@ -63,19 +65,50 @@ DEFAULT（唯一模式）。
 
 ```yaml
 chapter_plan:
+  # v1.1 原有字段
   chapter_id / chapter_function / viewpoint_character
   time_and_location / opening_state / ending_state
-  scenes[] / required_elements / prohibited_reveals
-  active_foreshadowing / chapter_climax / continuity_risks
+  scenes[]:
+    - scene_id / goal / conflict / action
+      information_revealed[] / state_change / transition
+      style_modulation_ref: string | null   # v1.2 新增
+  required_elements[] / prohibited_reveals[]
+  active_foreshadowing[] / chapter_climax / continuity_risks[]
+
+  # v1.2 新增：章节质量目标
+  reader_experience:
+    chapter_role: { primary: enum, secondary: [] | null, description: string }
+    promise: string
+    payoff: { mode: enum, description: string, deferred_reason: string | null, justification: string | null, expected_payoff_window: object | null }
+    emotional_arc: { target: string, turning_point: string }
+    information_gain: [{ target_id: string, what: string, significance: string }] | null
+    tension_curve: { type: enum, description: string }
+    continuation_drive: { type: enum, description: string, justification: string }
+
+  # v1.2 新增
+  contract_meta:
+    schema_id: "novel-master/chapter-plan"
+    schema_version: "1.2.0"
 ```
+
+条件必填规则：
+- FAST：reader_experience 可选，缺失时产生提示不阻塞。
+- STANDARD/STRICT：必须包含 reader_experience；chapter_role.primary/promise/payoff.mode/emotional_arc.target/tension_curve.type/continuation_drive.type 至少必填。
+- payoff.mode=DEFERRED → deferred_reason 必填；NONE_JUSTIFIED → justification 必填。
+- continuation_drive.type=NONE_JUSTIFIED → justification 必填。
 
 ## 完成标准
 
 - 章节功能明确。
 - 开始和结束状态不同。
+- STANDARD/STRICT 下 reader_experience 存在且必填项（promise/payoff/emotional_arc.target/tension_curve/continuation_drive）不空。
+- payoff.mode=DEFERRED 时具备 deferred_reason，NONE_JUSTIFIED 时具备 justification。
+- continuation_drive.type=NONE_JUSTIFIED 时具备 justification。
+- 每个 scene 的 style_modulation_ref 已设置（STANDARD/STRICT 下每个 scene 必填，FAST 下可选）。
 - 每个场景都有目标、阻力和结果。
 - 信息揭示符合人物知情范围。
 - chapter-writer 无需猜测核心剧情方向。
+- contract_meta 已填写正确的 schema_id 和 schema_version。
 
 ## 阻塞条件
 

@@ -29,7 +29,13 @@ DEFAULT（唯一模式）。
 ## 必需输入
 
 - `review_target`: 被评审的文件或文本。
-- `review_scope`: 评审范围说明。
+- `review_scope`: `list[review_dimension]`。由 novel-master 编排调用时必填；用户直接调用时可推导。
+  - CONTRACT_COMPLIANCE：是否违反章节卡、Canon、知情范围或风格指南。
+  - NARRATIVE_SOUNDNESS：因果、动机、冲突、信息揭示是否成立。
+  - READER_EXPERIENCE：是否兑现 reader_experience、情绪曲线、阅读动力。
+  - CRAFT_EXECUTION：对话、句式、AI 腔、角色声音。
+- `chapter_plan_ref`：章节卡引用（optional，READER_EXPERIENCE 维度激活时需）。
+- `chapter_report_ref`：Writer 执行报告引用（optional，READER_EXPERIENCE 维度激活时需）。
 
 ## 允许读取
 
@@ -46,12 +52,12 @@ DEFAULT（唯一模式）。
 ## 操作步骤
 
 1. 读取评审目标和相关上下文。
-2. 按评审维度逐项检查（节奏、冲突、人物、连续性、文风等）。
-3. 区分已证实问题、潜在风险和偏好建议。
-4. 为每个问题提供文本证据和影响说明。
+2. 执行 mandatory_guardrail_scan：无论 review_scope 是什么，始终扫描 CANON_CONFLICT、KNOWLEDGE_STATE_VIOLATION、PROHIBITED_REVEAL 和 MAJOR_FACT_CONTRADICTION。结果输出到独立的 guardrail_results。
+3. 按 review_scope 激活对应维度，每个维度输出独立的 dimension_results（恰好四个维度，每个出现一次）。未激活维度的 status 为 NOT_EVALUATED，填写 reason_code。
+4. 每个 finding 附带结构化 evidence_ref（source_type/deliverable_id/revision/excerpt），区分已证实问题、潜在风险和偏好建议。
 5. 识别应保留的优点。
 6. 给出推荐编辑等级和推荐后继 Skill。
-7. 如允许持久化，写入 `reviews/`。
+7. 如允许持久化（artifact_persistence_allowed: true），写入 `reviews/`。
 
 ## 禁止事项
 
@@ -61,24 +67,61 @@ DEFAULT（唯一模式）。
 - 把偏好当错误。
 - 承诺作品成败。
 - 为爽点破坏定位。
+- 省略未激活维度（dimension_results 必须恰好包含四个维度）。
+- 对未激活维度做系统性评审（guardrail 偶然发现除外）。
 
 ## 输出
 
 ```yaml
 review_report:
+  # v1.1 原有
   overall_assessment
   confirmed_issues[] / potential_risks[]
   preference_based_suggestions[] / strengths_to_preserve[]
-  continuity_flags[] / recommended_edit_level
-  recommended_next_skill
+  recommended_edit_level / recommended_next_skill
+
+  # v1.2 新增：Guardrail 安全扫描（无论 scope 均执行）
+  guardrail_results:
+    status: PASS | WARNING | BLOCKED
+    findings:
+      - guardrail: CANON_CONFLICT | KNOWLEDGE_STATE_VIOLATION |
+                   PROHIBITED_REVEAL | MAJOR_FACT_CONTRADICTION
+        severity: BLOCKER | WARNING | INFO
+        evidence_ref: { source_type, deliverable_id, revision, excerpt, ... }
+        assessment: string
+        recommended_action: string
+
+  # v1.2 新增：维度化诊断（恰好四个维度）
+  dimension_results:
+    - dimension: CONTRACT_COMPLIANCE
+      status: PASS | WARNING | FAIL | NOT_EVALUATED
+      reason_code: string | null
+      findings:
+        - criterion: string
+          evidence_ref: { ... }
+          assessment: string
+          recommended_action: string
+          severity: INFO | WARNING | BLOCKER
+    - dimension: NARRATIVE_SOUNDNESS  # 同上结构
+    - dimension: READER_EXPERIENCE    # 同上结构
+    - dimension: CRAFT_EXECUTION      # 同上结构
+
+  # v1.2 新增
+  contract_meta:
+    schema_id: "novel-master/review-report"
+    schema_version: "1.2.0"
 ```
 
 ## 完成标准
 
-- 重要问题都有文本或项目证据。
-- 明确区分已证实问题、潜在风险和偏好建议。
+- 重要问题都有文本或项目证据（evidence_ref 含 source_type/deliverable_id/revision/excerpt）。
+- 明确区分已证实问题、潜在风险和偏好建议（severity 字段）。
+- guardrail_results 已执行 mandatory_guardrail_scan，独立于 dimension_results。
+- dimension_results 恰好包含四个维度（CONTRACT_COMPLIANCE/NARRATIVE_SOUNDNESS/READER_EXPERIENCE/CRAFT_EXECUTION）；未激活维度的 status 为 NOT_EVALUATED 且填写 reason_code。
+- 旧正文无 reader_experience 时 READER_EXPERIENCE 维度标记 NOT_EVALUATED + reason_code: MISSING_PLAN_CONTRACT。
 - 建议可执行并说明应保留的优点。
 - 给出合理编辑等级。
+- contract_meta 已填写。
 
 ## 阻塞条件
 

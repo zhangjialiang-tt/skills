@@ -282,3 +282,16 @@ stage_routing:
 ## 接受闸门规则
 
 章节接受、允许状态转换、提交资格和 ApprovalRef 校验统一见[生命周期与授权](lifecycle-and-approval.md)。路由器只决定何时插入闸门，不得在此另行定义授权语义。
+
+## v1.2 质量链路由：review_scope 映射
+
+novel-master 编排调用 novel-reviewer 时，必须根据 task.mode 显式传入 review_scope：
+
+| 模式 | review_scope |
+| --- | --- |
+| STRICT | `[CONTRACT_COMPLIANCE, NARRATIVE_SOUNDNESS, READER_EXPERIENCE, CRAFT_EXECUTION]` |
+| STANDARD | `[CONTRACT_COMPLIANCE, NARRATIVE_SOUNDNESS, READER_EXPERIENCE]` |
+| FAST | `[CONTRACT_COMPLIANCE]` |
+| ADVISORY | 根据用户请求推导，无法推导时默认全量 |
+
+STANDARD/STRICT 下 Planner 需产生 reader_experience；FAST 下 reader_experience 可选。Writer 的 reader_experience_execution 在所有模式下均产出（如 reader_experience 缺失则仅跟踪 v1.1 chapter_report 原有字段）。

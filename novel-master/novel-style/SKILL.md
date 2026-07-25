@@ -47,8 +47,11 @@ DEFAULT（唯一模式）。
 2. 基于风格指南模板，逐章节把占位符替换为与定位一致的具体约束。
 3. 参考已有人物档案与世界设定，使「角色声音」「题材特殊规则」等章节贴合具体内容。
 4. 对 AI 腔规避项给出可执行清单（每条可被写作和评审直接判定）。
-5. 分离已确认项、假设和待确认项。
-6. 输出结构化 `style_guide`。
+5. 分析本作品常见的场景类型，按稳定 category（COMBAT/EMOTIONAL/MYSTERY/TRANSITION/CLIMAX/EXPOSITION/DEFAULT）为每种场景生成 scene_modulations。
+6. 每种 modulation 使用项目级 modulation_id（如 `COMBAT_FAST`），覆盖项仅填写与全局默认值不同的字段，使用 typed 相对操作符（SHORTER/LONGER/HIGHER/LOWER/CLOSER/FARTHER/SAME），不复制全套 Style Guide。
+7. 定义 override_policy.protected_fields（使用 JSON Pointer 路径），标记不可被任何 modulation 覆盖的硬约束。
+8. 分离已确认项、假设和待确认项。
+9. 输出结构化 `style_guide`（含 scene_modulations、override_policy 和 contract_meta）。
 
 ## 禁止事项
 
@@ -57,17 +60,47 @@ DEFAULT（唯一模式）。
 - 固化某一题材的默认风格（占位符不得用通用默认值填充，必须基于本作品定位）。
 - 把低置信度推断写成已确认风格。
 - 模仿特定在世作者的可识别文风。
+- 在示例中使用具体硬性数值作为通用模板要求（如"平均 8-12 字"）；使用相对度量替代。
+- 复制全套 Style Guide 到每个 modulation；仅输出与全局默认值不同的覆盖项。
 
 ## 输出
 
 ```yaml
 style_guide:
+  # 全局默认风格（v1.1 原有 12 节）
   narrative_pov / narrative_distance / sentence_rhythm
   description_density / dialogue_rules / character_voice
   exposition_strategy / chapter_word_count
   hook_principles / recall_strategy
   ai_voice_avoidance[] / genre_specific_rules[]
   assumptions / unresolved_decisions
+
+  # v1.2 新增：场景类型调制
+  scene_modulations:
+    <project_specific_modulation_id>:
+      category: COMBAT | EMOTIONAL | MYSTERY | TRANSITION |
+                CLIMAX | EXPOSITION | DEFAULT
+      overrides:
+        sentence_rhythm: { relative_to_global: SHORTER | LONGER | SAME }
+        action_density: { relative_to_global: HIGHER | LOWER | SAME }
+        narrative_distance: { relative_to_global: CLOSER | FARTHER | SAME }
+        description_density: { relative_to_global: HIGHER | LOWER | SAME }
+        dialogue_ratio: { relative_to_global: HIGHER | LOWER | SAME }
+
+  # v1.2 新增：覆盖策略
+  override_policy:
+    protected_fields:
+      - /narrative/viewpoint
+      - /narrative/person
+      - /characters/*/voice/core
+      - /constraints/prohibited_author_styles
+      - /constraints/must_avoid
+      - /constraints/content_safety
+
+  # v1.2 新增
+  contract_meta:
+    schema_id: "novel-master/style-guide"
+    schema_version: "1.2.0"
 ```
 
 ## 完成标准
@@ -75,6 +108,9 @@ style_guide:
 - 模板全部占位符已具象化，无遗留 `{{}}` 或 `<!-- TODO -->`。
 - 每条约束可被 chapter-writer 当作硬约束执行、可被 novel-reviewer 当作证据判定。
 - 风格与 project_brief 的目标读者体验、story_architecture 的基调一致。
+- scene_modulations 已覆盖本作品所有常见场景类型，覆盖项仅使用 typed 相对操作符。
+- override_policy.protected_fields 已标记不可被 modulation 覆盖的硬约束。
+- contract_meta 已填写正确的 schema_id 和 schema_version。
 - 已确认项、假设和待确认项分离。
 - 没有把低置信度推断写成事实。
 

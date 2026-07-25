@@ -1,0 +1,78 @@
+# v1.2 样本：BL-001 — Chapter Plan（含 reader_experience）
+
+```yaml
+chapter_plan:
+  chapter_id: "12"
+  chapter_function: "引入秘境西部区域——古老祭坛废墟"
+
+  reader_experience:
+    chapter_role:
+      primary: SETUP
+      secondary: [REVEAL]
+      description: "以环境探索为载体建立新区域的陌生感和危险性，在探索中渐进揭示秘境的核心秘密线索"
+
+    promise: "本章向读者承诺：展示祭坛废墟的异样感（符文不属于任何已知体系）和封印与主角龙脉之间的神秘共振"
+
+    payoff:
+      mode: PARTIAL
+      description: "兑现了一部分——完成了祭坛环境建立和封印共振的基础揭示，但封印的真相和龙脉共振的本质留到后续章"
+      deferred_reason: "封印真相属于本卷核心揭示，需在第 16 章左右一次性呈现"
+
+    emotional_arc:
+      target: "好奇→不安→肃然"
+      turning_point: "发现封印与龙脉同步震动时"
+
+    information_gain:
+      - target_id: "INFO-12-001"
+        what: "祭坛符文不属于已知修仙体系（道纹/佛印/魔痕/古篆均不像）"
+        significance: "暗示秘境存在更古老的独立修炼体系"
+      - target_id: "INFO-12-002"
+        what: "封印使用了远古版本的简化封印符"
+        significance: "联系现代修炼体系和远古源头"
+      - target_id: "INFO-12-003"
+        what: "封印与林辰龙脉产生共振，林辰龙脉异常不是单纯的强——它被封印所回应"
+        significance: "龙脉异常从'个人问题'升级为'秘境层面的问题'"
+
+    tension_curve:
+      type: RISING
+      description: "从环境交代的缓步上升，到符文发现的中段紧张，到龙脉共振的高点"
+
+    continuation_drive:
+      type: QUESTION
+      description: "封印背后是什么？为什么它和林辰有共同的心跳？"
+
+  scenes:
+    - scene_id: "12-01"
+      goal: "找到安全的庇护所"
+      conflict: "祭坛符文区域自动激活，比预期更危险"
+      action: "林辰用龙脉感知避开符文陷阱，苏晚晴解读符文来源"
+      style_modulation_ref: "MYSTERY_EXPLORATION"
+    - scene_id: "12-02"
+      goal: "调查祭坛深处的光芒"
+      conflict: "光芒是封印而非宝物，触碰引发反击"
+      action: "苏晚晴先碰被震退，林辰用龙脉阻挡——发现封印与龙脉共振"
+      style_modulation_ref: "MYSTERY_CLIMAX"
+    - scene_id: "12-03"
+      goal: "恢复体力并推进关系"
+      conflict: "苏晚晴追问林辰龙脉真相，林辰迟疑"
+      action: "林辰部分坦白神秘老者帮助的存在，两人达成阶段性默契"
+      style_modulation_ref: "CHARACTER_TENSION"
+
+  contract_meta:
+    schema_id: "novel-master/chapter-plan"
+    schema_version: "1.2.0"
+```
+
+## 对比 v1.1
+
+| 维度 | v1.1 | v1.2 | 改善 |
+| --- | --- | --- | --- |
+| Promise 具体性 | chapter_function 模糊 | promise 精确到具体兑现内容 | +2 |
+| Payoff 定义 | 无 | mode=PARTIAL + deferred_reason | 新能力 |
+| 继续阅读动力 | 章末自然悬念 | continuation_drive 明确标注为 QUESTION 类型 | 结构化为验证依据 |
+
+## 质量评分
+
+| D1 | D2 | D3 | D4 | D5 | D6 | 总分 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 5 | 5 | 5 | N/A (Planner) | N/A | N/A | 15/15 |

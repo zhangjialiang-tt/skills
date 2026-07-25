@@ -50,10 +50,13 @@ description: "根据章节卡创作、续写或按授权等级编辑网文正文
 
 ### WRITE / CONTINUE
 1. 读取章节卡和上下文包。
-2. 按场景顺序创作正文，执行章节卡中的目标、冲突和状态变化。
-3. 遵守风格指南和视角约束。
-4. 输出正文（标记为 DRAFT）和 chapter_report。
-5. 报告所有新增事实、偏离计划、状态变化和连续性风险。
+2. 消费 reader_experience：明确本章的 chapter_role、promise、payoff、emotional_arc 和 continuation_drive 目标。
+3. 从 ContextPack 的 style_profile 中获取当前 scens 的 effective style（含 global defaults 和 scene_modulations 覆盖项）。
+4. 按场景顺序创作正文，执行章节卡中的目标、冲突和状态变化；根据 style_modulation 覆盖项调整句式、描写密度和对话规则。
+5. 遵守风格指南和视角约束。
+6. 输出正文（标记为 DRAFT）和 chapter_report。
+7. 报告 reader_experience_execution：逐项记录每个 reader_experience 目标的执行情况（target_execution + evidence_ref）、偏离项和未预期效果。
+8. 报告所有新增事实、偏离计划、状态变化和连续性风险。
 
 ### EDIT
 1. 确认 `edit_level` 和 `semantic_impact`。
@@ -72,19 +75,26 @@ description: "根据章节卡创作、续写或按授权等级编辑网文正文
 - 在 L1/L2 中改变剧情或事实。
 - 模仿特定在世作者的可识别文风。
 - WRITE 输出标记为 DRAFT 以外的状态。
+- 输出全局 quality_score 或 ACHIEVED/FAILED 等自我评分字段（Writer 只逐项报告执行，不自我评分；质量判定由 Reviewer 负责）。
+- 机械复制 reader_experience 或 planner 字段到正文。
+- 在 SETUP/TRANSITION 章制造虚假高潮来满足质量指标。
 
 ## 输出
 
-- WRITE/CONTINUE：`chapter_draft`（status: DRAFT）+ `chapter_report`。
+- WRITE/CONTINUE：`chapter_draft`（status: DRAFT）+ `chapter_report`（含 reader_experience_execution + target_execution + evidence_ref + contract_meta）。
 - EDIT：`edited_text` + `edit_report`。
 
 ## 完成标准
 
 - 正文执行章节卡或编辑目标。
+- reader_experience_execution 已逐项报告每个 reader_experience 目标的执行情况（target_execution + evidence_ref 绑定正文 revision）。
+- evidence_ref 使用结构化格式（source_type/deliverable_id/revision/paragraph_start/end/excerpt）。
 - 视角、时间、人物动机和知情范围符合上下文。
 - 所有新增事实、状态变化和计划偏离均已报告。
+- Writer 未输出全局质量评分或自我质量判定。
 - 修改没有超出授权等级。
 - 新 revision 的生命周期已按实际状态标记。
+- contract_meta 已填写。
 
 ## 阻塞条件
 

@@ -14,7 +14,7 @@
       "properties": {
         "review_target": {
           "type": "object",
-          "additionalProperties": false,
+          "additionalProperties": true,
           "minProperties": 1
         },
         "review_scope": {

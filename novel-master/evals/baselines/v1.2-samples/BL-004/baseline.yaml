@@ -1,0 +1,130 @@
+# v1.2 样本：BL-004 — Chapter Plan + Report + Reviewer
+
+> task_id: BL-004 | chapter_role: PAYOFF | EMOTIONAL
+> v1.2 新增：reader_experience、target_execution、dimension_results
+
+## Chapter Plan（含 reader_experience）
+
+```yaml
+reader_experience:
+  chapter_role:
+    primary: PAYOFF
+    secondary: [REVEAL, EMOTIONAL]
+    description: "兑现 FS-005 神秘帮助者身份、FS-003 龙脉来源部分真相，以师父现身和传功为核心的情感兑现章"
+
+  promise: "师父现出真身并揭示龙脉来源——一个无脉的七岁孩子因师徒之情被远古龙血所救。本章的情感兑现必须克制、不用煽情手段，通过细节和记忆片段传达三年牺牲的重量。"
+
+  payoff:
+    mode: FULL
+    description: "神秘帮助者身份完全兑现、龙脉来源揭示、第一课控制方法传授、师父守护封印之门的真相公布"
+    expected_payoff_window: null
+
+  emotional_arc:
+    target: "愤怒（三年等待）→ 理解（师父的牺牲）→ 悲伤（再次离别）→ 宁静（承担使命）"
+    turning_point: "师父揭示龙脉真相——无脉的孩子因师徒之情活了下来"
+
+  tension_curve:
+    type: RELEASE
+    description: "从前期章节的高张力战斗转入情感解决章，在师父的回忆中张力释放，结尾以新威胁重新建立低度紧张"
+
+  continuation_drive:
+    type: EMOTIONAL
+    description: "师父消失在封印之门中、'你是我唯一的传人'——情感牵引同时建立了守护者传承的长期使命"
+
+contract_meta:
+  schema_id: "novel-master/chapter-plan"
+  schema_version: "1.2.0"
+```
+
+## Chapter Report（含 target_execution）
+
+```yaml
+reader_experience_execution:
+  target_execution:
+    - target_ref: "/reader_experience/promise"
+      execution: PRESENT
+      evidence_ref:
+        source_type: CHAPTER_DRAFT
+        deliverable_id: "ch018-draft-001"
+        revision: "1"
+        scene_id: "18-02"
+        paragraph_start: 16
+        paragraph_end: 18
+        excerpt: "'那年你七岁……无脉，是废人。你父母来找我……你想要你的命。' '不是力量——是一部分的我。'"
+    - target_ref: "/reader_experience/emotional_arc"
+      execution: PRESENT
+      evidence_ref:
+        source_type: CHAPTER_DRAFT
+        deliverable_id: "ch018-draft-001"
+        revision: "1"
+        scene_id: "18-03"
+        paragraph_start: 32
+        paragraph_end: 33
+        excerpt: "'你不需要等师父了。你的龙血会救你。'——从师父再消失到苏晚晴说出此言的情绪收束"
+    - target_ref: "/reader_experience/continuation_drive"
+      execution: PRESENT
+      evidence_ref:
+        source_type: CHAPTER_DRAFT
+        deliverable_id: "ch018-draft-001"
+        revision: "1"
+        scene_id: "18-03"
+        paragraph_start: 38
+        paragraph_end: 39
+        excerpt: "'你就是莫无声唯一的传人。' 他走进门里，没回头。"
+```
+
+## Reviewer Report（dimension_results）
+
+```yaml
+guardrail_results:
+  status: PASS
+  findings: []
+
+dimension_results:
+  - dimension: CONTRACT_COMPLIANCE
+    status: PASS
+    findings:
+      - criterion: "FS-005 已完全兑现"
+        evidence_ref: { source_type: CHAPTER_PLAN, deliverable_id: "ch018-plan-001", revision: "1", json_pointer: "/chapter_plan/active_foreshadowing", excerpt: "FS-005" }
+        severity: INFO
+      - criterion: "PAYOFF 章无虚假高潮——情感兑现自然收束"
+        severity: INFO
+  - dimension: NARRATIVE_SOUNDNESS
+    status: PASS
+    findings:
+      - criterion: "师父三年离开的动机与本章行为一致"
+        evidence_ref: { source_type: CHAPTER_DRAFT, deliverable_id: "ch018-draft-001", revision: "1", scene_id: "18-02", paragraph_start: 24, paragraph_end: 25, excerpt: "'我守了三年……你来了，我可以把一半的力量传给你。'" }
+        severity: INFO
+  - dimension: READER_EXPERIENCE
+    status: PASS
+    findings:
+      - criterion: "emotional_arc 完整——从愤怒到宁静的四阶段变化均有文本依据"
+        evidence_ref: { source_type: CHAPTER_DRAFT, deliverable_id: "ch018-draft-001", revision: "1", scene_id: "18-03", paragraph_start: 32, paragraph_end: 35, excerpt: "当他再次睁眼……这种感觉很沉，很温和，不是战斗的力量，是血。" }
+        severity: INFO
+      - criterion: "EMOTIONAL continuation_drive 有效——传承使命不是悬念，是长期情感牵引"
+        severity: INFO
+  - dimension: CRAFT_EXECUTION
+    status: PASS
+    findings:
+      - criterion: "情感章写得克制——'无声的守护者'意象贯穿全章，无煽情独白"
+        evidence_ref: { source_type: CHAPTER_DRAFT, deliverable_id: "ch018-draft-001", revision: "1", scene_id: "18-03", paragraph_start: 38, paragraph_end: 39, excerpt: "'你不是我师父。你是莫无声唯一的传人。'" }
+        severity: INFO
+      - criterion: "章末转换精准——'兵刃出鞘的声音'一句话将情感收束接入紧迫感"
+        severity: INFO
+
+contract_meta:
+  schema_id: "novel-master/review-report"
+  schema_version: "1.2.0"
+```
+
+## v1.1 vs v1.2 A/B 评分
+
+| 维度 | v1.1 | v1.2 | WIN/LOSS |
+| --- | --- | --- | --- |
+| D1 Promise 具体性 | 4 | 5 | WIN |
+| D2 Payoff 质量 | 5 | 5 | TIE |
+| D3 阅读动力 | 5 | 5 | TIE |
+| D4 风格自然度 | 5 | 5 | TIE |
+| D5 模板化程度 | 5 | 5 | TIE |
+| D6 Reviewer 证据 | 3 | 5 | WIN |
+| **结果** | | | **WIN (2 wins, 4 ties)** |

@@ -1,0 +1,123 @@
+# v1.2 样本：BL-003 — Chapter Plan + Report + Reviewer
+
+> task_id: BL-003 | chapter_role: ESCALATION | COMBAT
+> v1.2 新增：reader_experience、target_execution、dimension_results
+
+## Chapter Plan（含 reader_experience）
+
+```yaml
+reader_experience:
+  chapter_role:
+    primary: ESCALATION
+    secondary: [REVEAL]
+    description: "通过两场不同风格的战斗将冲突从'追杀'升级为'围剿'，揭示血魂门对祭坛的研究深度"
+
+  promise: "本章承诺：至少两场不同风格的高密度战斗，龙脉在战斗中首次失控并产生人际代价"
+
+  payoff:
+    mode: FULL
+    description: "灵剑宗围攻被击退（战术制胜），血魂门主力战揭示龙脉失控（剧情推进）"
+    expected_payoff_window: null
+
+  emotional_arc:
+    target: "紧张→对抗→失控后的恐惧→短暂凝聚"
+    turning_point: "龙脉失控误伤苏晚晴的瞬间"
+
+  tension_curve:
+    type: SPIKE
+    description: "灵剑宗→血魂门两次上升，龙脉失控处达到最高点后短降"
+
+  continuation_drive:
+    type: DANGER
+    description: "血魂门首领撤退但留下宣言'有人在等'——威胁从秘境层面升级为外部势力"
+
+contract_meta:
+  schema_id: "novel-master/chapter-plan"
+  schema_version: "1.2.0"
+```
+
+## Chapter Report（含 target_execution）
+
+```yaml
+reader_experience_execution:
+  target_execution:
+    - target_ref: "/reader_experience/promise"
+      execution: PRESENT
+      evidence_ref:
+        source_type: CHAPTER_DRAFT
+        deliverable_id: "ch013-draft-001"
+        revision: "1"
+        scene_id: "13-02"
+        paragraph_start: 28
+        paragraph_end: 32
+        excerpt: "金色从皮肤下爆发——不是他引动的，是祭坛回应了他的愤怒。"
+    - target_ref: "/reader_experience/emotional_arc"
+      execution: PRESENT
+      evidence_ref:
+        source_type: CHAPTER_DRAFT
+        deliverable_id: "ch013-draft-001"
+        revision: "1"
+        scene_id: "13-02"
+        paragraph_start: 34
+        paragraph_end: 35
+        excerpt: "身后传来苏晚晴的闷哼……血从她的袖口渗出，染红了白色的法袍。"
+    - target_ref: "/reader_experience/continuation_drive"
+      execution: PRESENT
+      evidence_ref:
+        source_type: CHAPTER_DRAFT
+        deliverable_id: "ch013-draft-001"
+        revision: "1"
+        scene_id: "13-02"
+        paragraph_start: 44
+        paragraph_end: 45
+        excerpt: "'他会来找你——我保证。'"
+```
+
+## Reviewer Report（dimension_results）
+
+```yaml
+guardrail_results:
+  status: PASS
+  findings: []
+
+dimension_results:
+  - dimension: CONTRACT_COMPLIANCE
+    status: PASS
+    findings:
+      - criterion: "两场战斗均已执行"
+        severity: INFO
+  - dimension: NARRATIVE_SOUNDNESS
+    status: WARNING
+    findings:
+      - criterion: "灵剑宗→血魂门的过渡不够"  
+        evidence_ref: { source_type: CHAPTER_DRAFT, deliverable_id: "ch013-draft-001", revision: "1", scene_id: "13-01", paragraph_start: 22, paragraph_end: 23, excerpt: "'做了功课的人已经在看。'——一句话过渡缺失环境铺垫" }
+        assessment: "两场战斗之间缺乏呼吸空间"
+        severity: WARNING
+  - dimension: READER_EXPERIENCE
+    status: PASS
+    findings:
+      - criterion: "emotional_arc 中龙脉失控的转向处理得当——不是刻意煽情而是战斗逻辑的自然代价"
+        severity: INFO
+  - dimension: CRAFT_EXECUTION
+    status: WARNING
+    findings:
+      - criterion: "失控段描写节奏过快——160 字展现核心事件"
+        assessment: "建议扩展失控的主观体验以增强冲击力"
+        severity: WARNING
+
+contract_meta:
+  schema_id: "novel-master/review-report"
+  schema_version: "1.2.0"
+```
+
+## v1.1 vs v1.2 A/B 评分
+
+| 维度 | v1.1 | v1.2 | WIN/LOSS |
+| --- | --- | --- | --- |
+| D1 Promise 具体性 | 3 | 5 | WIN |
+| D2 Payoff 质量 | 5 | 5 | TIE |
+| D3 阅读动力 | 5 | 5 | TIE |
+| D4 风格自然度 | 3 | 4 | WIN |
+| D5 模板化程度 | 4 | 4 | TIE |
+| D6 Reviewer 证据 | 3 | 5 | WIN |
+| **结果** | | | **WIN (3 wins, 3 ties)** |

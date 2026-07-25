@@ -51,9 +51,10 @@ DEFAULT（唯一模式）。初始化收尾以 DEFAULT 模式下的 `INITIALIZAT
 7. 新书初始化链按 `novel-brief → STORY → CHARACTER → WORLD → PLOT → novel-style → INITIALIZATION_REVIEW` 顺序路由，不得跳过 novel-style。
 8. `INITIALIZATION_REVIEW` 输出六类 approval_scope 摘要、结构化 pending_decisions、change_log 起始记录，并提示用户确认路径。
 9. 章节写作后执行接受闸门。
-10. 只有 ACCEPTED/PUBLISHED 内容产生事实变化时插入状态提交。
-11. 校验子 Skill 返回的 `SkillResult`，为每个 deliverable 调用 `scripts/compute_revision.py` 计算 content_hash 并回填三元组（deliverable_id/revision/content_hash），处理越权。
-12. 汇总 `MasterResult` 并回答用户。
+10. 根据 task.mode 决定 review_scope 并显式传入 novel-reviewer（STRICT: 全 4 维度 / STANDARD: CONTRACT+NARRATIVE+READER_EXPERIENCE / FAST: CONTRACT 仅）。
+11. 只有 ACCEPTED/PUBLISHED 内容产生事实变化时插入状态提交。
+12. 校验子 Skill 返回的 `SkillResult`，为每个 deliverable 调用 `scripts/compute_revision.py` 计算 content_hash 并回填三元组（deliverable_id/revision/content_hash），处理越权。
+13. 汇总 `MasterResult` 并回答用户。
 
 ## 禁止事项
 

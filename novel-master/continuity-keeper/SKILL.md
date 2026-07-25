@@ -65,8 +65,10 @@ description: "管理网文事实、时间线和连续性，是 state/ 唯一正�
 ### EXTRACT_CONTEXT
 1. 确定任务所需的最小相关信息。
 2. 从状态文件提取相关 Canon、人物状态、伏笔、开放循环。
-3. 按预算裁剪（硬约束 > Canon > 当前状态 > 知识 > 伏笔 > 风格）。
-4. 输出 ContextPack，标记 unknowns 和 omitted_context_refs。
+3. 从 style_guide.md 提取当前章节 scens 中涉及的 style_modulation 定义（仅包含被引用的 modulation_id，不复制整套 Scene Modulations）。
+4. 按 budget 裁剪（硬约束 > Canon > 当前状态 > 知识 > 伏笔 > 风格）。
+5. 在 ContextPack 中填充 `style_profile` 对象（含 global_defaults_ref 和 relevant_scene_modulations），保留 `style_constraints` 向后兼容。
+6. 输出 ContextPack，标记 unknowns 和 omitted_context_refs。
 
 ### COMMIT_CHAPTER_STATE
 1. 校验来源章节状态为 ACCEPTED 或 PUBLISHED。

@@ -39,7 +39,8 @@
 | knowledge_state | state/knowledge_state.md | 各人物当前知情范围，防止信息泄露 |
 | 最近 2~3 章摘要 | state/chapter_summaries.md | 前文结尾状态、未解决冲突、情感延续 |
 | 相关 Canon | state/canon.md | 与当前场景直接相关的已确认事实 |
-| style_guide | style_guide.md | 视角、语气、节奏、禁忌词等风格约束 |
+| style_guide | style_guide.md | 全局默认风格 + 篇章 scens 的 relevant_scene_modulations |
+| contract_meta | 各种交付物 | schema_version 用于识别 v1.2 vs v1.1 结构 |
 
 ## 提取策略
 

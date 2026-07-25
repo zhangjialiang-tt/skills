@@ -1,0 +1,121 @@
+# v1.2 样本：BL-001 — Reviewer Report（含 dimension_results + guardrail_results）
+
+```yaml
+review_report:
+  guardrail_results:
+    status: PASS
+    findings: []
+
+  dimension_results:
+    - dimension: CONTRACT_COMPLIANCE
+      status: PASS
+      reason_code: null
+      findings:
+        - criterion: "章节卡所有场景目标均已执行"
+          evidence_ref:
+            source_type: CHAPTER_PLAN
+            deliverable_id: "ch012-plan-001"
+            revision: "1"
+            json_pointer: "/chapter_plan/scenes"
+            excerpt: "三个场景均被 Writer 正确映射到正文叙事结构"
+          assessment: "无违规。所有 required_elements 均已体现"
+          recommended_action: null
+          severity: INFO
+
+    - dimension: NARRATIVE_SOUNDNESS
+      status: PASS
+      reason_code: null
+      findings:
+        - criterion: "人物动机一致性"
+          evidence_ref:
+            source_type: CHAPTER_DRAFT
+            deliverable_id: "ch012-draft-001"
+            revision: "1"
+            scene_id: "12-03"
+            paragraph_start: 35
+            paragraph_end: 36
+            excerpt: "林辰:'有人在暗中帮我……我也不确定他是替我挡刀还是把我往刀口上推。'"
+          assessment: "林辰坦白部分真相的动机合理——对苏晚晴的信赖已在 12-02 的共患难中铺垫"
+          severity: INFO
+        - criterion: "信息揭示的因果链"
+          evidence_ref:
+            source_type: CHAPTER_DRAFT
+            deliverable_id: "ch012-draft-001"
+            revision: "1"
+            scene_id: "12-01"
+            paragraph_start: 14
+            paragraph_end: 19
+          assessment: "符文→封印→龙脉共振的因果链清晰，每步推理有文本依据"
+          severity: INFO
+
+    - dimension: READER_EXPERIENCE
+      status: PASS
+      reason_code: null
+      findings:
+        - criterion: "promise 兑现"
+          evidence_ref:
+            source_type: CHAPTER_REPORT
+            deliverable_id: "ch012-report-001"
+            revision: "1"
+            json_pointer: "/chapter_report/reader_experience_execution/target_execution/0"
+          assessment: "promise 的三项内容（环境异样感、封印共振、符文体系）均在本章完整兑现"
+          severity: INFO
+        - criterion: "emotional_arc 达成"
+          evidence_ref:
+            source_type: CHAPTER_DRAFT
+            deliverable_id: "ch012-draft-001"
+            revision: "1"
+            scene_id: "12-02"
+            paragraph_start: 30
+            paragraph_end: 32
+            excerpt: "林辰跪下……封印之门上的银色光芒照在他脸上"
+          assessment: "情绪转折点（不安→肃然）在封印共振段落体现充分"
+          severity: INFO
+        - criterion: "continuation_drive 有效性"
+          evidence_ref:
+            source_type: CHAPTER_DRAFT
+            deliverable_id: "ch012-draft-001"
+            revision: "1"
+            scene_id: "12-03"
+            paragraph_start: 47
+            paragraph_end: 48
+          assessment: "QUESTION 类型的阅读动力自然有效——不是机械断章，而是情节逻辑自然产生的追问"
+          severity: INFO
+
+    - dimension: CRAFT_EXECUTION
+      status: WARNING
+      reason_code: null
+      findings:
+        - criterion: "描写密度均衡性"
+          evidence_ref:
+            source_type: CHAPTER_DRAFT
+            deliverable_id: "ch012-draft-001"
+            revision: "1"
+            scene_id: "12-01"
+            paragraph_start: 6
+            paragraph_end: 19
+          assessment: "scene-01 祭坛描写段落偏高密度细节（约 580 字纯描写），建议压缩至 350 字以维持 SETUP 章的阅读节奏"
+          recommended_action: "将部分符文细节从 scene-01 移至 scene-02 的苏晚晴解读过程，减少静态描写"
+          severity: WARNING
+        - criterion: "AI 腔排查"
+          evidence_ref:
+            source_type: CHAPTER_DRAFT
+            deliverable_id: "ch012-draft-001"
+            revision: "1"
+          assessment: "本章未发现空洞总结句、过度排比或经典 AI 腔标记。描写有具体性和个性。"
+          severity: INFO
+
+  contract_meta:
+    schema_id: "novel-master/review-report"
+    schema_version: "1.2.0"
+```
+
+## 对比 v1.1
+
+| 维度 | v1.1 Reviewer | v1.2 Reviewer |
+| --- | --- | --- |
+| 诊断格式 | overall_assessment + 自由文本 issues | dimension_results 四维独立诊断 + guardrail_results |
+| 证据 | "scene-01 约 600 字"（模糊） | evidence_ref 精确到段落号 + excerpt |
+| 可执行性 | "建议压缩至 350 字"（无具体理由） | "将符文细节移至 scene-02 的解读过程"（可执行步骤） |
+| 审美/客观区分 | 无 | severity 字段区分 INFO/WARNING/BLOCKER |
+| 安全保障 | 无独立检查 | guardrail_results 单独输出 |
