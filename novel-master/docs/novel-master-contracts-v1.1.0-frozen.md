@@ -1,16 +1,17 @@
 ---
 title: novel-master V1 路由与子 Skill 契约手册
 document_id: NM-CONTRACT
-version: 1.0.1
+version: 1.1.0
 status: FROZEN
-frozen_at: 2026-07-24
+frozen_at: 2026-07-25
 applies_to: novel-master V1
-companion: novel-master-architecture-v1.0.1-frozen.md
+companion: novel-master-architecture-v1.1.0-frozen.md
 source_documents:
   - inbox/craft-1.md
   - inbox/craft-2.md
   - inbox/craft-3.md
   - revision-prompt-v1.0.1.md
+  - revision-prompt-v1.1.0.md
 ---
 
 # `novel-master` V1 路由与子 Skill 契约手册
@@ -20,7 +21,7 @@ source_documents:
 本文是 `novel-master` V1 的可执行契约参考，规定项目目录、文件所有权、统一数据结构、路由规则、子 Skill 契约、异常处理和降级策略。
 
 系统目标、设计理由、实施计划和验收策略见
-[《`novel-master` 工业级网文创作 Skill 架构总纲》](novel-master-architecture-v1.0.1-frozen.md)。
+[《`novel-master` 工业级网文创作 Skill 架构总纲》](novel-master-architecture-v1.1.0-frozen.md)。
 
 若两份冻结文档发生语义冲突：
 
@@ -52,10 +53,10 @@ source_documents:
 
 本手册实现以下冻结决策：
 
-- [ADR 6.1：Canon 单一写入者](novel-master-architecture-v1.0.1-frozen.md#nm-arch-decision-single-writer)
-- [ADR 6.2：`chapter-writer` 不修改 Canon](novel-master-architecture-v1.0.1-frozen.md#nm-arch-decision-writer-no-canon)
-- [ADR 6.3：评审和修改分离](novel-master-architecture-v1.0.1-frozen.md#nm-arch-decision-review-edit)
-- [ADR 6.4：最小上下文包](novel-master-architecture-v1.0.1-frozen.md#nm-arch-decision-min-context)
+- [ADR 6.1：Canon 单一写入者](novel-master-architecture-v1.1.0-frozen.md#nm-arch-decision-single-writer)
+- [ADR 6.2：`chapter-writer` 不修改 Canon](novel-master-architecture-v1.1.0-frozen.md#nm-arch-decision-writer-no-canon)
+- [ADR 6.3：评审和修改分离](novel-master-architecture-v1.1.0-frozen.md#nm-arch-decision-review-edit)
+- [ADR 6.4：最小上下文包](novel-master-architecture-v1.1.0-frozen.md#nm-arch-decision-min-context)
 
 ## 2. V1 组件与模式
 
@@ -78,6 +79,7 @@ source_documents:
 | --- | --- |
 | `novel-brief` | `DEFAULT` |
 | `story-architect` | `STORY`、`CHARACTER`、`WORLD`、`PLOT` |
+| `novel-style` | `DEFAULT` |
 | `chapter-planner` | `DEFAULT` |
 | `chapter-writer` | `WRITE`、`CONTINUE`、`EDIT` |
 | `novel-reviewer` | `DEFAULT` |
@@ -177,6 +179,7 @@ updated_at: string
 | `characters/` | `story-architect / CHARACTER` | 只读或人物状态 Proposal |
 | `world/` | `story-architect / WORLD` | 只读或设定 Proposal |
 | `outline/` | `story-architect / PLOT` | `chapter-planner` 只读 |
+| `style_guide.md` | `novel-style` | 只读或 Proposal |
 | `chapters/plans/` | `chapter-planner` | `chapter-writer` 只读 |
 | `chapters/drafts/` | `chapter-writer` | 其他子 Skill 只读 |
 | `reviews/` | `novel-reviewer` | 其他子 Skill 只读 |
@@ -626,10 +629,11 @@ approval_gate:
     - principal_characters
     - core_world_rules
     - active_plot_plan
+    - style_guide
   confirmation_format: structured_summary | full_review
 ```
 
-`INITIALIZATION_REVIEW` 必须输出上述五类内容的摘要、对应 revision、待确认项和冲突。用户确认或明确自动授权后，生成 `operation: INIT_PROJECT` 的 ApprovalRef，再允许 `COMMIT_CANON`。
+`INITIALIZATION_REVIEW` 必须输出上述六类内容的摘要、对应 revision、待确认项和冲突。用户确认或明确自动授权后，生成 `operation: INIT_PROJECT` 的 ApprovalRef，再允许 `COMMIT_CANON`。
 
 <a id="nm-contract-changeset"></a>
 
@@ -806,12 +810,13 @@ context_pack:
 | 用户意图 | 主路由 | 状态处理 |
 | --- | --- | --- |
 | 从想法创建新书 | `novel-brief → STORY` | 只生成设计产物，不直接提交 Canon |
-| 完整新书初始化 | `novel-brief → STORY → CHARACTER → WORLD → PLOT → INITIALIZATION_REVIEW → 用户确认/自动授权 → COMMIT_CANON` | ApprovalRef 必须覆盖全部初始化范围和当前 revision |
+| 完整新书初始化 | `novel-brief → STORY → CHARACTER → WORLD → PLOT → novel-style → INITIALIZATION_REVIEW → 用户确认/自动授权 → COMMIT_CANON` | ApprovalRef 必须覆盖全部初始化范围和当前 revision |
 | 修改作品定位 | `novel-brief → IMPACT_ANALYSIS` | 高风险时待用户确认 |
 | 设计主线/结局方向 | `STORY` | 重大变化只作为 Proposal |
 | 设计人物/关系 | `CHARACTER` | 正式采用后提交 Canon |
 | 设计世界/力量体系 | `WORLD → CHECK_CONTRADICTIONS` | 新规则先作为候选 |
 | 生成整书/分卷大纲 | `STORY → PLOT` 或仅 `PLOT` | 已确认结构可提交 |
+| 确立或修订风格指南 | `novel-style`（定位/基调变化时前置 `IMPACT_ANALYSIS`） | 高风险时待用户确认 |
 
 #### 章节生产
 
@@ -1416,6 +1421,70 @@ recovery_report:
 - 恢复报告将证据、推断、冲突和未知项分离。
 - ChangeSet 已提交或完整回滚，不存在部分状态。
 
+<a id="nm-contract-skill-style"></a>
+
+### 12.7 `novel-style`
+
+**职责**：把作品定位和故事基调转化为可执行的叙事风格约束，填写项目 `style_guide.md`，供 `chapter-writer` 作为硬约束、`novel-reviewer` 作为风格维度证据。
+
+**触发**：新书初始化阶段 `story_architecture` 已生成、作品定位或故事基调发生重大变化、`style_guide.md` 仍存在未填写占位符。
+
+**必需输入**：
+
+```yaml
+project_brief: file
+architecture/story_architecture.md: file
+```
+
+**可选输入**：
+
+```yaml
+characters/: []      # 参考人物声音差异
+world/: []           # 参考世界质感与题材规则
+outline/: []         # 参考节奏与信息揭示曲线
+existing_style_guide: file   # 修订时读取
+```
+
+**输出**：
+
+```yaml
+style_guide:
+  narrative_pov: object          # 主视角、视角人物、切换规则、限制
+  narrative_distance: object      # 默认距离、变化规则、禁止
+  sentence_rhythm: object         # 默认句长、节奏模式、段落长度、禁止
+  description_density: object     # 动作/过渡/情感/环境密度、禁止
+  dialogue_rules: object          # 占比、标签、潜台词、节奏、禁止
+  character_voice: object         # 主角特征、配角区分、叙述者声音、禁止
+  exposition_strategy: object     # 背景说明、体系说明、前情回顾、禁止
+  chapter_word_count: object      # 标准字数、浮动、高潮/过渡章节
+  hook_principles: object         # 章首/章尾 Hook、断章规则、禁止
+  recall_strategy: object         # 已知信息、伏笔提醒、前章衔接
+  ai_voice_avoidance: []          # 可执行的 AI 腔规避清单
+  genre_specific_rules: []        # 题材特殊规则
+  assumptions: []
+  unresolved_decisions: []
+```
+
+**可写**：`style_guide.md`。
+
+**禁止**：
+
+- 写正文、章节卡、大纲或人物档案。
+- 修改 Canon 或写 `state/`。
+- 固化某一题材的默认风格（占位符必须基于本作品定位具象化，不得用通用默认值填充）。
+- 把低置信度推断写成已确认风格。
+- 模仿特定在世作者的可识别文风。
+
+**完成标准**：
+
+- 模板全部占位符已具象化，无遗留 `{{}}` 或 `<!-- TODO -->`。
+- 每条约束可被 `chapter-writer` 当作硬约束执行、可被 `novel-reviewer` 当作证据判定。
+- 风格与 `project_brief` 的目标读者体验、`story_architecture` 的基调一致。
+- 已确认项、假设和待确认项分离。
+- 没有把低置信度推断写成事实。
+
+**默认后继**：`INITIALIZATION_REVIEW`（初始化阶段）或回到调用方。
+
 ## 13. 异常与降级策略
 
 | 场景 | 检测 | 降级动作 | 状态 |
@@ -1550,6 +1619,17 @@ master_result:
 
 ## 17. 变更记录
 
+### 1.1.0（2026-07-25）
+
+| 变更 | 原因 | 影响 |
+| --- | --- | --- |
+| 新增子 Skill `novel-style` 及其契约 §12.7 | `style_guide.md` 在 §3.1 列为标准文件，但 §3.3 无所有权、§2.2 无产出方、§10 无路由，是冻结契约留白；`chapter-writer`/`novel-reviewer` 已把它当必需只读输入 | §2.2 子 Skill 表、§3.3 文件所有权表、§10.4 路由表新增对应条目 |
+| §3.3 新增 `style_guide.md` 所有权行，归属 `novel-style` | 消除孤儿文件 | 其他组件对 `style_guide.md` 为只读或 Proposal |
+| §7.2 初始化 `approval_scope` 新增 `style_guide` | 初始化范围纳入风格约束 | INITIALIZATION_REVIEW 输出六类摘要（原五类） |
+| §10.4 「完整新书初始化」路由在 PLOT 后插入 `novel-style` | 初始化阶段补齐风格指南 | 新增「确立或修订风格指南」路由行 |
+
+本次为次版本修订：新增独立子 Skill 属于架构调整，按架构总纲 §1.3 规则增加次版本号。现有 6 个子 Skill 的模式、可写区域、输入输出和顶层契约字段保持不变；`style_guide.md` 的所有权和 `approval_scope` 的 `style_guide` 项为新增字段，不与现有字段冲突。
+
 ### 1.0.1（2026-07-24）
 
 | 变更 | 原因 | 影响 |
@@ -1573,4 +1653,4 @@ master_result:
 - 1.0.0 的纯路径 `required_files` 可以在兼容期读取，1.0.1 写出方必须输出 `FileRef`。
 - 1.0.0 小写风险枚举可以在兼容期读取并规范化为大写；1.0.1 写出方只输出大写。
 - 1.0.0 的 `RESTORE_PROJECT` 输入在兼容期按只读 `RESTORE_PROJECT / EXTRACT_EVIDENCE` 处理；任何状态重建都必须显式使用新子阶段并重新授权。
-- V1 的 1+6 架构和专业 Skill/模式不变；新增的是治理操作和恢复子阶段。
+- V1 的 1+6 架构和专业 Skill/模式不变；新增的是治理操作和恢复子阶段。（注：1.1.0 起 V1 架构调整为 1+7，新增 `novel-style`，详见 §17 变更记录。）

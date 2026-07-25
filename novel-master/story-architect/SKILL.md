@@ -24,14 +24,14 @@ description: "按单一互斥模式完成长篇网文的故事、人物、世界
 
 ## 激活模式
 
-四种互斥模式，一次只能激活一个：
+四种互斥模式，一次只能激活一个。**可写文件名必须使用契约 §3.1 标准名，禁止合并为单文件、禁止用自定义代号命名：**
 
-| 模式 | 可写区域 | 必需输入 |
+| 模式 | 可写标准文件（见契约 §3.1） | 必需输入 |
 |------|----------|----------|
-| `STORY` | `architecture/` | `project_brief.md` |
-| `CHARACTER` | `characters/` | `project_brief.md` + `architecture/story_architecture.md` |
-| `WORLD` | `world/` | `project_brief.md` + `architecture/story_architecture.md` |
-| `PLOT` | `outline/` | 故事架构 + 相关人物 + 相关世界规则 |
+| `STORY` | `architecture/story_architecture.md`、`architecture/themes.md`、`architecture/story_promises.md` | `project_brief.md` |
+| `CHARACTER` | `characters/protagonist.md`、`characters/antagonist.md`、`characters/supporting_cast.md`、`characters/relationship_map.md`（按需生成，未涉及的可缺省，但文件名必须用标准名） | `project_brief.md` + `architecture/story_architecture.md` |
+| `WORLD` | `world/world_overview.md`、`world/factions.md`、`world/power_system.md`、`world/locations.md`、`world/glossary.md`（按需生成，但文件名必须用标准名） | `project_brief.md` + `architecture/story_architecture.md` |
+| `PLOT` | `outline/master_outline.md`、`outline/volume_01.md`、`outline/volume_NN.md`（分卷按需）、`outline/subplot_tracker.md` | 故事架构 + 相关人物 + 相关世界规则 |
 
 未声明模式、声明多个模式或目标路径跨越多个所有权区域时，返回 `BLOCKED / INVALID_SKILL_MODE`。
 
@@ -47,7 +47,9 @@ description: "按单一互斥模式完成长篇网文的故事、人物、世界
 
 ## 允许写入
 
-- 仅当前激活模式对应的所有权区域（见上表）。
+- 仅当前激活模式对应的标准文件（见上表）。
+- 禁止把多个标准文件合并为单个文件（如把 `world_overview.md`+`factions.md`+`power_system.md`+`locations.md`+`glossary.md` 合并成一个 `world_design.md`）。
+- 禁止用自定义代号文件名替代标准名（如用 `pillar.md`、`healer.md` 替代 `protagonist.md` 等标准名）。
 
 ## 操作步骤
 
@@ -64,6 +66,8 @@ description: "按单一互斥模式完成长篇网文的故事、人物、世界
 - 静默改变已确认的结局、人物命运或世界规则。
 - 创造与剧情无关的大量人物或百科内容。
 - 把设计可能性当成已经发生的事实。
+- 把多个标准文件合并为单个文件。
+- 使用非标准文件名（自定义代号等）替代契约 §3.1 标准名。
 
 ## 输出
 
@@ -87,4 +91,4 @@ description: "按单一互斥模式完成长篇网文的故事、人物、世界
 - 执行前读取[公共规则](../references/common-rules.md)和[文件所有权](../references/file-ownership.md)。
 - 设计变更影响已确认 Canon 或需要用户授权时，读取[生命周期与授权](../references/lifecycle-and-approval.md)。
 - 模式无效、越权或发生冲突时，读取[错误码](../references/error-codes.md)。
-- 需要核对模式输出结构时，读取[冻结契约](../docs/novel-master-contracts-v1.0.1-frozen.md) §12.2 和[冻结架构](../docs/novel-master-architecture-v1.0.1-frozen.md) §4.2、§6.5。
+- 需要核对模式输出结构时，读取[冻结契约](../docs/novel-master-contracts-v1.1.0-frozen.md) §12.2 和[冻结架构](../docs/novel-master-architecture-v1.1.0-frozen.md) §4.2、§6.5。

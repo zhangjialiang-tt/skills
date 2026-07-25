@@ -79,7 +79,7 @@ project_brief:
 ## 按需读取
 
 - 执行前读取[公共规则](../references/common-rules.md)和[文件所有权](../references/file-ownership.md)。
-- 创建项目风格约束时，读取[风格指南模板](../references/style-guide-template.md)。
+- 风格指南由 `novel-style` 基于 project_brief 产出，novel-brief 不负责填写 style_guide.md；需要理解风格定位时，读取[风格指南模板](../references/style-guide-template.md)作为下游参考。
 - 涉及初始化确认、Canon 候选或授权时，读取[生命周期与授权](../references/lifecycle-and-approval.md)。
 - 返回阻塞或待决策结果时，读取[错误码](../references/error-codes.md)。
-- 需要核对输出结构时，读取[冻结契约](../docs/novel-master-contracts-v1.0.1-frozen.md) §12.1 和[冻结架构](../docs/novel-master-architecture-v1.0.1-frozen.md) §4.2。
+- 需要核对输出结构时，读取[冻结契约](../docs/novel-master-contracts-v1.1.0-frozen.md) §12.1 和[冻结架构](../docs/novel-master-architecture-v1.1.0-frozen.md) §4.2。

@@ -1,6 +1,6 @@
 # novel-master V1 实施说明
 
-> 基于冻结基线 `novel-master-architecture-v1.0.1-frozen.md` 和 `novel-master-contracts-v1.0.1-frozen.md`。
+> 基于冻结基线 `novel-master-architecture-v1.1.0-frozen.md` 和 `novel-master-contracts-v1.1.0-frozen.md`。
 > 本文不修改冻结文档，仅补充实施层规范。
 
 ## 0. 平台能力调查结论

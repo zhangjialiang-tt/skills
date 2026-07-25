@@ -88,4 +88,4 @@ chapter_plan:
 - 执行前读取[公共规则](../references/common-rules.md)和[文件所有权](../references/file-ownership.md)。
 - 获取或校验 `context_pack` 时，读取[上下文提取规则](../references/context-retrieval-rules.md)。
 - 章节卡与 Canon 冲突或输入不足时，读取[错误码](../references/error-codes.md)。
-- 需要核对章节卡结构时，读取[冻结契约](../docs/novel-master-contracts-v1.0.1-frozen.md) §12.3 和[冻结架构](../docs/novel-master-architecture-v1.0.1-frozen.md) §4.2、§8.2。
+- 需要核对章节卡结构时，读取[冻结契约](../docs/novel-master-contracts-v1.1.0-frozen.md) §12.3 和[冻结架构](../docs/novel-master-architecture-v1.1.0-frozen.md) §4.2、§8.2。

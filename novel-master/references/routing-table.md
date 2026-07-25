@@ -56,6 +56,8 @@ routes:
         mode: WORLD
       - skill: story-architect
         mode: PLOT
+      - skill: novel-style
+        mode: DEFAULT
       - skill: novel-master
         mode: INITIALIZATION_REVIEW
     approval_gate: INIT_PROJECT
@@ -64,7 +66,7 @@ routes:
       mode: COMMIT_CANON
       after: USER_CONFIRMED
     constraints:
-      approval_must_cover: [project_brief, story_architecture, principal_characters, core_world_rules, active_plot_plan]
+      approval_must_cover: [project_brief, story_architecture, principal_characters, core_world_rules, active_plot_plan, style_guide]
 
   # ─── 章节规划 ───
   - route_id: PLAN_CHAPTER
@@ -238,6 +240,21 @@ routes:
       no_formal_artifact: true
       no_state_mutation: true
       output_as_proposal: true
+
+  # ─── 风格指南 ───
+  - route_id: ESTABLISH_STYLE_GUIDE
+    when:
+      task_type: UPDATE_STYLE_GUIDE
+      # 或：初始化链中 PLOT 已完成但 style_guide.md 仍存在未填写占位符
+    steps:
+      - skill: novel-style
+        mode: DEFAULT
+    approval_gate:
+      when_risk: HIGH   # 定位/基调重大变化引发的风格重写为 HIGH
+      requires: ApprovalRef
+    state_commit: null  # style_guide 变更不直接写 state/，由后续 COMMIT_CANON 处理
+    constraints:
+      requires_brief_and_architecture: true
 ```
 
 ## 项目阶段默认路由
@@ -252,7 +269,9 @@ stage_routing:
     next: story-architect / CHARACTER | WORLD
   - stage: has_architecture_no_outline
     next: story-architect / PLOT
-  - stage: has_outline_no_chapter_plan
+  - stage: has_outline_no_style_guide
+    next: novel-style
+  - stage: has_style_guide_no_chapter_plan
     next: chapter-planner
   - stage: has_chapter_plan_no_draft
     next: chapter-writer / WRITE

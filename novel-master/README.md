@@ -23,6 +23,7 @@
 novel-master (编排器)
 ├── novel-brief        — 项目简报：一本书的定位、卖点、读者画像
 ├── story-architect    — 故事架构：背景 / 人物 / 世界 / 情节
+├── novel-style        — 风格指南：叙事视角、节奏、AI 腔规避等可执行约束
 ├── chapter-planner    — 章节规划：章纲、节拍、目标
 ├── chapter-writer     — 正文创作：草稿、续写、修订
 ├── novel-reviewer     — 文本评审：一致性、节奏、风格
@@ -35,7 +36,7 @@ novel-master (编排器)
 
 ```
 1. 初始化项目
-   novel-brief → story-architect (STORY/CHARACTER/WORLD/PLOT) → INITIALIZATION_REVIEW
+   novel-brief → story-architect (STORY/CHARACTER/WORLD/PLOT) → novel-style → INITIALIZATION_REVIEW
 
 2. 章节创作
    chapter-planner → chapter-writer → ACCEPTANCE_GATE → continuity-keeper (可选)
@@ -54,7 +55,7 @@ novel-master (编排器)
 ```
 novel-master/
 ├── SKILL.md                        # 编排器主文件
-├── manifest.json                   # 包清单 (v1.1.0)
+├── manifest.json                   # 包清单 (v1.2.0)
 ├── agents/                         # Agent 接口配置
 ├── references/                     # 公共规则、路由表、错误码等参考文档
 │   ├── common-rules.md
@@ -63,8 +64,8 @@ novel-master/
 │   ├── error-codes.md
 │   └── ...
 ├── docs/                           # 冻结架构与契约文档
-│   ├── novel-master-architecture-v1.0.1-frozen.md
-│   ├── novel-master-contracts-v1.0.1-frozen.md
+│   ├── novel-master-architecture-v1.1.0-frozen.md
+│   ├── novel-master-contracts-v1.1.0-frozen.md
 │   └── ...
 ├── schemas/                        # JSON Schema 定义 (7 个)
 ├── scripts/                        # 确定性校验脚本
@@ -85,6 +86,7 @@ novel-master/
 | ------------------- | ------------------------------- | ---------------------------------------------------- |
 | `novel-brief`       | 项目简报、定位、卖点            | `project_brief.md`                                   |
 | `story-architect`   | 故事架构（背景/人物/世界/情节） | `architecture/`、`characters/`、`world/`、`outline/` |
+| `novel-style`       | 风格指南、叙事约束              | `style_guide.md`                                     |
 | `chapter-planner`   | 章节规划、章纲                  | `chapters/plans/`                                    |
 | `chapter-writer`    | 正文创作、续写、修订            | `chapters/drafts/`                                   |
 | `novel-reviewer`    | 文本评审、一致性检查            | `reviews/`                                           |
@@ -164,8 +166,8 @@ my-novel-project/
 
 | 文档                                                            | 说明                                       |
 | --------------------------------------------------------------- | ------------------------------------------ |
-| [架构冻结基线](docs/novel-master-architecture-v1.0.1-frozen.md) | 系统目标、术语、总体架构、设计决策         |
-| [契约冻结手册](docs/novel-master-contracts-v1.0.1-frozen.md)    | 字段级契约、路由、文件所有权、输入输出规范 |
+| [架构冻结基线](docs/novel-master-architecture-v1.1.0-frozen.md) | 系统目标、术语、总体架构、设计决策         |
+| [契约冻结手册](docs/novel-master-contracts-v1.1.0-frozen.md)    | 字段级契约、路由、文件所有权、输入输出规范 |
 | [实施指南](docs/novel-master-implementation-guide-v1.md)        | 实施顺序、验收方法                         |
 | [路由表](references/routing-table.md)                           | 路由决策的可测试规则                       |
 | [文件所有权](references/file-ownership.md)                      | 每个 Skill 的文件读写权限边界              |
@@ -176,9 +178,9 @@ my-novel-project/
 
 ## 版本与状态
 
-- **当前版本**: 1.1.0
+- **当前版本**: 1.2.0
 - **生命周期**: Production
-- **架构冻结**: v1.0.1 (2026-07-24)
+- **架构冻结**: v1.1.0 (2026-07-25)
 - **兼容性目标**: OpenAI / Generic
 
 ---
@@ -195,4 +197,4 @@ Copyright (c) 2026 zhangjl.
 
 ## 更新日志
 
-参见 [docs/novel-master-architecture-v1.0.1-frozen.md §16](docs/novel-master-architecture-v1.0.1-frozen.md) 变更记录章节。
+参见 [docs/novel-master-architecture-v1.1.0-frozen.md §16](docs/novel-master-architecture-v1.1.0-frozen.md) 变更记录章节。

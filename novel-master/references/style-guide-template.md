@@ -113,8 +113,9 @@
 
 ## 使用约束
 
-1. 此模板不固化任何题材风格，所有 `{{}}` 内为占位提示，用户必须自行填写。
-2. chapter-writer 写作前必须读取项目 style_guide.md，将其作为硬约束。
-3. novel-reviewer 评审时将 style_guide.md 作为风格维度的评判依据。
-4. 风格指南修改属于 PROPOSAL → CANON 流程，需用户确认。
-5. 未填写的占位符视为"无特殊约束"，不得由 AI 自行填充默认值。
+1. 此模板不固化任何题材风格，所有 `{{}}` 内为占位提示，必须基于具体作品定位具象化，不得用通用默认值填充。
+2. **由 `novel-style` 子 Skill 基于此模板填写**项目 `style_guide.md`（见冻结契约 §12.7）。初始化阶段在 story-architect / PLOT 之后、INITIALIZATION_REVIEW 之前执行。
+3. chapter-writer 写作前必须读取项目 style_guide.md，将其作为硬约束。
+4. novel-reviewer 评审时将 style_guide.md 作为风格维度的评判依据。
+5. 风格指南修改属于 PROPOSAL → CANON 流程，需用户确认。
+6. 未填写的占位符视为"无特殊约束"，不得由 AI 自行填充默认值。

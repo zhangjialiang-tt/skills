@@ -1,16 +1,17 @@
 ---
 title: novel-master 工业级网文创作 Skill 架构总纲
 document_id: NM-ARCH
-version: 1.0.1
+version: 1.1.0
 status: FROZEN
-frozen_at: 2026-07-24
+frozen_at: 2026-07-25
 applies_to: novel-master V1
-companion: novel-master-contracts-v1.0.1-frozen.md
+companion: novel-master-contracts-v1.1.0-frozen.md
 source_documents:
   - inbox/craft-1.md
   - inbox/craft-2.md
   - inbox/craft-3.md
   - revision-prompt-v1.0.1.md
+  - revision-prompt-v1.1.0.md
 ---
 
 # `novel-master` 工业级网文创作 Skill 架构总纲
@@ -20,7 +21,7 @@ source_documents:
 本文是 `novel-master` V1 的架构冻结基线，规定系统目标、术语、职责边界、关键设计决策、V1 范围、实施顺序和验收方法。
 
 字段、路由、文件所有权和子 Skill 输入输出以配套文档
-[《`novel-master` V1 契约手册》](novel-master-contracts-v1.0.1-frozen.md)
+[《`novel-master` V1 契约手册》](novel-master-contracts-v1.1.0-frozen.md)
 为唯一规范来源。本文不重复维护详细契约。
 
 ### 1.1 目录
@@ -61,7 +62,7 @@ source_documents:
 4. 同步更新配套契约、测试用例和变更记录。
 5. 重新执行受影响的回归测试。
 
-补丁版本可以包含错字、断链、排版修复，以及不改变 1+6 架构和顶层契约的向后兼容语义澄清。新增专业能力、破坏性字段变更或架构调整必须增加次版本或主版本号。
+补丁版本可以包含错字、断链、排版修复，以及不改变 1+7 架构和顶层契约的向后兼容语义澄清。新增专业能力、破坏性字段变更或架构调整必须增加次版本或主版本号。
 
 ## 2. 系统目标
 
@@ -117,6 +118,7 @@ novel-master（编排与治理入口）
 ├─ 创作设计层
 │  ├─ novel-brief
 │  ├─ story-architect
+│  ├─ novel-style
 │  ├─ character-designer        [V1 合并]
 │  └─ world-builder             [V1 合并]
 │
@@ -133,13 +135,14 @@ novel-master（编排与治理入口）
 
 ### 4.2 V1 运行架构
 
-V1 冻结为 **1 个编排器 + 6 个子 Skill**：
+V1 冻结为 **1 个编排器 + 7 个子 Skill**：
 
 | 组件 | V1 职责 |
 | --- | --- |
 | `novel-master` | 识别意图、确定风险、路由、汇总结果；不直接产出专业创作内容 |
 | `novel-brief` | 明确作品定位、读者承诺、篇幅和创作约束 |
 | `story-architect` | 通过不同模式承担故事结构、人物、世界和大纲设计 |
+| `novel-style` | 把作品定位与故事基调转化为可执行的叙事风格约束，填写 `style_guide.md` |
 | `chapter-planner` | 把大纲节点和当前状态转化为可执行章节卡 |
 | `chapter-writer` | 根据章节卡写正文；在明确修订模式下承担 V1 文本编辑 |
 | `novel-reviewer` | 只读诊断，不直接修改正文 |
@@ -177,9 +180,9 @@ V1 合并关系：
 15. 状态提交必须基于未过期的输入 revision，并通过完整 `ChangeSet` 事务；检测到陈旧上下文时禁止写入。
 
 章节生命周期、权限矩阵和事务字段分别以契约手册
-[第 4.3 节](novel-master-contracts-v1.0.1-frozen.md#nm-contract-chapter-lifecycle)、
-[第 5.6 节](novel-master-contracts-v1.0.1-frozen.md#nm-contract-authority)和
-[第 8 节](novel-master-contracts-v1.0.1-frozen.md#nm-contract-changeset)为准。
+[第 4.3 节](novel-master-contracts-v1.1.0-frozen.md#nm-contract-chapter-lifecycle)、
+[第 5.6 节](novel-master-contracts-v1.1.0-frozen.md#nm-contract-authority)和
+[第 8 节](novel-master-contracts-v1.1.0-frozen.md#nm-contract-changeset)为准。
 
 ## 6. 关键设计决策
 
@@ -284,7 +287,7 @@ V1 合并关系：
 - 会导致多章返工的结构变更。
 
 新书初始化阶段的所有重大决策必须通过 `INITIALIZATION_REVIEW` 确认后才能提交为 Canon。只有存在覆盖对应初始化范围、绑定当前 revision 的有效自动授权时，才可以用明确的自动授权替代逐项人工确认。批准结构见契约手册
-[第 7 节](novel-master-contracts-v1.0.1-frozen.md#nm-contract-approval)。
+[第 7 节](novel-master-contracts-v1.1.0-frozen.md#nm-contract-approval)。
 
 ### 7.2 操作风险等级
 
@@ -295,7 +298,7 @@ V1 合并关系：
 | 高 | L3（改变事实、状态或结果）、L4、Canon 修改、大纲重构、主要关系变化 | 先影响分析，必须显式确认 |
 
 编辑等级不直接等于风险等级：仅场景内调整且 `semantic_impact.fact_change`、`semantic_impact.state_change`、`semantic_impact.plot_outcome_change` 均为 `false` 的 L3 为 `MEDIUM`；任一字段为 `true` 的 L3，以及所有 L4，均为 `HIGH`。详细推导规则见契约手册
-[第 5.7 节](novel-master-contracts-v1.0.1-frozen.md#nm-contract-risk-derivation)。
+[第 5.7 节](novel-master-contracts-v1.1.0-frozen.md#nm-contract-risk-derivation)。
 
 模糊请求采用最低安全权限。若最低权限无法解决问题，应先诊断并说明需要扩权的原因。
 
@@ -312,6 +315,7 @@ novel-master
   → story-architect / CHARACTER
   → story-architect / WORLD
   → story-architect / PLOT
+  → novel-style
   → INITIALIZATION_REVIEW（初始化摘要、revision 和待确认项）
   → 用户确认或明确自动授权
   → continuity-keeper / COMMIT_CANON
@@ -319,7 +323,7 @@ novel-master
 
 完成条件：
 
-- 项目定位、故事骨架、主要人物、必要世界规则和首阶段大纲存在。
+- 项目定位、故事骨架、主要人物、必要世界规则、首阶段大纲和可执行的叙事风格约束存在。
 - 已确认项、待确认项和未知项明确分离。
 - `approval_gate` 覆盖全部初始化范围。
 - 初始 Canon 有来源、当前 revision 和有效 `ApprovalRef`。
@@ -510,6 +514,7 @@ novel-master
 | --- | --- |
 | `novel-brief` | 模糊创意输入后，已确认项、假设和待确认项分离 |
 | `story-architect` | 四种模式各自只写负责区域，跨模式内容作为 Proposal |
+| `novel-style` | 占位符全部具象化为可执行约束，风格与作品定位一致 |
 | `chapter-planner` | 章节卡包含开始/结束状态、场景目标、冲突和结果 |
 | `chapter-writer` | 正文执行章节卡，并报告新增事实和偏离 |
 | `novel-reviewer` | 只读输出证据化问题，不修改原文 |
@@ -547,7 +552,7 @@ novel-master
 
 满足以下全部条件才可宣布 V1 完成：
 
-- 1 个编排器和 6 个子 Skill 的职责可独立描述和测试。
+- 1 个编排器和 7 个子 Skill 的职责可独立描述和测试。
 - `novel-master` 不直接写专业交付物。
 - 所有子 Skill 使用统一契约。
 - 每个文件区域有唯一主要负责人。
@@ -592,6 +597,15 @@ novel-master
 这些能力未来可以消费冻结产物，但不得绕过 `novel-master` 的权限和状态治理。
 
 ## 16. 变更记录
+
+### 1.1.0（2026-07-25）
+
+| 变更 | 原因 | 影响 |
+| --- | --- | --- |
+| 新增子 Skill `novel-style`，V1 架构由 1+6 调整为 1+7 | 冻结契约 §3.1 把 `style_guide.md` 列为标准目录成员，但无所有权、路由和产出方；`chapter-writer`/`novel-reviewer` 已把它当必需只读输入，下游依赖悬空 | 架构 §4.2 子 Skill 表、§4.1 目标架构图、§8.1 初始化流程、§12.2 子 Skill 测试表、§13 验收标准同步更新；契约手册新增 §12.7 并更新 §2.2、§3.3、§7.2、§10.4 |
+| 新书初始化流程在 PLOT 后、`INITIALIZATION_REVIEW` 前插入 `novel-style` 步骤 | 初始化阶段补齐风格约束，避免进入写作阶段时风格指南仍为空模板 | §8.1 流程与完成条件更新；初始化审批范围纳入 `style_guide` |
+
+本次为次版本修订：新增独立子 Skill 属于架构调整，按 §1.3 规则增加次版本号。现有 6 个子 Skill 的职责、模式、文件所有权和顶层契约字段保持不变；新增字段和文件所有权以向后兼容方式补充。
 
 ### 1.0.1（2026-07-24）
 

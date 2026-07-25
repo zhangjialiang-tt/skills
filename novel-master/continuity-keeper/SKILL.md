@@ -131,4 +131,4 @@ continuity_result:
 - 从正文或报告生成状态候选时，读取[事实提取规则](../references/fact-extraction-rules.md)。
 - COMMIT_CHAPTER_STATE、COMMIT_CANON、恢复写入或影响分析时，读取[生命周期与授权](../references/lifecycle-and-approval.md)。
 - 返回冲突、陈旧上下文、无效授权或事务失败时，读取[错误码](../references/error-codes.md)。
-- 需要核对状态、ChangeSet 或 ContextPack 字段时，读取[冻结契约](../docs/novel-master-contracts-v1.0.1-frozen.md) §12.6、§8、§9 和[冻结架构](../docs/novel-master-architecture-v1.0.1-frozen.md) §5、§6.1、§6.4、§9。
+- 需要核对状态、ChangeSet 或 ContextPack 字段时，读取[冻结契约](../docs/novel-master-contracts-v1.1.0-frozen.md) §12.6、§8、§9 和[冻结架构](../docs/novel-master-architecture-v1.1.0-frozen.md) §5、§6.1、§6.4、§9。

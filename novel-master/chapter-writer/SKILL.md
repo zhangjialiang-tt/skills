@@ -99,4 +99,4 @@ description: "根据章节卡创作、续写或按授权等级编辑网文正文
 - 写作或评估风格约束时，读取[风格指南模板](../references/style-guide-template.md)并优先遵守项目实际 `style_guide.md`。
 - EDIT 涉及 L3/L4、高风险语义变化或新 revision 接受时，读取[生命周期与授权](../references/lifecycle-and-approval.md)。
 - 返回阻塞、越权或冲突结果时，读取[错误码](../references/error-codes.md)。
-- 需要核对写作和编辑字段时，读取[冻结契约](../docs/novel-master-contracts-v1.0.1-frozen.md) §12.4、§4.3 和[冻结架构](../docs/novel-master-architecture-v1.0.1-frozen.md) §6.2、§6.3。
+- 需要核对写作和编辑字段时，读取[冻结契约](../docs/novel-master-contracts-v1.1.0-frozen.md) §12.4、§4.3 和[冻结架构](../docs/novel-master-architecture-v1.1.0-frozen.md) §6.2、§6.3。

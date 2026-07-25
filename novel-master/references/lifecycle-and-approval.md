@@ -2,7 +2,7 @@
 
 > 用途：统一章节生命周期、接受闸门、状态提交资格和 ApprovalRef 校验规则。
 > 读取时机：涉及章节接受、生命周期转换、COMMIT_CHAPTER_STATE、COMMIT_CANON、RETCON、EDIT_L3/L4 或初始化确认时，通过 SKILL.md 中的相对链接读取。
-> 来源：[冻结契约](../docs/novel-master-contracts-v1.0.1-frozen.md) §4.3、§7、§8。
+> 来源：[冻结契约](../docs/novel-master-contracts-v1.1.0-frozen.md) §4.3、§7、§8。
 
 ## 目录
 

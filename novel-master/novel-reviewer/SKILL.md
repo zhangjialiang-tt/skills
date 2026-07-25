@@ -91,4 +91,4 @@ review_report:
 - 评估文风时，读取[风格指南模板](../references/style-guide-template.md)并以项目实际 `style_guide.md` 为证据。
 - 判断报告能否落盘、revision 是否匹配或后继编辑是否需授权时，读取[生命周期与授权](../references/lifecycle-and-approval.md)。
 - 返回阻塞或降级结果时，读取[错误码](../references/error-codes.md)。
-- 需要核对评审报告结构时，读取[冻结契约](../docs/novel-master-contracts-v1.0.1-frozen.md) §12.5、§5.6 和[冻结架构](../docs/novel-master-architecture-v1.0.1-frozen.md) §6.3。
+- 需要核对评审报告结构时，读取[冻结契约](../docs/novel-master-contracts-v1.1.0-frozen.md) §12.5、§5.6 和[冻结架构](../docs/novel-master-architecture-v1.1.0-frozen.md) §6.3。
