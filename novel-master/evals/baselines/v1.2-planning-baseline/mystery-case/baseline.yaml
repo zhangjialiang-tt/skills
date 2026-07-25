@@ -1,0 +1,98 @@
+# 《十二时辰》— v1.2 规划基线
+
+> 题材：mystery-case（悬疑揭秘流）
+> 生成日期：2026-07-25
+
+## v1.2 典型输出
+
+### 1. story_architecture（STORY）
+
+```yaml
+project_id: mystery-case
+title: 十二时辰
+
+core_theme: "真相层层嵌套——每一次揭秘都通向更大的谎言"
+tone: 阴郁、密集，线索驱动
+
+main_character:
+  name: 苏念
+  goal: 找出十二年前灭门案真凶
+  arc: 从复仇者 → 发现自己是案件关键变量 → 审判与救赎
+
+story_structure:
+  - phase: 第一卷·重返故地
+    summary: 苏念回到封城，重启旧案调查
+  - phase: 第二卷·地下网络
+    summary: 发现城市深处的隐秘信息交易网
+  - phase: 第三卷·最后一环
+    summary: 逼近真凶时发现自己也是案件一环
+
+conflict_layers:
+  - 调查者 vs 信息封锁
+  - 复仇 vs 正义
+  - 信任 vs 背叛（每个证人都不可靠）
+```
+
+### 2. plot_plan（PLOT）
+
+```yaml
+phase: 第一卷·重返故地
+target_chapters: 40
+
+major_events:
+  - chapter_range: CH-001~CH-005
+    event: 苏念回到封城，从旧案卷宗开始
+  - chapter_range: CH-006~CH-012
+    event: 第一个证人出现又消失
+  - chapter_range: CH-013~CH-020
+    event: 发现案发当晚存在第五个在场者
+  - chapter_range: CH-021~CH-030
+    event: 追查第五人，被人警告
+  - chapter_range: CH-031~CH-040
+    event: 第五人现身，吐出部分真相后遇害
+
+subplots:
+  - 苏念与搭档的信任裂痕
+  - 城市掌权者与地下网络的冲突
+  - 旧案受害者家属的现况线
+```
+
+### 3. v1.2 章节卡（CH-017）
+
+```yaml
+chapter_id: CH-017
+chapter_function: "苏念找到第五人的旧住址，发现被清理过"
+viewpoint_character: 苏念
+
+scenes:
+  - scene_id: scene-01
+    goal: 走访第五人旧居
+    conflict: 房东否认认识此人，但苏念发现屋内被专业清理
+    information_reveal: 有人比她先到一步，而且手段专业
+
+chapter_climax: "在清理痕迹中发现一张未销毁的照片——苏念认出上面有自己父亲的身影"
+continuity_risks: []
+```
+
+### 4. v1.2 Reviewer（CH-017 评审）
+
+```yaml
+overall_assessment: "信息揭示节奏好，照片线索有力"
+confirmed_issues:
+  - issue: "房东身份未展开——是否重要证人？"
+    severity: INFO
+strengths_to_preserve:
+  - "清理痕迹的细节描写营造了压迫感"
+```
+
+### 5. v1.2 基线评分
+
+| 维度 | 分数 | 评价 |
+| --- | --- | --- |
+| DP1 长期方向可追踪性 | 2/5 | 有分卷但线索间无层级关系 |
+| DP2 故事发动机可持续性 | 2/5 | 依赖"找证人→证人出事"循环，无多样性 |
+| DP3 章节间协调性 | 2/5 | 章节按范围分组但无 Batch 规划 |
+| DP4 人物规划深度 | 2/5 | 有 goal 但无能力定义、无冲突边缘 |
+| DP5 规划弹性 | 1/5 | 事件列表僵化 |
+| DP6 计划传递一致性 | 2/5 | 章节引用 plot 但无验证 |
+| **总分** | **11/30** | |

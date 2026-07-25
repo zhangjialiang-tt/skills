@@ -1,0 +1,98 @@
+# 《修仙歧路》— v1.2 规划基线
+
+> 题材：cultivation-progression（玄幻升级流）
+> 生成日期：2026-07-25
+
+## v1.2 典型输出（Planner + Writer + Reviewer）
+
+### 1. story_architecture（STORY 模式）— v1.2 输出
+
+```yaml
+project_id: cultivation-progression
+title: 修仙歧路
+
+core_theme: "力量与代价——每一次突破都要求放弃一部分自我"
+tone: 冷峻、沉思，伴随悬疑
+
+main_character:
+  name: 林逸
+  goal: 追寻母亲失踪真相，突破修仙体系禁锢
+  arc: 从蒙蔽的体系维护者 → 看到真相的反叛者 → 体系的颠覆与重建者
+
+story_structure:
+  - phase: 第一卷·入道疑云
+    summary: 林逸进入青云宗，发现修炼体系暗藏代价
+  - phase: 第二卷·真相之渊
+    summary: 离开宗门，深入遗迹寻找母亲下落
+  - phase: 第三卷·体系颠覆
+    summary: 揭示修仙体系本质，面临抉择
+
+conflict_layers:
+  - 个人 vs 系统（修仙体系的规则约束）
+  - 个人 vs 自我（每次升级需要放弃的情感/记忆）
+  - 个人 vs 命运（母亲失踪背后的势力）
+```
+
+### 2. plot_plan（PLOT 模式）— v1.2 输出
+
+```yaml
+phase: 第一卷·入道疑云
+target_chapters: 50
+
+major_events:
+  - chapter_range: CH-001~CH-005
+    event: 林逸被选中进入青云宗
+  - chapter_range: CH-006~CH-015
+    event: 初次修炼，发现灵气流动异常
+  - chapter_range: CH-016~CH-025
+    event: 宗门大比，结识关键人物
+  - chapter_range: CH-026~CH-035
+    event: 首次突破境界时亲历代价
+  - chapter_range: CH-036~CH-050
+    event: 调查代价秘密，触及宗门高层
+
+subplots:
+  - 林逸与大师姐的情感线（从同门到共谋）
+  - 同门嫉妒与陷害
+  - 母亲遗留的线索
+```
+
+### 3. v1.2 章节卡样例（CH-021）
+
+```yaml
+chapter_id: CH-021
+chapter_function: "宗门大比首个对手——林逸展示异常修炼速度"
+viewpoint_character: 林逸
+
+scenes:
+  - scene_id: scene-01
+    goal: 大比开场，林逸与对手战术对抗
+    conflict: 对手使用非标技法，林逸本能应对
+    information_reveal: 林逸的反应速度远超同境界
+
+chapter_climax: "林逸以异常速度击败对手，引起长老注意"
+continuity_risks: []
+```
+
+### 4. v1.2 Reviewer 输出（CH-021 评审）
+
+```yaml
+overall_assessment: "章节推进了大比剧情，节奏紧凑"
+confirmed_issues:
+  - issue: "对手的异常技法背后原因未解释"
+    severity: WARNING
+strengths_to_preserve:
+  - "战斗场景的节奏感"
+```
+
+### 5. v1.2 基线评分
+
+| 维度 | 分数 | 评价 |
+| --- | --- | --- |
+| DP1 长期方向可追踪性 | 2/5 | 有分卷但无层级结构，volume 只是事件列表 |
+| DP2 故事发动机可持续性 | 1/5 | 仅有"修炼+调查"双线，无升级轴定义 |
+| DP3 章节间协调性 | 2/5 | 有 chapter_range 分组但无正式 Batch |
+| DP4 人物规划深度 | 2/5 | 有 goal/arc 但无具体能力或冲突源 |
+| DP5 规划弹性 | 1/5 | 完全刚性，无偏差机制 |
+| DP6 计划传递一致性 | 2/5 | 章节卡引用 plot 但无执行追踪 |
+| **总分** | **10/30** | |

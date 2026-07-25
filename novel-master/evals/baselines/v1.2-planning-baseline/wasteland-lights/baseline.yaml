@@ -1,0 +1,100 @@
+# 《废土灯火》— v1.2 规划基线
+
+> 题材：wasteland-lights（生存/建设发动机）
+> 生成日期：2026-07-25
+
+## v1.2 典型输出
+
+### 1. story_architecture（STORY）
+
+```yaml
+project_id: wasteland-lights
+title: 废土灯火
+
+core_theme: "在文明废墟上重建秩序——权力、信任与牺牲"
+tone: 灰暗、坚韧、温暖边缘
+
+main_character:
+  name: 陈远
+  goal: 在废土上建立安全的幸存者聚居地
+  arc: 从孤独求生者 → 小团体领袖 → 势力领袖 → 文明重建者
+
+story_structure:
+  - phase: 第一卷·灯火初燃
+    summary: 建立第一个小型据点，抵御掠夺者和环境威胁
+  - phase: 第二卷·势力博弈
+    summary: 与其他幸存者势力接触、冲突与联盟
+  - phase: 第三卷·文明抉择
+    summary: 面对更大威胁，决定废土未来的秩序
+
+conflict_layers:
+  - 生存 vs 人性（安全区资源分配）
+  - 秩序 vs 自由（规则是否限制幸存者）
+  - 信任 vs 效率（扩大势力同时防止背叛）
+```
+
+### 2. plot_plan（PLOT）
+
+```yaml
+phase: 第一卷·灯火初燃
+target_chapters: 45
+
+major_events:
+  - chapter_range: CH-001~CH-005
+    event: 陈远发现废弃地堡，开始清理改造
+  - chapter_range: CH-006~CH-012
+    event: 收容第一批幸存者，建立资源分配规则
+  - chapter_range: CH-013~CH-022
+    event: 第一次掠夺者袭击，陈远组织防御
+  - chapter_range: CH-023~CH-032
+    event: 发现附近有其他幸存者据点
+  - chapter_range: CH-033~CH-045
+    event: 两个据点之间的摩擦与合作试探
+
+subplots:
+  - 陈远与核心成员的信任建立与背叛
+  - 地堡内资源的来源谜团
+  - 废土环境异化的真相
+```
+
+### 3. v1.2 章节卡（CH-025）
+
+```yaml
+chapter_id: CH-025
+chapter_function: "陈远派出侦察队探查邻据点，带回令人不安的消息"
+viewpoint_character: 陈远
+
+scenes:
+  - scene_id: scene-01
+    goal: 侦察队出发前的争论——谁去、风险多大
+    conflict: 核心成员不愿冒险，陈远需要说服
+  - scene_id: scene-02
+    goal: 侦察队归来，带回情报
+    conflict: 邻据点拥有比他们先进的技术设备
+    information_reveal: 邻据点的领袖可能是陈远从前认识的人
+```
+
+### 4. v1.2 Reviewer（CH-025 评审）
+
+```yaml
+overall_assessment: "过渡章推进了势力接触线，人物冲突真实"
+confirmed_issues:
+  - issue: "邻据点技术优势的来源未铺垫"
+    severity: WARNING
+  - issue: "侦察队风险无实际生死悬念"
+    severity: INFO
+strengths_to_preserve:
+  - "说服场景展现了陈远的领导力演化"
+```
+
+### 5. v1.2 基线评分
+
+| 维度 | 分数 | 评价 |
+| --- | --- | --- |
+| DP1 长期方向可追踪性 | 2/5 | 有分卷事件列表，但不可追溯 |
+| DP2 故事发动机可持续性 | 2/5 | 建设+生存双线，但无升级轴 |
+| DP3 章节间协调性 | 2/5 | chapter_range 分组无批次 |
+| DP4 人物规划深度 | 2/5 | 有人物弧但无具体能力和冲突源 |
+| DP5 规划弹性 | 1/5 | 刚性事件列表 |
+| DP6 计划传递一致性 | 2/5 | 章节引用 plot 无执行验证 |
+| **总分** | **11/30** | |

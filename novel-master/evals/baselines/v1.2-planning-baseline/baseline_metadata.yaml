@@ -1,0 +1,46 @@
+# v1.2 规划基线元数据
+
+baseline_version: "1.0"
+frozen_at: 2026-07-25
+git_commit: v1.2.0-frozen
+
+fixtures:
+  cultivation-progression:
+    task_id: PL-BL-001
+    subject: cultivation-progression
+    story_engine_type: upgrade/exploration
+    holdout: false
+    sample_count: 1
+    baseline_score: 10/30
+  mystery-case:
+    task_id: PL-BL-002
+    subject: mystery-case
+    story_engine_type: information/revelation
+    holdout: false
+    sample_count: 1
+    baseline_score: 11/30
+  wasteland-lights:
+    task_id: PL-BL-003
+    subject: wasteland-lights
+    story_engine_type: survival/building
+    holdout: false
+    sample_count: 1
+    baseline_score: 11/30
+
+holdout:
+  # 保留 30%：不用于字段和 Prompt 调优
+  - PL-BL-002  # mystery-case holdout for final validation
+
+baseline_scores:
+  DP1_mean: 2.0
+  DP2_mean: 1.7
+  DP3_mean: 2.0
+  DP4_mean: 2.0
+  DP5_mean: 1.0
+  DP6_mean: 2.0
+  total_mean: 10.7
+
+key_observations:
+  - DP5 (规划弹性) 在所有题材上均为最低分 1/5——v1.2 无偏差机制
+  - DP2 (故事发动机) 均分 1.7——无升级轴定义
+  - DP1/DP3/DP4/DP6 均为 2.0——有基本结构但不可执行
