@@ -21,7 +21,7 @@ from check_prompt_regressions import (  # noqa: E402
 )
 
 
-EXPECTED_CASE_IDS = [f"NM-REG-{index:03d}" for index in range(1, 11)]
+EXPECTED_CASE_IDS = [f"NM-REG-{index:03d}" for index in range(1, 13)]
 
 
 def test_fixed_regression_suite_covers_all_required_cases():
@@ -38,7 +38,7 @@ def test_suite_rejects_missing_required_case():
 
     issues = validate_suite(broken)
 
-    assert any("NM-REG-010" in issue for issue in issues)
+    assert any("NM-REG-012" in issue for issue in issues)
 
 
 def test_suite_rejects_duplicate_case_id():
@@ -58,8 +58,8 @@ def test_known_good_results_pass_all_assertions():
     comparison = compare_results(suite, results)
 
     assert comparison["summary"] == {
-        "total": 10,
-        "passed": 10,
+        "total": 12,
+        "passed": 12,
         "failed": 0,
         "missing": 0,
     }
@@ -92,7 +92,7 @@ def test_markdown_report_is_human_reviewable():
 
     assert "# novel-master Prompt 回归对比报告" in report
     assert "| NM-REG-001 |" in report
-    assert "10/10" in report
+    assert "12/12" in report
     assert "人工复核项" in report
 
 

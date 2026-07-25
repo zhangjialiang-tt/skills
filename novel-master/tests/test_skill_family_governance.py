@@ -9,14 +9,15 @@ ROOT = Path(__file__).resolve().parents[1]
 CHILDREN = (
     "novel-brief",
     "story-architect",
+    "novel-style",
     "chapter-planner",
     "chapter-writer",
     "novel-reviewer",
     "continuity-keeper",
 )
 FROZEN_HASHES = {
-    "docs/novel-master-architecture-v1.0.1-frozen.md": "8b276013c5c7e1f9d07de92f0eb86e345e2a29029e8ae546aa6e456b0ee35d16",
-    "docs/novel-master-contracts-v1.0.1-frozen.md": "27571f0e48b6457ee93dbfb2d0b94aade514642ef00331b09e76976ba9dc3cce",
+    "docs/novel-master-architecture-v1.1.0-frozen.md": "19c11596deefb1ed5f63cbb6d61723bdb3d181fa2848460816f771cbb7229a5c",
+    "docs/novel-master-contracts-v1.1.0-frozen.md": "0b02629eb66a4ed4819d28dba646ceb26d7ee7f2613e0d90ee91f4122a5ab41c",
 }
 GOVERNED_LABELS = {
     "input_files",
@@ -35,7 +36,7 @@ def load_yaml(path: Path) -> dict:
 def test_manifest_declares_production_candidate_and_two_targets():
     manifest = json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))
 
-    assert manifest["version"] == "1.1.0"
+    assert manifest["version"] == "1.2.0"
     assert manifest["owner"] == "zhangjl"
     assert manifest["maturity_tier"] == "production"
     assert manifest["lifecycle_stage"] == "production"

@@ -23,7 +23,7 @@ from pathlib import Path
 from typing import Any
 
 
-REQUIRED_CASE_IDS = [f"NM-REG-{index:03d}" for index in range(1, 11)]
+REQUIRED_CASE_IDS = [f"NM-REG-{index:03d}" for index in range(1, 13)]
 ALLOWED_OPERATORS = {
     "equals",
     "contains",
@@ -126,7 +126,7 @@ def validate_suite(suite: dict[str, Any]) -> list[str]:
         issues.append(f"存在未登记回归编号: {case_id}")
 
     if ids and ids != REQUIRED_CASE_IDS:
-        issues.append("回归场景必须按 NM-REG-001 至 NM-REG-010 排序")
+        issues.append("回归场景必须按 NM-REG-001 至 NM-REG-012 排序")
 
     return issues
 

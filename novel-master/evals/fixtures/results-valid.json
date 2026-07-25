@@ -196,6 +196,57 @@
           "committed_updates": []
         }
       }
+    },
+    {
+      "id": "NM-REG-011",
+      "actual": {
+        "route": {
+          "steps": [
+            "novel-brief/DEFAULT",
+            "story-architect/STORY",
+            "story-architect/CHARACTER",
+            "story-architect/WORLD",
+            "story-architect/PLOT",
+            "novel-style/DEFAULT",
+            "novel-master/INITIALIZATION_REVIEW"
+          ]
+        },
+        "actions": [
+          "run_init_chain"
+        ],
+        "result": {
+          "status": "NEEDS_DECISION",
+          "approval_scope": [
+            "project_brief",
+            "story_architecture",
+            "principal_characters",
+            "core_world_rules",
+            "active_plot_plan",
+            "style_guide"
+          ]
+        }
+      }
+    },
+    {
+      "id": "NM-REG-012",
+      "actual": {
+        "route": {
+          "target_skill": "story-architect"
+        },
+        "actions": [
+          "design_world"
+        ],
+        "result": {
+          "status": "COMPLETED",
+          "deliverable_paths": [
+            "world/world_overview.md",
+            "world/factions.md",
+            "world/power_system.md",
+            "world/locations.md",
+            "world/glossary.md"
+          ]
+        }
+      }
     }
   ]
 }

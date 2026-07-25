@@ -375,6 +375,81 @@
         "候选明确记录顾青得知城主伪造王令，而不是所有人物都知情。",
         "因来源仍为 DRAFT，变化只进入 Proposal，不进入正式状态。"
       ]
+    },
+    {
+      "id": "NM-REG-011",
+      "title": "新书初始化链包含 novel-style 步骤",
+      "prompt": "我要开一本新的末世生存小说，帮我从头把设定、人物、世界、大纲和风格都搭起来。",
+      "context": {
+        "task_type": "INIT_PROJECT",
+        "project_exists": false
+      },
+      "assertions": [
+        {
+          "path": "route.steps",
+          "operator": "contains",
+          "expected": "novel-brief/DEFAULT"
+        },
+        {
+          "path": "route.steps",
+          "operator": "contains",
+          "expected": "story-architect/STORY"
+        },
+        {
+          "path": "route.steps",
+          "operator": "contains",
+          "expected": "novel-style/DEFAULT"
+        },
+        {
+          "path": "route.steps",
+          "operator": "contains",
+          "expected": "novel-master/INITIALIZATION_REVIEW"
+        },
+        {
+          "path": "result.approval_scope",
+          "operator": "contains",
+          "expected": "style_guide"
+        }
+      ],
+      "manual_checks": [
+        "novel-style 步骤位于 PLOT 之后、INITIALIZATION_REVIEW 之前。",
+        "初始化审批范围覆盖 project_brief/story_architecture/principal_characters/core_world_rules/active_plot_plan/style_guide 六类。"
+      ]
+    },
+    {
+      "id": "NM-REG-012",
+      "title": "story-architect 使用标准文件名且禁止合并",
+      "prompt": "设计世界设定：把病毒规则、势力、地点和术语都写出来。",
+      "context": {
+        "target_skill": "story-architect",
+        "skill_mode": "WORLD"
+      },
+      "assertions": [
+        {
+          "path": "route.target_skill",
+          "operator": "equals",
+          "expected": "story-architect"
+        },
+        {
+          "path": "result.deliverable_paths",
+          "operator": "contains",
+          "expected": "world/world_overview.md"
+        },
+        {
+          "path": "result.deliverable_paths",
+          "operator": "contains",
+          "expected": "world/glossary.md"
+        },
+        {
+          "path": "result.deliverable_paths",
+          "operator": "not_contains",
+          "expected": "world/world_design.md"
+        }
+      ],
+      "manual_checks": [
+        "产出拆分为 world_overview.md、factions.md、power_system.md、locations.md、glossary.md 等标准名文件，而非合并为单个 world_design.md。",
+        "不使用自定义代号文件名替代契约 §3.1 标准名。"
+      ]
     }
   ]
 }
