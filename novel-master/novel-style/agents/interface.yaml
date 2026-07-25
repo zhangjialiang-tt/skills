@@ -1,0 +1,20 @@
+interface:
+  display_name: "网文风格指南"
+  short_description: "把作品定位与故事基调转化为可执行的叙事风格约束并填写 style_guide.md"
+  default_prompt: "使用 $novel-style 基于作品定位和故事架构填写风格指南。"
+compatibility:
+  canonical_format: "agent-skills"
+  adapter_targets: ["openai", "generic"]
+  activation:
+    mode: "manual"
+    paths: []
+  execution:
+    context: "inline"
+    shell: "powershell"
+  trust:
+    source_tier: "local"
+    remote_inline_execution: "forbid"
+    remote_metadata_policy: "allow-metadata-only"
+  degradation:
+    openai: "metadata-adapter"
+    generic: "neutral-source"

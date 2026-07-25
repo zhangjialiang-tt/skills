@@ -1,0 +1,6 @@
+interface:
+  display_name: "网文风格指南"
+  short_description: "把作品定位与故事基调转化为可执行的叙事风格约束并填写 style_guide.md"
+  default_prompt: "使用 $novel-style 基于作品定位和故事架构填写风格指南。"
+policy:
+  allow_implicit_invocation: false
