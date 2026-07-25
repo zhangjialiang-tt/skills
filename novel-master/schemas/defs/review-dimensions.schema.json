@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "defs/review-dimensions.schema.json",
+  "title": "Review Dimensions & Guardrail",
+  "description": "Reviewer dimension types, guardrail scan items, status/reason/severity enums.",
+  "definitions": {
+    "review_dimension": {
+      "type": "string",
+      "enum": ["CONTRACT_COMPLIANCE", "NARRATIVE_SOUNDNESS", "READER_EXPERIENCE", "CRAFT_EXECUTION"]
+    },
+    "guardrail_item": {
+      "type": "string",
+      "enum": ["CANON_CONFLICT", "KNOWLEDGE_STATE_VIOLATION", "PROHIBITED_REVEAL", "MAJOR_FACT_CONTRADICTION"]
+    },
+    "dimension_status": {
+      "type": "string",
+      "enum": ["PASS", "WARNING", "FAIL", "NOT_EVALUATED"]
+    },
+    "reason_code": {
+      "type": "string",
+      "enum": ["NOT_REQUESTED", "MISSING_PLAN_CONTRACT", "MISSING_SOURCE", "STALE_REVISION", "INSUFFICIENT_CONTEXT"]
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["INFO", "WARNING", "BLOCKER"]
+    },
+    "guardrail_status": {
+      "type": "string",
+      "enum": ["PASS", "WARNING", "BLOCKED"]
+    },
+    "dimension_result_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dimension", "status", "findings"],
+      "properties": {
+        "dimension": { "$ref": "#/definitions/review_dimension" },
+        "status": { "$ref": "#/definitions/dimension_status" },
+        "reason_code": { "type": ["string", "null"] },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["criterion", "assessment", "severity"],
+            "properties": {
+              "criterion": { "type": "string", "minLength": 1 },
+              "evidence_ref": { "$ref": "defs/evidence-ref.schema.json" },
+              "assessment": { "type": "string", "minLength": 1 },
+              "recommended_action": { "type": "string" },
+              "severity": { "$ref": "#/definitions/severity" }
+            }
+          }
+        }
+      }
+    },
+    "guardrail_finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["guardrail", "severity", "assessment"],
+      "properties": {
+        "guardrail": { "$ref": "#/definitions/guardrail_item" },
+        "severity": { "$ref": "#/definitions/severity" },
+        "evidence_ref": { "$ref": "defs/evidence-ref.schema.json" },
+        "assessment": { "type": "string", "minLength": 1 },
+        "recommended_action": { "type": "string" }
+      }
+    }
+  }
+}

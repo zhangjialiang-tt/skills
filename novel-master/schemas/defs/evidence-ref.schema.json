@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "defs/evidence-ref.schema.json",
+  "title": "Evidence Reference",
+  "description": "Writer and Reviewer evidence reference pointing to a specific location in a deliverable.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["source_type", "deliverable_id", "revision", "excerpt"],
+  "properties": {
+    "source_type": {
+      "type": "string",
+      "enum": ["CHAPTER_DRAFT", "CHAPTER_PLAN", "CANON", "CONTEXT_PACK", "STYLE_GUIDE", "CHAPTER_REPORT"]
+    },
+    "deliverable_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "revision": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scene_id": {
+      "type": ["string", "null"]
+    },
+    "paragraph_start": {
+      "type": ["integer", "null"],
+      "minimum": 1,
+      "description": "1-based, closed interval. Non-empty Markdown blocks."
+    },
+    "paragraph_end": {
+      "type": ["integer", "null"],
+      "minimum": 1
+    },
+    "json_pointer": {
+      "type": ["string", "null"],
+      "description": "JSON Pointer for YAML structure evidence (e.g. /reader_experience/promise)."
+    },
+    "excerpt": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Direct quote from the evidence source."
+    }
+  }
+}

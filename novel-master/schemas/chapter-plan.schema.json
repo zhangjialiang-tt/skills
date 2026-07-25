@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chapter-plan.schema.json",
+  "title": "Chapter Plan",
+  "description": "V1.2 chapter plan contract. Extends v1.1 with reader_experience, style_modulation_ref, and contract_meta.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["chapter_plan"],
+  "properties": {
+    "chapter_plan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "chapter_id", "chapter_function", "viewpoint_character",
+        "time_and_location", "scenes", "chapter_climax", "contract_meta"
+      ],
+      "properties": {
+        "chapter_id": { "type": "string", "minLength": 1 },
+        "chapter_function": { "type": "string", "minLength": 1 },
+        "viewpoint_character": { "type": "string", "minLength": 1 },
+        "time_and_location": { "type": "string" },
+        "opening_state": { "type": "object", "additionalProperties": true },
+        "scenes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["scene_id", "goal", "conflict", "action"],
+            "properties": {
+              "scene_id": { "type": "string", "minLength": 1 },
+              "goal": { "type": "string" },
+              "conflict": { "type": "string" },
+              "action": { "type": "string" },
+              "information_revealed": { "type": "array", "items": { "type": "string" } },
+              "state_change": { "type": "string" },
+              "transition": { "type": "string" },
+              "style_modulation_ref": { "type": ["string", "null"] }
+            }
+          }
+        },
+        "required_elements": { "type": "array", "items": { "type": "string" } },
+        "prohibited_reveals": { "type": "array", "items": { "type": "string" } },
+        "active_foreshadowing": { "type": "array", "items": { "type": "string" } },
+        "chapter_climax": { "type": "string", "minLength": 1 },
+        "ending_state": { "type": "object", "additionalProperties": true },
+        "continuity_risks": { "type": "array", "items": { "type": "string" } },
+        "reader_experience": { "$ref": "defs/reader-experience.schema.json" },
+        "contract_meta": { "$ref": "defs/contract-meta.schema.json" }
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "review-report.schema.json",
+  "title": "Review Report",
+  "description": "V1.2 Reviewer output contract with guardrail_results and dimension_results.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["review_report"],
+  "properties": {
+    "review_report": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["guardrail_results", "dimension_results", "contract_meta"],
+      "properties": {
+        "guardrail_results": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "findings"],
+          "properties": {
+            "status": { "$ref": "defs/review-dimensions.schema.json#/definitions/guardrail_status" },
+            "findings": {
+              "type": "array",
+              "items": { "$ref": "defs/review-dimensions.schema.json#/definitions/guardrail_finding" }
+            }
+          }
+        },
+        "dimension_results": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": { "$ref": "defs/review-dimensions.schema.json#/definitions/dimension_result_item" }
+        },
+        "overall_assessment": { "type": "string" },
+        "confirmed_issues": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "potential_risks": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "preference_based_suggestions": { "type": "array" },
+        "strengths_to_preserve": { "type": "array", "items": { "type": "string" } },
+        "recommended_edit_level": { "type": "string" },
+        "recommended_next_skill": { "type": "string" },
+        "contract_meta": { "$ref": "defs/contract-meta.schema.json" }
+      }
+    }
+  }
+}

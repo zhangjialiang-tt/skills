@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "defs/contract-meta.schema.json",
+  "title": "Contract Meta",
+  "description": "Every v1.2 business deliverable must carry contract_meta for version identification.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_id", "schema_version"],
+  "properties": {
+    "schema_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "e.g. novel-master/chapter-plan"
+    },
+    "schema_version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semver, e.g. 1.2.0"
+    }
+  }
+}

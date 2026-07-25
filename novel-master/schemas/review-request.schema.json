@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "review-request.schema.json",
+  "title": "Review Request",
+  "description": "V1.2 Reviewer input contract with typed review_scope.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["review_request"],
+  "properties": {
+    "review_request": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["review_target", "review_scope", "contract_meta"],
+      "properties": {
+        "review_target": {
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1
+        },
+        "review_scope": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": { "$ref": "defs/review-dimensions.schema.json#/definitions/review_dimension" }
+        },
+        "chapter_plan_ref": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "path": { "type": "string" },
+            "revision": { "type": "string" }
+          }
+        },
+        "chapter_report_ref": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "path": { "type": "string" },
+            "revision": { "type": "string" }
+          }
+        },
+        "context_pack_ref": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "path": { "type": "string" },
+            "revision": { "type": "string" }
+          }
+        },
+        "contract_meta": { "$ref": "defs/contract-meta.schema.json" }
+      }
+    }
+  }
+}

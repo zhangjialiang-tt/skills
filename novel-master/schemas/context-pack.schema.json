@@ -136,6 +136,34 @@
       "type": "array",
       "items": { "type": "string" }
     },
+    "style_profile": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "global_defaults_ref": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["path", "revision"],
+          "properties": {
+            "path": { "type": "string", "minLength": 1 },
+            "revision": { "type": "string", "minLength": 1 }
+          }
+        },
+        "relevant_scene_modulations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["modulation_id", "overrides", "source_ref"],
+            "properties": {
+              "modulation_id": { "type": "string", "minLength": 1 },
+              "overrides": { "type": "object", "additionalProperties": true },
+              "source_ref": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
     "unknowns": {
       "type": "array",
       "items": { "type": "string" }

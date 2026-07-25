@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "defs/reader-experience.schema.json",
+  "title": "Reader Experience",
+  "description": "Chapter-level reader experience contract defined by Planner.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["chapter_role", "promise", "payoff", "emotional_arc", "tension_curve", "continuation_drive"],
+  "properties": {
+    "chapter_role": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["primary", "description"],
+      "properties": {
+        "primary": {
+          "type": "string",
+          "enum": ["SETUP", "ESCALATION", "PAYOFF", "REVEAL", "REVERSAL", "TRANSITION", "RECOVERY", "CLIMAX"]
+        },
+        "secondary": {
+          "type": ["array", "null"],
+          "items": { "type": "string", "enum": ["SETUP", "ESCALATION", "PAYOFF", "REVEAL", "REVERSAL", "TRANSITION", "RECOVERY", "CLIMAX"] }
+        },
+        "description": { "type": "string", "minLength": 1 }
+      }
+    },
+    "promise": { "type": "string", "minLength": 1 },
+    "payoff": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode", "description"],
+      "properties": {
+        "mode": { "type": "string", "enum": ["FULL", "PARTIAL", "DEFERRED", "NONE_JUSTIFIED"] },
+        "description": { "type": "string", "minLength": 1 },
+        "deferred_reason": { "type": ["string", "null"] },
+        "justification": { "type": ["string", "null"] },
+        "expected_payoff_window": {
+          "type": ["object", "null"],
+          "additionalProperties": false,
+          "properties": {
+            "type": { "type": "string", "enum": ["NEXT_CHAPTER", "WITHIN_CHAPTERS", "ARC_END", "VOLUME_END"] },
+            "chapter_count": { "type": ["integer", "null"], "minimum": 1 }
+          }
+        }
+      },
+      "allOf": [
+        { "if": { "properties": { "mode": { "const": "DEFERRED" } }, "required": ["mode"] },
+          "then": { "required": ["deferred_reason"] } },
+        { "if": { "properties": { "mode": { "const": "NONE_JUSTIFIED" } }, "required": ["mode"] },
+          "then": { "required": ["justification"] } }
+      ]
+    },
+    "emotional_arc": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["target"],
+      "properties": {
+        "target": { "type": "string", "minLength": 1 },
+        "turning_point": { "type": "string" }
+      }
+    },
+    "information_gain": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["target_id", "what"],
+        "properties": {
+          "target_id": { "type": "string", "minLength": 1 },
+          "what": { "type": "string", "minLength": 1 },
+          "significance": { "type": "string" }
+        }
+      }
+    },
+    "tension_curve": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "description"],
+      "properties": {
+        "type": { "type": "string", "enum": ["RISING", "WAVE", "SPIKE", "RELEASE", "FLAT_JUSTIFIED"] },
+        "description": { "type": "string", "minLength": 1 }
+      }
+    },
+    "continuation_drive": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "description"],
+      "properties": {
+        "type": { "type": "string", "enum": ["QUESTION", "DANGER", "DECISION", "REVELATION", "EMOTIONAL", "GOAL", "NONE_JUSTIFIED"] },
+        "description": { "type": "string", "minLength": 1 },
+        "justification": { "type": "string" }
+      },
+      "allOf": [
+        { "if": { "properties": { "type": { "const": "NONE_JUSTIFIED" } }, "required": ["type"] },
+          "then": { "required": ["justification"] } }
+      ]
+    }
+  }
+}

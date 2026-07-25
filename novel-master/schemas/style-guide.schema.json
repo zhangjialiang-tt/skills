@@ -1,0 +1,114 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "style-guide.schema.json",
+  "title": "Style Guide",
+  "description": "V1.2 style guide contract with scene_modulations and override_policy.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["style_guide"],
+  "properties": {
+    "style_guide": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scene_modulations", "override_policy", "contract_meta"],
+      "properties": {
+        "scene_modulations": {
+          "type": "object",
+          "additionalProperties": false,
+          "minProperties": 1,
+          "patternProperties": {
+            "^[A-Z][A-Z0-9_]*$": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["category", "overrides"],
+              "properties": {
+                "category": {
+                  "type": "string",
+                  "enum": ["COMBAT", "EMOTIONAL", "MYSTERY", "TRANSITION", "CLIMAX", "EXPOSITION", "DEFAULT"]
+                },
+                "overrides": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "sentence_rhythm": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["relative_to_global"],
+                      "properties": {
+                        "relative_to_global": {
+                          "type": "string",
+                          "enum": ["SHORTER", "LONGER", "SAME"]
+                        }
+                      }
+                    },
+                    "action_density": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["relative_to_global"],
+                      "properties": {
+                        "relative_to_global": {
+                          "type": "string",
+                          "enum": ["HIGHER", "LOWER", "SAME"]
+                        }
+                      }
+                    },
+                    "narrative_distance": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["relative_to_global"],
+                      "properties": {
+                        "relative_to_global": {
+                          "type": "string",
+                          "enum": ["CLOSER", "FARTHER", "SAME"]
+                        }
+                      }
+                    },
+                    "description_density": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["relative_to_global"],
+                      "properties": {
+                        "relative_to_global": {
+                          "type": "string",
+                          "enum": ["HIGHER", "LOWER", "SAME"]
+                        }
+                      }
+                    },
+                    "dialogue_ratio": {
+                      "type": "object",
+                      "additionalProperties": false,
+                      "required": ["relative_to_global"],
+                      "properties": {
+                        "relative_to_global": {
+                          "type": "string",
+                          "enum": ["HIGHER", "LOWER", "SAME"]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "override_policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["protected_fields"],
+          "properties": {
+            "protected_fields": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "pattern": "^/",
+                "description": "JSON Pointer path to protected field"
+              }
+            }
+          }
+        },
+        "contract_meta": { "$ref": "defs/contract-meta.schema.json" }
+      }
+    }
+  }
+}

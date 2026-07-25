@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "chapter-report.schema.json",
+  "title": "Chapter Report",
+  "description": "V1.2 Writer chapter report. Extends v1.1 with reader_experience_execution and contract_meta.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["chapter_report"],
+  "properties": {
+    "chapter_report": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["reader_experience_execution", "contract_meta"],
+      "properties": {
+        "reader_experience_execution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["target_execution"],
+          "properties": {
+            "target_execution": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["target_ref", "execution", "evidence_ref"],
+                "properties": {
+                  "target_ref": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "JSON Pointer, e.g. /reader_experience/promise"
+                  },
+                  "execution": {
+                    "type": "string",
+                    "enum": ["PRESENT", "PARTIAL", "DEVIATED"]
+                  },
+                  "evidence_ref": { "$ref": "defs/evidence-ref.schema.json" }
+                }
+              }
+            },
+            "deviations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "planned": { "type": "string" },
+                  "actual": { "type": "string" },
+                  "reason": { "type": "string" }
+                }
+              }
+            },
+            "unplanned_effects": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "effect": { "type": "string" },
+                  "evidence_ref": { "$ref": "defs/evidence-ref.schema.json" }
+                }
+              }
+            }
+          }
+        },
+        "executed_plan_items": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "deviations_from_plan": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "new_facts_introduced": { "type": "array", "items": { "type": "string" } },
+        "character_state_changes": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "timeline_changes": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "knowledge_changes": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "foreshadowing_changes": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "possible_continuity_risks": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "contract_meta": { "$ref": "defs/contract-meta.schema.json" }
+      }
+    }
+  }
+}
