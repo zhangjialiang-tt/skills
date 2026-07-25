@@ -1,0 +1,77 @@
+# novel-coach Agent Interface
+# Target: Generic agent platform (conversational role-play skill)
+
+skill:
+  name: novel-coach
+  display_name: "网文魔鬼教练"
+  version: "1.1.0"
+  lifecycle: production
+  description: >
+    以犀利、结果导向的风格质询作者的创作方案，通过四阶段流程（核心概念→人设压力→结构蓝图→局部打磨）
+    帮助作者想清楚再动笔。输出咨询建议和分析，不生成正文。
+
+activation:
+  mode: implicit
+  triggers:
+    positive:
+      - "帮我审故事"
+      - "帮我看大纲"
+      - "评估这个构思"
+      - "审稿"
+      - "评估世界观"
+      - "分析爽点"
+      - "分析节奏"
+      - "检查逻辑"
+      - "我有个创意想听听意见"
+      - "这个设定有没有问题"
+      - "卡文了"
+      - "这段写得怎么样"
+      - "帮我看看这个故事"
+      - "评价我的构思"
+      - "网文教练"
+      - "魔鬼教练"
+      - "故事教练"
+    negative:
+      - "帮我写正文"
+      - "续写"
+      - "润色文本"
+      - "分析已出版"
+      - "推荐小说"
+      - "只想要鼓励"
+      - "温柔一点"
+
+modes:
+  - name: CHALLENGE
+    display_name: "挑战模式"
+    description: "从 Phase 1 开始逐阶段质询，适合新创意/新大纲/新设定"
+    default: true
+  - name: FOCUS
+    display_name: "聚焦模式"
+    description: "针对指定内容直接诊断，适合卡文/具体问题"
+
+output:
+  type: conversational
+  content_type: "analysis + question + recommendation"
+  not_produced:
+    - "正文/草稿"
+    - "文件操作"
+    - "项目状态"
+
+assets:
+  references:
+    - "references/genre-logic.md"
+    - "references/four-phases.md"
+  evals:
+    trigger_cases: "evals/trigger_cases.json"
+    semantic_config: "evals/semantic_config.json"
+  reports:
+    - "reports/output-risk-profile.md"
+    - "reports/artifact-design-profile.md"
+
+quality:
+  trigger_eval:
+    precision: 0.964
+    recall: 0.964
+    threshold: 0.17
+    false_positives: 1
+    false_negatives: 1

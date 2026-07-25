@@ -1,0 +1,235 @@
+{
+  "recommended_threshold": 0.17,
+  "negative_patterns": [
+    "帮我写",
+    "续写",
+    "代写",
+    "润色这段",
+    "改病句",
+    "翻译",
+    "推荐小说",
+    "推荐书",
+    "书单",
+    "分析这本书",
+    "分析这部",
+    "评价这本书",
+    "已出版",
+    "名著",
+    "商务文案",
+    "工作报告",
+    "PPT",
+    "写个通知",
+    "只想要鼓励",
+    "温柔一点",
+    "别太严厉",
+    "帮我改改文字",
+    "纠错",
+    "校对"
+  ],
+  "should_trigger": [
+    {
+      "text": "帮我审故事",
+      "family": "trigger_keyword"
+    },
+    {
+      "text": "帮我看大纲",
+      "family": "trigger_keyword"
+    },
+    {
+      "text": "评估这个构思",
+      "family": "trigger_keyword"
+    },
+    {
+      "text": "审稿",
+      "family": "trigger_keyword"
+    },
+    {
+      "text": "评估世界观",
+      "family": "trigger_keyword"
+    },
+    {
+      "text": "分析爽点和节奏",
+      "family": "trigger_keyword"
+    },
+    {
+      "text": "检查逻辑漏洞",
+      "family": "trigger_keyword"
+    },
+    {
+      "text": "我有个创意想听听意见",
+      "family": "trigger_keyword"
+    },
+    {
+      "text": "这个设定有没有问题",
+      "family": "trigger_keyword"
+    },
+    {
+      "text": "卡文了帮我看看",
+      "family": "trigger_keyword"
+    },
+    {
+      "text": "这段写得怎么样",
+      "family": "trigger_keyword"
+    },
+    {
+      "text": "帮我看看这个故事",
+      "family": "trigger_keyword"
+    },
+    {
+      "text": "评价我的构思",
+      "family": "trigger_keyword"
+    },
+    {
+      "text": "我写了个玄幻开头，帮我看看能不能留住读者",
+      "family": "natural_review"
+    },
+    {
+      "text": "这个修仙设定有没有逻辑问题？帮我诊断一下",
+      "family": "natural_setting"
+    },
+    {
+      "text": "感觉节奏太慢了，读者说水字数，你帮我分析一下哪些地方该删",
+      "family": "natural_pacing"
+    },
+    {
+      "text": "我设计了一个反派，但总觉得不够有压迫感，帮我看看",
+      "family": "natural_villain"
+    },
+    {
+      "text": "主角金手指是不是太弱了？帮我评估一下爽点",
+      "family": "natural_cheat"
+    },
+    {
+      "text": "我有一个都市重生+系统流的脑洞，帮我看看有没有市场",
+      "family": "natural_market"
+    },
+    {
+      "text": "写到大结局不知道怎么收了，卡文卡了三天",
+      "family": "natural_stuck"
+    },
+    {
+      "text": "帮我看看前三章的钩子够不够强",
+      "family": "natural_hook"
+    },
+    {
+      "text": "无限流副本规则设计好了，帮我做个压力测试",
+      "family": "natural_test"
+    },
+    {
+      "text": "大纲写完了但总觉得结构不太对，帮我梳理一下",
+      "family": "natural_outline"
+    },
+    {
+      "text": "故事教练",
+      "family": "minimal"
+    },
+    {
+      "text": "网文教练",
+      "family": "minimal"
+    },
+    {
+      "text": "魔鬼教练",
+      "family": "minimal"
+    },
+    {
+      "text": "审一下大纲",
+      "family": "minimal"
+    },
+    {
+      "text": "帮我审审",
+      "family": "minimal"
+    }
+  ],
+  "should_not_trigger": [
+    {
+      "text": "帮我写一段玄幻开头",
+      "family": "write_body"
+    },
+    {
+      "text": "续写这一章",
+      "family": "write_body"
+    },
+    {
+      "text": "帮我润色这段描写",
+      "family": "polish_only"
+    },
+    {
+      "text": "改一下这段的病句",
+      "family": "polish_only"
+    },
+    {
+      "text": "翻译这段对白成英文",
+      "family": "translate"
+    },
+    {
+      "text": "推荐几本好看的玄幻小说",
+      "family": "recommend"
+    },
+    {
+      "text": "分析一下《斗破苍穹》为什么火",
+      "family": "analyze_published"
+    },
+    {
+      "text": "评价《诡秘之主》的世界观",
+      "family": "analyze_published"
+    },
+    {
+      "text": "帮我写一份工作周报",
+      "family": "non_fiction"
+    },
+    {
+      "text": "写个通知发给团队",
+      "family": "non_fiction"
+    },
+    {
+      "text": "帮我改改这封邮件",
+      "family": "polish_only"
+    },
+    {
+      "text": "我只想要鼓励，别骂我",
+      "family": "soft_only"
+    },
+    {
+      "text": "能不能温柔一点",
+      "family": "soft_only"
+    },
+    {
+      "text": "帮我写个 PPT 大纲",
+      "family": "non_fiction"
+    },
+    {
+      "text": "这段文字不太通顺，帮我改改",
+      "family": "polish_only"
+    }
+  ],
+  "near_neighbor": [
+    {
+      "text": "帮我构思一个故事开头",
+      "family": "brainstorm_vs_coach"
+    },
+    {
+      "text": "想写小说但没灵感，帮我想几个创意",
+      "family": "brainstorm_vs_coach"
+    },
+    {
+      "text": "分析一下这篇小说的优缺点",
+      "family": "third_party_analysis"
+    },
+    {
+      "text": "我的大纲写完了，直接帮我生成第一章吧",
+      "family": "coach_then_write"
+    },
+    {
+      "text": "这个开头我改了五版了，帮我选一版最好的",
+      "family": "compare_vs_coach"
+    },
+    {
+      "text": "帮我设计一个修炼体系",
+      "family": "creative_vs_coach"
+    },
+    {
+      "text": "你看这个人物有没有魅力",
+      "family": "soft_review"
+    }
+  ]
+}
