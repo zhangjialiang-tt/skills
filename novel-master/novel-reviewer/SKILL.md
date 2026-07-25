@@ -1,6 +1,6 @@
 ---
 name: novel-reviewer
-description: "基于文本证据只读诊断长篇网文，不直接修改正文；仅在 artifact_persistence_allowed=true 时保存 reviews/ 报告。用户要求分析、评审、诊断章节或正文，修改前定位问题、卷末复盘或讨论剧情合理性时使用。"
+description: "基于文本证据只读诊断长篇网文，不直接修改正文。仅由 $novel-master 路由或用户显式调用 $novel-reviewer；只有 artifact_persistence_allowed=true 时保存 reviews/，普通网文请求统一交给 $novel-master。"
 ---
 
 # novel-reviewer

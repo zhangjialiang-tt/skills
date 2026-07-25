@@ -1,6 +1,6 @@
 ---
 name: chapter-planner
-description: "把大纲节点和当前项目状态转化为可直接写作的章节卡并输出到 chapters/plans/。规划新章节、在续写或重写前重做章节计划，或连续创作多章时逐章拆解场景、状态变化和连续性约束时使用。"
+description: "把大纲节点和当前状态转化为可写作的章节卡并输出到 chapters/plans/。仅由 $novel-master 路由或用户显式调用 $chapter-planner，用于规划、续写或重写前拆解章节；普通网文请求统一交给 $novel-master。"
 ---
 
 # chapter-planner

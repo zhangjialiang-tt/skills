@@ -1,6 +1,6 @@
 ---
 name: continuity-keeper
-description: "管理长篇网文项目事实、时间线和连续性，并作为 state/ 唯一正式写入者。提取写作上下文、检查矛盾、提交已接受章节状态或已授权 Canon、执行高风险影响分析、生成摘要、恢复项目或重建派生状态时使用。"
+description: "管理网文事实、时间线和连续性，是 state/ 唯一正式写入者。仅由 $novel-master 路由或用户显式调用 $continuity-keeper，用于上下文、矛盾、状态提交、影响分析或恢复；普通网文请求统一交给 $novel-master。"
 ---
 
 # continuity-keeper

@@ -1,6 +1,6 @@
 ---
 name: chapter-writer
-description: "根据章节卡创作或续写长篇网文正文（WRITE/CONTINUE），或按授权等级编辑已有正文（EDIT），但不修改 Canon。用户要求写章节、续写草稿，或依据评审和明确目标执行 L1-L4 正文修订时使用。"
+description: "根据章节卡创作、续写或按授权等级编辑网文正文，但不修改 Canon。仅由 $novel-master 路由或用户显式调用 $chapter-writer，执行 WRITE、CONTINUE 或 L1-L4 EDIT；普通网文请求统一交给 $novel-master。"
 ---
 
 # chapter-writer

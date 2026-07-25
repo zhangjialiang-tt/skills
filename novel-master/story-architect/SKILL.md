@@ -1,6 +1,6 @@
 ---
 name: story-architect
-description: "按单一互斥模式完成长篇网文的故事结构、人物、世界或大纲设计。设计或修改主线与主题、人物档案与关系、世界规则与力量体系、整书或分卷大纲时使用；一次调用只激活 STORY、CHARACTER、WORLD、PLOT 之一。"
+description: "按单一互斥模式完成长篇网文的故事、人物、世界或大纲设计。仅由 $novel-master 路由或用户显式调用 $story-architect；一次调用只激活 STORY、CHARACTER、WORLD、PLOT 之一，普通网文请求统一交给 $novel-master。"
 ---
 
 # story-architect

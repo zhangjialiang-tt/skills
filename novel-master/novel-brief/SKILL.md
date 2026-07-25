@@ -1,6 +1,6 @@
 ---
 name: novel-brief
-description: "将模糊创意转化为明确、可确认的作品定义并输出 project_brief.md。创建新小说项目、补齐缺失简报，或修改作品定位、目标读者、读者承诺和创作约束时使用。"
+description: "将模糊创意转化为明确、可确认的作品定义并输出 project_brief.md。仅由 $novel-master 路由或用户显式调用 $novel-brief，用于创建项目、补齐简报或修改作品定位；普通网文请求统一交给 $novel-master。"
 ---
 
 # novel-brief

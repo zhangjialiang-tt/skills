@@ -1,0 +1,20 @@
+interface:
+  display_name: "网文章节规划"
+  short_description: "把大纲与当前状态拆解为可直接执行的长篇网文章节卡文档"
+  default_prompt: "使用 $chapter-planner 根据大纲和当前状态生成可执行章节卡。"
+compatibility:
+  canonical_format: "agent-skills"
+  adapter_targets: ["openai", "generic"]
+  activation:
+    mode: "manual"
+    paths: []
+  execution:
+    context: "inline"
+    shell: "powershell"
+  trust:
+    source_tier: "local"
+    remote_inline_execution: "forbid"
+    remote_metadata_policy: "allow-metadata-only"
+  degradation:
+    openai: "metadata-adapter"
+    generic: "neutral-source"
