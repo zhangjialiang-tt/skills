@@ -1,0 +1,47 @@
+{
+  "skill_name": "goal-generator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我写一个 Goal：解决板上 m_axis_read_data_tlast 不出现的问题。目前仿真回归能通过，但板上 accepted < cmd_len，观察到 data FIFO 出现 full，status FIFO 表现为 empty，tlast 完全没有出现。可以修改 rtl/read_path/**、tb/read_path/**、scripts/run_read_regression.py，不能动第三方 AXI DMA 源码和帧格式。",
+      "expected_output": "完整六部分结构，status FIFO empty 作为假设，验收证据包含具体命令+阈值，含反投机约束",
+      "files": [],
+      "expectations": [
+        "六部分结构完整",
+        "Outcome 不含动作词",
+        "status FIFO empty 在【待验证假设】中",
+        "验收证据含具体脚本/命令",
+        "Constraints 含反投机约束",
+        "Blocked 列 ≥3 种阻塞情形"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "我们的支付系统最近偶尔会出现重复扣款的问题。客服说是因为网络超时导致客户端重试引起的，我觉得应该加个幂等锁。重复扣款的报告大约有每周 3-5 例，主要是移动端用户。测试可以用 pytest tests/test_payment.py，基准在 benchmarks/payment_bench.py。数据库是 PostgreSQL 14，后端是 Python/FastAPI。",
+      "expected_output": "Outcome 描述可观察状态而非'加幂等锁'；'网络超时导致重试'作为假设；验收证据包含'每周 < 1 例'的阈值",
+      "files": [],
+      "expectations": [
+        "Outcome 描述可观察状态（无'加幂等锁'等具体实现手段）",
+        "验收证据包含重复扣款发生率阈值（< 1 例/周）",
+        "'网络超时导致重试'作为假设，非事实",
+        "'加幂等锁'作为假设/方案，非 Outcome",
+        "Constraints 含反投机约束",
+        "迭代策略含复现步骤"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "我们的文档搜索功能太慢了，用户抱怨加载要等好几秒。能不能想想办法优化一下？我们用的是 Elasticsearch 8.x，索引大概有 200GB。搜索接口 GET /api/search?q=... 目前用的是 match 查询，返回前 100 条。搜索服务的代码在 services/search.py，测试在 tests/test_search.py。",
+      "expected_outcome": "将模糊的'太慢'转化为 P95 < 500ms 等具体阈值；验收证据引用 tests/test_search.py；约束要求搜索结果相关性不退化；工作边界明确是否允许修改 ES 配置",
+      "files": [],
+      "expectations": [
+        "Outcome 使用可量化性能指标（如 P95 < 500ms），而非'搜索变快了'",
+        "验收证据引用 tests/test_search.py 的具体命令",
+        "Constraints 包含搜索结果质量/相关性不退化",
+        "Boundaries 明确是否允许修改 ES 配置、索引结构",
+        "迭代策略从基准测量和瓶颈定位开始",
+        "含反投机约束（如不通过减少返回数量来虚假提速）"
+      ]
+    }
+  ]
+}
