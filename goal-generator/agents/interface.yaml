@@ -1,0 +1,29 @@
+interface:
+  display_name: Goal Generator
+  short_description: 把原始任务转换成高质量的 /goal 完成契约
+  default_prompt: 请把下面这个任务转换成一个高质量的 /goal 完成契约
+
+compatibility:
+  canonical_format: markdown
+  adapter_targets:
+    - claude
+    - codex
+    - omp
+  activation:
+    mode: path_scoped
+    paths:
+      - "**/SKILL.md"
+  execution:
+    context: inline
+    shell: bash
+  trust:
+    source_tier: local
+    remote_inline_execution: forbid
+    remote_metadata_policy: strip
+  degradation:
+    claude: fallback_to_description
+    codex: fallback_to_description
+    omp: fallback_to_description
+
+owner: zhangjl
+review_cadence: per_iteration

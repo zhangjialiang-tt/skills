@@ -1,0 +1,31 @@
+{
+  "name": "goal-generator",
+  "version": "1.0.0",
+  "description": "把用户提供的原始任务、需求或现象描述转换成高质量的 /goal 完成契约",
+  "owner": "zhangjl",
+  "updated_at": "2026-07-26",
+  "review_cadence": "per_iteration",
+  "status": "active",
+  "maturity_tier": "production",
+  "tags": ["goal", "contract", "planning", "agent"],
+  "platforms": ["claude", "codex", "omp"],
+  "inputs": [],
+  "outputs": [
+    {
+      "name": "goal_contract",
+      "type": "markdown",
+      "description": "完整的 /goal 契约文档"
+    },
+    {
+      "name": "quality_scorecard",
+      "type": "markdown",
+      "description": "可验证性/边界清晰度/抗投机性/停止条件的 0-2 评分"
+    }
+  ],
+  "rollback_boundary": "goal.md 生成为纯文本操作，无副作用；回滚即删除生成的文件",
+  "evidence": {
+    "output_quality_scorecard": "reports/output_quality_scorecard.md",
+    "iteration_history": "goal-generator-workspace/iteration-1/benchmark.json, goal-generator-workspace/iteration-2/benchmark.json, goal-generator-workspace/iteration-3/reports/output_quality_scorecard.md",
+    "trigger_eval": "not yet run"
+  }
+}
