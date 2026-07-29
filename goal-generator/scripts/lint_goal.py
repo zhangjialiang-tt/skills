@@ -3,19 +3,24 @@
 
 This is a STRUCTURAL checker, not a semantic judge. It validates a generated
 /goal contract against the canonical label grammar shared by SKILL.md's
-published templates, detects missing sections, placeholders, dangerous vague
-instructions, over-wide boundaries, fact/hypothesis confusion, and missing
-anti-gaming constraints.
+published templates and detects: missing sections (including Outcome),
+placeholders, dangerous vague instructions, over-wide boundaries,
+fact/hypothesis confusion, missing anti-gaming constraints, and thin blocked
+reports.
 
-Design notes (v2.0.2):
+Design notes:
 - One canonical label grammar drives BOTH marker detection and section parsing,
   so every label form SKILL.md publishes (plain Chinese ``验证：``, bilingual
   ``Verification（验证）：``, and bracketed ``【验收证据】``) is accepted and no
   section bleeds into the next.
+- Outcome is a REQUIRED structural field for both profiles; it is never
+  inferred by falling back into Current Facts.
 - There is NO baseline->threshold coercion. A baseline-only goal (metric in
   facts, no numeric target in verification) is valid and must not fail. Target
   provenance (user goal / SLO / proposed-pending-confirmation / measure-first)
-  is a semantic property and is checked manually, not by regex.
+  is a semantic property checked manually, not by regex.
+- Findings are errors (structural failure), warnings (advisory; promoted to
+  errors under --strict), or infos (heuristic hints; NEVER promoted).
 """
 
 from __future__ import annotations
@@ -24,14 +29,17 @@ import re
 import sys
 from pathlib import Path
 
-VERSION = "2.0.2"
+VERSION = "2.0.3"
 
 # ---------------------------------------------------------------------------
 # Canonical label grammar
 # ---------------------------------------------------------------------------
 # Each logical section maps to the label aliases SKILL.md accepts. Within a
 # section, list the most specific alias first so longer labels win the
-# alternation (e.g. "verification evidence" before "verification").
+# alternation (e.g. "verification evidence" before "verification"). The stop /
+# pause alias sets are deliberately shared with the Diagnostic combined
+# 【阻塞与停止】 block; Standard presence is checked with stricter, separate
+# regexes further down.
 SECTION_ALIASES: dict[str, list[str]] = {
     "outcome": ["期望结果", "outcome"],
     "current_facts": ["current facts", "当前事实"],
@@ -91,13 +99,32 @@ SECTION_START = re.compile(
 COMMAND_PATTERNS = [r"(?m)^\s*/goal\b"]
 BAD_COMMAND_PATTERNS = [r"(?m)^\s*/目标\b"]
 
-# Sections every Standard goal must carry (stop/pause checked separately).
+# Sections every goal must carry. Outcome is checked separately (it may be
+# inline on the /goal line or a standalone section); stop/pause are checked
+# with profile-specific rules.
 STANDARD_REQUIRED = ["verification", "constraints", "boundaries", "iteration"]
-# Diagnostic goals additionally carry fact/hypothesis sections.
 DIAGNOSTIC_REQUIRED = STANDARD_REQUIRED + ["current_facts", "hypotheses"]
 
+# Standard goals must name Stop and Pause with their OWN labels; a single
+# "Blocked report" line must not silently satisfy both.
+STD_STOP_PRESENT = re.compile(
+    r"(?m)^\s*(?:#{1,6}\s*)?(?:stop when|完成条件|停止条件)\s*(?:[（(][^）)]*[）)])?\s*[:：]",
+    re.IGNORECASE,
+)
+STD_PAUSE_PRESENT = re.compile(
+    r"(?m)^\s*(?:#{1,6}\s*)?(?:pause if|暂停条件)\s*(?:[（(][^）)]*[）)])?\s*[:：]",
+    re.IGNORECASE,
+)
+
+# Narrow placeholder detection: only template-style fill-ins, not markdown
+# links ([x](y)), array indices (items[0]), or regex classes ([0-9]).
 PLACEHOLDER_PATTERNS = [
-    (r"\[[^\]]+\]", "bracket placeholder [XXX]"),
+    (
+        r"\[(?:XXX|TBD|TODO[^\]]*|待[^\]]{0,6}|路径|模块[^\]]{0,4}|文件[^\]]{0,4}|"
+        r"范围|数值|阈值|命令[^\]]*|内容|说明|描述|Outcome|outcome|"
+        r"具体[^\]]*|哪些[^\]]*|需要[^\]]*|不能[^\]]*)\]",
+        "bracket placeholder [XXX]",
+    ),
     (r"\bTBD\b", "TBD"),
     (r"\bTODO\b", "TODO"),
     (r"<[^>]+>", "angle-bracket placeholder <XXX>"),
@@ -146,15 +173,24 @@ ANTI_GAMING_PATTERN = (
 )
 
 # Anti-gaming is only mandatory when the goal has something a speculator could
-# game: a proxy/performance/coverage/reliability metric, or a destructive
-# delete/migrate operation. A non-gameable MVP needs invariants only.
+# game. Destructive operations require an explicit object so a plain invariant
+# like "不删除现有功能" does not mark the whole goal gameable.
 GAMEABLE_SIGNAL = re.compile(
     r"性能|延迟|延时|吞吐|响应时间|覆盖率|可靠性|成功率|错误率|召回|相关性|指标|配额|"
-    r"删除|清理|迁移|删库|"
-    r"\bmetric\b|\bcoverage\b|\blatency\b|\bthroughput\b|\breliability\b|\bdelete\b|\bmigrat\w*|"
+    r"删除数据|清理数据|清空|批量移除|删库|迁移生产|迁移数据|数据迁移|"
+    r"\bmetric\b|\bcoverage\b|\blatency\b|\bthroughput\b|\breliability\b|"
     r"P\d{2}\b|\bfps\b|\bQPS\b|\bTPS\b|\d+\s*(?:ms|毫秒|秒|fps|例/|次/)",
     re.IGNORECASE,
 )
+
+# Keywords signalling a Diagnostic blocked report carries real blocking
+# conditions and report content (used to reject one-liner stop conditions).
+BLOCKED_REPORT_KEYWORDS = (
+    "环境", "权限", "授权", "缺少", "缺失", "无法", "不可用", "冲突",
+    "必须修改", "证据", "已尝试", "风险", "所需", "输入", "置信度", "报告", "路径",
+)
+
+_PUNCT_ONLY = {"", "，", "：", ":", "。", "."}
 
 
 def has_section(text: str, key: str) -> bool:
@@ -196,29 +232,20 @@ def get_section_block(text: str, key: str) -> str:
     return "\n".join(block).strip()
 
 
-def extract_outcome(text: str) -> str | None:
-    """Extract outcome text after /goal, handling both inline and block formats."""
-    lines = text.splitlines()
-    for i, line in enumerate(lines):
+def find_outcome(text: str) -> str | None:
+    """Return the Outcome: inline text after /goal, else the Outcome section.
+
+    Deliberately does NOT fall back into Current Facts: an empty 【期望结果】
+    header yields no outcome rather than borrowing the first fact.
+    """
+    for line in text.splitlines():
         if "/goal" in line:
-            idx = line.find("/goal") + 5
-            after = line[idx:].strip()
-            if after and after not in ("", "，", "：", ":", "。", "."):
+            after = line[line.find("/goal") + 5 :].strip()
+            if after and after not in _PUNCT_ONLY:
                 return after
-            for j in range(i + 1, min(i + 6, len(lines))):
-                next_line = lines[j].strip()
-                if not next_line:
-                    continue
-                if next_line.startswith("【") and next_line.endswith("】"):
-                    continue
-                if "【" in next_line and "】" in next_line:
-                    after_header = next_line[next_line.index("】") + 1 :].strip()
-                    if after_header:
-                        return after_header
-                    continue
-                return next_line
             break
-    return None
+    block = get_section_block(text, "outcome").strip()
+    return block or None
 
 
 def _emit(strict: bool, errors: list[str], warnings: list[str], msg: str) -> None:
@@ -229,10 +256,28 @@ def _emit(strict: bool, errors: list[str], warnings: list[str], msg: str) -> Non
         warnings.append(msg)
 
 
-def lint_text(text: str, source: str, strict: bool = False) -> tuple[list[str], list[str]]:
-    """Returns (errors, warnings)."""
+def _gameable_scope(text: str) -> str:
+    """Text searched for gameable signals: outcome + verification + facts only.
+
+    Constraints/Boundaries/Stop are excluded so a negated invariant such as
+    "不删除现有功能" cannot mark the whole goal gameable.
+    """
+    parts = []
+    outcome = find_outcome(text)
+    if outcome:
+        parts.append(outcome)
+    parts.append(get_section_block(text, "verification"))
+    parts.append(get_section_block(text, "current_facts"))
+    return "\n".join(parts)
+
+
+def lint_text(
+    text: str, source: str, strict: bool = False
+) -> tuple[list[str], list[str], list[str]]:
+    """Returns (errors, warnings, infos). Infos are never promoted by --strict."""
     errors: list[str] = []
     warnings: list[str] = []
+    infos: list[str] = []
 
     profile = classify_profile(text)
 
@@ -241,6 +286,16 @@ def lint_text(text: str, source: str, strict: bool = False) -> tuple[list[str], 
     elif not any(re.search(p, text) for p in COMMAND_PATTERNS):
         errors.append(f"{source}: E02 - missing /goal command marker")
 
+    # --- Outcome is required and must not be empty ---
+    outcome_text = find_outcome(text)
+    if not outcome_text:
+        errors.append(
+            f"{source}: E07 - missing or empty Outcome "
+            f"(inline after /goal, or an Outcome（期望结果） / 【期望结果】 section)"
+        )
+    elif len(outcome_text) < 15:
+        infos.append(f"{source}: I01 - /goal outcome is very short ({len(outcome_text)} chars)")
+
     # --- Required section markers ---
     required = DIAGNOSTIC_REQUIRED if profile == "diagnostic" else STANDARD_REQUIRED
     for name in required:
@@ -248,11 +303,17 @@ def lint_text(text: str, source: str, strict: bool = False) -> tuple[list[str], 
             examples = " / ".join(SECTION_ALIASES[name][:3])
             errors.append(f"{source}: E03 - missing required section `{name}` (e.g., {examples}：)")
 
-    # --- Stop and Pause: separate checks ---
-    if not has_section(text, "stop"):
-        errors.append(f"{source}: E05 - missing stop condition (完成条件 / Stop when / 【阻塞与停止】)")
-    if not has_section(text, "pause"):
-        errors.append(f"{source}: E06 - missing pause condition (暂停条件 / Pause if / 【阻塞与停止】)")
+    # --- Stop and Pause: profile-specific presence ---
+    if profile == "standard":
+        if not STD_STOP_PRESENT.search(text):
+            errors.append(f"{source}: E05 - Standard goal needs a stop condition (完成条件 / Stop when)")
+        if not STD_PAUSE_PRESENT.search(text):
+            errors.append(f"{source}: E06 - Standard goal needs a pause condition (暂停条件 / Pause if)")
+    else:
+        if not has_section(text, "stop"):
+            errors.append(f"{source}: E05 - missing stop condition (完成条件 / Stop when / 【阻塞与停止】)")
+        if not has_section(text, "pause"):
+            errors.append(f"{source}: E06 - missing pause condition (暂停条件 / Pause if / 【阻塞与停止】)")
 
     # --- Placeholders ---
     for pattern, desc in PLACEHOLDER_PATTERNS:
@@ -263,11 +324,6 @@ def lint_text(text: str, source: str, strict: bool = False) -> tuple[list[str], 
     for pattern, desc in DANGEROUS_VAGUE_PATTERNS:
         if re.search(pattern, text, flags=re.IGNORECASE):
             _emit(strict, errors, warnings, f"{source}: W02 - dangerous vague instruction: '{desc}'")
-
-    # --- Outcome length (advisory only; heuristic) ---
-    outcome_text = extract_outcome(text)
-    if outcome_text and len(outcome_text) < 15:
-        warnings.append(f"{source}: W03 - /goal outcome is very short ({len(outcome_text)} chars)")
 
     # --- Verification names concrete evidence (section-isolated) ---
     verification_block = get_section_block(text, "verification")
@@ -304,10 +360,30 @@ def lint_text(text: str, source: str, strict: bool = False) -> tuple[list[str], 
                 f"{source}: W08 - Diagnostic iteration strategy should start with reproduction/measurement",
             )
 
+        # Blocked report must carry real blocking conditions + report content,
+        # not a one-liner like "遇到问题时停止".
+        blocked_block = get_section_block(text, "stop")
+        if blocked_block:
+            list_items = len(re.findall(r"(?m)^\s*(?:-\s+|\*\s+|\d+\s*[.)、])", blocked_block))
+            keyword_hits = sum(1 for kw in BLOCKED_REPORT_KEYWORDS if kw in blocked_block)
+            if list_items < 3 and keyword_hits < 3:
+                _emit(
+                    strict,
+                    errors,
+                    warnings,
+                    f"{source}: W10 - Diagnostic blocked report is too thin "
+                    f"(list >=3 blocking conditions or report fields)",
+                )
+
     # --- Anti-gaming constraint (distinct from plain invariants) ---
-    # Only mandatory when the goal has a gameable metric or destructive op.
+    # Only mandatory when the gameable scope (outcome/verification/facts) has a
+    # gameable metric or destructive op.
     constraints_block = get_section_block(text, "constraints")
-    if constraints_block and GAMEABLE_SIGNAL.search(text) and not re.search(ANTI_GAMING_PATTERN, constraints_block):
+    if (
+        constraints_block
+        and GAMEABLE_SIGNAL.search(_gameable_scope(text))
+        and not re.search(ANTI_GAMING_PATTERN, constraints_block)
+    ):
         _emit(
             strict,
             errors,
@@ -320,7 +396,7 @@ def lint_text(text: str, source: str, strict: bool = False) -> tuple[list[str], 
     if stop_block and re.search(r"继续直到完成|不要停下来|keep going|until done", stop_block, flags=re.IGNORECASE):
         errors.append(f"{source}: E04 - stop condition must not be 'continue until done'")
 
-    return errors, warnings
+    return errors, warnings, infos
 
 
 def print_usage() -> None:
@@ -331,19 +407,21 @@ Usage: lint_goal.py [--strict] <file> [<file> ...]
 Validates generated /goal contracts against the canonical label grammar.
 Auto-detects Standard vs Diagnostic profile. Accepts plain Chinese labels
 (验证：), bilingual labels (Verification（验证）：), and bracket labels (【验收证据】).
+Outcome is required for both profiles.
 
 Options:
-  --strict    Treat warnings as errors (for CI/evaluation)
+  --strict    Treat warnings (Wxx) as errors. Infos (Ixx) are never promoted.
   -h, --help  Show this help and exit
 
 Exit codes:
-  0 = passed (no errors; warnings OK in default mode) or help shown
+  0 = passed (no errors; warnings/infos OK in default mode) or help shown
   1 = at least one error
   2 = usage error (no input files)
 
 Output format:
   <file>: EXX - <error message>     (structural failure)
   <file>: WXX - <warning message>    (advisory; promoted to error under --strict)
+  <file>: IXX - <info message>       (heuristic hint; never promoted)
 
 Limitations:
 - STRUCTURAL checker, not a semantic judge.
@@ -369,6 +447,7 @@ def main(argv: list[str]) -> int:
 
     all_errors: list[str] = []
     all_warnings: list[str] = []
+    all_infos: list[str] = []
 
     for raw_path in args:
         path = Path(raw_path)
@@ -377,24 +456,29 @@ def main(argv: list[str]) -> int:
         except OSError as exc:
             all_errors.append(f"{path}: cannot read file: {exc}")
             continue
-        errors, warnings = lint_text(text, str(path), strict=strict)
+        errors, warnings, infos = lint_text(text, str(path), strict=strict)
         all_errors.extend(errors)
         all_warnings.extend(warnings)
+        all_infos.extend(infos)
 
+    for info in all_infos:
+        print(info, file=sys.stderr)
     for warning in all_warnings:
         print(warning, file=sys.stderr)
-
     for error in all_errors:
         print(error, file=sys.stderr)
 
     if all_errors:
-        print(f"\nFAILED: {len(all_errors)} error(s), {len(all_warnings)} warning(s)", file=sys.stderr)
+        print(
+            f"\nFAILED: {len(all_errors)} error(s), {len(all_warnings)} warning(s), {len(all_infos)} info(s)",
+            file=sys.stderr,
+        )
         return 1
 
     if all_warnings:
-        print(f"PASSED with {len(all_warnings)} warning(s).")
+        print(f"PASSED with {len(all_warnings)} warning(s), {len(all_infos)} info(s).")
     else:
-        print("PASSED: Goal contract lint passed.")
+        print(f"PASSED: Goal contract lint passed ({len(all_infos)} info(s)).")
 
     return 0
 

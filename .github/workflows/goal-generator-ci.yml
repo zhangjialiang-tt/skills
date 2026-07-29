@@ -1,0 +1,26 @@
+name: goal-generator-ci
+
+on:
+  push:
+    paths:
+      - "goal-generator/**"
+      - ".github/workflows/goal-generator-ci.yml"
+  pull_request:
+    paths:
+      - "goal-generator/**"
+      - ".github/workflows/goal-generator-ci.yml"
+
+jobs:
+  contract-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Byte-compile scripts
+        run: |
+          python3 -m py_compile goal-generator/scripts/lint_goal.py
+          python3 -m py_compile goal-generator/scripts/run_lint_tests.py
+      - name: Run contract-consistency tests
+        run: python3 goal-generator/scripts/run_lint_tests.py
