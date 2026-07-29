@@ -24,12 +24,11 @@ Design notes:
 """
 
 from __future__ import annotations
-
 import re
 import sys
 from pathlib import Path
 
-VERSION = "2.0.3"
+VERSION = "2.0.3.1"
 
 # ---------------------------------------------------------------------------
 # Canonical label grammar
@@ -183,12 +182,19 @@ GAMEABLE_SIGNAL = re.compile(
     re.IGNORECASE,
 )
 
-# Keywords signalling a Diagnostic blocked report carries real blocking
-# conditions and report content (used to reject one-liner stop conditions).
-BLOCKED_REPORT_KEYWORDS = (
-    "环境", "权限", "授权", "缺少", "缺失", "无法", "不可用", "冲突",
-    "必须修改", "证据", "已尝试", "风险", "所需", "输入", "置信度", "报告", "路径",
+# A Diagnostic blocked report must carry (A) several distinct blocking
+# conditions and (B) real report content. Blocking synonyms are grouped so they
+# count once; this stops a one-liner that names many report fields but only one
+# blocking condition from passing.
+BLOCKING_CATEGORIES = (
+    ("环境", "测试环境"),
+    ("权限", "授权", "访问"),
+    ("缺少", "缺失", "缺"),
+    ("无法", "不可用"),
+    ("冲突",),
+    ("必须修改", "禁止修改", "冻结"),
 )
+REPORT_FIELDS = ("已尝试", "证据", "判断", "根因", "风险", "所需", "输入", "置信度")
 
 _PUNCT_ONLY = {"", "，", "：", ":", "。", "."}
 
@@ -235,12 +241,15 @@ def get_section_block(text: str, key: str) -> str:
 def find_outcome(text: str) -> str | None:
     """Return the Outcome: inline text after /goal, else the Outcome section.
 
-    Deliberately does NOT fall back into Current Facts: an empty 【期望结果】
-    header yields no outcome rather than borrowing the first fact.
+    The /goal command must start its line (matching the command grammar), so
+    prose that merely mentions "/goal" is ignored. Deliberately does NOT fall
+    back into Current Facts: an empty 【期望结果】 header yields no outcome
+    rather than borrowing the first fact.
     """
     for line in text.splitlines():
-        if "/goal" in line:
-            after = line[line.find("/goal") + 5 :].strip()
+        m = re.match(r"^\s*/goal\b(.*)$", line)
+        if m:
+            after = m.group(1).strip()
             if after and after not in _PUNCT_ONLY:
                 return after
             break
@@ -360,19 +369,30 @@ def lint_text(
                 f"{source}: W08 - Diagnostic iteration strategy should start with reproduction/measurement",
             )
 
-        # Blocked report must carry real blocking conditions + report content,
-        # not a one-liner like "遇到问题时停止".
+        # Blocked report must carry (A) several distinct blocking conditions and
+        # (B) real report content — not a one-liner like "遇到问题时停止".
         blocked_block = get_section_block(text, "stop")
         if blocked_block:
             list_items = len(re.findall(r"(?m)^\s*(?:-\s+|\*\s+|\d+\s*[.)、])", blocked_block))
-            keyword_hits = sum(1 for kw in BLOCKED_REPORT_KEYWORDS if kw in blocked_block)
-            if list_items < 3 and keyword_hits < 3:
+            category_hits = sum(
+                1 for cats in BLOCKING_CATEGORIES if any(c in blocked_block for c in cats)
+            )
+            if list_items < 3 and category_hits < 3:
                 _emit(
                     strict,
                     errors,
                     warnings,
-                    f"{source}: W10 - Diagnostic blocked report is too thin "
-                    f"(list >=3 blocking conditions or report fields)",
+                    f"{source}: W10A - Diagnostic blocked report needs >=3 distinct blocking conditions",
+                )
+            has_report_verb = ("报告" in blocked_block) or ("report" in blocked_block.lower())
+            field_hits = sum(1 for f in REPORT_FIELDS if f in blocked_block)
+            if not (has_report_verb and field_hits >= 2):
+                _emit(
+                    strict,
+                    errors,
+                    warnings,
+                    f"{source}: W10B - Diagnostic blocked report needs report content "
+                    f"(a report verb + >=2 of 已尝试/证据/判断/风险/所需输入)",
                 )
 
     # --- Anti-gaming constraint (distinct from plain invariants) ---

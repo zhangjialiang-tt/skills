@@ -1,4 +1,4 @@
-# Output Risk Profile: goal-generator v2.0.3
+# Output Risk Profile: goal-generator v2.0.3.1
 
 ## Artifact family
 Text-only Markdown contract (the `/goal`). No visual artifact; the deliverable is a structured goal document that feeds into agent execution.
@@ -22,7 +22,7 @@ Text-only Markdown contract (the `/goal`). No visual artifact; the deliverable i
 | Multi-goal mixing | Medium (new in v2.0.1) | Skill Rule 6: single main result per Goal; failure mode #13 added |
 | Cross-domain example contamination | Low (new in v2.0.1) | Failure mode #11 added; examples audited for contamination |
 | Missing or empty Outcome | High (without skill) | Linter E07 requires a non-empty Outcome for both profiles; never inferred from Current Facts |
-| Thin Diagnostic blocked report ("stop when there's a problem") | Medium | Linter W10 requires >=3 blocking conditions or report fields |
+| Thin Diagnostic blocked report ("stop when there's a problem") | Medium | Linter W10A (>=3 blocking conditions) + W10B (report content) |
 
 ## Quality gates (automated + manual)
 
@@ -50,7 +50,7 @@ Text-only Markdown contract (the `/goal`). No visual artifact; the deliverable i
 | 20 | Section fields do not bleed into one another | ✅ scripts/run_lint_tests.py |
 | 21 | All formal files declare one version | ✅ scripts/run_lint_tests.py |
 | 22 | Outcome present and non-empty (both profiles) | ✅ lint_goal.py E07 |
-| 23 | Diagnostic blocked report has real structure | ✅ lint_goal.py W10 |
+| 23 | Diagnostic blocked report has real structure | ✅ lint_goal.py W10A (≥3 blocking conditions) + W10B (report content) |
 | 24 | Standard Stop and Pause are distinct labels | ✅ lint_goal.py E05/E06 |
 
 ## Linter modes

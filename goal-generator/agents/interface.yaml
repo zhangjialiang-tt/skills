@@ -5,7 +5,7 @@
 # and trust boundary.
 
 name: goal-generator
-version: "2.0.3"
+version: "2.0.3.1"
 archetype: library
 mode: production
 
@@ -24,7 +24,7 @@ output_contract:
 
 deterministic_logic:
   - path: "scripts/lint_goal.py"
-    role: "Read-only checker: validate a generated /goal against the selected profile contract — required sections including a non-empty Outcome (E07), placeholders, dangerous vague instructions, over-wide boundaries, fact-hypothesis confusion, profile-specific stop/pause, gameable-scoped anti-gaming, and Diagnostic blocked-report structure (W10)"
+    role: "Read-only checker: validate a generated /goal against the selected profile contract — required sections including a non-empty Outcome (E07), placeholders, dangerous vague instructions, over-wide boundaries, fact-hypothesis confusion, profile-specific stop/pause, gameable-scoped anti-gaming, and Diagnostic blocked-report structure (W10A/W10B)"
     runs_in: "skill root"
     side_effects: "none (read-only)"
 
@@ -95,7 +95,7 @@ failure_modes:
   - mode: "验收证据模糊"
     guard: "规则 2：每项必须包含具体检查动作 + 通过阈值"
   - mode: "反投机约束泛泛"
-    guard: "规则 4：必须按领域写出具体的投机手段"
+    guard: "规则 4：仅 gameable 任务（Outcome/Verification/Facts 含可投机指标或删除/迁移）强制；必须按领域写出具体投机手段，纯不变量不能替代"
   - mode: "用户目标指标未进入验收"
     guard: "规则 3：用户明确给出的目标指标（confirmed target）必须进入验收阈值；baseline 不得静默转换"
   - mode: "baseline 静默转换为目标"
@@ -115,7 +115,7 @@ failure_modes:
   - mode: "Outcome 缺失或为空"
     guard: "E07：Outcome 为必填结构字段（/goal 行内或 Outcome/【期望结果】 段），不得从 Current Facts 回退推断"
   - mode: "Diagnostic 阻塞报告过薄"
-    guard: "W10：阻塞报告须列出 ≥3 项阻塞条件或报告字段，拒绝一句话停止条件"
+    guard: "W10A/W10B：阻塞报告须列出 ≥3 项阻塞条件（W10A）并包含报告字段（W10B），拒绝一句话停止条件"
   - mode: "Standard 用单一 Blocked 段冒充 Stop+Pause"
     guard: "E05/E06：Standard 必须分别出现 Stop（完成条件）与 Pause（暂停条件）标签"
 

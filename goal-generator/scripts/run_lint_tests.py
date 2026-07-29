@@ -36,9 +36,10 @@ SKILL_MD = ROOT / "SKILL.md"
 _results: list[tuple[bool, str]] = []
 
 
-def check(ok: bool, label: str) -> None:
+def check(ok: bool, label: str) -> bool:
     _results.append((ok, label))
     print(f"{'PASS' if ok else 'FAIL'}  {label}")
+    return ok
 
 
 def lint_file(path: Path, strict: bool) -> tuple[list[str], list[str], list[str]]:
@@ -164,8 +165,9 @@ def test_section_isolation() -> None:
 
 
 def test_gameable_scope() -> None:
-    # A negated invariant in Constraints ("不删除现有功能") must NOT mark a
-    # non-gameable goal as gameable and force anti-gaming.
+    # Negative: a negated invariant in Constraints ("不删除现有功能") must NOT mark
+    # a non-gameable goal as gameable and force anti-gaming. Check BOTH lists:
+    # under --strict a W09 would land in errors, not warnings.
     non_gameable = (
         "/goal 创建一个本地笔记整理工具，实现导入导出核心流程。\n"
         "验证：运行 pytest tests/ 全部 PASS。\n"
@@ -175,12 +177,61 @@ def test_gameable_scope() -> None:
         "完成条件：测试全部通过即完成。\n"
         "暂停条件：需要凭证或付费时暂停。\n"
     )
-    _e, warnings, _i = lint_goal.lint_text(non_gameable, "inline", strict=True)
+    errors, warnings, _infos = lint_goal.lint_text(non_gameable, "inline", strict=True)
     check(
-        not any("W09" in w for w in warnings),
+        not errors and not any("W09" in w for w in warnings),
         "gameable scope: negated invariant '不删除现有功能' does not force anti-gaming",
     )
 
+    # Positive control: a gameable goal (performance metric) with only invariants
+    # MUST trigger W09, proving the detector is actually live.
+    gameable = (
+        "/goal 将列表接口响应时间优化到可接受水平。\n"
+        "验证：tests/test_list.py 全部 PASS；P95 延迟相对基线下降。\n"
+        "约束：不修改公共接口。\n"
+        "边界：只修改 services/list.py。\n"
+        "迭代策略：先建立延迟基线，再一次一个优化。\n"
+        "完成条件：测试通过且延迟下降。\n"
+        "暂停条件：需要修改表结构时暂停。\n"
+    )
+    _e2, warnings2, _i2 = lint_goal.lint_text(gameable, "inline", strict=False)
+    check(
+        any("W09" in w for w in warnings2),
+        "gameable scope: performance goal with only invariants triggers W09 (detector live)",
+    )
+
+
+def test_blocked_report() -> None:
+    # A one-liner that names many REPORT fields but only one blocking condition
+    # must fail W10A (blocking conditions) while W10B (report content) passes.
+    thin = (
+        "/goal 找到并修复接口偶发超时的根因。\n"
+        "【当前事实】\n- 接口偶发超时\n"
+        "【待验证假设】\n- 可能是连接池耗尽\n"
+        "【验收证据】\n1. pytest tests/test_api.py -v 全部 PASS\n"
+        "【必须保持】\n- 不改变接口格式\n- 不通过拒绝请求来虚标错误率下降\n"
+        "【工作边界】\n允许修改：services/api/\n禁止修改：生产配置\n"
+        "【迭代策略】\n- 先复现超时场景，再建立基线\n"
+        "【阻塞与停止】\n环境不可用时报告已尝试路径、证据和所需输入。\n"
+    )
+    _e, warnings, _i = lint_goal.lint_text(thin, "inline", strict=False)
+    check(
+        any("W10A" in w for w in warnings) and not any("W10B" in w for w in warnings),
+        "blocked report: one blocking condition + report fields trips W10A only",
+    )
+
+    # A rich blocked report (>=3 conditions + report content) triggers neither.
+    rich = thin.replace(
+        "【阻塞与停止】\n环境不可用时报告已尝试路径、证据和所需输入。\n",
+        "【阻塞与停止】\n仅在所有验收证据满足时判定完成。\n"
+        "若测试环境无法复现、缺少生产日志访问权限或必须修改生产配置，\n"
+        "停止并报告已尝试路径、证据、当前判断及所需输入。\n",
+    )
+    _e2, warnings2, _i2 = lint_goal.lint_text(rich, "inline", strict=False)
+    check(
+        not any("W10A" in w for w in warnings2) and not any("W10B" in w for w in warnings2),
+        "blocked report: rich report triggers neither W10A nor W10B",
+    )
 
 def _read_version(path: Path, pattern: str) -> str | None:
     if path.suffix == ".json":
@@ -222,6 +273,7 @@ def main() -> int:
     test_baseline_only_not_coerced()
     test_section_isolation()
     test_gameable_scope()
+    test_blocked_report()
     test_version_consistency()
 
     failed = [label for ok, label in _results if not ok]

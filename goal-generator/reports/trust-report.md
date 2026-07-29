@@ -1,7 +1,7 @@
-# Trust Report: goal-generator skill v2.0.3
+# Trust Report: goal-generator skill v2.0.3.1
 
 - **Skill:** goal-generator
-- **Version:** 2.0.3
+- **Version:** 2.0.3.1
 - **Date:** 2026-07-29
 - **Trust tier:** local (no remote code execution, no network I/O)
 
@@ -17,10 +17,11 @@
 - Includes lightweight structural linter (`scripts/lint_goal.py`) with `--strict` mode
 - Contract-consistency test runner (`scripts/run_lint_tests.py`) verifies canonical templates pass `--strict`, fixtures behave, sections don't bleed, and all versions match
 - Requires a non-empty Outcome (E07) for both profiles; never inferred from Current Facts
-- Checks Diagnostic blocked-report structure (W10) and profile-specific Stop/Pause (E05/E06)
+- Checks Diagnostic blocked-report structure (W10A/W10B) and profile-specific Stop/Pause (E05/E06)
 - Extracts canonical templates directly from marked SKILL.md blocks (single source of truth)
 - Forbids baseline-to-target silent conversion
 - Enforces single-main-result-per-Goal rule
+- Test runner uses a boolean `check()` and two-sided controls (positive + negative) to avoid false-green skips
 
 **What the skill does NOT own:**
 - Executing the goal (agent's job)

@@ -1,7 +1,7 @@
-# Portability Report: goal-generator v2.0.3
+# Portability Report: goal-generator v2.0.3.1
 
 - **Skill:** goal-generator
-- **Version:** 2.0.3
+- **Version:** 2.0.3.1
 - **Date:** 2026-07-29
 
 ## Canonical format
@@ -61,3 +61,11 @@ If only `description` is available (e.g., OpenAI), the trigger still routes corr
 - Findings split into errors / warnings / infos; `--strict` promotes warnings but not infos (W03 → I01)
 - Narrowed placeholder regex (no false positives on markdown links, indices, regex classes)
 - Minimal GitHub Actions CI runs the contract tests and byte-compiles the scripts
+
+### v2.0.3.1 (test integrity patch)
+- Test runner `check()` now returns a bool, so the SKILL.md template-parse assertions actually execute (previously skipped → false green)
+- `test_gameable_scope` checks both errors and warnings and adds a positive control proving W09 is live
+- `find_outcome()` anchors `/goal` to line start (prose mentioning /goal no longer steals the Outcome)
+- W10 split into W10A (≥3 distinct blocking conditions) and W10B (report content)
+- Anti-gaming rule unified as conditional on gameable context across SKILL / README / interface
+- CI workflow gains `permissions: contents: read` and `timeout-minutes: 5`

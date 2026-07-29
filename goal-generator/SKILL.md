@@ -1,6 +1,6 @@
 ---
 name: goal-generator
-version: "2.0.3"
+version: "2.0.3.1"
 description: >
   把用户提供的原始任务、需求或现象描述转换成高质量的 `/goal` 完成契约。
   支持两种 Profile：Standard（产品/功能/文档）和 Diagnostic（Bug/性能/硬件/根因调查）。
@@ -141,7 +141,7 @@ output_contract:
 | 1 | Outcome 描述可观察状态（而非纯动作） | 改写为"完成后系统是什么样" |
 | 2 | Verification 包含具体检查动作（命令/条件/截图/日志） | 补检查方式 |
 | 3 | 用户提供了目标数字时，Verification 有明确目标阈值 | 基于用户目标数字推导 |
-| 4 | Constraints 包含至少一项反投机约束 | 添加领域相关的禁止行为 |
+| 4 | gameable 任务的 Constraints 含领域相关反投机约束（非 gameable 只需不变量） | 当 Outcome/Verification 存在可投机指标/性能/覆盖率/可靠性或删除/迁移时，按领域添加 |
 | 5 | Boundaries 明确允许/禁止范围 | 补边界 |
 | 6 | Stop 定义完成证据；Pause 列出高风险/需授权的情形 | 补停止或暂停条件 |
 
@@ -184,7 +184,7 @@ Pause if（暂停条件）：[需要人工决定、凭证、付费、破坏性�
 | 2 | Outcome 描述可观察状态 | 改写 |
 | 3 | 每项 Verification Evidence 包含具体命令/条件 + 通过阈值 | 补命令和阈值 |
 | 4 | 用户提供了目标数字时，Verification Evidence 有目标阈值 | 基于用户目标数字推导 |
-| 5 | Invariants 包含至少一项领域相关反投机约束 | 添加 |
+| 5 | gameable 任务的 Invariants 含领域相关反投机约束（非 gameable 只需不变量） | 存在可投机场景时按领域添加 |
 | 6 | Work Boundaries 明确允许/禁止范围 | 补边界 |
 | 7 | Experiment Strategy 以可执行的复现为第一步 | 补复现步骤 |
 | 8 | Stop 定义完成证据 | 补完成条件 |
@@ -301,7 +301,7 @@ Pause if（暂停条件）：[需要人工决定、凭证、付费、破坏性�
 
 ### 规则 4：反投机约束必须领域具体
 
-不能只写"不通过删除测试来虚假达标"这种泛泛之谈。必须根据任务领域写出具体的投机手段。
+反投机约束**仅在 gameable 任务**强制：当 Outcome、Verification 或 Current Facts 中存在可投机指标（性能代理、覆盖率、可靠性），或删除/迁移等可投机操作时，必须包含领域相关反投机约束；否则只需明确不变量。无论是否强制，都不得只写"不通过删除测试来虚假达标"这种泛泛之谈，必须根据任务领域写出具体的投机手段。
 
 | 领域 | 具体反投机约束 |
 |------|---------------|

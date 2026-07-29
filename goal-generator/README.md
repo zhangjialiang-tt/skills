@@ -83,7 +83,7 @@
 
 ### 领域相关反投机约束
 
-禁止泛泛的"不通过删除测试来虚假达标"。按领域写出具体的投机手段：
+反投机约束仅在 gameable 任务强制（Outcome/Verification/Facts 存在性能代理、覆盖率、可靠性指标，或删除/迁移操作）；非 gameable 任务只需明确不变量。无论是否强制，都禁止泛泛的"不通过删除测试来虚假达标"，要按领域写出具体的投机手段：
 
 - 支付/金融：不通过拒绝所有重复请求达成"零重复扣款"
 - 性能优化：不通过减少返回结果数量、关闭核心功能虚标性能
@@ -129,7 +129,7 @@ python3 scripts/run_lint_tests.py                            # 契约一致性�
 - 是否有明确 Stop 条件
 - 是否有必要的 Pause/Blocked 条件
 - Outcome 是否为必填且非空（E07；不会从事实回退推断）
-- Standard 的 Stop 与 Pause 是否为独立标签；Diagnostic 阻塞报告是否过薄（W10）
+- Standard 的 Stop 与 Pause 是否为独立标签；Diagnostic 阻塞报告是否过薄（W10A 阻塞条件 / W10B 报告内容）
 - gameable 任务是否缺少领域反投机约束（W09，仅检查 outcome/verification/facts）
 
 **注意：** linter 是结构检查器，不是语义判断器。接受三种标签写法（`验证：`、`Verification（验证）：`、`【验收证据】`），且各段不会串入后续字段。发现分为 ERROR（结构性失败）、WARNING（建议性）、INFO（启发式提示）；`--strict` 把 WARNING 升级为 ERROR，但 INFO（如 Outcome 长度提示 I01）不受影响。目标数字的来源是否合理（用户目标 / SLO / 建议待确认）属于语义判断，需人工复核。

@@ -1,6 +1,6 @@
 {
   "skill_name": "goal-generator",
-  "version": "2.0.3",
+  "version": "2.0.3.1",
   "description": "Output-structure quality evals (complement evals.json, which covers trigger/profile). Inputs are distinct from references/. Every positive carries an explicit Goal request; expectations enforce baseline/target separation (no fabricated thresholds), complete profile structure, fact/hypothesis separation, anti-gaming, and multi-goal split.",
   "evals": [
     {
