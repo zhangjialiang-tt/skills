@@ -1,16 +1,15 @@
 ---
 name: goal-generator
-version: "2.0.0"
+version: "2.0.1"
 description: >
   把用户提供的原始任务、需求或现象描述转换成高质量的 `/goal` 完成契约。
   支持两种 Profile：Standard（产品/功能/文档）和 Diagnostic（Bug/性能/硬件/根因调查）。
-  当用户说"帮我生成 Goal"/"写一个 goal"/"构造 goal"/"把下面任务变成 goal"/
-  "Goal 化"/"设计目标契约"/"帮我定义完成条件" 时，必须使用本 skill。
-  即使任务看起来简单，只要用户想要一个可验证的完成条件而非即时执行，就应触发。
+  当用户显式要求"生成 Goal""写 goal""Goal 化""定义完成条件"时触发。
+  仅当用户询问 Profile 选择或描述任务特征时可作为弱信号辅助判断，不单独触发。
   不适合：纯一次性命令、未确定方向的探索、可直接用 Plan Mode 的明确任务、
-         简单翻译、一行 shell 输出、纯头脑风暴。
+         简单翻译、一行 shell 输出、纯头脑风暴、可直接调试的明确 Bug。
 triggers:
-  include:
+  strong:
     - "帮我生成 Goal"
     - "写一个 goal"
     - "构造 goal"
@@ -20,12 +19,22 @@ triggers:
     - "帮我定义完成条件"
     - "定义完成条件"
     - "需要 /goal"
+    - "不要执行，只生成执行目标"
+  weak:
+    - "修复 X 问题"
+    - "找到根因"
+    - "优化性能"
+    - "调查现象"
+    - "可能是 X 导致"
+    - "报错、挂死、太慢"
   exclude:
     - "纯一次性命令"
     - "简单翻译"
     - "一行 shell"
     - "尚未确定方向的探索"
     - "已用 Plan Mode 的明确任务"
+    - "可直接调试的明确 Bug"
+    - "纯头脑风暴"
 output_contract:
   artifacts:
     - "/goal 契约文档（内联输出）"
@@ -35,39 +44,78 @@ output_contract:
     - "不执行 Goal 本身"
     - "不修改用户文件"
     - "不使用无依据的数字编造验收阈值"
+    - "用户 baseline 不得静默转换为目标"
+    - "一个 Goal 只能有一个主完成结果"
 ---
 
 # Goal Generator
 
 把原始任务转换为适合 Coding Agent 持续执行的高质量 `/goal` 完成契约。
 
-## Profile 自动选择
+## 触发与不触发
 
-本 Skill 支持两种 Profile，根据任务特征自动选择，无需用户显式指定：
+### 强触发（用户显式要求）
+
+只有用户**明确表示要生成 Goal 或定义完成条件**时才触发。强触发词：
+- "帮我生成 Goal"、"写一个 goal"、"构造 goal"
+- "把下面任务变成 goal"、"Goal 化"
+- "设计目标契约"、"帮我定义完成条件"
+- "需要 /goal"、"不要执行，只生成执行目标"
+
+### 弱信号（仅用于 Profile 判断，不单独触发）
+
+以下信号**只能用于判断使用哪个 Profile**，不能单独触发 Goal Generator：
+- "修复 X 问题"、"找到根因"、"优化性能"、"调查现象"
+- "可能是 X 导致"、"报错、挂死、太慢"、"FPGA/RTL"
+
+**也就是说：用户说"修复 tlast 不出现的问题"，如果没有明确要求生成 Goal，应该直接调试而非生成 Goal。**
+
+### 不触发的情况
+
+- 一次性修改、可直接调试的明确 Bug → 直接执行
+- 尚未确定方向的架构讨论 → Plan Mode
+- 简单翻译、一行 shell 输出、纯头脑风暴 → 直接回答
+- 可直接执行且完成状态显而易见的任务 → 直接执行
+
+### 什么时候用 Standard，什么时候用 Diagnostic
+
+| 任务性质 | Profile |
+|---------|---------|
+| 创建新东西、实现明确功能、文档交付、UI 修改、有明确边界的重构 | Standard |
+| Bug 定位、根因调查、性能优化、FPGA/RTL/嵌入式、可靠性问题、数据一致性 | Diagnostic |
+
+**简单、立即完成、完成状态显而易见的一次性修改 → 直接执行，不使用本 Skill。**
+**虽然是单次任务，但需要多轮执行、回归验证或严格边界的修改 → Standard Goal。**
+
+---
+
+## 三轴判断
+
+每个 Goal 由三个维度共同决定：
+
+### 轴一：任务性质
 
 | Profile | 适用场景 | 逻辑字段 |
 |---------|----------|----------|
-| **Standard Goal** | 产品功能、文档交付、UI 修改、常规重构、小型工程、明确的新功能开发 | Outcome / Verification / Constraints / Boundaries / Iteration / Stop & Pause |
+| **Standard Goal** | 产品功能、文档交付、UI 修改、有明确边界的重构、小型工程 | Outcome / Verification / Constraints / Boundaries / Iteration / Stop & Pause |
 | **Diagnostic Goal** | Bug 定位、根因调查、性能优化、FPGA/RTL/嵌入式、可靠性问题、数据一致性、已有现象但根因未知 | Outcome / Current Facts / Hypotheses / Verification Evidence / Invariants & Anti-gaming / Work Boundaries / Experiment Strategy / Stop / Blocked Report |
 
-### 判断规则
+### 轴二：信息状态
 
-满足以下任一条件时，选择 **Diagnostic Goal**：
+| 状态 | 含义 | 处理 |
+|------|------|------|
+| Sufficient | 可直接生成完整 Goal | 直接生成 |
+| Defaultable | 缺少非关键信息 | 使用保守默认值，显式说明假设 |
+| Blocked | 缺少关键决策 | 提出最多 3 个编号选择题 |
+| Discovery-first | 陌生专业领域 | 先读取权威上下文，列出工作假设 |
 
-- 用户明确描述了一个失败现象（"不工作"、"报错"、"太慢"、"挂死"）
-- 用户提出了一个未验证的根因猜测（"可能是 X 导致"、"我觉得是 Y"）
-- 任务涉及硬件、板级、仿真 vs 上板一致性、时序、CDC
-- 任务明确要求"找到根因"、"调查"、"复现"、"调试"
-- 用户提供了可量化的失败指标（"每周 3-5 例"、"P95 太高"、"8 fps"）
+### 轴三：风险等级
 
-以下情况选择 **Standard Goal**：
-
-- 任务目标是创建新东西（功能、页面、文档、项目）
-- 实现路径明确，验收条件可直接定义
-- 没有失败现象或未验证猜测
-- 任务本质是一次性修改或常规重构
-
-如果信息不足以判断，先问自己：用户更关心"做出什么"还是"修好什么"？前者倾向 Standard，后者倾向 Diagnostic。仍然不确定时，默认 Standard 并显式声明假设。
+| 等级 | 处理 |
+|------|------|
+| Low | 本地原型、文档、玩具数据 → 直接生成 |
+| Medium | 现有项目修改、开发环境变更 → 增加显式边界和暂停条件 |
+| High | 生产数据、凭证、破坏性操作、法律/医疗/金融 → 暂停确认或生成 discovery-first Goal |
 
 ---
 
@@ -90,7 +138,7 @@ output_contract:
 |---|--------|-----------|
 | 1 | Outcome 描述可观察状态（而非纯动作） | 改写为"完成后系统是什么样" |
 | 2 | Verification 包含具体检查动作（命令/条件/截图/日志） | 补检查方式 |
-| 3 | 用户提供了数字/指标时，Verification 有明确目标阈值 | 基于用户数字推导（如"每周 3-5 例"→"<1 例/周"） |
+| 3 | 用户提供了目标数字时，Verification 有明确目标阈值 | 基于用户目标数字推导 |
 | 4 | Constraints 包含至少一项反投机约束 | 添加领域相关的禁止行为 |
 | 5 | Boundaries 明确允许/禁止范围 | 补边界 |
 | 6 | Stop 定义完成证据；Pause 列出高风险/需授权的情形 | 补停止或暂停条件 |
@@ -132,7 +180,7 @@ Pause if（暂停条件）：[需要人工决定、凭证、付费、破坏性�
 | 1 | 事实与假设严格分离 | 将假设移至 Hypotheses |
 | 2 | Outcome 描述可观察状态 | 改写 |
 | 3 | 每项 Verification Evidence 包含具体命令/条件 + 通过阈值 | 补命令和阈值 |
-| 4 | 用户提供了指标时，Verification Evidence 有目标阈值 | 基于用户数字推导 |
+| 4 | 用户提供了目标数字时，Verification Evidence 有目标阈值 | 基于用户目标数字推导 |
 | 5 | Invariants 包含至少一项领域相关反投机约束 | 添加 |
 | 6 | Work Boundaries 明确允许/禁止范围 | 补边界 |
 | 7 | Experiment Strategy 以可执行的复现为第一步 | 补复现步骤 |
@@ -221,19 +269,25 @@ Pause if（暂停条件）：[需要人工决定、凭证、付费、破坏性�
 ❌ 模糊："测试通过"、"功能正确"、"代码质量良好"
 ✅ 可执行："pytest tests/test_payment.py -v 全部 PASS"
 ✅ 可执行："benchmarks/payment_bench.py P99 < 10ms"
-✅ 可执行："重复扣款发生率 < 1 例/周（当前 3-5 例/周）"
+✅ 可执行："重复扣款发生率 < 1 例/周（用户目标，当前 baseline 3-5 例/周）"
 ```
 
-### 规则 3：用户指标必须转化为验收阈值
+### 规则 3：baseline 不得静默转换为目标
 
-**如果用户提到了具体数字（如"每周 3-5 例"、"延迟 X ms"、"N GB"、"8 fps"），验收证据中必须包含该指标的目标阈值，且必须基于用户数字推导。**
+用户给出的当前状态（baseline）和用户给出的目标必须严格分离：
+
+| 类型 | 含义 | 处理 |
+|------|------|------|
+| Confirmed target | 用户明确给出的目标（"降到 X 以下"、"不超过 Y"） | 可直接写入验收 |
+| Current baseline | 用户描述的当前状态（"目前 X"、"每周 Y 例"、"好几秒"） | 只能写入事实，不能自动变成目标 |
+| Proposed target | Skill 推荐的目标 | 必须标记为建议值，重大影响时需用户确认 |
 
 ```
-❌ 错误：用户说"每周 3-5 例" → 验收写"零重复扣款"（绝对化，无法验证渐进改善）
-✅ 正确：用户说"每周 3-5 例" → 验收写"重复扣款 < 1 例/周（较当前降低 80%）"
+❌ 错误：用户说"好几秒" → 验收写"P95 < 500ms（当前约 2-3s）"
+✅ 正确：用户说"好几秒" → 验收写"响应时间目标：待基线测量后确认（建议 P95 < 500ms，但需基于实际基线）"
 
-❌ 错误：用户说"好几秒" → 验收写"搜索变快了"
-✅ 正确：用户说"好几秒" → 验收写"P95 < 500ms（当前约 2-3s）"
+❌ 错误：用户说"重复扣款每周 3-5 例" → 验收写"重复扣款 < 1 例/周"
+✅ 正确：用户说"重复扣款每周 3-5 例" → 验收写"重复扣款发生率目标：根据当前基线 3-5 例/周，由用户确认后写入"
 ```
 
 ### 规则 4：反投机约束必须领域具体
@@ -258,6 +312,21 @@ Pause if（暂停条件）：[需要人工决定、凭证、付费、破坏性�
 
 ❌ 错误："1. 使用 ILA 抓取波形"
 ✅ 正确："1. 在 tb/read_path/tb_read_path_fifo_run.sv 中启动回归，连续运行 10 帧，确认 status FIFO empty 信号在 accepted < cmd_len 时被观察到"
+```
+
+### 规则 6：单一主结果门禁
+
+一个 Goal 只能有一个主完成结果。如果任务包含多个不同风险、验证方式或修改边界，应拆分成多个 Goal。
+
+**判断标准：**
+- 多个结果可以共享同一组验收证据和约束 → 可以合并
+- 多个结果需要不同的验证方式、修改边界或风险等级 → 必须拆分
+
+```
+❌ 错误：一个 Goal 同时包含"删除测试用户订单数据"和"优化查询速度"
+✅ 正确：拆分为两个 Goal：
+  /goal A：安全清理测试订单数据（破坏性任务，需先确认范围、备份、授权）
+  /goal B：建立基准并优化查询性能（非破坏性，可独立执行）
 ```
 
 ---
@@ -386,9 +455,11 @@ Pause if（暂停条件）：[需要人工决定、凭证、付费、破坏性�
 
 参见顶部触发条件。不适合则建议其他模式，不要强行生成。
 
-### 第二步：分类任务
+### 第二步：三轴判断
 
-按 Profile 自动选择规则确定使用 Standard 还是 Diagnostic Goal。
+1. 判断任务性质（Standard vs Diagnostic）
+2. 判断信息状态（Sufficient / Defaultable / Blocked / Discovery-first）
+3. 判断风险等级（Low / Medium / High）
 
 ### 第三步：提取与分类
 
@@ -416,20 +487,6 @@ Pause if（暂停条件）：[需要人工决定、凭证、付费、破坏性�
 
 ---
 
-## 何时使用，何时不使用
-
-**适合 → 生成 Goal：**
-- 完成条件相对明确
-- 实现路径需要根据调查或实验动态决定
-- 存在可检查的测试、日志、benchmark、生成物或其他证据
-
-**不适合 → 建议其他模式：**
-- 一次性修改、纯探索、尚未确定方向的架构讨论 → 普通 Prompt 或 Plan Mode
-- 任务模糊到无法定义任何完成条件 → 先 Plan
-- 简单翻译、一行 shell 输出、纯头脑风暴 → 直接回答
-
----
-
 ## 常见失败模式
 
 参见 `references/failure-modes.md`（包含真实失败案例及其修正版本）。
@@ -438,9 +495,9 @@ Pause if（暂停条件）：[需要人工决定、凭证、付费、破坏性�
 
 ## 参考文件
 
-- `references/standard-goal-examples.md` — Standard Goal 示例
-- `references/diagnostic-goal-examples.md` — Diagnostic Goal 示例
-- `references/default-reference.md` — 默认策略参考
-- `references/discovery-reference.md` — Discovery-first 参考
+- `references/standard-goal-examples.md` — Standard Goal 示例（产品/功能/文档/UI/多目标拆分）
+- `references/diagnostic-goal-examples.md` — Diagnostic Goal 示例（Bug/性能/硬件/数据一致性）
+- `references/default-reference.md` — 默认策略参考（default-first 策略）
+- `references/discovery-reference.md` — Discovery-first 策略参考（陌生专业领域）
 - `references/failure-modes.md` — 常见失败模式
-- `scripts/lint_goal.py` — 轻量静态校验脚本
+- `scripts/lint_goal.py` — 轻量静态校验脚本（支持 `--strict` 模式）

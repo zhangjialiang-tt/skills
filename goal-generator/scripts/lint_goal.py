@@ -26,7 +26,7 @@ import re
 import sys
 from pathlib import Path
 
-VERSION = "2.0.0"
+VERSION = "2.0.1"
 
 # ---------------------------------------------------------------------------
 # Pattern groups
@@ -35,15 +35,20 @@ VERSION = "2.0.0"
 COMMAND_PATTERNS = [r"(?m)^\s*/goal\b"]
 BAD_COMMAND_PATTERNS = [r"(?m)^\s*/目标\b"]
 
+# Required markers for ALL profiles
 COMMON_MARKERS = {
     "command": [r"(?m)/goal"],
     "verification": [r"验证[:：]", r"Verification[:：]", r"验收证据", r"【验证】", r"【验收证据】"],
     "constraints": [r"约束[:：]", r"Constraints[:：]", r"必须保持", r"【约束】", r"【必须保持】"],
     "boundaries": [r"边界[:：]", r"Boundaries[:：]", r"工作边界", r"【边界】", r"【工作边界】"],
     "iteration": [r"迭代策略[:：]", r"Iteration policy[:：]", r"迭代", r"【迭代策略】"],
-    "stop": [r"完成条件[:：]", r"Stop when[:：]", r"停止条件[:：]", r"阻塞与停止", r"【完成条件】", r"【阻塞与停止】", r"暂停条件[:：]", r"Pause if[:：]", r"【暂停条件】"],
 }
 
+# Stop and Pause are now SEPARATE checks
+STOP_MARKERS = [r"完成条件[:：]", r"Stop when[:：]", r"停止条件[:：]", r"【完成条件】", r"阻塞与停止", r"【阻塞与停止】"]
+PAUSE_MARKERS = [r"暂停条件[:：]", r"Pause if[:：]", r"【暂停条件】", r"阻塞与停止", r"【阻塞与停止】"]
+
+# Required markers for Diagnostic profile only
 DIAGNOSTIC_MARKERS = {
     "current_facts": [r"当前事实[:：]", r"Current facts[:：]", r"【当前事实】"],
     "hypotheses": [r"待验证假设[:：]", r"Hypotheses[:：]", r"【待验证假设】"],
@@ -57,7 +62,9 @@ PLACEHOLDER_PATTERNS = [
     (r"<[^>]+>", "angle-bracket placeholder <XXX>"),
     (r"待补充", "待补充"),
     (r"待定", "待定"),
-    (r"某", "vague '某'"),
+    (r"某某", "vague '某某'"),
+    (r"某模块", "'某模块' is a placeholder"),
+    (r"某路径", "'某路径' is a placeholder"),
 ]
 
 DANGEROUS_VAGUE_PATTERNS = [
@@ -72,7 +79,6 @@ DANGEROUS_VAGUE_PATTERNS = [
     (r"直到满意", "直到满意"),
     (r"看起来不错就行", "看起来不错就行"),
     (r"感觉可以", "感觉可以"),
-    (r"尽可能", "vague '尽可能'"),
 ]
 
 VERIFICATION_EVIDENCE_PATTERNS = [
@@ -121,18 +127,14 @@ def extract_outcome(text: str) -> str | None:
         if '/goal' in line:
             idx = line.find('/goal') + 5
             after = line[idx:].strip()
-            # If there's meaningful content after /goal on the same line
             if after and after not in ('', '，', '：', ':', '。', '.'):
                 return after
-            # Look at subsequent non-empty lines
             for j in range(i + 1, min(i + 5, len(lines))):
                 next_line = lines[j].strip()
                 if not next_line:
                     continue
-                # Skip section headers like 【期望结果】
                 if next_line.startswith('【') and next_line.endswith('】'):
                     continue
-                # Skip section headers with content: 【期望结果】some text
                 if '【' in next_line and '】' in next_line:
                     after_header = next_line[next_line.index('】') + 1:].strip()
                     if after_header:
@@ -144,6 +146,7 @@ def extract_outcome(text: str) -> str | None:
 
 
 def find_section_content(text: str, patterns: list[str]) -> str | None:
+    """Extract content after a section marker on the same line."""
     for pattern in patterns:
         match = re.search(rf"{pattern}\s*(.+)", text)
         if match:
@@ -152,6 +155,7 @@ def find_section_content(text: str, patterns: list[str]) -> str | None:
 
 
 def get_section_block(text: str, header_patterns: list[str]) -> str:
+    """Get the text block under a header (until next header or end)."""
     lines = text.splitlines()
     in_section = False
     block_lines = []
@@ -181,7 +185,18 @@ def get_section_block(text: str, header_patterns: list[str]) -> str:
     return "\n".join(block_lines)
 
 
-def lint_text(text: str, source: str) -> tuple[list[str], list[str]]:
+def get_verification_block(text: str) -> str:
+    """Get the verification section content."""
+    return get_section_block(text, COMMON_MARKERS["verification"])
+
+
+def get_facts_block(text: str) -> str:
+    """Get the current facts section content (Diagnostic only)."""
+    return get_section_block(text, DIAGNOSTIC_MARKERS["current_facts"])
+
+
+def lint_text(text: str, source: str, strict: bool = False) -> tuple[list[str], list[str]]:
+    """Returns (errors, warnings)."""
     errors: list[str] = []
     warnings: list[str] = []
 
@@ -192,6 +207,7 @@ def lint_text(text: str, source: str) -> tuple[list[str], list[str]]:
     elif not any(re.search(p, text) for p in COMMAND_PATTERNS):
         errors.append(f"{source}: E02 - missing /goal command marker")
 
+    # --- Required markers (common) ---
     all_markers = {**COMMON_MARKERS}
     if profile == "diagnostic":
         all_markers.update(DIAGNOSTIC_MARKERS)
@@ -201,39 +217,82 @@ def lint_text(text: str, source: str) -> tuple[list[str], list[str]]:
             readable = " / ".join(p.replace(r"[:：]", ":").replace(r"(?m)", "") for p in patterns[:3])
             errors.append(f"{source}: E03 - missing required marker for `{name}` (e.g., {readable})")
 
+    # --- Stop and Pause: separate checks ---
+    has_stop = any(re.search(p, text) for p in STOP_MARKERS)
+    has_pause = any(re.search(p, text) for p in PAUSE_MARKERS)
+
+    if not has_stop:
+        errors.append(f"{source}: E05 - missing stop condition (完成条件 / Stop when / 【完成条件】)")
+    if not has_pause:
+        errors.append(f"{source}: E06 - missing pause condition (暂停条件 / Pause if / 【暂停条件】)")
+
+    # --- Placeholders ---
     for pattern, desc in PLACEHOLDER_PATTERNS:
         if re.search(pattern, text, flags=re.IGNORECASE):
-            warnings.append(f"{source}: W01 - unresolved placeholder: {desc}")
+            msg = f"{source}: W01 - unresolved placeholder: {desc}"
+            if strict:
+                errors.append(msg)
+            else:
+                warnings.append(msg)
 
+    # --- Dangerous vague instructions ---
     for pattern, desc in DANGEROUS_VAGUE_PATTERNS:
         if re.search(pattern, text, flags=re.IGNORECASE):
-            warnings.append(f"{source}: W02 - dangerous vague instruction: '{desc}'")
+            msg = f"{source}: W02 - dangerous vague instruction: '{desc}'"
+            if strict:
+                errors.append(msg)
+            else:
+                warnings.append(msg)
 
+    # --- Outcome length check ---
     outcome_text = extract_outcome(text)
     if outcome_text and len(outcome_text) < 15:
-        warnings.append(f"{source}: W03 - /goal outcome is very short ({len(outcome_text)} chars); consider whether it describes an observable state")
+        warnings.append(f"{source}: W03 - /goal outcome is very short ({len(outcome_text)} chars)")
 
-    verification_content = find_section_content(text, COMMON_MARKERS["verification"])
-    if verification_content:
-        if not any(re.search(p, verification_content, flags=re.IGNORECASE) for p in VERIFICATION_EVIDENCE_PATTERNS):
-            warnings.append(f"{source}: W04 - verification section should name concrete evidence")
+    # --- Verification has evidence (section-aware) ---
+    verification_block = get_verification_block(text)
+    if verification_block:
+        if not any(re.search(p, verification_block, flags=re.IGNORECASE) for p in VERIFICATION_EVIDENCE_PATTERNS):
+            msg = f"{source}: W04 - verification section should name concrete evidence"
+            if strict:
+                errors.append(msg)
+            else:
+                warnings.append(msg)
 
+    # --- Over-wide boundaries ---
     boundary_block = get_section_block(text, COMMON_MARKERS["boundaries"])
     if boundary_block:
         for pattern, desc in OVERWIDE_BOUNDARY_PATTERNS:
             if re.search(pattern, boundary_block):
-                warnings.append(f"{source}: W05 - over-wide boundary: {desc}")
+                msg = f"{source}: W05 - over-wide boundary: {desc}"
+                if strict:
+                    errors.append(msg)
+                else:
+                    warnings.append(msg)
 
-    user_metrics = []
-    for pattern in METRIC_PATTERNS:
-        for match in re.finditer(pattern, text):
-            user_metrics.append(match.group(0))
+    # --- User metric → threshold check (section-aware) ---
+    # Only check metrics in facts section, not verification
+    facts_block = get_facts_block(text) if profile == "diagnostic" else ""
+    verification_block_for_metric = get_verification_block(text)
+    
+    # Find metrics in facts/baseline section
+    baseline_metrics = []
+    if facts_block:
+        for pattern in METRIC_PATTERNS:
+            for match in re.finditer(pattern, facts_block):
+                baseline_metrics.append(match.group(0))
+    
+    # Find thresholds in verification section
+    if baseline_metrics:
+        has_threshold_in_verification = any(re.search(p, verification_block_for_metric) for p in THRESHOLD_PATTERNS)
+        if not has_threshold_in_verification:
+            msg = f"{source}: W06 - baseline metrics ({', '.join(baseline_metrics[:3])}) found but no target threshold in verification"
+            if strict:
+                errors.append(msg)
+            else:
+                warnings.append(msg)
 
-    if user_metrics:
-        has_threshold = any(re.search(p, text) for p in THRESHOLD_PATTERNS)
-        if not has_threshold:
-            warnings.append(f"{source}: W06 - user provided metrics ({', '.join(user_metrics[:3])}) but no target threshold found in verification")
-
+    # --- Profile-specific checks ---
     if profile == "diagnostic":
         facts_block = get_section_block(text, DIAGNOSTIC_MARKERS["current_facts"])
         hypotheses_block = get_section_block(text, DIAGNOSTIC_MARKERS["hypotheses"])
@@ -246,12 +305,18 @@ def lint_text(text: str, source: str) -> tuple[list[str], list[str]]:
             if not re.search(r"复现|重现|reproduce|先.*观察|先.*测量|先.*建立", iteration_block):
                 warnings.append(f"{source}: W08 - Diagnostic Goal iteration strategy should start with reproduction/measurement")
 
+    # --- Anti-gaming constraint check ---
     constraints_block = get_section_block(text, COMMON_MARKERS["constraints"])
     if constraints_block:
-        if not re.search(r"不通过|不得|禁止|不.*规避|不.*屏蔽|不.*删除.*测试|不.*硬编码|anti-gaming|投机", constraints_block):
-            warnings.append(f"{source}: W09 - constraints should include at least one anti-gaming prohibition")
+        if not re.search(r"不通过|不得|禁止|不.*规避|不.*屏蔽|不.*删除.*测试|不.*硬编码|不加入|不改变|不修改|不触碰|不修改冻结|anti-gaming|投机", constraints_block):
+            msg = f"{source}: W09 - constraints should include at least one anti-gaming prohibition"
+            if strict:
+                errors.append(msg)
+            else:
+                warnings.append(msg)
 
-    stop_block = get_section_block(text, COMMON_MARKERS["stop"])
+    # --- Stop condition check ---
+    stop_block = get_section_block(text, STOP_MARKERS)
     if stop_block:
         if re.search(r"继续直到完成|不要停下来|keep going|until done", stop_block, flags=re.IGNORECASE):
             errors.append(f"{source}: E04 - stop condition must not be 'continue until done'")
@@ -262,10 +327,13 @@ def lint_text(text: str, source: str) -> tuple[list[str], list[str]]:
 def print_usage() -> None:
     print(f"""goal-generator linter v{VERSION}
 
-Usage: lint_goal.py <file> [<file> ...]
+Usage: lint_goal.py [--strict] <file> [<file> ...]
 
 Validates generated /goal contracts against the selected profile.
 Auto-detects Standard vs Diagnostic profile.
+
+Options:
+  --strict    Treat warnings as errors (for CI/evaluation)
 
 Exit codes:
   0 = passed (no errors, warnings OK)
@@ -283,6 +351,11 @@ Limitations:
 
 
 def main(argv: list[str]) -> int:
+    strict = False
+    if "--strict" in argv:
+        strict = True
+        argv.remove("--strict")
+    
     if len(argv) < 2 or argv[1] in ("-h", "--help"):
         print_usage()
         return 2
@@ -297,7 +370,7 @@ def main(argv: list[str]) -> int:
         except OSError as exc:
             all_errors.append(f"{path}: cannot read file: {exc}")
             continue
-        errors, warnings = lint_text(text, str(path))
+        errors, warnings = lint_text(text, str(path), strict=strict)
         all_errors.extend(errors)
         all_warnings.extend(warnings)
 

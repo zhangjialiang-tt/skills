@@ -5,7 +5,7 @@
 # and trust boundary.
 
 name: goal-generator
-version: "2.0.0"
+version: "2.0.1"
 archetype: library
 mode: production
 
@@ -29,8 +29,8 @@ deterministic_logic:
     side_effects: "none (read-only)"
 
 references:
-  - "references/standard-goal-examples.md — Standard Goal 示例（产品/功能/文档/UI）"
-  - "references/diagnostic-goal-examples.md — Diagnostic Goal 示例（Bug/性能/硬件/根因）"
+  - "references/standard-goal-examples.md — Standard Goal 示例（产品/功能/文档/UI/多目标拆分）"
+  - "references/diagnostic-goal-examples.md — Diagnostic Goal 示例（Bug/性能/硬件/数据一致性）"
   - "references/default-reference.md — 默认策略参考（default-first 策略）"
   - "references/discovery-reference.md — Discovery-first 策略参考（陌生专业领域）"
   - "references/failure-modes.md — 常见失败模式（真实失败案例及修正）"
@@ -39,6 +39,8 @@ constraints:
   - "不执行 Goal 本身"
   - "不修改用户文件"
   - "不使用无依据的数字编造验收阈值"
+  - "用户 baseline 不得静默转换为目标"
+  - "一个 Goal 只能有一个主完成结果"
   - "低风险不确定性默认先推进，不拦用户填表"
   - "陌生领域使用 discovery-first，不编造领域规则"
   - "用户提供的指标必须转化为验收阈值"
@@ -53,6 +55,7 @@ exclusions:
   - "简单翻译（直接回答）"
   - "一行 shell 输出（直接执行）"
   - "尚未确定方向的架构讨论（先 Plan）"
+  - "可直接调试的明确 Bug（直接执行）"
   - "纯头脑风暴（直接讨论）"
   - "用户已给出完整规格且无歧义（直接执行）"
 
@@ -70,7 +73,7 @@ near_neighbor:
 
 workflow_steps:
   - "Step 1: 判断适合性（是否应触发 Goal）"
-  - "Step 2: 分类任务（Standard vs Diagnostic）"
+  - "Step 2: 三轴判断（任务性质 × 信息状态 × 风险等级）"
   - "Step 3: 提取与分类（事实/要求/假设/缺失信息）"
   - "Step 4: 选择默认策略（default-first / discovery-first）"
   - "Step 5: 生成 Goal（按所选 Profile 模板）"
@@ -79,9 +82,10 @@ workflow_steps:
 
 decision_points:
   - "Profile 选择：根据任务特征自动选择 Standard 或 Diagnostic"
-  - "信息不足时：判断是否可安全默认，还是必须追问"
-  - "高风险/陌生领域：使用 discovery-first"
+  - "信息状态：判断是否可安全默认，还是必须追问"
+  - "风险等级：High 风险必须暂停确认"
   - "用户提供了指标：必须转化为验收阈值"
+  - "多目标混合：判断是否拆分"
 
 failure_modes:
   - mode: "Profile 误选"
@@ -93,16 +97,24 @@ failure_modes:
   - mode: "反投机约束泛泛"
     guard: "规则 4：必须按领域写出具体的投机手段"
   - mode: "用户指标未转化"
-    guard: "规则 3：用户提供的数字必须推导为目标阈值"
+    guard: "规则 3：用户提供的目标数字必须推导为验收阈值"
+  - mode: "baseline 静默转换为目标"
+    guard: "规则 3：用户 baseline 只能写入 Current Facts，不得自动推导为目标"
   - mode: "迭代策略以分析为第一步（Diagnostic）"
     guard: "规则 5：第一步必须包含可执行的复现操作"
   - mode: "所有任务默认本地 MVP"
     guard: "default-first 策略根据任务类型判断，不固定默认"
   - mode: "机械生成无意义阻塞条件"
     guard: "Standard Goal 只需完成条件和关键暂停；Diagnostic Goal 需完整阻塞报告"
+  - mode: "跨领域示例污染"
+    guard: "支付示例不得出现 FPGA/AXI/帧格式；RTL 示例不得出现 PostgreSQL/支付 SDK"
+  - mode: "trigger 过宽（弱信号误触发）"
+    guard: "弱信号只能用于 Profile 判断，不能单独触发 Goal Generator"
+  - mode: "多目标混合未拆分"
+    guard: "规则 6：一个 Goal 只能有一个主完成结果；多个目标应拆分"
 
 evals:
-  - "evals/evals.json — 8 个用例（覆盖 Profile 选择、触发/不触发、事实假设分离、默认策略、discovery-first、验收质量、反投机约束、停止阻塞条件、输出长度和可复制性）"
+  - "evals/evals.json — 10 个用例（覆盖 Profile 选择、触发/不触发、事实假设分离、默认策略、discovery-first、验收质量、反投机约束、停止阻塞条件、输出长度和可复制性、baseline/target 分离）"
   - "scripts/lint_goal.py — 输出契约机器校验"
 
 output_risk:
@@ -110,7 +122,7 @@ output_risk:
 
 trust_boundary:
   owner: "zhangjl"
-  maturity: "production (content-ready; trigger eval with holdout set pending)"
+  maturity: "validated-local (content-ready; holdout eval and blind A/B pending)"
   review_cadence: "per-major-change"
   rollback_boundary: "/goal 生成为纯文本操作，无副作用；回滚即删除生成的文件"
   governed: false

@@ -1,4 +1,4 @@
-# Output Risk Profile: goal-generator v2.0.0
+# Output Risk Profile: goal-generator v2.0.1
 
 ## Artifact family
 Text-only Markdown contract (the `/goal`). No visual artifact; the deliverable is a structured goal document that feeds into agent execution.
@@ -16,13 +16,17 @@ Text-only Markdown contract (the `/goal`). No visual artifact; the deliverable i
 | Over-specifying implementation path | Low | Skill failure mode #6 + "优先使用行为标准" guidance |
 | Profile misselection (Standard vs Diagnostic) | Medium | Skill has automatic selection rules; default to Standard with explicit assumption |
 | All tasks default to "local MVP" | Low (after fix) | Skill explicitly forbids this; default strategy varies by task type |
-| Mechanical generation of meaningless blocking conditions | Low (after fix) | Standard Goal only needs completion + key pause conditions; Diagnostic needs full blocked report |
+| Mechanical generation of meaningless blocking conditions | Low (after fix) | Standard Goal only needs completion + key pause; Diagnostic needs full blocked report |
+| Baseline silently converted to target | Medium (new in v2.0.1) | Skill Rule 3 explicitly forbids this; failure mode #7 added |
+| Trigger too broad (weak signals) | Medium (new in v2.0.1) | Skill separates strong vs weak triggers; failure mode #12 added |
+| Multi-goal mixing | Medium (new in v2.0.1) | Skill Rule 6: single main result per Goal; failure mode #13 added |
+| Cross-domain example contamination | Low (new in v2.0.1) | Failure mode #11 added; examples audited for contamination |
 
 ## Quality gates (automated + manual)
 
 | # | Gate | Automated |
 |---|------|-----------|
-| 1 | `/goal` command present (not `/目标`) | ✅ lint_goal.py E01/E02 |
+| 1 | `/goal` command present (not `/目标`) | ✅ lint_goal.py E01/E02/E03 |
 | 2 | All required markers for selected profile present | ✅ lint_goal.py E03 |
 | 3 | No unresolved placeholders (TBD, TODO, [XXX]) | ✅ lint_goal.py W01 |
 | 4 | No dangerous vague instructions | ✅ lint_goal.py W02 |
@@ -31,11 +35,22 @@ Text-only Markdown contract (the `/goal`). No visual artifact; the deliverable i
 | 7 | User metrics → thresholds | ✅ lint_goal.py W06 |
 | 8 | Anti-gaming constraints present | ✅ lint_goal.py W09 |
 | 9 | Stop condition not "continue until done" | ✅ lint_goal.py E04 |
-| 10 | Facts vs hypotheses separated (Diagnostic) | ⚠️ lint_goal.py W07 (heuristic) |
-| 11 | Experiment strategy starts with reproduction (Diagnostic) | ⚠️ lint_goal.py W08 (heuristic) |
-| 12 | Outcome describes observable state | ❌ Manual check only |
-| 13 | Anti-gaming constraints are domain-specific | ❌ Manual check only |
-| 14 | Default strategy appropriate for task type | ❌ Manual check only |
+| 10 | Stop condition present (separate from Pause) | ✅ lint_goal.py E05 |
+| 11 | Pause condition present | ✅ lint_goal.py E06 |
+| 12 | Facts vs hypotheses separated (Diagnostic) | ⚠️ lint_goal.py W07 (heuristic) |
+| 13 | Experiment strategy starts with reproduction (Diagnostic) | ⚠️ lint_goal.py W08 (heuristic) |
+| 14 | Outcome describes observable state | ❌ Manual check only |
+| 15 | Anti-gaming constraints are domain-specific | ❌ Manual check only |
+| 16 | Default strategy appropriate for task type | ❌ Manual check only |
+| 17 | Baseline not silently converted to target | ❌ Manual check only |
+| 18 | Single main result per Goal | ❌ Manual check only |
+
+## Linter modes
+
+| Mode | Command | Behavior |
+|------|---------|----------|
+| Default | `python3 scripts/lint_goal.py goal.txt` | Warnings don't fail |
+| Strict | `python3 scripts/lint_goal.py --strict goal.txt` | Warnings become errors |
 
 ## Reviewer notes
 The generated goal.md is a contract document. Reviewers should check whether it would actually guide an agent to stop when blocked, detect speculation, and verify completion objectively. The goal should be executable without further clarification.
