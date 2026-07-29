@@ -5,7 +5,7 @@
 # and trust boundary.
 
 name: goal-generator
-version: "2.0.2"
+version: "2.0.3"
 archetype: library
 mode: production
 
@@ -24,7 +24,7 @@ output_contract:
 
 deterministic_logic:
   - path: "scripts/lint_goal.py"
-    role: "Read-only checker: validate a generated /goal against the selected profile contract, detect missing markers, placeholders, dangerous vague instructions, over-wide boundaries, fact-hypothesis confusion, and missing metric thresholds"
+    role: "Read-only checker: validate a generated /goal against the selected profile contract — required sections including a non-empty Outcome (E07), placeholders, dangerous vague instructions, over-wide boundaries, fact-hypothesis confusion, profile-specific stop/pause, gameable-scoped anti-gaming, and Diagnostic blocked-report structure (W10)"
     runs_in: "skill root"
     side_effects: "none (read-only)"
 
@@ -112,6 +112,12 @@ failure_modes:
     guard: "弱信号只能用于 Profile 判断，不能单独触发 Goal Generator"
   - mode: "多目标混合未拆分"
     guard: "规则 6：一个 Goal 只能有一个主完成结果；多个目标应拆分"
+  - mode: "Outcome 缺失或为空"
+    guard: "E07：Outcome 为必填结构字段（/goal 行内或 Outcome/【期望结果】 段），不得从 Current Facts 回退推断"
+  - mode: "Diagnostic 阻塞报告过薄"
+    guard: "W10：阻塞报告须列出 ≥3 项阻塞条件或报告字段，拒绝一句话停止条件"
+  - mode: "Standard 用单一 Blocked 段冒充 Stop+Pause"
+    guard: "E05/E06：Standard 必须分别出现 Stop（完成条件）与 Pause（暂停条件）标签"
 
 evals:
   - "evals/evals.json — 12 个用例（输入与 references 不同；覆盖强触发正例、弱信号单独不触发负例、Profile 选择、事实假设分离、default/discovery 策略、验收质量、反投机约束、停止阻塞、baseline/target 分离、多目标拆分）"

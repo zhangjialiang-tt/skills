@@ -1,4 +1,4 @@
-# Output Risk Profile: goal-generator v2.0.2
+# Output Risk Profile: goal-generator v2.0.3
 
 ## Artifact family
 Text-only Markdown contract (the `/goal`). No visual artifact; the deliverable is a structured goal document that feeds into agent execution.
@@ -21,6 +21,8 @@ Text-only Markdown contract (the `/goal`). No visual artifact; the deliverable i
 | Trigger too broad (weak signals) | Medium (new in v2.0.1) | Skill separates strong vs weak triggers; failure mode #12 added |
 | Multi-goal mixing | Medium (new in v2.0.1) | Skill Rule 6: single main result per Goal; failure mode #13 added |
 | Cross-domain example contamination | Low (new in v2.0.1) | Failure mode #11 added; examples audited for contamination |
+| Missing or empty Outcome | High (without skill) | Linter E07 requires a non-empty Outcome for both profiles; never inferred from Current Facts |
+| Thin Diagnostic blocked report ("stop when there's a problem") | Medium | Linter W10 requires >=3 blocking conditions or report fields |
 
 ## Quality gates (automated + manual)
 
@@ -33,7 +35,7 @@ Text-only Markdown contract (the `/goal`). No visual artifact; the deliverable i
 | 5 | Verification contains concrete evidence | ✅ lint_goal.py W04 |
 | 6 | No over-wide boundaries | ✅ lint_goal.py W05 |
 | 7 | Baseline not forced to a fabricated target | ✅ lint_goal.py (W06 coercion removed; baseline-only passes `--strict`) |
-| 8 | Anti-gaming constraints present | ✅ lint_goal.py W09 |
+| 8 | Anti-gaming constraints present (gameable goals only) | ✅ lint_goal.py W09 (scoped to outcome/verification/facts) |
 | 9 | Stop condition not "continue until done" | ✅ lint_goal.py E04 |
 | 10 | Stop condition present (separate from Pause) | ✅ lint_goal.py E05 |
 | 11 | Pause condition present | ✅ lint_goal.py E06 |
@@ -47,13 +49,16 @@ Text-only Markdown contract (the `/goal`). No visual artifact; the deliverable i
 | 19 | Canonical SKILL templates pass linter `--strict` | ✅ scripts/run_lint_tests.py |
 | 20 | Section fields do not bleed into one another | ✅ scripts/run_lint_tests.py |
 | 21 | All formal files declare one version | ✅ scripts/run_lint_tests.py |
+| 22 | Outcome present and non-empty (both profiles) | ✅ lint_goal.py E07 |
+| 23 | Diagnostic blocked report has real structure | ✅ lint_goal.py W10 |
+| 24 | Standard Stop and Pause are distinct labels | ✅ lint_goal.py E05/E06 |
 
 ## Linter modes
 
 | Mode | Command | Behavior |
 |------|---------|----------|
 | Default | `python3 scripts/lint_goal.py goal.txt` | Warnings don't fail |
-| Strict | `python3 scripts/lint_goal.py --strict goal.txt` | Warnings become errors |
+| Strict | `python3 scripts/lint_goal.py --strict goal.txt` | Warnings (Wxx) become errors; infos (Ixx) never promoted |
 
 ## Reviewer notes
 The generated goal.md is a contract document. Reviewers should check whether it would actually guide an agent to stop when blocked, detect speculation, and verify completion objectively. The goal should be executable without further clarification.

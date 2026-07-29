@@ -128,8 +128,11 @@ python3 scripts/run_lint_tests.py                            # 契约一致性�
 - baseline 与目标分离：baseline 不会被强制转换成数字目标（已移除 W06 阈值强制）
 - 是否有明确 Stop 条件
 - 是否有必要的 Pause/Blocked 条件
+- Outcome 是否为必填且非空（E07；不会从事实回退推断）
+- Standard 的 Stop 与 Pause 是否为独立标签；Diagnostic 阻塞报告是否过薄（W10）
+- gameable 任务是否缺少领域反投机约束（W09，仅检查 outcome/verification/facts）
 
-**注意：** linter 是结构检查器，不是语义判断器。接受三种标签写法（`验证：`、`Verification（验证）：`、`【验收证据】`），且各段不会串入后续字段。WARNING 是建议性的，ERROR 是结构性失败；`--strict` 把 WARNING 升级为 ERROR。目标数字的来源是否合理（用户目标 / SLO / 建议待确认）属于语义判断，需人工复核。
+**注意：** linter 是结构检查器，不是语义判断器。接受三种标签写法（`验证：`、`Verification（验证）：`、`【验收证据】`），且各段不会串入后续字段。发现分为 ERROR（结构性失败）、WARNING（建议性）、INFO（启发式提示）；`--strict` 把 WARNING 升级为 ERROR，但 INFO（如 Outcome 长度提示 I01）不受影响。目标数字的来源是否合理（用户目标 / SLO / 建议待确认）属于语义判断，需人工复核。
 
 ## 示例
 

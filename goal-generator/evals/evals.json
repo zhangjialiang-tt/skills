@@ -1,6 +1,6 @@
 {
   "skill_name": "goal-generator",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "12 evaluation cases (inputs deliberately distinct from references/). Coverage: explicit strong-trigger positives, weak-signal-only NON-trigger negatives, Standard vs Diagnostic profile selection, fact/hypothesis separation, baseline/target separation (no silent baseline->target), default-first, discovery-first, multi-goal split, anti-gaming, and stop/pause. Positives always contain an explicit Goal request; weak signals alone must NOT trigger.",
   "evals": [
     {

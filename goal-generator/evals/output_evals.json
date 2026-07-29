@@ -1,15 +1,15 @@
 {
   "skill_name": "goal-generator",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "Output-structure quality evals (complement evals.json, which covers trigger/profile). Inputs are distinct from references/. Every positive carries an explicit Goal request; expectations enforce baseline/target separation (no fabricated thresholds), complete profile structure, fact/hypothesis separation, anti-gaming, and multi-goal split.",
   "evals": [
     {
       "id": 1,
       "prompt": "帮我生成 Goal：网关服务偶发 502，监控显示上游连接池在高峰期耗尽，有人说是重试风暴引起的，我觉得把连接池调大就行。高峰期每分钟约 20-30 次 502。测试 pytest tests/test_gateway.py，压测 scripts/gateway_bench.py。",
-      "expected_output": "完整 Diagnostic 九段结构；'重试风暴'与'调大连接池'作为待验证假设；baseline '每分钟 20-30 次 502' 只写入事实，不静默转为验收阈值；验收证据含具体命令+通过条件；含网关领域反投机约束；Blocked 报告 ≥3 种情形。",
+      "expected_output": "完整 Diagnostic 结构（9 逻辑字段 / 8 渲染区块）；'重试风暴'与'调大连接池'作为待验证假设；baseline '每分钟 20-30 次 502' 只写入事实，不静默转为验收阈值；验收证据含具体命令+通过条件；含网关领域反投机约束；Blocked 报告 ≥3 种情形。",
       "files": [],
       "expectations": [
-        "Diagnostic 九段结构完整（期望结果/当前事实/待验证假设/验收证据/必须保持/工作边界/迭代策略/阻塞与停止）",
+        "Diagnostic 结构完整（9 逻辑字段 / 8 渲染区块：期望结果/当前事实/待验证假设/验收证据/必须保持/工作边界/迭代策略/阻塞与停止）",
         "Outcome 描述可观察状态（'消除高峰期 502'），不含'调大连接池'等具体实现手段",
         "'重试风暴导致连接池耗尽'与'调大连接池'均在【待验证假设】，非既定根因",
         "baseline '每分钟 20-30 次 502' 只在【当前事实】，验收目标不编造具体数字，标注为待基线测量/用户确认",
@@ -22,10 +22,10 @@
     {
       "id": 2,
       "prompt": "写一个 goal：给配置中心加一个灰度发布开关，支持按租户比例放量",
-      "expected_output": "完整 Standard 六段结构；Outcome 描述可观察状态；Verification 含具体检查动作；Boundaries 明确允许/禁止；Stop/Pause 完整。非 gameable 任务不强制 anti-gaming，但需不变量。",
+      "expected_output": "完整 Standard 结构（6 逻辑字段 / 7 渲染标签）；Outcome 描述可观察状态；Verification 含具体检查动作；Boundaries 明确允许/禁止；Stop/Pause 完整。非 gameable 任务不强制 anti-gaming，但需不变量。",
       "files": [],
       "expectations": [
-        "Standard 六段结构完整（Outcome/Verification/Constraints/Boundaries/Iteration policy/Stop when/Pause if）",
+        "Standard 结构完整（6 逻辑字段 / 7 渲染标签：Outcome/Verification/Constraints/Boundaries/Iteration policy/Stop when/Pause if）",
         "Outcome 描述可观察状态（'灰度开关可按租户比例放量并稳定运行'）",
         "Verification 含具体检查动作（测试命令/放量比例核对/回滚验证）",
         "Constraints 含不变量（不破坏现有配置读取接口）",
@@ -40,7 +40,7 @@
       "expected_output": "Diagnostic 结构；用户未提供目标数字，验收证据不包含编造的延迟阈值；lag/延迟作为 baseline 写入事实；目标标注为先测量基线并提出候选由用户确认。",
       "files": [],
       "expectations": [
-        "Diagnostic 九段结构完整",
+        "Diagnostic 结构完整（9 逻辑字段 / 8 渲染区块）",
         "Outcome 描述可观察状态，且不编造具体延迟/lag 数字",
         "lag 堆积、延迟偏高作为 baseline 写入【当前事实】，不转换为验收目标",
         "验收目标标注为先测量真实基线、读取 SLO/体验要求后提出候选由用户确认",
@@ -58,7 +58,7 @@
         "识别为两个不同主结果（破坏性清理 + 新功能），按单一主结果门禁拆分",
         "给出两个拟拆分标题",
         "高风险 Goal A（清理缓存）先进入确认：范围、环境、备份、授权，未确认前不生成可执行删除契约",
-        "Goal B（健康检查端点）非破坏性、信息充分，输出完整 /goal（六段结构）",
+        "Goal B（健康检查端点）非破坏性、信息充分，输出完整 /goal（Standard 结构：6 逻辑字段 / 7 渲染标签）",
         "不默认执行破坏性操作"
       ]
     }

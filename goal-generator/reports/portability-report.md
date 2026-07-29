@@ -1,7 +1,7 @@
-# Portability Report: goal-generator v2.0.2
+# Portability Report: goal-generator v2.0.3
 
 - **Skill:** goal-generator
-- **Version:** 2.0.2
+- **Version:** 2.0.3
 - **Date:** 2026-07-29
 
 ## Canonical format
@@ -51,3 +51,13 @@ If only `description` is available (e.g., OpenAI), the trigger still routes corr
 - Anti-gaming required only for gameable goals; distinguished from plain invariants
 - Evals rewritten (12 cases, inputs distinct from references; weak-signal-only negatives)
 - Contract-consistency test runner `scripts/run_lint_tests.py`
+
+### v2.0.3 (linter hardening)
+- Outcome is a required structural field (E07); never inferred from Current Facts
+- Canonical templates are extracted directly from marked SKILL.md blocks (single source of truth)
+- GAMEABLE_SIGNAL scoped to outcome/verification/facts; negated invariants no longer force anti-gaming
+- Profile-specific Stop/Pause: Standard needs distinct labels; Diagnostic may use combined 【阻塞与停止】
+- Diagnostic blocked-report structure check (W10)
+- Findings split into errors / warnings / infos; `--strict` promotes warnings but not infos (W03 → I01)
+- Narrowed placeholder regex (no false positives on markdown links, indices, regex classes)
+- Minimal GitHub Actions CI runs the contract tests and byte-compiles the scripts

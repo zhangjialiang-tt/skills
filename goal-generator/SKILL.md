@@ -1,6 +1,6 @@
 ---
 name: goal-generator
-version: "2.0.2"
+version: "2.0.3"
 description: >
   把用户提供的原始任务、需求或现象描述转换成高质量的 `/goal` 完成契约。
   支持两种 Profile：Standard（产品/功能/文档）和 Diagnostic（Bug/性能/硬件/根因调查）。
@@ -100,6 +100,8 @@ output_contract:
 | **Standard Goal** | 产品功能、文档交付、UI 修改、有明确边界的重构、小型工程 | Outcome / Verification / Constraints / Boundaries / Iteration / Stop & Pause |
 | **Diagnostic Goal** | Bug 定位、根因调查、性能优化、FPGA/RTL/嵌入式、可靠性问题、数据一致性、已有现象但根因未知 | Outcome / Current Facts / Hypotheses / Verification Evidence / Invariants & Anti-gaming / Work Boundaries / Experiment Strategy / Stop / Blocked Report |
 
+> **术语：** 逻辑字段 ≠ 渲染标签。Standard 有 6 个逻辑字段，渲染为 7 个标签（Stop 与 Pause 分开）；Diagnostic 有 9 个逻辑字段，渲染为 8 个区块（Stop 与 Blocked Report 合并为【阻塞与停止】）。linter 按标签识别区块。
+
 ### 轴二：信息状态
 
 | 状态 | 含义 | 处理 |
@@ -145,6 +147,7 @@ output_contract:
 
 ### 输出模板
 
+<!-- canonical-template:standard -->
 ```text
 /goal [Outcome]。
 Verification（验证）：[具体检查命令/条件 + 通过阈值或可观察条件]。
@@ -189,6 +192,7 @@ Pause if（暂停条件）：[需要人工决定、凭证、付费、破坏性�
 
 ### 输出模板
 
+<!-- canonical-template:diagnostic -->
 ```text
 /goal
 
@@ -289,6 +293,11 @@ Pause if（暂停条件）：[需要人工决定、凭证、付费、破坏性�
 ❌ 错误：用户说"重复扣款每周 3-5 例" → 验收写"重复扣款 < 1 例/周"
 ✅ 正确：用户说"重复扣款每周 3-5 例" → 验收写"重复扣款发生率目标：3-5 例/周为当前 baseline（非目标）；先建立可靠基线并读取 SLO，再提出候选目标由用户确认后写入"
 ```
+
+**Proposed target 的阶段门：** 当验收目标为 Proposed / 待确认时，Goal 必须显式分两阶段，避免"待确认目标"成为悬空条件：
+
+- **阶段一完成条件：** 基线已测量；现有 SLO 已确认；候选目标及其成本/范围影响已提交给用户。
+- **Pause：** 在用户批准目标前，不进入实现阶段，不宣布整个 Goal 完成。
 
 ### 规则 4：反投机约束必须领域具体
 
