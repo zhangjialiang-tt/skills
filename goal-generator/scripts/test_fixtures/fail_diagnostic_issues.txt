@@ -1,0 +1,26 @@
+/goal
+
+【期望结果】
+找到并修复板上 AXI read path 无法产生 m_axis_read_data_tlast 的根因。
+
+【当前事实】
+- 仿真中 read path 相关回归通过
+- 板上 accepted < cmd_len
+- status FIFO 表现为 empty 这可能是根因
+
+【验收证据】
+1. 现有 read path 和压缩链仿真回归全部 PASS
+2. 板上 accepted == cmd_len
+
+【必须保持】
+- 不修改冻结的 DDR 帧布局
+- 不改变顶层 AXI Stream 接口语义
+
+【工作边界】
+优先调查和修改 read command、read data、status 及其 CDC 路径。
+
+【迭代策略】
+先分析现有日志，确认问题模式。
+
+【阻塞与停止】
+只有全部验收证据满足时才能完成。

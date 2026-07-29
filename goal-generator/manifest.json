@@ -1,31 +1,42 @@
 {
   "name": "goal-generator",
-  "version": "1.0.0",
-  "description": "把用户提供的原始任务、需求或现象描述转换成高质量的 /goal 完成契约",
+  "version": "2.0.0",
+  "mode": "production",
+  "archetype": "library",
+  "context_budget_tier": "production",
+  "description": "把用户提供的原始任务、需求或现象描述转换成高质量的 /goal 完成契约。支持 Standard（产品/功能/文档）和 Diagnostic（Bug/性能/硬件/根因调查）两种 Profile，自动选择。",
   "owner": "zhangjl",
-  "updated_at": "2026-07-26",
-  "review_cadence": "per_iteration",
-  "status": "active",
-  "maturity_tier": "production",
-  "tags": ["goal", "contract", "planning", "agent"],
-  "platforms": ["claude", "codex", "omp"],
-  "inputs": [],
-  "outputs": [
-    {
-      "name": "goal_contract",
-      "type": "markdown",
-      "description": "完整的 /goal 契约文档"
-    },
-    {
-      "name": "quality_scorecard",
-      "type": "markdown",
-      "description": "可验证性/边界清晰度/抗投机性/停止条件的 0-2 评分"
-    }
+  "review_cadence": "per-major-change",
+  "triggers": [
+    "帮我生成 Goal",
+    "写一个 goal",
+    "构造 goal",
+    "把下面任务变成 goal",
+    "Goal 化",
+    "设计目标契约",
+    "帮我定义完成条件",
+    "需要 /goal",
+    "修复 X 问题",
+    "找到根因",
+    "优化性能",
+    "调查现象"
   ],
-  "rollback_boundary": "goal.md 生成为纯文本操作，无副作用；回滚即删除生成的文件",
-  "evidence": {
-    "output_quality_scorecard": "reports/output_quality_scorecard.md",
-    "iteration_history": "goal-generator-workspace/iteration-1/benchmark.json, goal-generator-workspace/iteration-2/benchmark.json, goal-generator-workspace/iteration-3/reports/output_quality_scorecard.md",
-    "trigger_eval": "not yet run"
+  "exclusions": [
+    "纯一次性命令",
+    "简单翻译",
+    "一行 shell 输出",
+    "尚未确定方向的探索",
+    "已用 Plan Mode 的明确任务",
+    "纯头脑风暴"
+  ],
+  "factory_components": {
+    "scripts": ["scripts/lint_goal.py"],
+    "references": [
+      "references/standard-goal-examples.md",
+      "references/diagnostic-goal-examples.md",
+      "references/default-reference.md",
+      "references/discovery-reference.md",
+      "references/failure-modes.md"
+    ]
   }
 }

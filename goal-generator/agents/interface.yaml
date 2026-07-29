@@ -1,29 +1,116 @@
-interface:
-  display_name: Goal Generator
-  short_description: 把原始任务转换成高质量的 /goal 完成契约
-  default_prompt: 请把下面这个任务转换成一个高质量的 /goal 完成契约
+# goal-generator — Portable Interface
+# yao-meta-skill compatible
+# Skill IR: externalizes the recurring job, triggers, exclusions, near-neighbor
+# edge cases, workflow, decision points, failure modes, evals, output risk,
+# and trust boundary.
 
-compatibility:
-  canonical_format: markdown
-  adapter_targets:
-    - claude
-    - codex
-    - omp
-  activation:
-    mode: path_scoped
-    paths:
-      - "**/SKILL.md"
-  execution:
-    context: inline
-    shell: bash
-  trust:
-    source_tier: local
-    remote_inline_execution: forbid
-    remote_metadata_policy: strip
-  degradation:
-    claude: fallback_to_description
-    codex: fallback_to_description
-    omp: fallback_to_description
+name: goal-generator
+version: "2.0.0"
+archetype: library
+mode: production
 
-owner: zhangjl
-review_cadence: per_iteration
+input_contract:
+  - description: "用户的原始任务、需求或现象描述（可能包含现象、猜测、指标）"
+    required: true
+  - description: "项目上下文（AGENTS.md、README、已有约束、冻结接口等）"
+    required: false
+  - description: "对话历史，避免重复询问"
+    required: false
+
+output_contract:
+  - "/goal 契约文档（内联输出，不写文件）"
+  - "可选：质量评分卡（仅在存在重大风险或不确定时输出）"
+  - "两种 Profile：Standard（产品/功能/文档）和 Diagnostic（Bug/性能/硬件/根因调查）"
+
+deterministic_logic:
+  - path: "scripts/lint_goal.py"
+    role: "Read-only checker: validate a generated /goal against the selected profile contract, detect missing markers, placeholders, dangerous vague instructions, over-wide boundaries, fact-hypothesis confusion, and missing metric thresholds"
+    runs_in: "skill root"
+    side_effects: "none (read-only)"
+
+references:
+  - "references/standard-goal-examples.md — Standard Goal 示例（产品/功能/文档/UI）"
+  - "references/diagnostic-goal-examples.md — Diagnostic Goal 示例（Bug/性能/硬件/根因）"
+  - "references/default-reference.md — 默认策略参考（default-first 策略）"
+  - "references/discovery-reference.md — Discovery-first 策略参考（陌生专业领域）"
+  - "references/failure-modes.md — 常见失败模式（真实失败案例及修正）"
+
+constraints:
+  - "不执行 Goal 本身"
+  - "不修改用户文件"
+  - "不使用无依据的数字编造验收阈值"
+  - "低风险不确定性默认先推进，不拦用户填表"
+  - "陌生领域使用 discovery-first，不编造领域规则"
+  - "用户提供的指标必须转化为验收阈值"
+  - "事实与假设严格分离（Diagnostic Goal）"
+  - "反投机约束必须领域具体"
+  - "迭代策略必须以可执行的复现为第一步（Diagnostic Goal）"
+  - "不得把所有任务默认成'创建本地 MVP'"
+  - "不得削弱复杂工程和调试任务的契约强度"
+
+exclusions:
+  - "纯一次性命令（直接执行）"
+  - "简单翻译（直接回答）"
+  - "一行 shell 输出（直接执行）"
+  - "尚未确定方向的架构讨论（先 Plan）"
+  - "纯头脑风暴（直接讨论）"
+  - "用户已给出完整规格且无歧义（直接执行）"
+
+near_neighbor:
+  - skill: "requirement-alignment"
+    relation: "上游"
+    boundary: "requirement-alignment 在 Plan/实现前对齐需求；本 skill 将需求转化为可执行的 /goal 契约"
+    confusion: "用户说'帮我梳理任务'可能同时命中两者 → 若需求已对齐且需要执行契约则触发本 skill，否则先走 requirement-alignment"
+  - skill: "smart-commit"
+    relation: "无关"
+    boundary: "smart-commit 处理 git 提交信息，与 Goal 契约无路由重叠"
+  - skill: "rtl-refactor-scan"
+    relation: "下游"
+    boundary: "rtl-refactor-scan 处理 RTL 扫描/重构；若用户需要先定义 RTL 调试 Goal 则先走本 skill"
+
+workflow_steps:
+  - "Step 1: 判断适合性（是否应触发 Goal）"
+  - "Step 2: 分类任务（Standard vs Diagnostic）"
+  - "Step 3: 提取与分类（事实/要求/假设/缺失信息）"
+  - "Step 4: 选择默认策略（default-first / discovery-first）"
+  - "Step 5: 生成 Goal（按所选 Profile 模板）"
+  - "Step 6: 质量自检（逐项检查质量门禁）"
+  - "Step 7: 输出（按输出契约）"
+
+decision_points:
+  - "Profile 选择：根据任务特征自动选择 Standard 或 Diagnostic"
+  - "信息不足时：判断是否可安全默认，还是必须追问"
+  - "高风险/陌生领域：使用 discovery-first"
+  - "用户提供了指标：必须转化为验收阈值"
+
+failure_modes:
+  - mode: "Profile 误选"
+    guard: "按判断规则自动选择；不确定时默认 Standard 并显式声明假设"
+  - mode: "事实与假设混淆（Diagnostic）"
+    guard: "规则 1 强制分离；用户提供的猜测/归因必须写入 Hypotheses"
+  - mode: "验收证据模糊"
+    guard: "规则 2：每项必须包含具体检查动作 + 通过阈值"
+  - mode: "反投机约束泛泛"
+    guard: "规则 4：必须按领域写出具体的投机手段"
+  - mode: "用户指标未转化"
+    guard: "规则 3：用户提供的数字必须推导为目标阈值"
+  - mode: "迭代策略以分析为第一步（Diagnostic）"
+    guard: "规则 5：第一步必须包含可执行的复现操作"
+  - mode: "所有任务默认本地 MVP"
+    guard: "default-first 策略根据任务类型判断，不固定默认"
+  - mode: "机械生成无意义阻塞条件"
+    guard: "Standard Goal 只需完成条件和关键暂停；Diagnostic Goal 需完整阻塞报告"
+
+evals:
+  - "evals/evals.json — 8 个用例（覆盖 Profile 选择、触发/不触发、事实假设分离、默认策略、discovery-first、验收质量、反投机约束、停止阻塞条件、输出长度和可复制性）"
+  - "scripts/lint_goal.py — 输出契约机器校验"
+
+output_risk:
+  report: "reports/output-risk-profile.md"
+
+trust_boundary:
+  owner: "zhangjl"
+  maturity: "production (content-ready; trigger eval with holdout set pending)"
+  review_cadence: "per-major-change"
+  rollback_boundary: "/goal 生成为纯文本操作，无副作用；回滚即删除生成的文件"
+  governed: false

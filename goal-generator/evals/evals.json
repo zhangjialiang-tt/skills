@@ -1,52 +1,166 @@
 {
   "skill_name": "goal-generator",
+  "version": "2.0.0",
+  "description": "8 evaluation cases covering: Profile selection, trigger/non-trigger, fact-hypothesis separation, default strategy, discovery-first, verification quality, anti-gaming constraints, stop/block conditions, and output length/copy-readiness.",
   "evals": [
     {
       "id": 1,
-      "prompt": "帮我写一个 Goal：解决板上 m_axis_read_data_tlast 不出现的问题。目前仿真回归能通过，但板上 accepted < cmd_len，观察到 data FIFO 出现 full，status FIFO 表现为 empty，tlast 完全没有出现。可以修改 rtl/read_path/**、tb/read_path/**、scripts/run_read_regression.py，不能动第三方 AXI DMA 源码和帧格式。",
-      "expected_output": "输出一个完整的高质量 /goal，包含六部分结构。期望结果描述状态而非动作（如'使 1280×1024 压缩帧读取能够完整结束'），验收证据包含具体检查命令或波形条件，约束写成可验证的不变量，工作边界明确允许修改和禁止修改的路径，迭代策略包含证据驱动的最小实验，阻塞条件明确何时停止而非假装完成。",
-      "files": [],
+      "category": "Standard Goal - fuzzy product task",
+      "prompt": "帮我做一个简单的桌面工具",
+      "expected_profile": "standard",
+      "should_trigger": true,
       "expectations": [
-        "输出包含完整的六部分结构（Outcome / Verification / Constraints / Boundaries / Iteration / Blocked）",
-        "期望结果描述可观察的系统状态，不包含'分析''研究''尝试'等动作词",
-        "验收证据包含至少一个具体检查命令（如脚本名、测试名）或可观察条件",
-        "Constraints 使用可验证的不变量，未使用'保持优雅''足够健壮'等模糊词",
-        "Boundaries 明确允许修改和禁止修改的范围",
-        "Iteration policy 要求先建立假设、优先最小实验、一次只引入一个可归因变量",
-        "Blocked stop condition 列出至少3种具体阻塞情形，并要求报告已尝试路径和证据",
-        "未将 status FIFO empty 作为既定根因，而是作为待验证假设"
+        "Profile 自动选择为 Standard（而非 Diagnostic）",
+        "使用 default-first 策略，默认本地 MVP + 核心流程",
+        "提供默认选择理由",
+        "提供最多 3 个编号调整项",
+        "Outcome 描述可观察状态（'创建...工具'而非'分析需求'）",
+        "Verification 包含具体检查动作",
+        "Constraints 包含反投机约束",
+        "Boundaries 明确允许/禁止范围",
+        "Stop 有明确完成条件",
+        "Pause 列出高风险/需授权的情形",
+        "可直接复制的 /goal 代码块"
       ]
     },
     {
       "id": 2,
+      "category": "Diagnostic Goal - bug with unverified hypothesis",
       "prompt": "我们的支付系统最近偶尔会出现重复扣款的问题。客服说是因为网络超时导致客户端重试引起的，我觉得应该加个幂等锁。重复扣款的报告大约有每周 3-5 例，主要是移动端用户。测试可以用 pytest tests/test_payment.py，基准在 benchmarks/payment_bench.py。数据库是 PostgreSQL 14，后端是 Python/FastAPI。",
-      "expected_output": "生成高质量 /goal。Outcome 描述'重复扣款问题解决、系统稳定运行'的可观察状态；验收证据引用具体测试和基准命令，包含重复扣款发生率阈值（如每周 < 1 例）；约束要求不破坏现有支付 API、不引入新的数据一致性风险；工作边界限制在支付模块内部；迭代策略从复现和根因确认开始，而非直接跳到'加幂等锁'的结论；阻塞条件包含无法复现、数据库锁限制等。",
-      "files": [],
+      "expected_profile": "diagnostic",
+      "should_trigger": true,
       "expectations": [
-        "输出包含完整六部分结构",
-        "Outcome 描述可观察状态而非动作，不包含'实现幂等''加锁'等具体实现手段",
-        "验收证据包含重复扣款发生率的具体阈值（如每周 < 1 例）",
-        "Constraints 包含至少一项反投机约束（如'不通过屏蔽重试错误来虚假达标'）",
-        "未将'网络超时导致重试'作为既定根因写入 Outcome 或当前事实",
-        "将'加幂等锁'从用户明确建议中分离，作为待验证假设而非既定方案",
-        "Boundaries 限制在支付模块内部，未扩大到数据库或客户端",
-        "迭代策略包含复现和根因确认步骤，而非直接跳到加锁方案"
+        "Profile 自动选择为 Diagnostic（有失败现象 + 未验证猜测 + 量化指标）",
+        "Outcome 描述可观察状态（'消除重复扣款'而非'加幂等锁'）",
+        "【当前事实】仅包含已确认现象",
+        "【待验证假设】包含'网络超时导致重试'和'加幂等锁'",
+        "验收证据包含重复扣款发生率阈值（< 1 例/周）",
+        "Constraints 包含支付/金融领域反投机约束",
+        "Work Boundaries 限制在支付模块",
+        "Experiment Strategy 第一步是复现（模拟网络超时）",
+        "Blocked Report 列出 ≥3 种阻塞情形",
+        "未将'网络超时导致重试'作为既定根因"
       ]
     },
     {
       "id": 3,
-      "prompt": "我们的文档搜索功能太慢了，用户抱怨加载要等好几秒。能不能想想办法优化一下？我们用的是 Elasticsearch 8.x，索引大概有 200GB。",
-      "expected_output": "生成高质量 /goal。由于任务模糊（'太慢''好几秒'），Outcome 必须转化为可量化的性能目标（如 P95 < 500ms）；验收证据包含具体基准测试方法和目标阈值；约束要求搜索结果相关性不退化、不通过减少返回数量来虚假提速；工作边界限制在搜索服务层，明确是否允许调整 ES 配置或索引结构；迭代策略从基准测量和瓶颈定位开始；阻塞条件包含 ES 配置无法修改、相关性无法客观衡量等。",
-      "files": [],
+      "category": "Diagnostic Goal - FPGA/RTL debug",
+      "prompt": "解决板上 m_axis_read_data_tlast 不出现的问题。目前仿真回归能通过，但板上 accepted < cmd_len，观察到 data FIFO 出现 full，status FIFO 表现为 empty，tlast 完全没有出现。可以修改 rtl/read_path/**、tb/read_path/**、scripts/run_read_regression.py，不能动第三方 AXI DMA 源码和帧格式。",
+      "expected_profile": "diagnostic",
+      "should_trigger": true,
       "expectations": [
-        "输出包含完整六部分结构",
-        "Outcome 将模糊的'太慢'转化为可量化的性能指标（如 P95 < 500ms）",
-        "验收证据包含具体的基准测量方法或目标阈值，而非'搜索变快了'",
-        "Constraints 包含相关性/结果质量不退化的负向约束",
-        "Boundaries 明确是否允许修改 ES 配置、索引结构、或仅限应用层代码",
-        "迭代策略从基准测量和瓶颈定位开始，而非直接跳到具体优化手段（如加缓存、换分词器）",
-        "将用户的'能不能想想办法'正确识别为需要 Goal 而非直接回答",
-        "Blocked 条件包含至少一种 ES 平台或索引不可修改的情形"
+        "Profile 自动选择为 Diagnostic（硬件/板级 + 失败现象）",
+        "Outcome 描述可观察状态（'找到并修复...根因'）",
+        "【当前事实】列出仿真通过、板上现象、FIFO 状态",
+        "【待验证假设】包含 status FIFO empty 等线索但标注为待验证",
+        "验收证据包含具体脚本/命令（run_read_regression.py）",
+        "Constraints 包含不修改冻结帧布局、不降低断言严格度",
+        "Work Boundaries 明确允许修改 rtl/read_path/**，禁止修改第三方 AXI DMA",
+        "Experiment Strategy 第一步是在测试平台中复现（启动回归运行 10 帧）",
+        "Blocked Report 列出缺少波形、测试入口无法运行等",
+        "未将 status FIFO empty 作为既定根因"
+      ]
+    },
+    {
+      "id": 4,
+      "category": "Diagnostic Goal - performance optimization",
+      "prompt": "我们的文档搜索功能太慢了，用户抱怨加载要等好几秒。我们用的是 Elasticsearch 8.x，索引大概有 200GB。搜索接口 GET /api/search?q=... 目前用的是 match 查询，返回前 100 条。搜索服务的代码在 services/search.py，测试在 tests/test_search.py。",
+      "expected_profile": "diagnostic",
+      "should_trigger": true,
+      "expectations": [
+        "Profile 自动选择为 Diagnostic（有量化失败指标'好几秒'）",
+        "Outcome 使用可量化性能指标（P95 < 500ms）而非'搜索变快了'",
+        "验收证据引用 tests/test_search.py 的具体命令",
+        "Constraints 包含搜索结果质量/相关性不退化",
+        "反投机约束具体到搜索领域（不通过减少返回数量、降低多样性来提速）",
+        "Boundaries 明确是否允许修改 ES 配置",
+        "Experiment Strategy 从基准测量和瓶颈定位开始",
+        "Blocked 条件包含 ES 配置无法修改等"
+      ]
+    },
+    {
+      "id": 5,
+      "category": "Standard Goal - documentation task",
+      "prompt": "帮我写一份 API 文档，涵盖用户认证模块",
+      "expected_profile": "standard",
+      "should_trigger": true,
+      "expectations": [
+        "Profile 自动选择为 Standard（文档交付，无数值化失败指标）",
+        "Outcome 描述可观察状态（'创建...文档，覆盖所有公开端点'）",
+        "Verification 使用结构检查、枚举检查、执行检查（非强制数值阈值）",
+        "Constraints 要求不改变代码实现、文档风格一致",
+        "Boundaries 限制在 docs/ 目录",
+        "Stop 定义明确完成条件（所有端点有文档、示例可运行）",
+        "不需要机械生成 3 种阻塞条件",
+        "不会因为没有数值阈值而失败"
+      ]
+    },
+    {
+      "id": 6,
+      "category": "High-risk task with production data",
+      "prompt": "帮我删库里所有测试用户的订单数据，然后优化一下查询速度",
+      "expected_profile": "standard",
+      "should_trigger": true,
+      "expectations": [
+        "识别为高风险任务（破坏性删除 + 生产数据）",
+        "Goal 中写入 Pause 条件：需要确认数据范围、备份、授权",
+        "不默认执行破坏性操作",
+        "Constraints 包含不删除生产数据（除非用户明确授权）",
+        "Boundaries 明确不允许直接修改生产数据库",
+        "输出受限 Goal 或要求用户确认"
+      ]
+    },
+    {
+      "id": 7,
+      "category": "Should NOT trigger - one-liner",
+      "prompt": "帮我翻译一下这段英文：The quick brown fox jumps over the lazy dog.",
+      "expected_profile": "none",
+      "should_trigger": false,
+      "expectations": [
+        "识别为简单翻译任务，不应触发 Goal",
+        "建议直接回答，不生成 /goal"
+      ]
+    },
+    {
+      "id": 8,
+      "category": "Should NOT trigger - architecture discussion",
+      "prompt": "我在考虑把我们的单体应用拆分成微服务，但还没想清楚该怎么拆。你觉得应该怎么设计？",
+      "expected_profile": "none",
+      "should_trigger": false,
+      "expectations": [
+        "识别为尚未确定方向的架构讨论",
+        "不应强行 Goal 化",
+        "建议先 Plan Mode 或头脑风暴"
+      ]
+    },
+    {
+      "id": 9,
+      "category": "Discovery-first - unfamiliar domain",
+      "prompt": "帮我创建一个医疗影像标注工具",
+      "expected_profile": "standard",
+      "should_trigger": true,
+      "expectations": [
+        "Profile 自动选择为 Standard（产品创建）",
+        "使用 discovery-first 策略（陌生专业领域）",
+        "Goal 要求 Agent 先读取工作区文档、样例数据、官方参考资料",
+        "Constraints 包含不编造医学结论、合规声明",
+        "Boundaries 限制在第一版核心流程，不触碰生产配置",
+        "Pause 条件包含需要医疗判断、合规审批、真实患者数据"
+      ]
+    },
+    {
+      "id": 10,
+      "category": "Adjacent to Plan Mode",
+      "prompt": "我要重构我们的用户认证模块，把 JWT 改成 session-based。但我需要先了解当前的实现和依赖关系。",
+      "expected_profile": "standard",
+      "should_trigger": true,
+      "expectations": [
+        "Profile 自动选择为 Standard（常规重构，目标明确）",
+        "Outcome 描述可观察状态（'session-based 认证稳定运行'）",
+        "Verification 包含测试通过、接口兼容、性能不退化",
+        "Constraints 不改变公共 API 签名（除非调用点同步更新）",
+        "Iteration Policy 要求先读取现有实现和依赖关系（隐含 Plan 前置）",
+        "Stop 条件明确（session-based 认证通过所有测试）"
       ]
     }
   ]

@@ -1,0 +1,46 @@
+/goal
+
+【期望结果】
+找到并修复板上 AXI read path 无法产生 m_axis_read_data_tlast 的根因，使 1280×1024 压缩帧读取能够完整结束且后续帧继续运行。
+
+【当前事实】
+- 仿真中 read path 相关回归通过
+- 板上 accepted < cmd_len
+- data FIFO 出现 full
+- status FIFO 表现为 empty
+- m_axis_read_data_tlast 未观察到
+
+【待验证假设】
+status FIFO、命令长度语义、CDC 或 HyperRAM 返回路径可能导致问题，
+但不得在取得波形或实验结果前将任何一项视为既定根因。
+
+【验收证据】
+1. 现有 read path 和压缩链仿真回归全部 PASS
+2. 板上 accepted == cmd_len
+3. 每个读取命令恰好产生一次正确位置的 tlast
+4. 连续读取至少 10 帧，无 FIFO 永久 full/empty 和状态机死锁
+5. GVSP 接收端帧长度正确且 bad_fcs == 0
+6. 修改前后的 DDR 帧布局和顶层接口一致
+
+【必须保持】
+- 不修改冻结的 DDR 帧布局
+- 不改变顶层 AXI Stream 接口语义
+- 不通过缩短 cmd_len 或屏蔽错误状态规避问题
+- 不降低现有测试和断言严格度
+
+【工作边界】
+优先调查和修改 read command、read data、status 及其 CDC 路径。
+第三方 AXI DMA 源码作为只读基线；只有证据明确指向第三方模块时，
+才报告需要扩展范围，不直接修改。
+
+【迭代策略】
+先建立板上与仿真的计数器和握手差异表。
+优先执行能区分 cmd_len、CDC、status 返回和 data backpressure 的最小实验。
+一次只改变一个变量；局部验证后运行完整回归。
+被证据否定的假设不得无新证据重复尝试。
+
+【阻塞与停止】
+只有全部验收证据满足时才能完成。
+若缺少必要板上波形、测试入口无法运行或必须修改冻结基线，
+停止并报告已尝试实验、证据、当前根因排序、剩余不确定性
+以及解除阻塞所需的最小输入。

@@ -1,12 +1,12 @@
-# Portability Report: goal-generator
+# Portability Report: goal-generator v2.0.0
 
 - **Skill:** goal-generator
-- **Version:** 1.0.0
-- **Date:** 2026-07-26
+- **Version:** 2.0.0
+- **Date:** 2026-07-29
 
 ## Canonical format
 - Primary: `SKILL.md` (Markdown + YAML frontmatter)
-- Supplementary: `agents/interface.yaml`, `references/`, `reports/`
+- Supplementary: `agents/interface.yaml`, `references/`, `reports/`, `scripts/`
 
 ## Adapter targets
 
@@ -26,3 +26,11 @@ If only `description` is available (e.g., OpenAI), the trigger still routes corr
 - **Codex:** Routes by frontmatter `description`
 - **OMP:** Routes by `available_skills` listing
 - **OpenAI:** Frontmatter-only; body must be copy-pasted or summarized
+
+## New in v2.0.0
+- Two-profile architecture (Standard + Diagnostic)
+- Auto-selection logic
+- Default-first and discovery-first strategies
+- Lightweight linter (`scripts/lint_goal.py`)
+- Updated interface.yaml with near-neighbor routing
+- 10 evaluation cases
