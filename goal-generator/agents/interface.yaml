@@ -5,7 +5,7 @@
 # and trust boundary.
 
 name: goal-generator
-version: "2.0.1"
+version: "2.0.2"
 archetype: library
 mode: production
 
@@ -43,7 +43,7 @@ constraints:
   - "一个 Goal 只能有一个主完成结果"
   - "低风险不确定性默认先推进，不拦用户填表"
   - "陌生领域使用 discovery-first，不编造领域规则"
-  - "用户提供的指标必须转化为验收阈值"
+  - "用户明确提供的目标指标（confirmed target）必须进入验收；仅提供 baseline 时不得自动推导为目标"
   - "事实与假设严格分离（Diagnostic Goal）"
   - "反投机约束必须领域具体"
   - "迭代策略必须以可执行的复现为第一步（Diagnostic Goal）"
@@ -84,7 +84,7 @@ decision_points:
   - "Profile 选择：根据任务特征自动选择 Standard 或 Diagnostic"
   - "信息状态：判断是否可安全默认，还是必须追问"
   - "风险等级：High 风险必须暂停确认"
-  - "用户提供了指标：必须转化为验收阈值"
+  - "用户提供了数字：区分 confirmed target（写入验收）、baseline（只写入事实）、proposed target（需依据并待用户确认）"
   - "多目标混合：判断是否拆分"
 
 failure_modes:
@@ -96,8 +96,8 @@ failure_modes:
     guard: "规则 2：每项必须包含具体检查动作 + 通过阈值"
   - mode: "反投机约束泛泛"
     guard: "规则 4：必须按领域写出具体的投机手段"
-  - mode: "用户指标未转化"
-    guard: "规则 3：用户提供的目标数字必须推导为验收阈值"
+  - mode: "用户目标指标未进入验收"
+    guard: "规则 3：用户明确给出的目标指标（confirmed target）必须进入验收阈值；baseline 不得静默转换"
   - mode: "baseline 静默转换为目标"
     guard: "规则 3：用户 baseline 只能写入 Current Facts，不得自动推导为目标"
   - mode: "迭代策略以分析为第一步（Diagnostic）"
@@ -114,7 +114,7 @@ failure_modes:
     guard: "规则 6：一个 Goal 只能有一个主完成结果；多个目标应拆分"
 
 evals:
-  - "evals/evals.json — 10 个用例（覆盖 Profile 选择、触发/不触发、事实假设分离、默认策略、discovery-first、验收质量、反投机约束、停止阻塞条件、输出长度和可复制性、baseline/target 分离）"
+  - "evals/evals.json — 12 个用例（输入与 references 不同；覆盖强触发正例、弱信号单独不触发负例、Profile 选择、事实假设分离、default/discovery 策略、验收质量、反投机约束、停止阻塞、baseline/target 分离、多目标拆分）"
   - "scripts/lint_goal.py — 输出契约机器校验"
 
 output_risk:
@@ -122,7 +122,7 @@ output_risk:
 
 trust_boundary:
   owner: "zhangjl"
-  maturity: "validated-local (content-ready; holdout eval and blind A/B pending)"
+  maturity: "candidate-local (linter/template/section/eval/version consistency machine-checked via scripts/run_lint_tests.py; holdout eval, blind A/B, route-confusion and adversarial tests pending)"
   review_cadence: "per-major-change"
   rollback_boundary: "/goal 生成为纯文本操作，无副作用；回滚即删除生成的文件"
   governed: false

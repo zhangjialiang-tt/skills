@@ -1,4 +1,4 @@
-# Output Risk Profile: goal-generator v2.0.1
+# Output Risk Profile: goal-generator v2.0.2
 
 ## Artifact family
 Text-only Markdown contract (the `/goal`). No visual artifact; the deliverable is a structured goal document that feeds into agent execution.
@@ -12,12 +12,12 @@ Text-only Markdown contract (the `/goal`). No visual artifact; the deliverable i
 | Hypothesis presented as confirmed fact (e.g., "root cause is X") | Medium | Skill has dedicated Rule 1 (fact/hypothesis separation) + failure mode #1; linter warns if facts block contains hypothesis language |
 | Missing anti-speculation constraints | High (without skill) | Skill makes this a mandatory part of Constraints section + failure mode #3; linter warns if constraints lack anti-gaming language |
 | Missing blocked stop conditions | Medium | Skill failure mode #5; Diagnostic Goal requires ≥3 blocking conditions + report content |
-| Missing business-metric threshold when user provides one | Medium | Skill Rule 3: if user mentions a metric, verification must include a target threshold; linter warns if metrics exist but no threshold |
+| Missing provenance for a numeric target | Medium | Skill Rule 3: confirmed targets enter verification; baselines stay facts; proposed targets need a derivation (SLO/baseline/industry) or measure-first. Provenance is a manual gate (not regex) |
 | Over-specifying implementation path | Low | Skill failure mode #6 + "优先使用行为标准" guidance |
 | Profile misselection (Standard vs Diagnostic) | Medium | Skill has automatic selection rules; default to Standard with explicit assumption |
 | All tasks default to "local MVP" | Low (after fix) | Skill explicitly forbids this; default strategy varies by task type |
 | Mechanical generation of meaningless blocking conditions | Low (after fix) | Standard Goal only needs completion + key pause; Diagnostic needs full blocked report |
-| Baseline silently converted to target | Medium (new in v2.0.1) | Skill Rule 3 explicitly forbids this; failure mode #7 added |
+| Baseline silently converted to target | Medium (addressed v2.0.1+) | Skill Rule 3 forbids it; linter W06 coercion REMOVED so a baseline-only goal passes `--strict` instead of being forced to fabricate a threshold |
 | Trigger too broad (weak signals) | Medium (new in v2.0.1) | Skill separates strong vs weak triggers; failure mode #12 added |
 | Multi-goal mixing | Medium (new in v2.0.1) | Skill Rule 6: single main result per Goal; failure mode #13 added |
 | Cross-domain example contamination | Low (new in v2.0.1) | Failure mode #11 added; examples audited for contamination |
@@ -32,7 +32,7 @@ Text-only Markdown contract (the `/goal`). No visual artifact; the deliverable i
 | 4 | No dangerous vague instructions | ✅ lint_goal.py W02 |
 | 5 | Verification contains concrete evidence | ✅ lint_goal.py W04 |
 | 6 | No over-wide boundaries | ✅ lint_goal.py W05 |
-| 7 | User metrics → thresholds | ✅ lint_goal.py W06 |
+| 7 | Baseline not forced to a fabricated target | ✅ lint_goal.py (W06 coercion removed; baseline-only passes `--strict`) |
 | 8 | Anti-gaming constraints present | ✅ lint_goal.py W09 |
 | 9 | Stop condition not "continue until done" | ✅ lint_goal.py E04 |
 | 10 | Stop condition present (separate from Pause) | ✅ lint_goal.py E05 |
@@ -44,6 +44,9 @@ Text-only Markdown contract (the `/goal`). No visual artifact; the deliverable i
 | 16 | Default strategy appropriate for task type | ❌ Manual check only |
 | 17 | Baseline not silently converted to target | ❌ Manual check only |
 | 18 | Single main result per Goal | ❌ Manual check only |
+| 19 | Canonical SKILL templates pass linter `--strict` | ✅ scripts/run_lint_tests.py |
+| 20 | Section fields do not bleed into one another | ✅ scripts/run_lint_tests.py |
+| 21 | All formal files declare one version | ✅ scripts/run_lint_tests.py |
 
 ## Linter modes
 

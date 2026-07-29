@@ -34,6 +34,24 @@
 - 任务目标是创建新东西 → Standard
 - 无法判断时默认 Standard 并显式声明假设
 
+## 触发规则（强触发 vs 弱信号）
+
+**只有用户显式要求生成 Goal 时才触发**（强触发）：
+- "帮我生成 Goal"、"写一个 goal"、"把下面任务变成 goal"、"Goal 化"
+- "设计目标契约"、"帮我定义完成条件"、"需要 /goal"、"不要执行，只生成执行目标"
+
+**弱信号仅用于判断 Profile，不单独触发**：
+- "修复 X 问题"、"找到根因"、"优化性能"、"调查现象"、"报错/挂死/太慢"、"FPGA/RTL"
+- 例：用户说"修复 tlast 不出现的问题"但未要求生成 Goal → 直接调试，不生成 Goal。
+
+### 三轴判断
+
+每个 Goal 由三轴共同决定：任务性质（Standard / Diagnostic）× 信息状态（Sufficient / Defaultable / Blocked / Discovery-first）× 风险等级（Low / Medium / High）。High 风险（生产数据、凭证、破坏性操作、法律/医疗/金融）必须暂停确认或生成 discovery-first Goal。
+
+### 单一主结果
+
+一个 Goal 只能有一个主完成结果。多个结果若需要不同的验证方式、修改边界或风险等级，必须拆分为多个 Goal。
+
 ## 什么时候使用
 
 **适合 → 生成 Goal：**
@@ -56,9 +74,12 @@
 
 每项验收证据包含：具体检查动作（命令/脚本/测试）+ 通过阈值（数值或可观察条件）。
 
-### 用户指标转化为验收阈值
+### baseline 与目标分离
 
-如果用户提到了具体数字（如"每周 3-5 例"、"P95 太高"），验收证据必须包含该指标的目标阈值，且必须基于用户数字推导。
+用户给出的数字要区分类型：
+- **Confirmed target**（用户明确目标，如"降到 X 以下"、"不超过 Y"）→ 直接写入验收阈值。
+- **Current baseline**（当前状态，如"每周 3-5 例"、"好几秒"）→ 只写入事实，不得自动转换成目标。
+- **Proposed target**（Skill 推荐）→ 必须携带推导依据（现有 SLO / 真实基线 / 行业或体验目标）；无依据时先测量并提出 2-3 个候选，由用户确认，不编造具体数字。
 
 ### 领域相关反投机约束
 
@@ -91,7 +112,9 @@
 ## 轻量校验工具
 
 ```bash
-python3 scripts/lint_goal.py <goal-file> [<goal-file> ...]
+python3 scripts/lint_goal.py <goal-file> [<goal-file> ...]   # 默认：WARNING 不致败
+python3 scripts/lint_goal.py --strict <goal-file> [...]      # 严格：WARNING 升级为 ERROR
+python3 scripts/run_lint_tests.py                            # 契约一致性测试（canonical 模板/夹具/分段/版本）
 ```
 
 校验覆盖：
@@ -102,11 +125,11 @@ python3 scripts/lint_goal.py <goal-file> [<goal-file> ...]
 - 是否存在过宽的修改边界
 - Verification 是否包含具体检查动作或证据
 - Diagnostic Goal 是否正确区分事实与假设
-- 用户提供指标时是否进入验收条件
+- baseline 与目标分离：baseline 不会被强制转换成数字目标（已移除 W06 阈值强制）
 - 是否有明确 Stop 条件
 - 是否有必要的 Pause/Blocked 条件
 
-**注意：** linter 是结构检查器，不是语义判断器。WARNING 是建议性的，ERROR 是结构性失败。
+**注意：** linter 是结构检查器，不是语义判断器。接受三种标签写法（`验证：`、`Verification（验证）：`、`【验收证据】`），且各段不会串入后续字段。WARNING 是建议性的，ERROR 是结构性失败；`--strict` 把 WARNING 升级为 ERROR。目标数字的来源是否合理（用户目标 / SLO / 建议待确认）属于语义判断，需人工复核。
 
 ## 示例
 
@@ -124,6 +147,10 @@ python3 scripts/lint_goal.py <goal-file> [<goal-file> ...]
 - 不能保证生成的 Goal 在所有 Agent 环境下都能完美执行
 - 静态 linter 无法可靠判断 Outcome 是否真正描述了可观察状态（仅做长度和关键词提示）
 - 不熟悉的领域可能生成 discovery-first Goal，需要用户提供权威信息
+
+## 成熟度
+
+当前为 **candidate-local**：linter 与 canonical 模板、夹具、分段解析、版本一致性已由 `scripts/run_lint_tests.py` 机器校验。尚未完成：触发 holdout 评测、盲测 A/B、邻域路由混淆检查、对抗评测（baseline-as-target、多目标混合、跨领域污染）。在这些证据补齐前，不应宣称 production-ready / governed。
 
 ## License
 

@@ -1,118 +1,141 @@
 {
   "skill_name": "goal-generator",
-  "version": "2.0.0",
-  "description": "8 evaluation cases covering: Profile selection, trigger/non-trigger, fact-hypothesis separation, default strategy, discovery-first, verification quality, anti-gaming constraints, stop/block conditions, and output length/copy-readiness.",
+  "version": "2.0.2",
+  "description": "12 evaluation cases (inputs deliberately distinct from references/). Coverage: explicit strong-trigger positives, weak-signal-only NON-trigger negatives, Standard vs Diagnostic profile selection, fact/hypothesis separation, baseline/target separation (no silent baseline->target), default-first, discovery-first, multi-goal split, anti-gaming, and stop/pause. Positives always contain an explicit Goal request; weak signals alone must NOT trigger.",
   "evals": [
     {
       "id": 1,
-      "category": "Standard Goal - fuzzy product task",
-      "prompt": "帮我做一个简单的桌面工具",
+      "category": "Standard Goal - fuzzy product task (explicit request)",
+      "prompt": "把下面任务变成 goal：做一个本地的 Markdown 笔记整理工具",
       "expected_profile": "standard",
       "should_trigger": true,
       "expectations": [
-        "Profile 自动选择为 Standard（而非 Diagnostic）",
+        "强触发（'把下面任务变成 goal'）命中，触发 Goal Generator",
+        "Profile 自动选择为 Standard",
         "使用 default-first 策略，默认本地 MVP + 核心流程",
         "提供默认选择理由",
         "提供最多 3 个编号调整项",
         "Outcome 描述可观察状态（'创建...工具'而非'分析需求'）",
         "Verification 包含具体检查动作",
-        "Constraints 包含反投机约束",
+        "Constraints 至少包含不变量；非-gameable 任务不强制 anti-gaming",
         "Boundaries 明确允许/禁止范围",
-        "Stop 有明确完成条件",
-        "Pause 列出高风险/需授权的情形",
-        "可直接复制的 /goal 代码块"
+        "Stop 有明确完成条件；Pause 列出高风险/需授权情形",
+        "输出可直接复制的 /goal"
       ]
     },
     {
       "id": 2,
-      "category": "Diagnostic Goal - bug with unverified hypothesis",
-      "prompt": "我们的支付系统最近偶尔会出现重复扣款的问题。客服说是因为网络超时导致客户端重试引起的，我觉得应该加个幂等锁。重复扣款的报告大约有每周 3-5 例，主要是移动端用户。测试可以用 pytest tests/test_payment.py，基准在 benchmarks/payment_bench.py。数据库是 PostgreSQL 14，后端是 Python/FastAPI。",
+      "category": "Diagnostic Goal - bug with unverified hypothesis (explicit request)",
+      "prompt": "帮我生成 Goal：订单导出任务偶尔卡死在约 50%，日志停在 writing csv。有人说是文件锁，我觉得加超时就行。大约每周 2-3 次，主要是大租户。数据库 PostgreSQL 14，后端 Python。测试可以用 pytest tests/test_export.py。",
       "expected_profile": "diagnostic",
       "should_trigger": true,
       "expectations": [
-        "Profile 自动选择为 Diagnostic（有失败现象 + 未验证猜测 + 量化指标）",
-        "Outcome 描述可观察状态（'消除重复扣款'而非'加幂等锁'）",
-        "【当前事实】仅包含已确认现象",
-        "【待验证假设】包含'网络超时导致重试'和'加幂等锁'",
-        "验收证据包含重复扣款发生率阈值（< 1 例/周）",
-        "Constraints 包含支付/金融领域反投机约束",
-        "Work Boundaries 限制在支付模块",
-        "Experiment Strategy 第一步是复现（模拟网络超时）",
+        "强触发命中，Profile 自动选择为 Diagnostic（失败现象 + 未验证猜测 + 量化指标）",
+        "Outcome 描述可观察状态（'消除导出卡死'而非'加超时'）",
+        "【当前事实】仅包含已确认现象（卡死在 50%、日志停在 writing csv、每周 2-3 次）",
+        "【待验证假设】包含'文件锁'与'加超时'，均标注待验证",
+        "baseline '每周 2-3 次' 只写入事实，不静默转换为验收目标；完成目标标注为待测量/用户确认",
+        "Constraints 包含导出领域 anti-gaming（如不通过跳过大数据量用例或截断导出虚假达成）",
+        "Work Boundaries 限制在导出模块",
+        "Experiment Strategy 第一步是复现（构造大数据量导出触发卡死）",
         "Blocked Report 列出 ≥3 种阻塞情形",
-        "未将'网络超时导致重试'作为既定根因"
+        "未将'文件锁'作为既定根因"
       ]
     },
     {
       "id": 3,
-      "category": "Diagnostic Goal - FPGA/RTL debug",
-      "prompt": "解决板上 m_axis_read_data_tlast 不出现的问题。目前仿真回归能通过，但板上 accepted < cmd_len，观察到 data FIFO 出现 full，status FIFO 表现为 empty，tlast 完全没有出现。可以修改 rtl/read_path/**、tb/read_path/**、scripts/run_read_regression.py，不能动第三方 AXI DMA 源码和帧格式。",
+      "category": "Diagnostic Goal - hardware/board debug (explicit request)",
+      "prompt": "把下面任务变成 goal：SPI 从机采样数据偶发错位，仿真回归能通过，但板上 CRC 校验错，观察到 MISO 在时钟边沿附近抖动。可以修改 rtl/spi/**、tb/spi/**、scripts/run_spi_test.py，不能动第三方 PHY 源码和帧格式。",
       "expected_profile": "diagnostic",
       "should_trigger": true,
       "expectations": [
-        "Profile 自动选择为 Diagnostic（硬件/板级 + 失败现象）",
-        "Outcome 描述可观察状态（'找到并修复...根因'）",
-        "【当前事实】列出仿真通过、板上现象、FIFO 状态",
-        "【待验证假设】包含 status FIFO empty 等线索但标注为待验证",
-        "验收证据包含具体脚本/命令（run_read_regression.py）",
-        "Constraints 包含不修改冻结帧布局、不降低断言严格度",
-        "Work Boundaries 明确允许修改 rtl/read_path/**，禁止修改第三方 AXI DMA",
-        "Experiment Strategy 第一步是在测试平台中复现（启动回归运行 10 帧）",
+        "强触发命中，Profile 自动选择为 Diagnostic（硬件/板级 + 失败现象）",
+        "Outcome 描述可观察状态（'找到并修复...根因，板上 CRC 正确'）",
+        "【当前事实】列出仿真通过、板上 CRC 错、MISO 边沿抖动",
+        "【待验证假设】包含边沿抖动等线索但标注为待验证",
+        "验收证据包含具体脚本/命令（run_spi_test.py）",
+        "Constraints 包含不修改冻结帧格式、不降低断言严格度",
+        "Work Boundaries 明确允许 rtl/spi/**，禁止第三方 PHY 源码",
+        "Experiment Strategy 第一步是在测试平台复现",
         "Blocked Report 列出缺少波形、测试入口无法运行等",
-        "未将 status FIFO empty 作为既定根因"
+        "未将 MISO 边沿抖动作为既定根因"
       ]
     },
     {
       "id": 4,
-      "category": "Diagnostic Goal - performance optimization",
-      "prompt": "我们的文档搜索功能太慢了，用户抱怨加载要等好几秒。我们用的是 Elasticsearch 8.x，索引大概有 200GB。搜索接口 GET /api/search?q=... 目前用的是 match 查询，返回前 100 条。搜索服务的代码在 services/search.py，测试在 tests/test_search.py。",
+      "category": "Diagnostic Goal - performance optimization (explicit request)",
+      "prompt": "帮我定义完成条件：列表页接口用户反馈很慢，MySQL 8，单表约 5000 万行，GET /api/list 目前走全表扫描。代码在 services/list.py，测试在 tests/test_list.py。",
       "expected_profile": "diagnostic",
       "should_trigger": true,
       "expectations": [
-        "Profile 自动选择为 Diagnostic（有量化失败指标'好几秒'）",
-        "Outcome 使用可量化性能指标（P95 < 500ms）而非'搜索变快了'",
-        "验收证据引用 tests/test_search.py 的具体命令",
-        "Constraints 包含搜索结果质量/相关性不退化",
-        "反投机约束具体到搜索领域（不通过减少返回数量、降低多样性来提速）",
-        "Boundaries 明确是否允许修改 ES 配置",
-        "Experiment Strategy 从基准测量和瓶颈定位开始",
-        "Blocked 条件包含 ES 配置无法修改等"
+        "强触发命中，Profile 自动选择为 Diagnostic（性能优化 + 失败现象）",
+        "Outcome 描述可观察状态，且不编造具体延迟数字；响应时间目标标注为待基线测量后由用户确认",
+        "验收证据引用 tests/test_list.py 的具体命令",
+        "Constraints 包含结果集/排序不退化",
+        "anti-gaming 具体到列表/搜索领域（不通过减少返回数量、限制分页、降低结果完整性来虚标提速）",
+        "Boundaries 明确是否允许修改索引/表结构",
+        "Experiment Strategy 从基线测量和瓶颈定位开始",
+        "Blocked 条件包含索引/表结构不可变、无法客观衡量等"
       ]
     },
     {
       "id": 5,
-      "category": "Standard Goal - documentation task",
-      "prompt": "帮我写一份 API 文档，涵盖用户认证模块",
+      "category": "Standard Goal - documentation task (explicit request)",
+      "prompt": "写一个 goal：给计费模块写一份 API 文档",
       "expected_profile": "standard",
       "should_trigger": true,
       "expectations": [
-        "Profile 自动选择为 Standard（文档交付，无数值化失败指标）",
+        "强触发命中，Profile 自动选择为 Standard（文档交付，无数值化失败指标）",
         "Outcome 描述可观察状态（'创建...文档，覆盖所有公开端点'）",
         "Verification 使用结构检查、枚举检查、执行检查（非强制数值阈值）",
         "Constraints 要求不改变代码实现、文档风格一致",
         "Boundaries 限制在 docs/ 目录",
         "Stop 定义明确完成条件（所有端点有文档、示例可运行）",
-        "不需要机械生成 3 种阻塞条件",
         "不会因为没有数值阈值而失败"
       ]
     },
     {
       "id": 6,
-      "category": "High-risk task with production data",
-      "prompt": "帮我删库里所有测试用户的订单数据，然后优化一下查询速度",
+      "category": "Multi-goal high-risk task - must split (explicit request)",
+      "prompt": "帮我把下面任务变成 goal：先清掉测试租户的脏数据，再给报表模块加一个导出为 Excel 的功能",
       "expected_profile": "standard",
       "should_trigger": true,
       "expectations": [
-        "识别为高风险任务（破坏性删除 + 生产数据）",
-        "Goal 中写入 Pause 条件：需要确认数据范围、备份、授权",
-        "不默认执行破坏性操作",
-        "Constraints 包含不删除生产数据（除非用户明确授权）",
-        "Boundaries 明确不允许直接修改生产数据库",
-        "输出受限 Goal 或要求用户确认"
+        "强触发命中",
+        "识别为两个不同主结果（破坏性删除 + 新功能），按单一主结果门禁拆分，而不是混成一个 Goal",
+        "给出两个拟拆分标题（Goal A 安全清理测试租户脏数据 / Goal B 报表导出 Excel）",
+        "高风险 Goal A 先进入确认：范围、环境、备份、授权，未确认前不生成可执行的最终删除契约",
+        "Goal B 非破坏性、信息充分，可独立生成完整 /goal",
+        "不默认执行破坏性操作"
       ]
     },
     {
       "id": 7,
-      "category": "Should NOT trigger - one-liner",
+      "category": "Should NOT trigger - weak signal only (bug, no Goal request)",
+      "prompt": "修复登录偶发 401 的问题，帮我查一下根因",
+      "expected_profile": "none",
+      "should_trigger": false,
+      "expectations": [
+        "'修复/找根因' 仅为弱信号，用户未显式要求生成 Goal",
+        "不应触发 Goal Generator，建议直接调试",
+        "不输出 /goal"
+      ]
+    },
+    {
+      "id": 8,
+      "category": "Should NOT trigger - weak signal only (performance, no Goal request)",
+      "prompt": "上传接口太慢了，帮我优化一下",
+      "expected_profile": "none",
+      "should_trigger": false,
+      "expectations": [
+        "'优化性能' 仅为弱信号，用户未显式要求生成 Goal",
+        "不应触发 Goal Generator，建议直接诊断/优化",
+        "不输出 /goal"
+      ]
+    },
+    {
+      "id": 9,
+      "category": "Should NOT trigger - one-liner translation",
       "prompt": "帮我翻译一下这段英文：The quick brown fox jumps over the lazy dog.",
       "expected_profile": "none",
       "should_trigger": false,
@@ -122,8 +145,8 @@
       ]
     },
     {
-      "id": 8,
-      "category": "Should NOT trigger - architecture discussion",
+      "id": 10,
+      "category": "Should NOT trigger - open architecture discussion",
       "prompt": "我在考虑把我们的单体应用拆分成微服务，但还没想清楚该怎么拆。你觉得应该怎么设计？",
       "expected_profile": "none",
       "should_trigger": false,
@@ -134,28 +157,28 @@
       ]
     },
     {
-      "id": 9,
-      "category": "Discovery-first - unfamiliar domain",
-      "prompt": "帮我创建一个医疗影像标注工具",
+      "id": 11,
+      "category": "Discovery-first - unfamiliar high-stakes domain (explicit request)",
+      "prompt": "帮我生成 Goal：做一个法律合同条款风险标注工具",
       "expected_profile": "standard",
       "should_trigger": true,
       "expectations": [
-        "Profile 自动选择为 Standard（产品创建）",
-        "使用 discovery-first 策略（陌生专业领域）",
-        "Goal 要求 Agent 先读取工作区文档、样例数据、官方参考资料",
-        "Constraints 包含不编造医学结论、合规声明",
+        "强触发命中，Profile 自动选择为 Standard（产品创建）",
+        "使用 discovery-first 策略（陌生且高风险专业领域）",
+        "Goal 要求 Agent 先读取工作区文档、样例数据、官方/权威参考资料",
+        "Constraints 包含不编造法律结论、合规声明、风险定性",
         "Boundaries 限制在第一版核心流程，不触碰生产配置",
-        "Pause 条件包含需要医疗判断、合规审批、真实患者数据"
+        "Pause 条件包含需要法律判断、合规审批、真实案件数据"
       ]
     },
     {
-      "id": 10,
-      "category": "Adjacent to Plan Mode",
-      "prompt": "我要重构我们的用户认证模块，把 JWT 改成 session-based。但我需要先了解当前的实现和依赖关系。",
+      "id": 12,
+      "category": "Standard Goal - bounded refactor adjacent to Plan (explicit request)",
+      "prompt": "把下面任务变成 goal：把鉴权从 JWT 改成 session-based，但我需要先了解当前的实现和依赖关系。",
       "expected_profile": "standard",
       "should_trigger": true,
       "expectations": [
-        "Profile 自动选择为 Standard（常规重构，目标明确）",
+        "强触发命中，Profile 自动选择为 Standard（有明确边界的重构）",
         "Outcome 描述可观察状态（'session-based 认证稳定运行'）",
         "Verification 包含测试通过、接口兼容、性能不退化",
         "Constraints 不改变公共 API 签名（除非调用点同步更新）",
