@@ -170,6 +170,8 @@ def main():
     if version is None:
         report["warnings"].append("InkOS CLI not found or version check failed.")
         report["version"] = None
+        report["review_only"] = True
+        report["warnings"].append("Unknown version → review-only mode. All writes blocked.")
     else:
         report["version"] = ".".join(map(str, version))
         lo, hi = SUPPORTED_VERSION_RANGE
@@ -203,7 +205,11 @@ def main():
     git_clean = check_git_clean(project_root)
     report["git_clean"] = git_clean
     if git_clean is False:
-        report["warnings"].append("Git working tree is dirty. Consider committing before modifications.")
+        report["blocked"] = True
+        report["errors"].append(
+            "Git working tree is dirty. Commit or stash before modifications "
+            "(otherwise verify_diff cannot isolate this session's changes)."
+        )
 
     # Output
     if args.json:
