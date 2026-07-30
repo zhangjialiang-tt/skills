@@ -1,0 +1,23 @@
+{
+  "skill_name": "doc-steward",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我刚在 docs/ 里新建了一份 SYSTEM_DESIGN.md（大概 2000 字，讲系统架构和组件边界）。帮我把它登记管理起来，并告诉我现在项目里有哪些受管文档、各自是什么状态。",
+      "expected_output": "将 SYSTEM_DESIGN.md 以 DRAFT 状态登记到 registry（doc_id 稳定、revision=1、status=DRAFT）；生成/更新 DOCS_DASHBOARD.md 列出所有受管文档的 L0 状态卡；不修改原文档内容；提示用户是否需要晋升状态（DRAFT→REVIEWING 需用户确认）。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "这轮开发我同时改了 docs/IMPLEMENTATION_PLAN.md 和 docs/TEST_STRATEGY.md，还新建了 docs/SCHEMA_CONTRACTS.md。帮我同步一下文档状态，我只需要知道现在哪些必须看、哪些扫一眼变化就行。",
+      "expected_output": "sync 检测到 3 份变化/新增文档；为每份生成 L0/L1/L2；按确定性分级算法输出三类：需要关注（带状态/变化/影响）、只需了解变化、本轮无需阅读；默认先呈现「需要关注」集，不倾倒完整长分析；FROZEN 文档若无变化则归入无需阅读。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "docs/PRODUCT_REPOSITIONING.md 现在被新的 docs/PRODUCT_REPOSITIONING_v2.md 替代了。把旧的标为已替代，并检查一下还有没有别的设计文档仍在依赖旧版。",
+      "expected_output": "supersede 属 Tier2，必须先取得用户明确批准才能执行；批准后原子完成：旧文档 SUPERSEDED + superseded_by 指向新文档@revision、新文档 supersedes 含旧、旧文档移出活跃阅读集、保留历史引用；扫描 depends_on 含旧文档的 ACTIVE/FROZEN 文档并标记为 stale_dependency 报告；不自动选择任何冲突事实源。",
+      "files": []
+    }
+  ]
+}

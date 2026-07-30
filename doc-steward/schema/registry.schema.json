@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://doc-steward/schema/registry.schema.json",
+  "title": "doc-steward registry",
+  "description": "权威元数据源 .doc-steward/registry.yaml 的 JSON Schema（Draft 2020-12）。约束直接来自 spec-frozen.md §1/§2。有效性绝不依据文件 mtime（本 schema 无 mtime 字段）。",
+  "type": "object",
+  "required": ["version", "config", "documents"],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+$",
+      "description": "registry 格式版本，如 1.0"
+    },
+    "config": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "document_roots": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["docs"]
+        },
+        "exclude": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "documents": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/document" }
+    }
+  },
+  "$defs": {
+    "document": {
+      "type": "object",
+      "required": ["doc_id", "path", "status", "revision", "content_hash", "updated_at", "decision"],
+      "additionalProperties": false,
+      "properties": {
+        "doc_id": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9-]+$",
+          "description": "稳定逻辑身份，文件改名/改内容都不变"
+        },
+        "title": { "type": "string" },
+        "path": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["design", "prd", "plan", "spec", "adr", "note", "other"],
+          "default": "other"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["DRAFT", "REVIEWING", "ACTIVE", "FROZEN", "SUPERSEDED", "ARCHIVED"]
+        },
+        "revision": { "type": "integer", "minimum": 1 },
+        "content_hash": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$",
+          "description": "文档内容 SHA-256"
+        },
+        "created_at": { "type": "string", "format": "date" },
+        "updated_at": { "type": "string", "format": "date" },
+        "assigned_domain": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "source_of_truth": {
+          "type": "boolean",
+          "default": false
+        },
+        "superseded_by": {
+          "type": ["string", "null"],
+          "default": null,
+          "pattern": "^.+@r\\d+$"
+        },
+        "supersedes": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "depends_on": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": []
+        },
+        "stale": { "type": "boolean", "default": false },
+        "stale_dependency": { "type": "boolean", "default": false },
+        "purpose": { "type": "string" },
+        "reading_hint": { "type": "string" },
+        "attention": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "level": {
+              "type": "string",
+              "enum": ["normal", "high"],
+              "default": "normal"
+            },
+            "note": { "type": "string" }
+          }
+        },
+        "archive": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "reason": { "type": ["string", "null"] },
+            "archived_at": { "type": ["string", "null"], "format": "date" },
+            "last_status": {
+              "type": ["string", "null"],
+              "enum": ["DRAFT", "REVIEWING", "ACTIVE", "FROZEN", "SUPERSEDED", "ARCHIVED"]
+            }
+          }
+        },
+        "decision": { "$ref": "#/$defs/decision" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "status": { "const": "SUPERSEDED" } } },
+          "then": {
+            "required": ["superseded_by"],
+            "properties": {
+              "superseded_by": {
+                "type": "string",
+                "pattern": "^.+@r\\d+$"
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "status": { "const": "ARCHIVED" } } },
+          "then": {
+            "required": ["archive"],
+            "properties": {
+              "archive": {
+                "required": ["reason", "archived_at", "last_status"]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "decision": {
+      "type": "object",
+      "required": ["by", "at", "reason"],
+      "additionalProperties": false,
+      "properties": {
+        "by": {
+          "type": "string",
+          "enum": ["user"],
+          "description": "Agent/Skill 自身不得作为决策主体（spec §1.4）"
+        },
+        "at": { "type": "string", "format": "date" },
+        "reason": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

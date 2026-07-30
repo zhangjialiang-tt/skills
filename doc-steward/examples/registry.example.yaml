@@ -1,0 +1,197 @@
+# doc-steward registry — 示例（非真实项目数据）
+# 机器可读校验：schema/registry.schema.json
+# 字段约束与条件规则见 references/registry-schema.md
+# 注意：日期字段一律写为带引号的 ISO 字符串（"YYYY-MM-DD"），registry 不存文件 mtime（不变量 I6）。
+
+version: "1.0"
+
+config:
+  document_roots:
+    - docs
+  exclude:
+    - docs/archive
+    - docs/generated
+
+documents:
+  # —— DRAFT：刚登记，内容未定型 ——
+  - doc_id: DOC-API-SPEC
+    title: "对外 API 规格草案"
+    path: "docs/api-spec.md"
+    type: design
+    status: DRAFT
+    revision: 1
+    content_hash: "b1946ac92492d2347c6235b4d2611184e58c503fa8e3a3a2b4a6b4e3c5f6a7b8"
+    created_at: "2026-07-20"
+    updated_at: "2026-07-20"
+    assigned_domain: [api]
+    source_of_truth: false
+    superseded_by: null
+    supersedes: []
+    depends_on: []
+    stale: false
+    stale_dependency: false
+    purpose: "定义 v1 对外接口的字段与错误码"
+    reading_hint: "先看「鉴权」与「限流」两节"
+    attention:
+      level: normal
+    decision:
+      by: user
+      at: "2026-07-20"
+      reason: "初次登记草案"
+
+  # —— REVIEWING：内容基本完成，存在待确认问题 ——
+  - doc_id: DOC-DATA-MODEL
+    title: "数据模型设计"
+    path: "docs/data-model.md"
+    type: design
+    status: REVIEWING
+    revision: 2
+    content_hash: "a1b2c3d4e5f60718293a4b5c6d7e8f9012233445566778899aabbccddeeff001"
+    created_at: "2026-07-18"
+    updated_at: "2026-07-25"
+    assigned_domain: [data-model]
+    source_of_truth: false
+    superseded_by: null
+    supersedes: []
+    depends_on:
+      - DOC-API-SPEC
+    stale: false
+    stale_dependency: false
+    purpose: "定义核心实体与关系"
+    attention:
+      level: high
+      note: "外键命名待架构组确认"
+    decision:
+      by: user
+      at: "2026-07-25"
+      reason: "内容完成，进入评审"
+
+  # —— ACTIVE + source_of_truth：当前有效事实源 ——
+  - doc_id: DOC-SYSTEM-DESIGN
+    title: "系统总体设计"
+    path: "docs/system-design.md"
+    type: design
+    status: ACTIVE
+    revision: 3
+    content_hash: "f0e1d2c3b4a5968778695a4b3c2d1e0f1a2b3c4d5e6f70819a0b1c2d3e4f5a6b"
+    created_at: "2026-06-30"
+    updated_at: "2026-07-26"
+    assigned_domain: [architecture]
+    source_of_truth: true
+    superseded_by: null
+    supersedes:
+      - DOC-SYSTEM-DESIGN-OLD@r1
+    depends_on: []
+    stale: false
+    stale_dependency: false
+    purpose: "系统分层、模块边界与关键约束"
+    reading_hint: "修改任何模块前先看「约束」节"
+    attention:
+      level: normal
+    decision:
+      by: user
+      at: "2026-07-10"
+      reason: "评审通过，提升为有效基线"
+
+  # —— FROZEN：阶段基线，未经显式决策不得修改 ——
+  - doc_id: DOC-RELEASE-PLAN
+    title: "v1.0 发布计划"
+    path: "docs/release-plan.md"
+    type: plan
+    status: FROZEN
+    revision: 4
+    content_hash: "11223344556677889900aabbccddeeff00112233445566778899aabbccddeeff"
+    created_at: "2026-05-01"
+    updated_at: "2026-06-01"
+    assigned_domain: [release]
+    source_of_truth: true
+    superseded_by: null
+    supersedes: []
+    depends_on:
+      - DOC-SYSTEM-DESIGN
+    stale: false
+    stale_dependency: false
+    purpose: "v1.0 里程碑与交付节奏"
+    attention:
+      level: normal
+    decision:
+      by: user
+      at: "2026-06-01"
+      reason: "版本范围冻结，未经解冻不得修改"
+
+  # —— SUPERSEDED：被 DOC-SYSTEM-DESIGN@r3 替代（I3：必含 superseded_by） ——
+  - doc_id: DOC-SYSTEM-DESIGN-OLD
+    title: "系统总体设计（旧版）"
+    path: "docs/archive/system-design-v0.md"
+    type: design
+    status: SUPERSEDED
+    revision: 1
+    content_hash: "deadbeef00112233445566778899aabbccddeeff00112233445566778899cafe"
+    created_at: "2026-04-01"
+    updated_at: "2026-07-10"
+    assigned_domain: [architecture]
+    source_of_truth: false
+    superseded_by: "DOC-SYSTEM-DESIGN@r3"
+    supersedes: []
+    depends_on: []
+    stale: false
+    stale_dependency: false
+    purpose: "已被 v3 总体设计替代"
+    attention:
+      level: normal
+    decision:
+      by: user
+      at: "2026-07-10"
+      reason: "由 DOC-SYSTEM-DESIGN@r3 正式替代"
+
+  # —— ARCHIVED：仅保留历史价值（I4：必含 archive 三元组） ——
+  - doc_id: DOC-LEGACY-NOTES
+    title: "早期调研笔记"
+    path: "docs/archive/legacy-notes.md"
+    type: note
+    status: ARCHIVED
+    revision: 1
+    content_hash: "cafe000112233445566778899aabbccddeeff00112233445566778899deadbee"
+    created_at: "2026-03-01"
+    updated_at: "2026-07-15"
+    assigned_domain: []
+    source_of_truth: false
+    superseded_by: null
+    supersedes: []
+    depends_on: []
+    stale: false
+    stale_dependency: false
+    purpose: "早期可行性调研，已无当前价值"
+    attention:
+      level: normal
+    archive:
+      reason: "调研结论已并入系统总体设计，归档备查"
+      archived_at: "2026-07-15"
+      last_status: DRAFT
+    decision:
+      by: user
+      at: "2026-07-15"
+      reason: "用户显式发起归档"
+
+# —— 冲突示意（同一 domain 两个 ACTIVE + source_of_truth）——
+# 真实 registry 不应出现此状态；validate_links.py 必须报告冲突而非自动二选一。
+#  - doc_id: DOC-SYSTEM-DESIGN-COMPETING
+#    title: "系统总体设计（竞争版）"
+#    path: "docs/system-design-competing.md"
+#    type: design
+#    status: ACTIVE
+#    revision: 1
+#    content_hash: "00112233445566778899aabbccddeeff00112233445566778899aabbccddee"
+#    created_at: "2026-07-12"
+#    updated_at: "2026-07-12"
+#    assigned_domain: [architecture]
+#    source_of_truth: true
+#    superseded_by: null
+#    supersedes: []
+#    depends_on: []
+#    stale: false
+#    stale_dependency: false
+#    decision:
+#      by: user
+#      at: "2026-07-12"
+#      reason: "竞争方案登记"
