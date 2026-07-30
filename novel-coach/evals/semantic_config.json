@@ -30,7 +30,8 @@
       "分析已出版作品",
       "推荐小说",
       "非小说类任务",
-      "只要鼓励不要批评"
+      "只要鼓励不要批评",
+      "具体 InkOS 项目的文件创建、修改、保存、同步或重写"
     ],
     "artifacts": [
       "创意",
@@ -283,6 +284,20 @@
         "轻点喷",
         "手下留情",
         "别太狠"
+      ]
+    },
+    "inkos_write_owner": {
+      "weight": 0.50,
+      "exclusive": true,
+      "phrases": [
+        "修改 InkOS",
+        "保存 InkOS",
+        "创建 InkOS 文件",
+        "write sync",
+        "rewrite InkOS",
+        "修改 story_frame",
+        "修改 volume_map",
+        "直接落盘"
       ]
     },
     "translate": {

@@ -22,6 +22,12 @@
     "只想要鼓励",
     "温柔一点",
     "别太严厉",
+    "修改 InkOS 项目",
+    "保存 InkOS 文件",
+    "write sync",
+    "rewrite InkOS",
+    "修改 story_frame",
+    "修改 volume_map",
     "帮我改改文字",
     "纠错",
     "校对"
@@ -141,6 +147,10 @@
     }
   ],
   "should_not_trigger": [
+    {
+      "text": "这个 InkOS 项目的世界观有一处要改，直接帮我修改 story_frame.md 并保存",
+      "family": "inkos_write_owner"
+    },
     {
       "text": "帮我写一段玄幻开头",
       "family": "write_body"

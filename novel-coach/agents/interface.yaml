@@ -4,11 +4,12 @@
 skill:
   name: novel-coach
   display_name: "网文魔鬼教练"
-  version: "1.1.0"
+  version: "1.2.0"
   lifecycle: production
   description: >
     以犀利、结果导向的风格质询作者的创作方案，通过四阶段流程（核心概念→人设压力→结构蓝图→局部打磨）
-    帮助作者想清楚再动笔。输出咨询建议和分析，不生成正文。
+    帮助作者想清楚再动笔。输出咨询建议和分析，不生成正文。具体 InkOS 项目的创建、修改、保存、同步
+    或重写由 inkos-story-steward 作为唯一写入 Owner；本 Skill 仅接受明确的只读评审或结构化委托评审。
 
 activation:
   mode: implicit
@@ -39,6 +40,12 @@ activation:
       - "推荐小说"
       - "只想要鼓励"
       - "温柔一点"
+      - "修改 InkOS 项目"
+      - "保存 InkOS 文件"
+      - "write sync"
+      - "rewrite InkOS"
+      - "修改 story_frame"
+      - "修改 volume_map"
 
 modes:
   - name: CHALLENGE
@@ -48,6 +55,9 @@ modes:
   - name: FOCUS
     display_name: "聚焦模式"
     description: "针对指定内容直接诊断，适合卡文/具体问题"
+  - name: DELEGATED_REVIEW
+    display_name: "委托评审模式"
+    description: "根据 CoachReviewRequest 只评审指定阶段和构件，不启动完整流程、不写文件、不改变项目状态"
 
 output:
   type: conversational

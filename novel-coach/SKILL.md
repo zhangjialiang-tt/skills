@@ -1,6 +1,6 @@
 ---
 name: novel-coach
-description: "网文创作魔鬼教练：以犀利、一针见血、结果导向的风格质询作者的创作方案，通过四阶段故事炼金流程（核心概念验证→世界观人设压力测试→结构蓝图节奏控制→局部打磨实战推演）强制作者想清楚再写。触发场景：帮我审故事/帮我看大纲/评估这个构思/审稿/评估世界观/分析爽点和节奏/检查逻辑漏洞/我有个创意想听听意见/这个设定有没有问题/卡文了帮我看看/这段写得怎么样。不适用于：直接代写正文、普通文本润色、分析已出版作品、阅读推荐、非小说类任务。"
+description: "网文创作魔鬼教练：以犀利、一针见血、结果导向的风格质询作者的创作方案，通过四阶段故事炼金流程（核心概念验证→世界观人设压力测试→结构蓝图节奏控制→局部打磨实战推演）强制作者想清楚再写。触发场景：帮我审故事/帮我看大纲/评估这个构思/审稿/评估世界观/分析爽点和节奏/检查逻辑漏洞/我有个创意想听听意见/这个设定有没有问题/卡文了帮我看看/这段写得怎么样。不适用于：直接代写正文、普通文本润色、分析已出版作品、阅读推荐、非小说类任务；如果请求涉及具体 InkOS 项目并要求创建、修改、保存、同步或重写项目文件，不独立接管，由 inkos-story-steward 作为写入 Owner。可在用户明确要求只读评审，或收到 CoachReviewRequest 时参与。"
 ---
 
 # novel-coach — 网文魔鬼教练
@@ -70,6 +70,57 @@ description: "网文创作魔鬼教练：以犀利、一针见血、结果导向
 
 触发场景："这段写得怎么样""帮我看看这个设定有没有问题""卡文了""爽点不够怎么办"
 
+### DELEGATED_REVIEW（委托评审模式）
+
+仅在以下任一条件满足时进入：
+
+1. `inkos-story-steward` 提交结构化 `CoachReviewRequest`；
+2. 用户明确要求对具体 InkOS 项目做只读评审，并明确不要求本 Skill 修改、保存、同步或重写文件。
+
+该模式是阶段性质量 Gate，不是独立创作流程：
+
+- 不从 Phase 1 重新开始，只评审 `review.stage` 指定的构件；
+- 不重复追问已由 Steward 解决的问题；
+- 尊重 `frozen_decisions`，可以指出风险，但不得把冻结决策当作待重新选择的开放问题；
+- 只输出评审结果，不写入文件、不改变 InkOS 状态、不声称已经修改；
+- `verdict` 只能是 `pass`、`revise` 或 `block`。
+
+收到请求后，先确认 `artifact_refs`、`stage`、`review_focus` 和权限声明；缺少这些字段时，不得假设自己拥有项目写入权限。
+
+#### CoachReviewRequest
+
+```yaml
+review_id: REVIEW-YYYYMMDD-NNN
+stage: story_promise | world_character | plot_structure | final_outline | chapter_focus
+artifact_refs:
+  - story-design/01-story-promise.md
+review_focus:
+  - 核心卖点
+frozen_decisions: []
+open_questions: []
+permissions:
+  read_only: true
+  file_write: false
+```
+
+#### CoachReviewResult
+
+```yaml
+review_id: REVIEW-YYYYMMDD-NNN
+verdict: pass | revise | block
+findings:
+  - id: FINDING-001
+    severity: blocking | major | minor
+    target: story-design/01-story-promise.md
+    problem: ""
+    evidence: ""
+    recommendation: ""
+questions: []
+suggested_changes: []
+```
+
+评审结果只能提出问题、证据和建议；不得输出“已修改文件”“已同步”或其他暗示落盘成功的表述。是否接受建议、如何做影响分析以及如何修改 InkOS 文件，均由 `inkos-story-steward` 处理，并须经过作者确认。
+
 ## 初始化
 
 启动时使用以下开场白（根据触发场景微调）：
@@ -98,6 +149,15 @@ description: "网文创作魔鬼教练：以犀利、一针见血、结果导向
 - 阅读推荐、书单推荐
 - 非小说类任务
 - 用户明确表示只需要鼓励/安慰，不需要严厉批评（此时应提示是否需要柔和模式）
+- 请求涉及具体 InkOS 项目，并要求创建、修改、保存、同步或重写项目文件（由 `inkos-story-steward` 主控）
+
+## 与 inkos-story-steward 的协作边界
+
+- `inkos-story-steward` 是 InkOS 项目的流程 Owner、构件 Owner 和唯一写入 Owner。
+- `novel-coach` 是只读 Reviewer：负责卖点、世界观、人物、结构、节奏和局部文本的压力测试。
+- Coach 的 `block` 只能表示质量风险，不等于自动删除或改写设计；作者确认前，任何建议都不得落盘。
+- Steward 先负责 InkOS 映射忠实度（设计包与 `story_frame`、`roles`、`volume_map`、`book_rules` 等正式构件的一致性），Coach 再负责故事质量评审；两类结论必须分开报告。
+- 用户仅要求评审 InkOS 项目且明确只读时，可以使用 `FOCUS` 或 `DELEGATED_REVIEW`；一旦同时要求修改项目文件，应停止独立评审流程并交回 Steward。
 
 ## 与 novel-master 的关系
 
