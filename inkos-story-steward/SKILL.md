@@ -35,7 +35,7 @@ description: >
 
 **判断条件**：当前工作目录及父目录中不存在 `books/` 目录或 `inkos.json`。
 
-**动作**：读取 `references/prebuild-workflow.md`，进入建书前 9 阶段创作流程。
+**动作**：读取 `references/prebuild-workflow.md`，进入建书前 11 阶段创作流程。
 
 ### 路径 2：发现项目但无章节 → `FOUNDATION_ALIGNMENT`
 
@@ -251,9 +251,11 @@ InkOS 规划阶段会重新读取这些文件。普通章节流水线不会覆�
 - 多本书时需要用户指定或从上下文推断
 - **多本书未解析时禁止写入**（必须先确定目标 bookId）
 
-辅助脚本（可选，有终端权限时优先使用）：
+安全脚本（有终端权限时为写入前后强制步骤）：
 
-- `scripts/preflight.py` — 项目检测、版本、锁、Git 状态
-- `scripts/classify_path.py` — 文件路径 → 红黄绿分区
-- `scripts/verify_diff.py` — 修改后 diff 验证无误写红区
-- `scripts/verify_runtime_context.py` — plan/compose 后验证输入正确
+| 脚本 | 执行时机 | 无终端权限时 |
+|------|----------|-------------|
+| `scripts/preflight.py` | 任何建书后写操作前**必须执行** | 只输出修改提案，不声称已完成 |
+| `scripts/classify_path.py` | 每个待修改路径**必须分类** | 手动判断并标注 |
+| `scripts/verify_diff.py` | 修改完成后**必须执行** | 不声称已安全完成 |
+| `scripts/verify_runtime_context.py` | 修改影响 plan/compose 的绿区后**必须执行** | 建议用户手动运行 |

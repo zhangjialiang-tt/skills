@@ -21,8 +21,8 @@
     },
     {
       "id": 4,
-      "prompt": "第五章里林远和何卫国的对话太平淡了，帮我把'这是他们第一次正式合作'改成'何卫国终于点了点头。这是感染爆发以来，第一次有人让他在方案上签字而不是命令。'",
-      "expected_output": "Skill 应识别为 CHAPTER_EDIT 模式。判断修改类型：这是纯文风修改（不改变事实，不改变行为结果），属于类型 A。可以直接编辑第 5 章正文。建议运行 inkos audit 确认。不需要 write sync。不应调用任何状态同步命令。",
+      "prompt": "第五章里'这是他们第一次正式合作。'这句话太干巴了，帮我改成'直到这一刻，他们才算真正站到了一起。'意思不变，只是措辞更有力度。",
+      "expected_output": "Skill 应识别为 CHAPTER_EDIT 模式。判断修改类型：这是纯文风修改（不改变事实——合作已经成立，只是换了表达方式），属于类型 A。可以直接编辑第 5 章正文。建议运行 inkos audit 确认。不需要 write sync。不应调用任何状态同步命令。",
       "files": ["evals/fixtures/active-book/"]
     },
     {
@@ -34,7 +34,7 @@
     {
       "id": 6,
       "prompt": "我想改第三章，让林远发现不是接线被动过，而是继电器本身质量有问题。这改变了第三章的一个事实。",
-      "expected_output": "Skill 应识别为 CHAPTER_EDIT 模式。判断：改变事实 + 目标不是最新章（第3章，最新是第5章）→ 不能调用 write sync（InkOS 限制只能 sync 最新章）。应明确告知用户 write sync 不能用于非最新章。评估：如果后续章节不依赖此事实，给出路径 A（通过最新章体现）或路径 B（直接编辑但标记状态不一致风险）。绝不可执行 inkos write sync test-book 3。",
+      "expected_output": "Skill 应识别为 CHAPTER_EDIT 模式。判断：改变事实 + 目标不是最新章（第3章，最新是第5章）→ 禁止直接编辑。不能调用 write sync（InkOS 限制只能 sync 最新章）。只允许两条路径：A. 不改历史正文，在最新章中通过剧情完成澄清；B. 升级为 rewrite（备份+确认+删除后续章节）。绝不可执行 inkos write sync test-book 3。绝不可直接编辑第3章正文中的事实。",
       "files": ["evals/fixtures/active-book/"]
     },
     {
