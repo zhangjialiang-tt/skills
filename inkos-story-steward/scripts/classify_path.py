@@ -48,6 +48,19 @@ GREEN_PATTERNS = [
 ]
 
 
+
+def _matches_pattern(path: str, pattern: str) -> bool:
+    """Component-level pattern match. Prevents prefix collisions like
+    'story/runtime' matching 'story/runtime-backup.md'."""
+    if path == pattern:
+        return True
+    if pattern.endswith("/"):
+        # Directory prefix: pattern already includes trailing /
+        return path.startswith(pattern)
+    else:
+        # Require component boundary: exact or followed by /
+        return path.startswith(pattern + "/")
+
 def classify(path_str: str) -> tuple[str, str]:
     """Return (zone, reason) for a path relative to book root."""
     # Normalize to posix
@@ -61,17 +74,17 @@ def classify(path_str: str) -> tuple[str, str]:
 
     # Check red
     for pattern in RED_PATTERNS:
-        if path_str_norm == pattern or path_str_norm.startswith(pattern + "/") or path_str_norm.startswith(pattern):
+        if _matches_pattern(path_str_norm, pattern):
             return "red", f"Matches red zone pattern: {pattern}"
 
     # Check green (before yellow because story/ paths overlap)
     for pattern in GREEN_PATTERNS:
-        if path_str_norm == pattern or path_str_norm.startswith(pattern):
+        if _matches_pattern(path_str_norm, pattern):
             return "green", f"Matches green zone pattern: {pattern}"
 
     # Check yellow
     for pattern in YELLOW_PATTERNS:
-        if path_str_norm == pattern or path_str_norm.startswith(pattern):
+        if _matches_pattern(path_str_norm, pattern):
             return "yellow", f"Matches yellow zone pattern: {pattern}"
 
     # Unknown

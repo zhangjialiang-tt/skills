@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """InkOS Story Steward preflight check.
 
-Read-only guard: detects project, version, lock, git state, latest chapter.
-Exit codes: 0 = safe to proceed, 1 = blocked (reason on stderr), 2 = warning.
+Fail-closed guard: any uncertainty blocks writes.
+Exit codes: 0 = write allowed, 1 = blocked, 2 = warnings only (write still allowed).
 
 Usage:
-    python scripts/preflight.py [--project-root PATH] [--book-id ID]
+    python scripts/preflight.py [--project-root PATH] [--book-id ID] [--json]
 """
 
 import argparse
@@ -70,7 +70,6 @@ def check_inkos_version() -> tuple[int, ...] | None:
         )
         if result.returncode != 0:
             return None
-        # Parse version from output like "inkos/1.7.2" or "1.7.2"
         version_str = result.stdout.strip().split("/")[-1].strip()
         parts = version_str.split(".")
         return tuple(int(p) for p in parts[:3])
@@ -79,7 +78,7 @@ def check_inkos_version() -> tuple[int, ...] | None:
 
 
 def check_git_clean(project_root: Path) -> bool | None:
-    """Return True if git working tree is clean, False if dirty, None if not a git repo."""
+    """Return True if clean, False if dirty, None if git unavailable/failed."""
     try:
         result = subprocess.run(
             ["git", "status", "--porcelain"],
@@ -87,10 +86,12 @@ def check_git_clean(project_root: Path) -> bool | None:
             cwd=str(project_root)
         )
         if result.returncode != 0:
-            return None
+            return None  # Git command failed
         return len(result.stdout.strip()) == 0
-    except (FileNotFoundError, subprocess.TimeoutExpired):
-        return None
+    except FileNotFoundError:
+        return None  # Git not installed
+    except subprocess.TimeoutExpired:
+        return None  # Git timed out
 
 
 def check_state_files(book_path: Path) -> dict:
@@ -111,17 +112,31 @@ def main():
     parser.add_argument("--json", action="store_true", help="Output as JSON")
     args = parser.parse_args()
 
-    report = {"blocked": False, "warnings": [], "errors": []}
+    report = {
+        "blocked": False,
+        "write_allowed": True,
+        "review_allowed": True,
+        "review_only": False,
+        "reason_codes": [],
+        "errors": [],
+        "warnings": [],
+    }
+
+    def block(code: str, msg: str):
+        report["blocked"] = True
+        report["write_allowed"] = False
+        report["review_only"] = True
+        if code not in report["reason_codes"]:
+            report["reason_codes"].append(code)
+        report["errors"].append(msg)
 
     # 1. Find project root
     project_root = find_project_root(args.project_root)
     if project_root is None:
         report["mode"] = "PREBUILD"
         report["message"] = "No InkOS project found. PREBUILD mode."
-        if args.json:
-            print(json.dumps(report, ensure_ascii=False, indent=2))
-        else:
-            print("Mode: PREBUILD (no InkOS project found)")
+        # PREBUILD doesn't need write permission checks
+        _output(report, args.json)
         sys.exit(0)
 
     report["project_root"] = str(project_root)
@@ -131,10 +146,7 @@ def main():
     if not books:
         report["mode"] = "PREBUILD"
         report["message"] = "Project exists but no books. PREBUILD mode."
-        if args.json:
-            print(json.dumps(report, ensure_ascii=False, indent=2))
-        else:
-            print("Mode: PREBUILD (no books found)")
+        _output(report, args.json)
         sys.exit(0)
 
     # 3. Resolve book ID
@@ -143,23 +155,16 @@ def main():
         if len(books) == 1:
             book_id = books[0]
         else:
-            report["blocked"] = True
-            report["errors"].append(
-                f"Multiple books found: {books}. Specify --book-id."
-            )
-            if args.json:
-                print(json.dumps(report, ensure_ascii=False, indent=2))
-            else:
-                print(f"BLOCKED: Multiple books {books}. Specify --book-id.", file=sys.stderr)
+            block("MULTI_BOOK_UNRESOLVED",
+                  f"Multiple books found: {books}. Specify --book-id.")
+            report["mode"] = "UNKNOWN"
+            _output(report, args.json)
             sys.exit(1)
 
     if book_id not in books:
-        report["blocked"] = True
-        report["errors"].append(f"Book '{book_id}' not found. Available: {books}")
-        if args.json:
-            print(json.dumps(report, ensure_ascii=False, indent=2))
-        else:
-            print(f"BLOCKED: Book '{book_id}' not found.", file=sys.stderr)
+        block("BOOK_NOT_FOUND", f"Book '{book_id}' not found. Available: {books}")
+        report["mode"] = "UNKNOWN"
+        _output(report, args.json)
         sys.exit(1)
 
     book_path = project_root / "books" / book_id
@@ -168,27 +173,21 @@ def main():
     # 4. Check version
     version = check_inkos_version()
     if version is None:
-        report["warnings"].append("InkOS CLI not found or version check failed.")
+        block("INKOS_VERSION_UNKNOWN",
+              "InkOS CLI not found or version check failed. Writes blocked.")
         report["version"] = None
-        report["review_only"] = True
-        report["warnings"].append("Unknown version → review-only mode. All writes blocked.")
     else:
         report["version"] = ".".join(map(str, version))
         lo, hi = SUPPORTED_VERSION_RANGE
         if not (lo <= version < hi):
-            report["warnings"].append(
-                f"InkOS version {report['version']} outside supported range "
-                f"[{'.'.join(map(str, lo))}, {'.'.join(map(str, hi))}). "
-                f"Switching to review-only mode."
-            )
-            report["review_only"] = True
+            block("INKOS_VERSION_UNSUPPORTED",
+                  f"InkOS version {report['version']} outside supported range "
+                  f"[{'.'.join(map(str, lo))}, {'.'.join(map(str, hi))}). Writes blocked.")
 
     # 5. Check write lock
     if check_write_lock(book_path):
-        report["blocked"] = True
-        report["errors"].append(
-            ".write.lock exists. InkOS pipeline is running. Wait for it to finish."
-        )
+        block("WRITE_LOCK_ACTIVE",
+              ".write.lock exists. InkOS pipeline is running. Wait for it to finish.")
 
     # 6. Determine mode
     latest_chapter = get_latest_chapter(book_path)
@@ -201,31 +200,45 @@ def main():
     # 7. Check state files
     report["state_files"] = check_state_files(book_path)
 
-    # 8. Check git
+    # 8. Check git — fail-closed on ANY uncertainty
     git_clean = check_git_clean(project_root)
     report["git_clean"] = git_clean
-    if git_clean is False:
-        report["blocked"] = True
-        report["errors"].append(
-            "Git working tree is dirty. Commit or stash before modifications "
-            "(otherwise verify_diff cannot isolate this session's changes)."
-        )
+    if git_clean is None:
+        block("GIT_BASELINE_UNAVAILABLE",
+              "Git unavailable, not a repo, or command failed. "
+              "Cannot establish clean baseline. Writes blocked.")
+    elif git_clean is False:
+        block("GIT_WORKTREE_DIRTY",
+              "Git working tree is dirty. Commit or stash before modifications. "
+              "Writes blocked.")
 
     # Output
-    if args.json:
+    _output(report, args.json)
+    if not report["write_allowed"]:
+        sys.exit(1)
+    elif report["warnings"]:
+        sys.exit(2)
+    else:
+        sys.exit(0)
+
+
+def _output(report: dict, as_json: bool):
+    if as_json:
         print(json.dumps(report, ensure_ascii=False, indent=2))
     else:
         if report["blocked"]:
             print(f"BLOCKED: {report['errors'][0]}", file=sys.stderr)
+            for code in report["reason_codes"]:
+                print(f"  [{code}]", file=sys.stderr)
         else:
-            print(f"Mode: {report['mode']}")
-            print(f"Book: {book_id}")
-            print(f"Latest chapter: {latest_chapter or 'none'}")
+            print(f"Mode: {report.get('mode', 'UNKNOWN')}")
+            if "book_id" in report:
+                print(f"Book: {report['book_id']}")
+            print(f"Latest chapter: {report.get('latest_chapter', 'none')}")
             print(f"Version: {report.get('version', 'unknown')}")
+            print(f"Write allowed: {report['write_allowed']}")
             for w in report["warnings"]:
                 print(f"WARNING: {w}", file=sys.stderr)
-
-    sys.exit(1 if report["blocked"] else (2 if report["warnings"] else 0))
 
 
 if __name__ == "__main__":
