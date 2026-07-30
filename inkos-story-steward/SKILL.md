@@ -110,6 +110,39 @@ description: >
 
 ---
 
+## 并发写入保护（.write.lock）
+
+`.write.lock` 存在表示 InkOS 正在执行写作流水线。此时外部修改绿区或黄区文件会导致 InkOS 读取到一半新一半旧的多文件状态。
+
+**硬规则**：任何建书后写操作前，必须执行：
+
+1. 解析目标 bookId
+2. 检查 `books/<bookId>/.write.lock` 是否存在
+3. 锁存在 → **停止一切写入**，告知用户 InkOS 正在运行，等待流水线完成
+4. 锁不存在 → 允许继续
+
+此检查适用于所有模式（ACTIVE_MAINTENANCE、CHAPTER_EDIT、YELLOW_ZONE_OPERATION、FOUNDATION_ALIGNMENT）的所有写操作。
+
+---
+
+## 版本预检
+
+本 Skill 的文件契约和操作命令基于 InkOS v1.7.x 验证。
+
+建书后首次操作前，检查 InkOS 版本：
+
+```bash
+inkos --version
+```
+
+| 版本范围 | 行为 |
+|----------|------|
+| `>=1.7.2 <1.8.0` | 正常操作 |
+| 其他版本 | 切换为只读模式：可评审、可输出建议，但不执行黄区写入或 sync/rewrite |
+
+版本不匹配时，明确告知用户当前 Skill 未验证该版本，建议升级或降级 InkOS。
+
+
 ## 变更影响分析要求
 
 建书后（`ACTIVE_MAINTENANCE`、`CHAPTER_EDIT`、`YELLOW_ZONE_OPERATION` 模式），执行任何修改前，必须先输出变更影响分析。
@@ -139,6 +172,10 @@ description: >
 | `references/yellow-zone-operations.md` | 进入 YELLOW_ZONE_OPERATION 模式时            |
 | `references/chapter-editing.md`        | 进入 CHAPTER_EDIT 模式时                     |
 | `references/change-impact-analysis.md` | 建书后执行任何修改前                         |
+| `references/story-engine-and-plot.md` | PREBUILD 阶段 5-6，或 revise-plot 时 |
+| `references/character-conflict-network.md` | PREBUILD 阶段 4，或 revise-character 时 |
+| `references/payoff-design.md` | PREBUILD 阶段 7，或 prepare-next-arc 时 |
+| `references/foreshadowing-and-mystery.md` | PREBUILD 阶段 8，或伏笔相关操作时 |
 
 ---
 
@@ -185,7 +222,7 @@ description: >
 story/
 ├── author_intent.md      # 作者意图
 ├── current_focus.md      # 当前焦点
-├── style_guide.md        # 风格指南（init/append-only）
+├── style_guide.md        # 风格指南（普通流水线不覆盖；style import/仿写初始化可能重建）
 ├── book_rules.md         # 书籍规则
 ├── outline/
 │   ├── story_frame.md    # 故事框架（世界观/设定权威源）
@@ -196,7 +233,7 @@ story/
     └── 次要角色/<角色名>.md
 ```
 
-InkOS 规划阶段会重新读取这些文件，流水线不会覆盖用户内容（`writeIfMissing`/append-only 语义）。
+InkOS 规划阶段会重新读取这些文件。普通章节流水线不会覆盖用户内容（`writeIfMissing`/append-only 语义），但 `style_guide.md` 在执行 `inkos style import` 或仿写初始化时可能被重建。
 
 ---
 
@@ -212,3 +249,11 @@ InkOS 规划阶段会重新读取这些文件，流水线不会覆盖用户内�
 
 - 只有一本书时自动识别
 - 多本书时需要用户指定或从上下文推断
+- **多本书未解析时禁止写入**（必须先确定目标 bookId）
+
+辅助脚本（可选，有终端权限时优先使用）：
+
+- `scripts/preflight.py` — 项目检测、版本、锁、Git 状态
+- `scripts/classify_path.py` — 文件路径 → 红黄绿分区
+- `scripts/verify_diff.py` — 修改后 diff 验证无误写红区
+- `scripts/verify_runtime_context.py` — plan/compose 后验证输入正确
