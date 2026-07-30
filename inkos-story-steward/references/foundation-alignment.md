@@ -81,10 +81,18 @@ books/<bookId>/book.json
 - 意图偏差 → 修正 `author_intent.md`
 - 焦点不准 → 修正 `current_focus.md`
 
-**注意**：
+**`pending_hooks.md` 处理决策表**：
 
-- `pending_hooks.md` 是黄区。如果伏笔被丢弃，将伏笔设计写入 `current_focus.md` 的近期推进要求，或通过 `author_intent.md` 补充。
-- `book.json` 是黄区。参数不对时建议用户执行 `inkos book update`。
+| 状态 | 操作 |
+|------|------|
+| 无章节，且无 `state/hooks.json` | 允许直接修正 `pending_hooks.md`（初始伏笔恢复） |
+| 无章节，但已生成 `state/hooks.json` | 不静默修改；提示用户执行受控重建或重新建书 |
+| 已有章节 | 不直接改 hooks 权威状态；通过正文结算、sync 或专门迁移 |
+| 无安全同步入口 | Fail closed，不用 `current_focus` 伪装为正式伏笔 |
+
+建书对齐的核心目标是恢复 Architect 丢失的内容。在尚无章节和结构化状态时，直接恢复初始伏笔到 `pending_hooks.md` 是正确操作。
+
+**`book.json` 处理**：参数不对时建议用户执行 `inkos book update`（黄区，不直接写）。
 
 ### 步骤 5：输出对齐报告
 

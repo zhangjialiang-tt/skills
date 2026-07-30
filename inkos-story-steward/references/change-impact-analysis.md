@@ -37,7 +37,7 @@
 ## YAML 输出格式
 
 ```yaml
-change_id: CHANGE-<NNN>
+change_id: CHANGE-<YYYYMMDD>-<NNN>
 change_type: future_design | retroactive_fix
 target:
   - <被修改的文件路径>
@@ -69,7 +69,7 @@ risk:
 
 | 字段                        | 说明                                                          |
 | --------------------------- | ------------------------------------------------------------- |
-| `change_id`                 | 变更编号，格式 `CHANGE-<NNN>`，递增                           |
+| `change_id`                 | 变更编号，格式 `CHANGE-<YYYYMMDD>-<NNN>`（日期+当日序号），跨会话不重复 |
 | `change_type`               | `future_design`（只影响未来）或 `retroactive_fix`（追溯修改） |
 | `target`                    | 本次修改直接涉及的文件                                        |
 | `affected_chapters.written` | 已写章节中受影响的范围                                        |
@@ -98,7 +98,7 @@ risk:
 ### 示例 1：低风险未来设计变更
 
 ```yaml
-change_id: CHANGE-001
+change_id: CHANGE-20260730-001
 change_type: future_design
 target:
   - story/outline/volume_map.md
@@ -130,7 +130,7 @@ risk:
 ### 示例 2：高风险追溯修改
 
 ```yaml
-change_id: CHANGE-002
+change_id: CHANGE-20260730-002
 change_type: retroactive_fix
 target:
   - chapters/010_基地危机.md
