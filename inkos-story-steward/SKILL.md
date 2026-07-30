@@ -8,6 +8,8 @@ description: >
   章节修改影响分析、绿区/黄区/红区、story_frame、volume_map、roles、book_rules、
   current_focus、author_intent。即使用户只说"改一下这个世界观"或"帮我规划下一卷"，
   只要上下文涉及 InkOS 项目，也应触发。
+  对所有 InkOS 项目相关任务，inkos-story-steward 是流程、构件和文件变更的唯一 Owner；
+  可委托 novel-coach 做只读质量评审，但不得让其自动写入或改变项目状态。
   排除：纯故事创意开发不涉及 InkOS（用 story-synopsis）、纯研究提示词生成（用 story-research-prompt）、
   直接写正文（用 InkOS 自身 write 命令）。
 ---
@@ -24,6 +26,91 @@ description: >
 ```
 故事创意研发 → 构件化设计 → InkOS 格式编译 → 建书后持续维护 → 变更影响分析 → 安全同步
 ```
+
+---
+
+## 与 novel-coach 的主从关系
+
+`inkos-story-steward` 是 InkOS 项目的主流程 Owner、正式构件 Owner 和唯一写入 Owner。
+`novel-coach` 只作为可委托的 Reviewer，负责质疑方案质量，不负责文件、项目状态或 InkOS
+命令。两者不得在同一个 InkOS 写入请求中平级隐式接管。
+
+### 可以委托 Coach 的场景
+
+仅在以下场景提交 `CoachReviewRequest`：
+
+- 作品承诺需要验证核心卖点、点击理由和前三章承诺；
+- 世界观、人物和冲突发动机需要压力测试；
+- 情节架构、分卷、爽点、伏笔和节奏需要质量评审；
+- 最终大纲需要 Readiness Review；
+- 用户明确询问某章或某个方案“好不好看”，且当前动作是只读诊断；
+- 修改方案的创意风险为 medium 以上，但这不替代 InkOS 变更影响分析。
+
+Coach 的评审结果只能是建议，不能自动落盘。收到 `pass`、`revise` 或 `block` 后，必须先让作者
+接受、拒绝或带风险接受；作者未确认前不得把 Coach 建议写入正式构件。Coach 的质量结论也不得
+替代 `FOUNDATION_ALIGNMENT`：前者判断故事是否成立，后者判断 InkOS 是否忠实保留设计。
+
+### CoachReviewRequest / CoachReviewResult
+
+交接使用 `novel-coach` 定义的结构化契约。Steward 至少提供：
+
+```yaml
+review_id: REVIEW-YYYYMMDD-NNN
+stage: story_promise | world_character | plot_structure | final_outline | chapter_focus
+artifact_refs:
+  - story-design/01-story-promise.md
+review_focus:
+  - 核心卖点
+frozen_decisions: []
+open_questions: []
+permissions:
+  read_only: true
+  file_write: false
+```
+
+接收结果时只接受以下形状：
+
+```yaml
+review_id: REVIEW-YYYYMMDD-NNN
+verdict: pass | revise | block
+findings:
+  - id: FINDING-001
+    severity: blocking | major | minor
+    target: story-design/01-story-promise.md
+    problem: ""
+    evidence: ""
+    recommendation: ""
+questions: []
+suggested_changes: []
+```
+
+如果缺少 `review_id`、`stage`、`artifact_refs`、权限声明或作者确认状态，不能把结果当成已批准
+的变更，也不能据此执行写入。
+
+### PREBUILD 四个质量 Gate
+
+PREBUILD 的四个作者确认门与 Coach 评审对应如下；Gate 不是自动批准器，`block` 或未确认时必须
+停止自动继续，只有作者明确接受风险并记录决策后才可越过当前 Gate：
+
+| Gate | Steward 产物 | Coach stage | 继续条件 |
+|------|--------------|-------------|----------|
+| Gate 1 | `00-project-brief.md`、`01-story-promise.md` | `story_promise` | Coach 通过或作者明确接受风险，并确认作品承诺 |
+| Gate 2 | `02-world-system.md`、`03-character-system.md`、`04-conflict-engine.md` | `world_character` | 世界压力、主角主动性、对手合理性和角色冲突可解释 |
+| Gate 3 | `05-plot-architecture.md`、`06-payoff-system.md`、`07-foreshadowing-and-mystery.md`、`08-volume-outline.md` | `plot_structure` | 结构、节奏、爽点、伏笔和结局前置条件可运行 |
+| Gate 4 | `09-story-outline.md`、`10-readiness-review.md` | `final_outline` | Readiness 通过，作者确认进入 InkOS 编译；之后才生成 `inkos/` 包 |
+
+每个 Gate 的执行顺序固定为：
+
+```text
+Steward 生成阶段产物
+→ 只读提交 CoachReviewRequest
+→ Coach 返回 CoachReviewResult
+→ 作者接受 / 拒绝 / 带风险接受
+→ Steward 更新正式构件并继续，或回退修订
+```
+
+Coach 不得重新启动自己的完整 CHALLENGE 流程；Steward 也不得跳过作者确认，直接把建议编译进
+InkOS 建书包。
 
 ---
 
