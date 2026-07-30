@@ -2,3 +2,4 @@
 .pi/
 .novel-1/
 *workspace/
+*.pyc

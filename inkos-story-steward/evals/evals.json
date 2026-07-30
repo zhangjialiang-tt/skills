@@ -1,0 +1,29 @@
+{
+  "skill_name": "inkos-story-steward",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我想写一个末日基地建设的故事，主角是个工程师，在城市感染爆发后带着幸存者建基地。帮我从头开始设计，准备用 InkOS 写。",
+      "expected_output": "Skill 应检测当前目录无 InkOS 项目，进入 PREBUILD 模式。从阶段 1（创意定界）开始，确认平台、题材、目标读者、章数等基本信息，输出作品假设（YAML 格式），然后只追问一个方向性问题（如结局是否已确定、核心体验侧重建设还是生存）。不应一次性输出全部 9 阶段产物，不应跳过用户确认直接生成完整大纲。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "我刚用 inkos book create --brief story-design/inkos/book-brief.md 建了书，帮我检查一下 InkOS 生成的设定和我原来的设计是不是一致的。",
+      "expected_output": "Skill 应检测到 books/ 目录存在但 chapters/ 为空，进入 FOUNDATION_ALIGNMENT 模式。读取设计包（story-design/）和 InkOS 生成文件（story_frame.md、volume_map.md、roles/、book_rules.md、pending_hooks.md），逐项比对，识别遗漏/曲解/降级，修正绿区文件，输出对齐报告。不应修改红区或黄区文件。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "我觉得现在的世界观设定里，感染规则太简单了，想加一条：感染后如果 48 小时内注射抑制剂可以延缓但不能治愈。帮我改一下。",
+      "expected_output": "Skill 应检测到存在已写章节，进入 ACTIVE_MAINTENANCE 模式。先输出变更影响分析（判断是未来设计变更还是追溯修改、是否影响已写正文、影响哪些角色和伏笔），然后修改 story/outline/story_frame.md 和 story/book_rules.md 中的感染规则，检查是否需要更新相关角色卡。不应直接修改 chapters/ 或 state/ 下的文件。",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "我想把 pending_hooks.md 里的第三个伏笔标记为已回收，因为我在第 15 章已经揭示了。",
+      "expected_output": "Skill 应识别 pending_hooks.md 为黄区文件，不能直接修改。应解释：已进入连载后 hooks.json 是优先读取源，直接改 Markdown 无效。给出正确路径：修改第 15 章正文（如果尚未体现）+ inkos write sync 15，或将回收要求写入 current_focus.md 让下一章自然推进。不应直接编辑 pending_hooks.md 或 state/hooks.json。",
+      "files": []
+    }
+  ]
+}
