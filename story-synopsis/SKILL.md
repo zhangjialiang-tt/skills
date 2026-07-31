@@ -292,6 +292,50 @@ description: 故事开发协作 Skill。当用户提供一句话灵感、角色�
 ### 用户确认定稿
 只有用户明确表示定稿意图时标记"状态：用户确认定稿"。不要因用户没有继续反对就自动视为定稿。
 
+## StorySynopsisPackage 交接
+
+当用户确认定稿时，除了标记"状态：用户确认定稿"，还必须同步生成 **StorySynopsisPackage**：
+
+```
+story-design/<design-id>/source/
+├── synopsis.md              # 完整梗概（即当前输出）
+└── synopsis-contract.yaml   # 机器交接契约
+```
+
+### 生成时机
+
+- **完整初稿**阶段：不生成 contract。`handoff_ready: false`。
+- **用户确认定稿**时：生成或更新 contract，设置 `handoff_ready: true`。
+- **定稿后修改**：revision +1，重新生成 contract，保持 handoff_ready。
+
+### 不生成 contract 的情况
+
+- 故事尚未完整（缺结局、缺真相、缺主角弧光）
+- 存在 blocking issue 未解决
+- 用户未明确表示定稿意图
+
+### contract 生成规则
+
+1. 从已确认事实中提取核心字段（不是从暂定事实）
+2. 已否决方向进入 `prohibited_directions`
+3. 未决定但不阻塞的事项进入 `unresolved_non_blocking`
+4. 世界规则必须包含边界和代价
+5. 结局必须标记 `frozen: true`
+6. 关键转折至少 3 个
+7. `adaptation_boundaries` 必须明确区分冻结事实和可扩展区域
+8. 不复制完整梗概文本，只提取下游必须稳定理解的结论
+
+### design-id 派生
+
+从作品标题派生：去除 Windows 非法字符（\ / : * ? " < > |），去除尾部句点和空格，中文保留，空结果回退 `untitled-story`。
+
+### 下游消费
+
+`webnovel-serial-designer` 只接受 `handoff_ready: true` 的 StorySynopsisPackage。未满足时退回 story-synopsis，不自行补完故事。
+
+使用模板：`templates/synopsis-contract.yaml`
+详细规则：`references/handoff-contract.md`
+
 ## 阶段回退
 
 允许从后续阶段回退到前序阶段。回退时必须说明：

@@ -1,0 +1,155 @@
+# synopsis-contract.yaml 模板
+# 由 story-synopsis 在用户确认定稿时生成
+# 位置: story-design/<design-id>/source/synopsis-contract.yaml
+
+schema_version: 1
+artifact_type: story_synopsis_contract
+
+identity:
+  design_id: <design-id>
+  title: <作品标题>
+  language: zh
+
+source:
+  synopsis_ref: source/synopsis.md
+  synopsis_revision: 1
+
+status:
+  synopsis_status: user_confirmed    # complete_draft | user_confirmed
+  handoff_ready: true                # 仅 user_confirmed 时可为 true
+  review_status: passed              # pending | passed
+  accepted_risks: []
+
+story_core:
+  premise: >
+    <一句话核心梗>
+  genre: <题材>
+  tone:
+    - <基调1>
+    - <基调2>
+  central_question: >
+    <核心命题，以问题形式>
+  story_promise: >
+    <核心故事承诺>
+
+protagonist:
+  name: <姓名>
+  identity: <身份>
+  external_desire: >
+    <外在目标>
+  internal_need: >
+    <内在缺口>
+  starting_belief: >
+    <开端信念>
+  flaw: >
+    <关键缺陷>
+  agency: >
+    <主角如何主动驱动故事>
+  primary_capability:
+    - <能力1>
+    - <能力2>
+  cost:
+    - <代价1>
+    - <代价2>
+  arc:
+    start: <起点状态>
+    turning_point: <关键转折>
+    final_choice: <最终选择>
+    end: <终点状态>
+
+opposition:
+  type: person | system | person_and_system | self | environment
+  primary_opponent:
+    identity: <对手身份>
+    goal: <对手目标>
+    motivation: <对手动机>
+    logic: >
+      <对手行为逻辑——为什么他认为自己做的是对的>
+    methods:
+      - <手段1>
+      - <手段2>
+    rational_strength: >
+      <对手逻辑的合理之处>
+
+core_conflict:
+  external: <外在冲突>
+  internal: <内在冲突>
+  relational: <关系冲突>
+  stakes:
+    personal: <个人利害>
+    social: <社会利害>
+    thematic: <主题利害>
+
+world_rules:
+  - id: RULE-001
+    statement: <规则描述>
+    boundary: <边界/限制>
+    cost: <代价>
+    known_at_start: <故事开始时已知什么>
+    hidden_truth: <背后的真相>
+    story_function: <规则的叙事功能>
+    frozen: true
+
+story_truth:
+  hidden_truth: >
+    <幕后真相>
+  truth_origin: >
+    <真相的成因>
+  protagonist_connection: >
+    <主角与真相的关系>
+  final_revelation: >
+    <最终揭示时读者/主角理解到什么>
+
+ending:
+  external_outcome: >
+    <外在目标是否实现>
+  final_choice: >
+    <主角最终选择>
+  personal_cost: >
+    <付出的代价>
+  protagonist_outcome: >
+    <主角最终状态>
+  thematic_answer: >
+    <主题回答>
+  ending_type: <bittersweet | tragic | hopeful | ambiguous | triumphant>
+  frozen: true
+
+major_turning_points:
+  - id: TURN-01
+    stage: inciting_incident
+    event: <事件>
+    state_change: <状态变化>
+    frozen: true
+  - id: TURN-02
+    stage: midpoint
+    event: <事件>
+    state_change: <状态变化>
+    frozen: true
+  - id: TURN-03
+    stage: climax
+    event: <事件>
+    state_change: <状态变化>
+    frozen: true
+
+character_fates:
+  - character: <角色名>
+    outcome: <结局>
+    frozen: true
+
+adaptation_boundaries:
+  frozen_facts:
+    - <不可改变的故事真相1>
+    - <不可改变的故事真相2>
+  expandable_zones:
+    - <可以扩展的区域1>
+    - <可以扩展的区域2>
+  prohibited_directions:
+    - <禁止方向1>
+    - <禁止方向2>
+  unresolved_non_blocking:
+    - <未决定但不阻塞的事项>
+
+quality:
+  blocking_issues: []
+  non_blocking_risks:
+    - <非阻塞风险>
