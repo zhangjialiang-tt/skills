@@ -1,0 +1,17 @@
+{
+  "skill_name": "webnovel-analysis-visualization",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "根据以下中央表数据设计 Excel 热力图：\n\nchapter_no | emotion_score | pressure_score | payoff_strength\n1 | 5 | 7 | 5\n2 | 3 | 8 | 0\n3 | 7 | 4 | 8\n4 | 6 | 5 | 3\n5 | 2 | 9 | 0",
+      "expected_output": "应设计条件格式：emotion_score 1红-10绿，pressure_score 1白-10深红，payoff_strength 0白-10橙色；第3章 payoff_strength=8 应标橙色高亮",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "中央表中 emotion_score 有缺失值（null），如何在图表中处理？",
+      "expected_output": "应保持空白不绘制，不得将缺失值当作 0 绘制",
+      "files": []
+    }
+  ]
+}

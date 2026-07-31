@@ -1,0 +1,17 @@
+{
+  "skill_name": "webnovel-chapter-template",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "生成一个通用的网文章节分析模板，目标工具为 Excel",
+      "expected_output": "应生成包含基础索引、结构功能、情绪评分、爽点字段、证据与置信度等核心字段的表头，每个字段标注 owner_skill",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "以下模板字段有什么问题？\n\nchapter_id, chapter_title, 林川的行动, 赵海的反应, emotion_score",
+      "expected_output": "应指出：'林川的行动''赵海的反应'包含专有名词，应改为通用字段如'主角行动''对手反应'；缺少 evidence/confidence 字段",
+      "files": []
+    }
+  ]
+}

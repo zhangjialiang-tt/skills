@@ -1,0 +1,17 @@
+{
+  "skill_name": "webnovel-payoff-engineering",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "分析以下章节的爽点：\n\n第19章：林川在会议上突然拿出账目复印件，指出采购金额重复入账。赵海脸色铁青，全场哗然。散会后，三个同事主动来找林川表示支持。",
+      "expected_output": "应识别出 payoff_type='智识碾压'，payoff_strength 在 5-7 分，suppression_level=3（前置压抑为公开羞辱），reader_reward 包含'掌控感'或'正义补偿'，release_mode='部分释放'",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "以下爽点判定有什么问题？\n\n第20章：主角路过彩票站，想到如果中了五百万就能还清债务。\n判定：payoff_present=true, payoff_type='利益获得', payoff_strength=6",
+      "expected_output": "应指出这是'爽点承诺'而非已兑现爽点——主角只是想象，并未真正获得利益，payoff_present 应为 false",
+      "files": []
+    }
+  ]
+}

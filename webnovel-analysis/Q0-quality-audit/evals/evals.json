@@ -1,0 +1,17 @@
+{
+  "skill_name": "webnovel-analysis-quality-audit",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "审计以下中央表数据：\n\nBK001-CH0001: emotion_score=5, pressure_score=7, release_score=4, payoff_strength=5\nBK001-CH0002: emotion_score=15, pressure_score=3, release_score=8, payoff_strength=2",
+      "expected_output": "应标记 BK001-CH0002 的 emotion_score=15 为 P0（越界），并检查 release_score=8 与 payoff_strength=2 的跨 Skill 冲突",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "审计发现 S2 给出 emotion_score=9 但原文只有主角获得一个无关紧要的信息。如何处理？",
+      "expected_output": "应标记为 P1（证据不足），不直接修改 S2 的评分，在 issues 中说明证据与结论不匹配",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "skill_name": "webnovel-emotion-rhythm",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "为以下章节打分：\n\n第18章：林川被赵海当众羞辱，要求他立刻交出账本。全场无人替他说话。林川默默回到工位，发现抽屉被人翻过。他知道时间不多了。",
+      "expected_output": "emotion_score 应在 2-4 分范围，pressure_score 应在 7-9 分，release_score 应在 0-2 分，主导情绪应为'憋屈'或'焦虑'",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "为以下章节打分：\n\n第19章：林川在会议上突然拿出账目复印件，指出采购金额重复入账。赵海脸色铁青，全场哗然。散会后，三个同事主动来找林川表示支持。",
+      "expected_output": "emotion_score 应在 7-8 分，release_score 应在 6-8 分，主导情绪应为'痛快'，读者奖励应包含'正义补偿'或'掌控感'",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "以下评分有什么问题？\n\n第5章：emotion_score=8, pressure_score=2, release_score=9\n第6章：emotion_score=7, pressure_score=3, release_score=8\n第7章：emotion_score=8, pressure_score=2, release_score=9\n第8章：emotion_score=7, pressure_score=3, release_score=8",
+      "expected_output": "应指出评分通胀问题：连续4章集中在 7-9 分，失去区分度；且压力分和释放分逻辑矛盾（低压力却高释放）",
+      "files": []
+    }
+  ]
+}

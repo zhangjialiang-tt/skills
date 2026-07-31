@@ -1,0 +1,17 @@
+{
+  "skill_name": "webnovel-commercial-hooks",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "分析以下章节的商业卡点：\n\n第19章结尾：林川在会议上突然拿出账目复印件，指出采购金额重复入账。赵海脸色铁青，全场哗然。散会后，赵海叫住林川：'小林，明天上午来我办公室，我们单独谈谈。'林川走出会议室，发现自己的工位被人翻过了。",
+      "expected_output": "应识别出 cliffhanger_type='危机迫近'，break_phase='爽后'，chapter_break_strength 在 8-9 分，follow_up_question 应为'林川的工位被谁翻了？'或'赵海明天要谈什么？'，paywall_suitability='高'",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "以下付费点判定有什么问题？\n\n第12章：主角正在修炼，突然突破。判定：paywall_suitability='高', reason='本章写得精彩'",
+      "expected_output": "应指出：付费点前必须已交付价值，'写得精彩'不是付费理由；且突破过程中切断属于爽前卡，频繁使用会透支信任",
+      "files": []
+    }
+  ]
+}

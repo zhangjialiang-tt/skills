@@ -1,0 +1,17 @@
+{
+  "skill_name": "webnovel-analysis-orchestrator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我想拆解一本都市重生逆袭小说，文本约 120 章，每章 2000-3000 字。请帮我规划分析流程。",
+      "expected_output": "应生成 task_manifest、批次计划（约 12 批，每批 10 章）、Skill 依赖图、文件清单和验收标准",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "以下执行计划有什么问题？\n\nS5 商业卡点 → S1 结构拆解 → S2 情绪评分 → S0 文本预处理",
+      "expected_output": "应指出：S0 必须在最前面（文本预处理）；S5 必须在 S1/S2/S4 之后（依赖结构和情绪数据）",
+      "files": []
+    }
+  ]
+}

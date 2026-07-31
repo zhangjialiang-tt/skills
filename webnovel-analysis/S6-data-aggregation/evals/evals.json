@@ -1,0 +1,17 @@
+{
+  "skill_name": "webnovel-analysis-aggregator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "合并以下 S1 和 S2 输出到中央表：\n\nS1: chapter_id=BK001-CH0001, chapter_function='建立困境', main_event='林川重生'\nS2: chapter_id=BK001-CH0001, emotion_score=5, pressure_score=7, release_score=4",
+      "expected_output": "应生成一行记录，包含 chapter_id、chapter_function、main_event、emotion_score 等字段，不修改任何 Skill 的原始结论",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "检测到以下冲突：S2 给出 release_score=2，但 S4 给出 payoff_strength=9。如何处理？",
+      "expected_output": "不应自行选择，应将冲突写入 conflicts 列表，标记 chapter_id 和冲突字段",
+      "files": []
+    }
+  ]
+}
