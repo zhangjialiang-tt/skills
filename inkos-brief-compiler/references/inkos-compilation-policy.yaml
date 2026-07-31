@@ -1,0 +1,131 @@
+# InkOS 编译策略表
+# 归属：inkos-brief-compiler Skill 级（非每本书）
+# 编译器根据 assertion.type 查询本表，不由 serial designer 指定目标
+
+schema_version: 1
+target: inkos
+inkos_version: ">=1.7.2 <1.8.0"
+
+profiles:
+  story_engine:
+    requirement: must_preserve
+    compression: semantic_summary
+    omission: forbidden
+    default_targets:
+      - book-brief
+      - author-intent
+      - story-frame
+
+  volume_architecture:
+    requirement: must_preserve
+    compression: structured_split
+    omission: forbidden
+    default_targets:
+      - volume-map
+      - book-brief
+
+  character_arc:
+    requirement: must_preserve
+    compression: structured_split
+    omission: forbidden
+    default_targets:
+      - roles
+      - author-intent
+
+  foreshadowing:
+    requirement: must_preserve
+    compression: structured_split
+    omission: forbidden
+    default_targets:
+      - pending-hooks
+      - volume-map
+
+  world_pressure:
+    requirement: must_preserve
+    compression: semantic_summary
+    omission: forbidden
+    default_targets:
+      - story-frame
+      - book-rules
+
+  payoff_cadence:
+    requirement: should_preserve
+    compression: semantic_summary
+    omission: warning
+    default_targets:
+      - author-intent
+
+  serial_promise:
+    requirement: must_preserve
+    compression: semantic_summary
+    omission: forbidden
+    default_targets:
+      - book-brief
+      - author-intent
+
+  launch_plan:
+    requirement: should_preserve
+    compression: semantic_summary
+    omission: warning
+    default_targets:
+      - book-brief
+      - author-intent
+
+  endgame_convergence:
+    requirement: must_preserve
+    compression: semantic_summary
+    omission: forbidden
+    default_targets:
+      - author-intent
+      - volume-map
+
+  information_reveal:
+    requirement: must_preserve
+    compression: structured_split
+    omission: forbidden
+    default_targets:
+      - pending-hooks
+      - volume-map
+
+  anti_repetition:
+    requirement: should_preserve
+    compression: semantic_summary
+    omission: warning
+    default_targets:
+      - author-intent
+
+  illustrative_example:
+    requirement: optional
+    compression: semantic_summary
+    omission: allowed
+    default_targets: []
+
+  design_rationale:
+    requirement: optional
+    compression: prohibited
+    omission: allowed
+    default_targets: []
+
+  rejected_direction:
+    requirement: prohibited
+    compression: prohibited
+    omission: required
+    default_targets: []
+
+# requirement 语义:
+#   must_preserve  — 必须出现在编译产物中，缺失则阻塞
+#   should_preserve — 应保留，缺失时警告
+#   optional       — 可保留可省略
+#   prohibited     — 禁止进入正式产物
+
+# compression 语义:
+#   verbatim         — 原文保留
+#   semantic_summary — 语义摘要（允许压缩表达，不允许改变含义）
+#   structured_split — 按 InkOS 文件结构拆分
+#   prohibited       — 不编译（设计理由等只保留在源文件中）
+
+# omission 语义:
+#   forbidden — 不可省略
+#   warning   — 省略时记录警告
+#   allowed   — 可静默省略
+#   required  — 必须省略（rejected 内容）

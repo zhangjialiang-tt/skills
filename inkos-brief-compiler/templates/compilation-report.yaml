@@ -1,0 +1,48 @@
+# compilation-report.yaml 模板
+# 由 inkos-brief-compiler 在每次编译时自动生成
+# 位置: story-design/<design-id>/compile/inkos/compilation-report.yaml
+
+schema_version: 1
+compiled_at: null               # ISO 8601
+source_serial_revision: null
+
+summary:
+  total_assertions: 0
+  confirmed: 0
+  mapped: 0
+  split: 0
+  summarized: 0
+  retained_as_baseline: 0
+  omitted_allowed: 0
+  unmapped_warning: 0
+  blocked: 0
+
+upstream_fidelity:
+  preserved_facts_checked: 0
+  preserved_facts_found: 0
+  forbidden_violations: []
+
+coverage:
+  block_if_missing_checked: []
+  block_if_missing_found: []
+  missing: []
+
+unmapped:
+  - assertion_id: null
+    type: null
+    reason: null
+    severity: warning   # warning | blocking
+    fallback: null
+
+information_loss:
+  - assertion_id: null
+    loss_level: low     # low | medium | high
+    what_was_lost: null
+    retained_in_baseline: true
+
+proposals_blocked:
+  - assertion_id: null
+    status: null        # provisional | proposal | rejected
+    reason: "status != confirmed, not included in formal output"
+
+verdict: null           # success | blocked

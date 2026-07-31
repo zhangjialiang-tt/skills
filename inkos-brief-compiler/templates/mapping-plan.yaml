@@ -1,0 +1,40 @@
+# mapping-plan.yaml 模板
+# 由 inkos-brief-compiler 在每次编译时自动生成
+# 位置: story-design/<design-id>/compile/inkos/mapping-plan.yaml
+
+schema_version: 1
+compiled_at: null               # ISO 8601
+source_serial_revision: null
+inkos_version_target: ">=1.7.2 <1.8.0"
+
+mappings:
+  - assertion_id: ASSERT-ENGINE-001
+    profile: story_engine
+    targets:
+      - file: book-brief.md
+        section: 故事推进机制
+      - file: author_intent.md
+        section: 长期叙事约束
+    result: mapped
+    information_loss: none
+    override: null
+
+  - assertion_id: ASSERT-PAYOFF-004
+    profile: payoff_cadence
+    targets:
+      - file: author_intent.md
+        section: 节奏和兑现
+    result: summarized
+    information_loss: low
+    override: null
+
+  - assertion_id: ASSERT-EXAMPLE-003
+    profile: illustrative_example
+    targets: []
+    result: omitted_allowed
+    information_loss: none
+    override: null
+
+# result 枚举:
+#   mapped | split | summarized | retained_as_baseline |
+#   omitted_allowed | unmapped_warning | blocked
