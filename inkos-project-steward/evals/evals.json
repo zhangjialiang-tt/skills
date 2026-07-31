@@ -1,0 +1,95 @@
+{
+  "skill_name": "inkos-story-steward",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我想写一个末日基地建设的故事，主角是个工程师，在城市感染爆发后带着幸存者建基地。帮我从头开始设计，准备用 InkOS 写。",
+      "expected_output": "Skill 应检测当前目录无 InkOS 项目（无 inkos.json），进入 PREBUILD 模式。从阶段 1（创意定界）开始，输出作品假设（YAML 格式），然后只追问一个方向性问题。不应一次性输出全部 11 阶段产物。产物目录应包含 00-10 全部文件（无断号），最终生成 inkos/ 编译包。",
+      "files": ["evals/fixtures/no-project/"]
+    },
+    {
+      "id": 2,
+      "prompt": "我刚用 inkos book create --brief story-design/活着的死者/compile/inkos/book-brief.md 建了书，帮我检查一下 InkOS 生成的设定和我原来的设计是不是一致。设计里有一个初始伏笔 H001 关于仓库偷窃，但 InkOS 生成的 pending_hooks.md 里好像没有。",
+      "expected_output": "Skill 应检测到 books/ 目录存在但 chapters/ 为空，进入 FOUNDATION_ALIGNMENT 模式。通过 story-design/活着的死者/manifest.yaml 确认设计包与书籍的绑定关系（manifest-based binding），而非猜测。读取设计包和 InkOS 生成文件逐项比对。对于 pending_hooks.md 中丢失的初始伏笔：因为无章节且无 state/hooks.json，应允许直接修正 pending_hooks.md（恢复 H001）。不应把伏笔写入 current_focus.md 伪装替代。不应修改红区文件。输出对齐报告。",
+      "files": ["evals/fixtures/foundation-only/"]
+    },
+    {
+      "id": 3,
+      "prompt": "我觉得现在的世界观设定里，感染规则太简单了，想加一条：感染后如果 48 小时内注射抑制剂可以延缓但不能治愈。帮我改一下。",
+      "expected_output": "Skill 应检测到存在已写章节（5章），进入 ACTIVE_MAINTENANCE 模式。先检查 .write.lock 不存在。输出变更影响分析（YAML 格式，含 change_id 时间戳格式）。修改 story/outline/story_frame.md 和 story/book_rules.md。检查是否需要更新角色卡。建议运行 inkos plan chapter 和 inkos compose chapter 验证。不应直接修改 chapters/ 或 state/ 下的文件。",
+      "files": ["evals/fixtures/active-book/"]
+    },
+    {
+      "id": 4,
+      "prompt": "第五章里'这是他们第一次正式合作。'这句话太干巴了，帮我改成'直到这一刻，他们才算真正站到了一起。'意思不变，只是措辞更有力度。",
+      "expected_output": "Skill 应识别为 CHAPTER_EDIT 模式。判断修改类型：这是纯文风修改（不改变事实——合作已经成立，只是换了表达方式），属于类型 A。可以直接编辑第 5 章正文。建议运行 inkos audit 确认。不需要 write sync。不应调用任何状态同步命令。",
+      "files": ["evals/fixtures/active-book/"]
+    },
+    {
+      "id": 5,
+      "prompt": "我想改第五章，让何卫国在会议中明确拒绝合作，而不是最终同意。这改变了他们的关系起点。",
+      "expected_output": "Skill 应识别为 CHAPTER_EDIT 模式。判断：改变事实 + 目标是最新章（第5章）→ 类型 B。输出变更影响分析。编辑正文后必须执行 inkos write sync test-book 5。验证 sync 退出码。运行 inkos status 确认。如果 sync 失败，不得声称完成。",
+      "files": ["evals/fixtures/active-book/"]
+    },
+    {
+      "id": 6,
+      "prompt": "我想改第三章，让林远发现不是接线被动过，而是继电器本身质量有问题。这改变了第三章的一个事实。",
+      "expected_output": "Skill 应识别为 CHAPTER_EDIT 模式。判断：改变事实 + 目标不是最新章（第3章，最新是第5章）→ 禁止直接编辑。不能调用 write sync（InkOS 限制只能 sync 最新章）。只允许两条路径：A. 不改历史正文，在最新章中通过剧情完成澄清；B. 升级为 rewrite（备份+确认+删除后续章节）。绝不可执行 inkos write sync test-book 3。绝不可直接编辑第3章正文中的事实。",
+      "files": ["evals/fixtures/active-book/"]
+    },
+    {
+      "id": 7,
+      "prompt": "帮我直接修改 chapters/index.json，把第三章的标题改成'配电柜之谜'。",
+      "expected_output": "Skill 应识别 chapters/index.json 为红区文件，拒绝修改。解释：index.json 由 InkOS 运行时维护，手动修改会破坏章节索引一致性。给出替代路径：修改章节文件本身的标题，或通过 inkos 命令操作。不应执行任何写入。",
+      "files": ["evals/fixtures/active-book/"]
+    },
+    {
+      "id": 8,
+      "prompt": "帮我修改一下 author_intent.md，加一条：不写任何形式的后宫情节。",
+      "expected_output": "Skill 应检测到 .write.lock 存在（InkOS 流水线正在运行），停止一切写入。告知用户 InkOS 正在执行写作流水线，此时修改绿区文件会导致 InkOS 读取到一半新一半旧的状态。建议等待流水线完成后再修改。不应执行任何文件写入。",
+      "files": ["evals/fixtures/write-locked/"]
+    },
+    {
+      "id": 9,
+      "prompt": "帮我修改一下世界观设定，加一条关于电力系统的规则。",
+      "expected_output": "Skill 应检测到存在多本书（book-a 和 book-b），无法自动确定目标。要求用户指定 book-id。在用户未指定前，不应执行任何写入操作。不应随机选择一本书进行修改。",
+      "files": ["evals/fixtures/multi-book/"]
+    },
+    {
+      "id": 10,
+      "prompt": "帮我把 pending_hooks.md 里的 H001 标记为已回收，我在第五章已经揭示了仓库偷窃的真相。",
+      "expected_output": "Skill 应识别 pending_hooks.md 为黄区文件。检测到已有章节且 state/hooks.json 存在，不能直接修改 Markdown。正确路径：通过第五章正文体现回收 + inkos write sync 5，或将回收推进写入 current_focus.md 让后续章节自然结算。执行命令后必须验证退出码和 inkos status。如果命令失败，不得声称操作已完成。",
+      "files": ["evals/fixtures/active-book/"]
+    },
+    {
+      "id": 11,
+      "prompt": "PREBUILD 的人物系统刚完成，继续下一步。",
+      "expected_output": "阶段 4 不得单独调用 novel-coach，也不得创建世界人设 Gate。Steward 应完成角色主动性、利益/价值观冲突、关系债务、知识边界、独立下一步和删除测试的本地自检，然后继续阶段 5；世界、人设与结构在阶段 8 后统一检查。",
+      "files": ["evals/fixtures/no-project/"]
+    },
+    {
+      "id": 12,
+      "prompt": "PREBUILD 已完成阶段 8，整体结构有中期重复风险，请做质量复核。",
+      "expected_output": "Skill 应在检查点 2 生成最多一份轻量只读请求，stage=plot_structure，artifacts 覆盖 02-world-system.md 至 08-volume-outline.md，focus 包含中期重复和发动机可持续性，保留 frozen_decisions。请求不得包含 review_id、artifact_refs、permissions、哈希或 Ledger。Coach 结果只是建议；作者确认前 Steward 不得落盘建议或进入阶段 9。",
+      "files": ["evals/fixtures/no-project/"]
+    },
+    {
+      "id": 13,
+      "prompt": "给当前 InkOS 项目的 book_rules.md 增加一条不改变核心冲突的未来规则：基地内明火必须登记。",
+      "expected_output": "Skill 应进入 ACTIVE_MAINTENANCE，执行写锁、版本、路径分类和变更影响分析。该请求是普通绿区未来规则补充，不应调用 novel-coach；应把规则写成条件到结果的可执行形式，并按现有安全脚本验证。",
+      "files": ["evals/fixtures/active-book/"]
+    },
+    {
+      "id": 14,
+      "prompt": "我想把主角目标从建设基地改成摧毁所有基地，这会改变后面整卷结构。先帮我评估并修改。",
+      "expected_output": "Skill 应识别为重大核心目标和整卷结构变化，先只读诊断与变更影响分析，可使用 stage=postbuild_diagnosis 委托 Coach。Coach 只能返回 verdict/findings，不得写文件。作者必须接受、拒绝或带风险接受建议；确认前不得实施修改，确认后仍由 Steward 按红黄绿和 sync/rewrite 规则执行。",
+      "files": ["evals/fixtures/active-book/"]
+    },
+    {
+      "id": 15,
+      "prompt": "最近十章越来越重复，主角也总是在等别人出事，帮我诊断为什么卡文，只评审不修改。",
+      "expected_output": "Skill 应执行只读 review-foundation，至少检查作品承诺偏离、主角主动性、爽点重复、伏笔衰减、角色独立目标、下一卷升级，并把卡文主因归入 information_missing、conflict_missing 或 choice_missing。每条发现需给本地证据、严重度、建议区域、coach_needed、runtime_action 和建议；不得修改文件或执行 InkOS 命令。",
+      "files": ["evals/fixtures/active-book/"]
+    }
+  ]
+}

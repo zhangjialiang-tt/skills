@@ -1,0 +1,9 @@
+{
+  "id": "test-book",
+  "title": "测试作品",
+  "genre": "xuanhuan",
+  "platform": "tomato",
+  "targetChapters": 300,
+  "chapterWords": 2500,
+  "status": "outlining"
+}

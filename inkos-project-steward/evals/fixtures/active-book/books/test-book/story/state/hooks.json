@@ -1,0 +1,5 @@
+{
+  "hooks": [
+    {"id": "H001", "status": "planted", "plantedChapter": 3, "description": "3号仓库异常损耗"}
+  ]
+}

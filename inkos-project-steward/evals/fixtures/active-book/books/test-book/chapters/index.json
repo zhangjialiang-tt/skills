@@ -1,0 +1,9 @@
+{
+  "chapters": [
+    {"number": 1, "title": "感染爆发", "path": "001_感染爆发.md"},
+    {"number": 2, "title": "临时避难", "path": "002_临时避难.md"},
+    {"number": 3, "title": "第一次修复", "path": "003_第一次修复.md"},
+    {"number": 4, "title": "物资争夺", "path": "004_物资争夺.md"},
+    {"number": 5, "title": "建立规则", "path": "005_建立规则.md"}
+  ]
+}
