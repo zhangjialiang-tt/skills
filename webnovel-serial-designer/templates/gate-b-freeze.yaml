@@ -1,0 +1,33 @@
+gate: serial_package_freeze
+status: pending  # pending | approved
+serial_revision: null
+readiness_verdict: null  # pass | revise | block
+
+upstream_integrity:
+  preserved: null
+  approved_revisions: []
+  violations: []
+
+serialization_summary:
+  volume_count: null
+  target_chapters: null
+  engine_summary: null
+  truth_reveal_plan: null
+  launch_plan_ready: null
+  endgame_convergence_ready: null
+
+remaining_risks:
+  - id: null
+    severity: null
+    accepted: null
+
+readiness_ref: design/10-readiness-review.md
+
+author_decision:
+  decision: null  # approve_and_freeze | revise_serial_design | reopen_gate_a | return_to_synopsis
+  decided_at: null
+  notes: null
+
+handoff:
+  serial_contract_status: null  # frozen
+  compiler_ready: null  # true

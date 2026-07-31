@@ -1,0 +1,24 @@
+gate: serialization_architecture
+status: pending  # pending | approved | reopened
+serial_revision: 1
+
+submitted:
+  engine_ref: design/02-story-engine.md
+  volume_architecture_ref: design/05-volume-architecture.md
+  character_serialization_ref: design/03-character-serialization.md
+
+macro_decisions:
+  volume_count: null
+  engine_loop_summary: null
+  protagonist_arc_volumes: []
+  core_truth_reveal_volume: null
+  final_crisis_volume: null
+
+alternatives_presented: []  # 2-3 options if multiple viable architectures
+
+accepted_risks: []
+
+author_decision:
+  decision: null  # approve | revise | return_to_synopsis
+  decided_at: null
+  notes: null

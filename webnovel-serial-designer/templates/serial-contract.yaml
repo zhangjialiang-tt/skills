@@ -1,0 +1,229 @@
+# serial-contract.yaml 模板
+# 由 webnovel-serial-designer 在设计完成后自动生成
+# 位置: story-design/<design-id>/serial/serial-contract.yaml
+
+schema_version: 1
+artifact_type: serial_design_contract
+
+identity:
+  design_id: <design-id>
+  title: <作品标题>
+  revision: 1
+
+source:
+  synopsis_contract_ref: ../source/synopsis-contract.yaml
+  synopsis_revision: 1
+
+status:
+  serial_design_status: draft       # draft | reviewing | frozen
+  handoff_ready: false              # 仅 frozen 时可为 true
+  readiness_verdict: pending        # pending | pass | revise | block
+  accepted_risks: []
+
+serialization_target:
+  form: long_webnovel
+  platform: <平台>
+  genre: <题材>
+  target_chapters: <目标章数>
+  chapter_words: <单章字数>
+  target_total_words: <总字数>
+  pacing_profile: <fast | medium_fast | medium | slow_burn>
+
+upstream_integrity:
+  preserved_synopsis_facts:
+    - <从上游 frozen_facts 复制>
+  approved_revision_proposals: []
+  forbidden_story_changes:
+    - <从上游 prohibited_directions 复制>
+
+serial_promise:
+  click_hook: >
+    <一句话点击钩子>
+  first_three_chapters:
+    promise: >
+      <前三章完成什么>
+    required_payoffs:
+      - <第一个兑现>
+      - <第二个兑现>
+  first_thirty_chapters:
+    promise: >
+      <前三十章完成什么>
+  long_term_promise: >
+    <长期追读承诺>
+
+story_engine:
+  engine_id: ENGINE-001
+  loop:
+    - <步骤1>
+    - <步骤2>
+    - <步骤3>
+    - <步骤4>
+  variable_inputs:
+    - <可变输入1>
+    - <可变输入2>
+    - <可变输入3>
+  cumulative_state:
+    - <累计状态1>
+    - <累计状态2>
+  escalation_axes:
+    - <升级轴1>
+    - <升级轴2>
+  anti_repetition_rules:
+    - <反重复规则1>
+    - <反重复规则2>
+
+volumes:
+  - id: VOL-01
+    title: <卷名>
+    chapter_range: [1, <N>]
+    external_goal: <本卷外在目标>
+    internal_pressure: <本卷内在压力>
+    primary_opposition: <本卷主要对手>
+    major_reveal: <本卷重大揭示>
+    climax: <本卷高潮>
+    irreversible_state_changes:
+      - <不可逆变化1>
+      - <不可逆变化2>
+    ending_hook: >
+      <卷末钩子>
+
+serial_characters:
+  - id: CHAR-PROTAGONIST
+    synopsis_character_ref: <上游角色标识>
+    serial_function:
+      primary: <主要连载功能>
+      secondary:
+        - <次要功能>
+    arc_checkpoints:
+      - volume: VOL-01
+        belief: <本卷信念>
+        forced_choice: <被迫选择>
+        cost: <代价>
+      - volume: VOL-02
+        belief: <本卷信念>
+        forced_choice: <被迫选择>
+        cost: <代价>
+    relationship_dynamics:
+      - target: <角色ID>
+        progression:
+          - <阶段1>
+          - <阶段2>
+    prohibited_drift:
+      - <禁止漂移规则>
+
+world_pressure:
+  persistent_pressures:
+    - id: PRESSURE-001
+      source: <压力来源>
+      escalation:
+        - <升级阶段1>
+        - <升级阶段2>
+      story_outputs:
+        - <产出的故事类型>
+
+payoff_system:
+  primary_payoffs:
+    - id: PAYOFF-001
+      type: <mystery_reveal | authority_reversal | capability | relationship | resource>
+      pattern: >
+        <兑现模式>
+      minimum_cadence:
+        chapters: <最小间隔>
+  density_rules:
+    opening_chapters_1_10:
+      minor_payoff_interval: <间隔>
+      major_payoffs: <数量>
+    normal_serialization:
+      minor_payoff_interval_range: [<min>, <max>]
+      volume_climax_required: true
+  prohibited_shortcuts:
+    - <禁止捷径1>
+    - <禁止捷径2>
+
+information_design:
+  truths:
+    - id: TRUTH-001
+      statement: <真相>
+      authority: canonical
+      reveal_volume: <揭示卷>
+      clue_schedule:
+        - volume: VOL-01
+          clue: <线索>
+          reader_visibility: <low | medium | high>
+          protagonist_awareness: <none | suspects | knows>
+      false_hypotheses:
+        - <错误解释>
+      omission_policy: forbidden
+
+launch_plan:
+  first_three_chapters:
+    - chapter: 1
+      required_event: <核心事件>
+      chapter_end_hook: <章尾钩子>
+    - chapter: 2
+      required_event: <核心事件>
+      chapter_end_hook: <章尾钩子>
+    - chapter: 3
+      required_event: <核心事件>
+      chapter_end_hook: <章尾钩子>
+      irreversible_choice: true
+  first_thirty_chapters:
+    required_progress:
+      - <必须完成1>
+      - <必须完成2>
+      - <必须完成3>
+
+endgame_convergence:
+  required_upstream_ending_ref: <上游结局标识>
+  convergence_conditions:
+    - <收束条件1>
+    - <收束条件2>
+  forbidden_endgame_changes:
+    - <禁止的终局改变1>
+    - <禁止的终局改变2>
+
+assertions:
+  - id: ASSERT-ENGINE-001
+    type: story_engine
+    statement: >
+      <跨构件约束>
+    status: confirmed
+    importance: critical
+    source_ref: design/02-story-engine.md#<section>
+    invariants:
+      - <语义不变量>
+    supersedes: []
+
+compilation_policy:
+  must_preserve:
+    - 上游故事真相
+    - 结局及其代价
+    - 故事发动机
+    - 每卷不可逆状态变化
+    - 主角跨卷弧光
+    - 核心伏笔及回收条件
+    - 关键世界规则
+  may_summarize:
+    - 方法论解释
+    - 设计理由
+    - 例示性事件
+    - Reviewer 论证过程
+  may_omit:
+    - 已解决的讨论记录
+    - 被否决方案的详细论证
+    - 纯审查过程
+    - 重复性示例
+  must_not_emit:
+    - 未接受的 Proposal
+    - 已否决方向
+    - 只用于 Reviewer 的质疑
+  block_if_missing:
+    - story_engine
+    - volume_architecture
+    - protagonist_arc_checkpoints
+    - endgame_convergence
+    - first_three_chapters
+
+external_reviews:
+  status: not_requested
+  references: []

@@ -1,0 +1,74 @@
+review_type: serial_readiness
+generated_by: webnovel-serial-designer
+serial_revision: null
+generated_at: null
+
+verdict: pending  # pass | revise | block
+
+checks:
+  upstream_fidelity:
+    status: null
+    frozen_facts_preserved: null
+    prohibited_respected: null
+    ending_convergence: null
+    violations: []
+
+  engine_sustainability:
+    status: null
+    can_run_50_cycles: null
+    variable_inputs_sufficient: null
+    escalation_clear: null
+    issues: []
+
+  volume_completeness:
+    status: null
+    all_volumes_have_goal: null
+    all_volumes_have_climax: null
+    all_volumes_have_irreversible_change: null
+    issues: []
+
+  character_arc_distribution:
+    status: null
+    protagonist_checkpoints_per_volume: null
+    no_midpoint_passivity: null
+    issues: []
+
+  payoff_executability:
+    status: null
+    density_adequate: null
+    variety_sufficient: null
+    no_shortcuts: null
+    issues: []
+
+  information_release:
+    status: null
+    clues_before_reveal: null
+    fair_play: null
+    reader_protagonist_asymmetry: null
+    issues: []
+
+  launch_readiness:
+    status: null
+    first_three_chapters_defined: null
+    first_thirty_direction_clear: null
+    issues: []
+
+  volume_credibility:
+    status: null
+    target_chapters_supportable: null
+    no_padding_risk: null
+    issues: []
+
+  endgame_convergence:
+    status: null
+    references_upstream_ending: null
+    conditions_achievable: null
+    issues: []
+
+blocking_issues: []
+major_risks: []
+auto_fixed: []
+
+external_reviews:
+  status: not_requested
+  references: []
