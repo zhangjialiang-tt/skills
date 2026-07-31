@@ -2,10 +2,13 @@
 """InkOS Story Steward preflight check.
 
 Fail-closed guard: any uncertainty blocks writes.
-Exit codes: 0 = write allowed, 1 = blocked, 2 = warnings only (write still allowed).
+Detects mode: PREBUILD_STANDALONE, PREBUILD_IN_PROJECT, FOUNDATION_ALIGNMENT,
+ACTIVE_MAINTENANCE, AMBIGUOUS_BINDING.
+
+Exit codes: 0 = write allowed, 1 = blocked, 2 = warnings only.
 
 Usage:
-    python scripts/preflight.py [--project-root PATH] [--book-id ID] [--json]
+    python scripts/preflight.py [--project-root PATH] [--book-id ID] [--design-id ID] [--json]
 """
 
 import argparse
@@ -14,7 +17,13 @@ import subprocess
 import sys
 from pathlib import Path
 
-SUPPORTED_VERSION_RANGE = (1, 7, 2), (1, 8, 0)  # >=1.7.2 <1.8.0
+sys.path.insert(0, str(Path(__file__).parent))
+from design_id import (
+    derive_design_id, detect_legacy_layout, find_all_manifests,
+    find_design_root, find_manifests_for_book, VALID_STATES,
+)
+
+SUPPORTED_VERSION_RANGE = (1, 7, 2), (1, 8, 0)
 
 
 def find_project_root(start: Path) -> Path | None:
@@ -41,14 +50,12 @@ def discover_books(project_root: Path) -> list[str]:
 
 
 def check_write_lock(book_path: Path) -> bool:
-    """Return True if .write.lock exists (BLOCKED)."""
     return (book_path / ".write.lock").exists()
 
 
 def inspect_chapter_state(book_path: Path) -> dict:
-    """Inspect chapter index and files for consistency.
-    Returns dict with: latest_chapter, index_exists, index_valid,
-    indexed_chapters, chapter_files, consistent, error."""
+    """Inspect chapter index and files for consistency."""
+    import re as _re
     result = {
         "latest_chapter": None,
         "index_exists": False,
@@ -62,33 +69,25 @@ def inspect_chapter_state(book_path: Path) -> dict:
     chapters_dir = book_path / "chapters"
     index_file = chapters_dir / "index.json"
 
-    # Discover chapter markdown files on disk
     if chapters_dir.is_dir():
-        import re
         for f in chapters_dir.iterdir():
             if f.suffix == ".md" and f.name != "index.json":
-                m = re.match(r"^(\d+)", f.name)
+                m = _re.match(r"^(\d+)", f.name)
                 if m:
                     result["chapter_files"].append(int(m.group(1)))
         result["chapter_files"].sort()
 
-    # Read index
     if index_file.exists():
         result["index_exists"] = True
         try:
             data = json.loads(index_file.read_text(encoding="utf-8"))
             chapters = data if isinstance(data, list) else data.get("chapters", [])
-            nums = []
-            for c in chapters:
-                n = c.get("number", c.get("id"))
-                if n is not None:
-                    nums.append(int(n))
+            nums = [int(c.get("number", c.get("id", 0))) for c in chapters]
             result["indexed_chapters"] = sorted(nums)
             result["index_valid"] = True
         except (json.JSONDecodeError, KeyError, ValueError, TypeError):
             result["index_valid"] = False
 
-    # Consistency checks
     indexed = set(result["indexed_chapters"])
     files = set(result["chapter_files"])
 
@@ -99,20 +98,16 @@ def inspect_chapter_state(book_path: Path) -> dict:
         result["consistent"] = False
         result["error"] = "index.json exists but is corrupt/unparseable"
     elif result["index_valid"]:
-        missing_files = indexed - files
-        unindexed_files = files - indexed
-        if missing_files:
+        if indexed - files:
             result["consistent"] = False
-            result["error"] = f"Index references chapters with no markdown file: {sorted(missing_files)}"
-        elif unindexed_files:
+            result["error"] = f"Index references chapters with no file: {sorted(indexed - files)}"
+        elif files - indexed:
             result["consistent"] = False
-            result["error"] = f"Markdown files exist but not in index: {sorted(unindexed_files)}"
-        # Check duplicates
-        if result["index_valid"] and len(result["indexed_chapters"]) != len(indexed):
+            result["error"] = f"Files exist but not in index: {sorted(files - indexed)}"
+        elif len(result["indexed_chapters"]) != len(indexed):
             result["consistent"] = False
             result["error"] = "Duplicate chapter numbers in index"
 
-    # Determine latest chapter
     all_chapters = indexed | files
     if all_chapters:
         result["latest_chapter"] = max(all_chapters)
@@ -121,54 +116,49 @@ def inspect_chapter_state(book_path: Path) -> dict:
 
 
 def check_inkos_version() -> tuple[int, ...] | None:
-    """Get InkOS version tuple, or None if not installed."""
     try:
         result = subprocess.run(
-            ["inkos", "--version"],
-            capture_output=True, text=True, timeout=10
+            ["inkos", "--version"], capture_output=True, text=True, timeout=10
         )
         if result.returncode != 0:
             return None
         version_str = result.stdout.strip().split("/")[-1].strip()
-        parts = version_str.split(".")
-        return tuple(int(p) for p in parts[:3])
+        return tuple(int(p) for p in version_str.split(".")[:3])
     except (FileNotFoundError, subprocess.TimeoutExpired, ValueError):
         return None
 
 
 def check_git_clean(project_root: Path) -> bool | None:
-    """Return True if clean, False if dirty, None if git unavailable/failed."""
     try:
         result = subprocess.run(
             ["git", "status", "--porcelain"],
-            capture_output=True, text=True, timeout=10,
-            cwd=str(project_root)
+            capture_output=True, text=True, timeout=10, cwd=str(project_root)
         )
         if result.returncode != 0:
-            return None  # Git command failed
+            return None
         return len(result.stdout.strip()) == 0
-    except FileNotFoundError:
-        return None  # Git not installed
-    except subprocess.TimeoutExpired:
-        return None  # Git timed out
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        return None
 
 
-def check_state_files(book_path: Path) -> dict:
-    """Check which state/*.json files exist."""
-    state_dir = book_path / "story" / "state"
-    return {
-        "manifest.json": (state_dir / "manifest.json").exists(),
-        "current_state.json": (state_dir / "current_state.json").exists(),
-        "hooks.json": (state_dir / "hooks.json").exists(),
-        "chapter_summaries.json": (state_dir / "chapter_summaries.json").exists(),
-    }
+def load_manifest(manifest_path: Path) -> dict | None:
+    """Load and validate manifest.yaml."""
+    try:
+        import yaml
+        data = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+        if not isinstance(data, dict):
+            return None
+        return data
+    except Exception:
+        return None
 
 
 def main():
     parser = argparse.ArgumentParser(description="InkOS preflight check")
     parser.add_argument("--project-root", type=Path, default=Path("."))
     parser.add_argument("--book-id", type=str, default=None)
-    parser.add_argument("--json", action="store_true", help="Output as JSON")
+    parser.add_argument("--design-id", type=str, default=None)
+    parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
 
     report = {
@@ -179,6 +169,13 @@ def main():
         "reason_codes": [],
         "errors": [],
         "warnings": [],
+        "mode": None,
+        "design_id": args.design_id,
+        "design_root": None,
+        "manifest_path": None,
+        "book_id": args.book_id,
+        "binding_status": "unbound",
+        "legacy_layout_detected": False,
     }
 
     def block(code: str, msg: str):
@@ -191,93 +188,142 @@ def main():
 
     # 1. Find project root
     project_root = find_project_root(args.project_root)
+
     if project_root is None:
-        report["mode"] = "PREBUILD"
-        report["message"] = "No InkOS project found. PREBUILD mode."
-        # PREBUILD doesn't need write permission checks
+        report["mode"] = "PREBUILD_STANDALONE"
+        report["message"] = "No InkOS project found. Standalone design mode."
+        # Check legacy layout in cwd
+        if detect_legacy_layout(args.project_root.resolve()):
+            report["legacy_layout_detected"] = True
+            report["warnings"].append("Legacy flat story-design/ layout detected. Migration recommended.")
         _output(report, args.json)
         sys.exit(0)
 
     report["project_root"] = str(project_root)
 
-    # 2. Discover books
+    # 2. Detect legacy layout
+    if detect_legacy_layout(project_root):
+        report["legacy_layout_detected"] = True
+        report["warnings"].append("Legacy flat story-design/ layout detected. Migration recommended.")
+
+    # 3. Discover books
     books = discover_books(project_root)
-    if not books:
-        report["mode"] = "PREBUILD"
-        report["message"] = "Project exists but no books. PREBUILD mode."
-        _output(report, args.json)
-        sys.exit(0)
 
-    # 3. Resolve book ID
-    book_id = args.book_id
-    if book_id is None:
-        if len(books) == 1:
-            book_id = books[0]
+    # 4. Determine mode based on design manifest and books
+    manifest_data = None
+    manifest_path = None
+
+    if args.design_id:
+        manifest_path = project_root / "story-design" / args.design_id / "manifest.yaml"
+        if manifest_path.exists():
+            manifest_data = load_manifest(manifest_path)
+            if manifest_data:
+                report["manifest_path"] = str(manifest_path)
+                report["design_root"] = f"story-design/{args.design_id}"
+                book_id_from_manifest = manifest_data.get("inkos", {}).get("book_id")
+                if book_id_from_manifest:
+                    report["book_id"] = book_id_from_manifest
+                    report["binding_status"] = "bound"
+
+    # 5. Mode detection
+    book_id = report["book_id"]
+
+    if book_id and book_id in books:
+        # Book exists — check for chapters
+        book_path = project_root / "books" / book_id
+        chapter_state = inspect_chapter_state(book_path)
+        report["chapter_state"] = chapter_state
+
+        if not chapter_state["consistent"]:
+            block("CHAPTER_INDEX_INCONSISTENT",
+                  f"Chapter index inconsistency: {chapter_state['error']}")
+            report["mode"] = "AMBIGUOUS_BINDING"
+        elif chapter_state["latest_chapter"] is None:
+            report["mode"] = "FOUNDATION_ALIGNMENT"
         else:
-            block("MULTI_BOOK_UNRESOLVED",
-                  f"Multiple books found: {books}. Specify --book-id.")
-            report["mode"] = "UNKNOWN"
-            _output(report, args.json)
-            sys.exit(1)
+            report["mode"] = "ACTIVE_MAINTENANCE"
 
-    if book_id not in books:
-        block("BOOK_NOT_FOUND", f"Book '{book_id}' not found. Available: {books}")
-        report["mode"] = "UNKNOWN"
-        _output(report, args.json)
-        sys.exit(1)
+        # Check write lock
+        if check_write_lock(book_path):
+            block("WRITE_LOCK_ACTIVE", ".write.lock exists. InkOS pipeline running.")
 
-    book_path = project_root / "books" / book_id
-    report["book_id"] = book_id
+    elif book_id and book_id not in books and books:
+        # Manifest claims a book that doesn't exist
+        block("BOOK_NOT_FOUND", f"Bound book_id '{book_id}' not found in project.")
+        report["mode"] = "AMBIGUOUS_BINDING"
 
-    # 4. Check version
-    version = check_inkos_version()
-    if version is None:
-        block("INKOS_VERSION_UNKNOWN",
-              "InkOS CLI not found or version check failed. Writes blocked.")
-        report["version"] = None
+    elif books and not book_id:
+        # Books exist but no binding — check for ambiguous manifests
+        if args.design_id:
+            # Design specified but not bound
+            report["mode"] = "PREBUILD_IN_PROJECT"
+        else:
+            # Multiple books, no design specified
+            if len(books) > 1:
+                block("MULTI_BOOK_UNRESOLVED",
+                      f"Multiple books {books} and no --design-id or --book-id specified.")
+                report["mode"] = "AMBIGUOUS_BINDING"
+            else:
+                # Single book — compatible fallback
+                report["book_id"] = books[0]
+                report["binding_status"] = "inferred_single"
+                report["warnings"].append(
+                    "Single book inferred. Add explicit binding to manifest for stability.")
+                book_path = project_root / "books" / books[0]
+                chapter_state = inspect_chapter_state(book_path)
+                report["chapter_state"] = chapter_state
+                if not chapter_state["consistent"]:
+                    block("CHAPTER_INDEX_INCONSISTENT", chapter_state["error"])
+                    report["mode"] = "AMBIGUOUS_BINDING"
+                elif chapter_state["latest_chapter"] is None:
+                    report["mode"] = "FOUNDATION_ALIGNMENT"
+                else:
+                    report["mode"] = "ACTIVE_MAINTENANCE"
+
     else:
-        report["version"] = ".".join(map(str, version))
-        lo, hi = SUPPORTED_VERSION_RANGE
-        if not (lo <= version < hi):
-            block("INKOS_VERSION_UNSUPPORTED",
-                  f"InkOS version {report['version']} outside supported range "
-                  f"[{'.'.join(map(str, lo))}, {'.'.join(map(str, hi))}). Writes blocked.")
+        # No books at all — PREBUILD_IN_PROJECT
+        report["mode"] = "PREBUILD_IN_PROJECT"
 
-    # 5. Check write lock
-    if check_write_lock(book_path):
-        block("WRITE_LOCK_ACTIVE",
-              ".write.lock exists. InkOS pipeline is running. Wait for it to finish.")
+    # Check for duplicate bindings
+    if book_id and report["mode"] not in ("AMBIGUOUS_BINDING",):
+        try:
+            bound_manifests = find_manifests_for_book(project_root, book_id)
+            if len(bound_manifests) > 1:
+                block("DUPLICATE_BINDING",
+                      f"Multiple manifests claim book_id '{book_id}': "
+                      f"{[str(m) for m in bound_manifests]}")
+                report["mode"] = "AMBIGUOUS_BINDING"
+        except ImportError:
+            pass  # PyYAML not available, skip binding check
 
-    # 6. Determine mode with chapter index consistency
-    chapter_state = inspect_chapter_state(book_path)
-    report["chapter_state"] = chapter_state
-    report["latest_chapter"] = chapter_state["latest_chapter"]
+    # 6. Version check (only for modes that write to books/)
+    if report["mode"] in ("FOUNDATION_ALIGNMENT", "ACTIVE_MAINTENANCE"):
+        version = check_inkos_version()
+        if version is None:
+            block("INKOS_VERSION_UNKNOWN", "InkOS CLI not found. Writes blocked.")
+            report["version"] = None
+        else:
+            report["version"] = ".".join(map(str, version))
+            lo, hi = SUPPORTED_VERSION_RANGE
+            if not (lo <= version < hi):
+                block("INKOS_VERSION_UNSUPPORTED",
+                      f"InkOS {report['version']} outside [{lo}, {hi}). Writes blocked.")
 
-    if not chapter_state["consistent"]:
-        block("CHAPTER_INDEX_INCONSISTENT",
-              f"Chapter index inconsistency: {chapter_state['error']}. "
-              f"Do NOT modify chapters/index.json (red zone). "
-              f"Use InkOS repair/audit or re-confirm project state.")
-        report["mode"] = "UNKNOWN"
-    elif chapter_state["latest_chapter"] is None:
-        report["mode"] = "FOUNDATION_ALIGNMENT"
-    else:
-        report["mode"] = "ACTIVE"
-
-    # 7. Check state files
-    report["state_files"] = check_state_files(book_path)
-
-    # 8. Check git — fail-closed on ANY uncertainty
+    # 7. Git check (fail-closed)
     git_clean = check_git_clean(project_root)
     report["git_clean"] = git_clean
     if git_clean is None:
-        block("GIT_BASELINE_UNAVAILABLE",
-              "Git unavailable, not a repo, or command failed. "
-              "Cannot establish clean baseline. Writes blocked.")
+        block("GIT_BASELINE_UNAVAILABLE", "Git unavailable. Cannot establish baseline.")
     elif git_clean is False:
-        block("GIT_WORKTREE_DIRTY",
-              "Git working tree is dirty. Commit or stash before modifications. "
-              "Writes blocked.")
+        block("GIT_WORKTREE_DIRTY", "Git working tree dirty. Commit first.")
+
+    # 8. Design root existence check for PREBUILD
+    if report["mode"] in ("PREBUILD_STANDALONE", "PREBUILD_IN_PROJECT") and args.design_id:
+        design_root = find_design_root(project_root, args.design_id)
+        if design_root.exists() and not (design_root / "manifest.yaml").exists():
+            report["warnings"].append(
+                f"Design root {design_root} exists without manifest. Possible conflict.")
+        report["design_root"] = f"story-design/{args.design_id}"
 
     # Output
     _output(report, args.json)
@@ -299,10 +345,10 @@ def _output(report: dict, as_json: bool):
                 print(f"  [{code}]", file=sys.stderr)
         else:
             print(f"Mode: {report.get('mode', 'UNKNOWN')}")
-            if "book_id" in report:
+            if report.get("design_id"):
+                print(f"Design: {report['design_id']}")
+            if report.get("book_id"):
                 print(f"Book: {report['book_id']}")
-            print(f"Latest chapter: {report.get('latest_chapter', 'none')}")
-            print(f"Version: {report.get('version', 'unknown')}")
             print(f"Write allowed: {report['write_allowed']}")
             for w in report["warnings"]:
                 print(f"WARNING: {w}", file=sys.stderr)

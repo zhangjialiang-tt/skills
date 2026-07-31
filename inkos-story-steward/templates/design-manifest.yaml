@@ -1,0 +1,36 @@
+# Design Manifest 模板
+# 每个建书前设计包必须拥有独立的 manifest.yaml
+# 位置: story-design/<design-id>/manifest.yaml
+
+schema_version: 1
+
+design:
+  id: <design-id>           # 文件系统隔离标识，从标题派生
+  title: <作品标题>          # 原始标题
+  root: story-design/<design-id>
+  status: draft
+  # 合法状态: draft | reviewing | ready_to_create | creating | created | aligned | archived
+
+inkos:
+  project_root: null         # InkOS 项目根（null = 独立设计，尚未关联项目）
+  book_id: null              # 建书后绑定的实际 bookId
+  book_dir: null             # 建书后绑定的实际书目录 (books/<book-id>)
+  brief_path: compile/inkos/book-brief.md  # 相对于 design root
+
+lifecycle:
+  created_at: null           # ISO 8601
+  updated_at: null
+  book_created_at: null
+  aligned_at: null
+  last_error: null           # 最近一次建书失败信息
+
+gates:
+  gate_1: pending            # 作品承诺确认
+  gate_2: pending            # 主角与结局确认
+  gate_3: pending            # 故事发动机与分卷确认
+  gate_4: pending            # 最终大纲与 InkOS 导入确认
+  # 合法值: pending | passed | accepted_with_risk
+
+source:
+  skill: inkos-story-steward
+  schema: prebuild-v2

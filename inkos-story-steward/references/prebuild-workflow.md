@@ -29,31 +29,36 @@
 
 ## 产物目录结构
 
+> `<design-root>` = `story-design/<design-id>`
+
 ```
-story-design/
-├── 00-project-brief.md
-├── 01-story-promise.md
-├── 02-world-system.md
-├── 03-character-system.md
-├── 04-conflict-engine.md
-├── 05-plot-architecture.md
-├── 06-payoff-system.md
-├── 07-foreshadowing-and-mystery.md
-├── 08-volume-outline.md
-├── 09-story-outline.md
-├── 10-readiness-review.md
-└── inkos/
-    ├── book-brief.md
-    ├── author_intent.md
-    ├── story_frame.md
-    ├── volume_map.md
-    ├── book_rules.md
-    ├── pending_hooks.md
-    └── roles/
+story-design/<design-id>/
+├── manifest.yaml
+├── design/
+│   ├── 00-project-brief.md
+│   ├── 01-story-promise.md
+│   ├── 02-world-system.md
+│   ├── 03-character-system.md
+│   ├── 04-conflict-engine.md
+│   ├── 05-plot-architecture.md
+│   ├── 06-payoff-system.md
+│   ├── 07-foreshadowing-and-mystery.md
+│   ├── 08-volume-outline.md
+│   ├── 09-story-outline.md
+│   └── 10-readiness-review.md
+└── compile/
+    └── inkos/
+        ├── book-brief.md
+        ├── author_intent.md
+        ├── story_frame.md
+        ├── volume_map.md
+        ├── book_rules.md
+        ├── pending_hooks.md
+        └── roles/
 ```
 
 真正交付给作者阅读的是 `09-story-outline.md`。
-`inkos/` 目录是机器交付包：`book-brief.md` 用于 `inkos book create --brief`，其余文件用于建书后对齐时的精确比对基准。
+`compile/inkos/` 目录是机器交付包：`book-brief.md` 用于 `inkos book create --brief`，其余文件用于建书后对齐时的精确比对基准。
 
 ---
 
@@ -73,7 +78,7 @@ story-design/
 - 现实资料和专业素材来源
 
 ### 产物
-`story-design/00-project-brief.md`（YAML 格式作品假设）
+`<design-root>/design/00-project-brief.md`（YAML 格式作品假设）
 
 使用模板：`templates/project-brief.md`
 
@@ -96,7 +101,7 @@ story-design/
 4. 这本书和同类型作品有什么区别？
 
 ### 产物
-`story-design/01-story-promise.md`
+`<design-root>/design/01-story-promise.md`
 
 输出一句可执行的作品承诺，而不是主题口号。
 
@@ -112,8 +117,8 @@ Steward 先完成质量检查；发现明显质量风险、需要对抗性复核
 ```yaml
 stage: story_promise
 artifacts:
-  - story-design/00-project-brief.md
-  - story-design/01-story-promise.md
+  - <design-root>/design/00-project-brief.md
+  - <design-root>/design/01-story-promise.md
 focus:
   - 一句话核心梗
   - 点击理由
@@ -143,7 +148,7 @@ frozen_decisions: []
 - 每次突破要付出什么代价
 
 ### 产物
-`story-design/02-world-system.md`
+`<design-root>/design/02-world-system.md`
 
 世界观必须同时输出两种形式：
 
@@ -203,7 +208,7 @@ frozen_decisions: []
 - 每个重要角色是否拥有独立目标、知识边界和下一步行动
 
 ### 产物
-`story-design/03-character-system.md`
+`<design-root>/design/03-character-system.md`
 
 本阶段不单独调用 Coach，也不设置作者 Gate；人物、世界与冲突发动机在阶段 8 后统一评审，
 避免相邻构件被重复检查。
@@ -251,7 +256,7 @@ frozen_decisions: []
 资源/能力、关系/信任、身份/价值观三个递增层级。
 
 ### 产物
-`story-design/04-conflict-engine.md`
+`<design-root>/design/04-conflict-engine.md`
 
 ---
 
@@ -276,8 +281,8 @@ frozen_decisions: []
 - 节奏原则（张弛、爽点密度、信息释放节奏）
 
 ### 产物
-- `story-design/05-plot-architecture.md`（情节架构 + 结局 + 转折）
-- `story-design/08-volume-outline.md`（分卷规划）
+- `<design-root>/design/05-plot-architecture.md`（情节架构 + 结局 + 转折）
+- `<design-root>/design/08-volume-outline.md`（分卷规划）
 
 ### 阶段性自检
 - 故事发动机是否可持续
@@ -314,7 +319,7 @@ frozen_decisions: []
 脱离作品节奏的硬规则。
 
 ### 产物
-`story-design/06-payoff-system.md`
+`<design-root>/design/06-payoff-system.md`
 
 ---
 
@@ -350,7 +355,7 @@ frozen_decisions: []
 还可以使用 InkOS 的 `forecast` 做局部分支推演，但建书前应先完成宏观剧情推演。
 
 ### 产物
-`story-design/07-foreshadowing-and-mystery.md`
+`<design-root>/design/07-foreshadowing-and-mystery.md`
 
 最终映射为 InkOS 的 `pending_hooks.md` 初始种子。
 
@@ -364,13 +369,13 @@ frozen_decisions: []
 ```yaml
 stage: plot_structure
 artifacts:
-  - story-design/02-world-system.md
-  - story-design/03-character-system.md
-  - story-design/04-conflict-engine.md
-  - story-design/05-plot-architecture.md
-  - story-design/06-payoff-system.md
-  - story-design/07-foreshadowing-and-mystery.md
-  - story-design/08-volume-outline.md
+  - <design-root>/design/02-world-system.md
+  - <design-root>/design/03-character-system.md
+  - <design-root>/design/04-conflict-engine.md
+  - <design-root>/design/05-plot-architecture.md
+  - <design-root>/design/06-payoff-system.md
+  - <design-root>/design/07-foreshadowing-and-mystery.md
+  - <design-root>/design/08-volume-outline.md
 focus:
   - 世界压力和人物冲突是否自行运行
   - 故事发动机是否可持续
@@ -420,7 +425,7 @@ Coach 重点检查：结局是否能反推前置条件、第一卷是否兑现�
 使用模板：`templates/story-outline.md`
 
 ### 产物
-`story-design/09-story-outline.md`
+`<design-root>/design/09-story-outline.md`
 
 ---
 
@@ -446,7 +451,7 @@ Coach 重点检查：结局是否能反推前置条件、第一卷是否兑现�
 - [ ] 编译映射是否没有引入原设计不存在的新事实
 
 ### 产物
-`story-design/10-readiness-review.md`
+`<design-root>/design/10-readiness-review.md`
 
 格式：
 ```markdown
@@ -479,8 +484,8 @@ Steward 完成 Readiness 和编译覆盖检查；发现明显质量风险、需�
 ```yaml
 stage: final_readiness
 artifacts:
-  - story-design/09-story-outline.md
-  - story-design/10-readiness-review.md
+  - <design-root>/design/09-story-outline.md
+  - <design-root>/design/10-readiness-review.md
 focus:
   - 最终大纲可执行性
   - 前三章和第一卷承诺
@@ -506,7 +511,7 @@ Readiness Review 通过后的全部产物。
 生成 InkOS 建书包（机器交付包）：
 
 ```
-story-design/inkos/
+<design-root>/compile/inkos/
 ├── book-brief.md          # 用于 --brief 参数
 ├── author_intent.md       # 作者意图精确版
 ├── story_frame.md         # 世界观精确版
@@ -535,7 +540,7 @@ inkos book create \
   --platform tomato \
   --target-chapters 300 \
   --chapter-words 2500 \
-  --brief story-design/inkos/book-brief.md
+  --brief "<design-root>/compile/inkos/book-brief.md"
 ```
 
 ### 编译前确认

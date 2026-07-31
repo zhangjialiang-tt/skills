@@ -1,6 +1,6 @@
 # InkOS 原生格式：角色卡
 
-> 此模板用于编译包 `story-design/inkos/roles/主要角色/<角色名>.md`。
+> 此模板用于编译包 `<design-root>/compile/inkos/roles/主要角色/<角色名>.md`。
 > 格式对齐 InkOS rules-reader 期望的角色卡结构。
 
 ---

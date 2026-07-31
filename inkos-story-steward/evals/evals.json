@@ -9,8 +9,8 @@
     },
     {
       "id": 2,
-      "prompt": "我刚用 inkos book create --brief story-design/inkos/book-brief.md 建了书，帮我检查一下 InkOS 生成的设定和我原来的设计是不是一致。设计里有一个初始伏笔 H001 关于仓库偷窃，但 InkOS 生成的 pending_hooks.md 里好像没有。",
-      "expected_output": "Skill 应检测到 books/ 目录存在但 chapters/ 为空，进入 FOUNDATION_ALIGNMENT 模式。读取设计包和 InkOS 生成文件逐项比对。对于 pending_hooks.md 中丢失的初始伏笔：因为无章节且无 state/hooks.json，应允许直接修正 pending_hooks.md（恢复 H001）。不应把伏笔写入 current_focus.md 伪装替代。不应修改红区文件。输出对齐报告。",
+      "prompt": "我刚用 inkos book create --brief story-design/活着的死者/compile/inkos/book-brief.md 建了书，帮我检查一下 InkOS 生成的设定和我原来的设计是不是一致。设计里有一个初始伏笔 H001 关于仓库偷窃，但 InkOS 生成的 pending_hooks.md 里好像没有。",
+      "expected_output": "Skill 应检测到 books/ 目录存在但 chapters/ 为空，进入 FOUNDATION_ALIGNMENT 模式。通过 story-design/活着的死者/manifest.yaml 确认设计包与书籍的绑定关系（manifest-based binding），而非猜测。读取设计包和 InkOS 生成文件逐项比对。对于 pending_hooks.md 中丢失的初始伏笔：因为无章节且无 state/hooks.json，应允许直接修正 pending_hooks.md（恢复 H001）。不应把伏笔写入 current_focus.md 伪装替代。不应修改红区文件。输出对齐报告。",
       "files": ["evals/fixtures/foundation-only/"]
     },
     {

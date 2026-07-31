@@ -57,7 +57,7 @@ InkOS 是否忠实保留设计。
 ```yaml
 stage: story_promise | plot_structure | final_readiness | postbuild_diagnosis
 artifacts:
-  - story-design/01-story-promise.md
+  - story-design/<design-id>/design/01-story-promise.md
 focus:
   - 核心卖点
 frozen_decisions: []
@@ -105,43 +105,64 @@ CHALLENGE 流程；Steward 也不得跳过作者确认，直接把建议编译�
 
 ## 模式检测路由
 
-收到用户请求后，按以下顺序判断当前模式，进入第一条匹配路径：
+收到用户请求后，按以下顺序判断当前模式，进入第一条匹配路径。红区写入拒绝是跨模式硬规则（见下方红区硬规则），不作为独立模式。
 
-### 路径 1：未发现 InkOS 项目 → `PREBUILD`
+### PREBUILD_STANDALONE
 
-**判断条件**：当前工作目录及父目录中不存在 `books/` 目录或 `inkos.json`。
+**判断条件**：当前工作目录及父目录中不存在 `inkos.json`。
 
-**动作**：读取 `references/prebuild-workflow.md`，进入建书前 11 阶段创作流程。
+**动作**：读取 `references/prebuild-workflow.md`，进入建书前 11 阶段创作流程。设计产物写入 `story-design/<design-id>/design/`，编译包写入 `story-design/<design-id>/compile/inkos/`。
 
-### 路径 2：发现项目但无章节 → `FOUNDATION_ALIGNMENT`
+### PREBUILD_IN_PROJECT
 
-**判断条件**：存在 `books/<bookId>/` 目录，但 `chapters/` 为空或不存在。
+**判断条件**：存在 `inkos.json`（项目已初始化），但 `books/` 为空或当前设计未绑定任何 book。
+
+**动作**：同 PREBUILD_STANDALONE 流程，但设计包路径为 `story-design/<design-id>/`。建书时通过 manifest 绑定 book_id。
+
+### FOUNDATION_ALIGNMENT
+
+**判断条件**：`story-design/<design-id>/manifest.yaml` 已绑定 `book_id`，`books/<bookId>/` 存在，但 `chapters/` 为空或不存在。
 
 **动作**：读取 `references/foundation-alignment.md`，执行建书对齐检查。
 
-### 路径 3：存在章节 + 修改绿区 → `ACTIVE_MAINTENANCE`
+### ACTIVE_MAINTENANCE
 
-**判断条件**：存在已写章节，用户请求修改世界观、角色、大纲、焦点、规则等绿区内容。
+**判断条件**：manifest 已绑定，`books/<bookId>/` 存在，且 `chapters/` 下有 `*.md` 文件。用户请求修改绿区、黄区或正文。
 
-**动作**：读取 `references/green-zone-editing.md`，执行绿区维护操作。
+**动作**：根据修改目标分发：
+- 绿区 → 读取 `references/green-zone-editing.md`
+- 正文 → 读取 `references/chapter-editing.md`
+- 黄区 → 读取 `references/yellow-zone-operations.md`
 
-### 路径 4：请求修改正文 → `CHAPTER_EDIT`
+### AMBIGUOUS_BINDING
 
-**判断条件**：用户请求修改 `chapters/*.md` 中的内容。
+**判断条件**：多个 manifest 声明同一 `book_id`，或 manifest 存在但对应 `books/<bookId>/` 不存在，或无法确定设计包与书的绑定关系。
 
-**动作**：读取 `references/chapter-editing.md`，判断修改类型并执行对应流程。
+**动作**：停止一切写入，向用户报告冲突并请求澄清。列出所有相关 manifest 路径及其声明的 book_id，等待用户选择正确绑定。
 
-### 路径 5：请求修改黄区状态 → `YELLOW_ZONE_OPERATION`
+---
 
-**判断条件**：用户请求修改 book.json、pending_hooks、current_state、emotional_arcs 等黄区文件。
+## 设计包规则
 
-**动作**：读取 `references/yellow-zone-operations.md`，通过受控流程执行。
+### 规则 1：设计包按书隔离
 
-### 路径 6：检测到红区写入请求 → 拒绝
+每本书的设计产物独立存放于 `story-design/<design-id>/`。`<design-id>` 由书名派生：移除 Windows 非法字符（`\ / : * ? " < > |`），保留中文，空标题回退为 `untitled-story`。不同书的设计包不得共享或交叉引用文件。
 
-**判断条件**：用户请求修改红区文件（见下方红区硬规则）。
+### 规则 2：设计包不等于正式书目录
 
-**动作**：拒绝写入，解释原因，给出替代路径。
+`story-design/<design-id>/` 是研发工作区，不是 InkOS 正式构件。建书前禁止在 `books/<book-id>/` 下预创建任何文件。只有 `inkos book create` 成功后，InkOS 才会在 `books/` 下生成正式目录。
+
+### 规则 3：绑定优先于猜测
+
+设计包与书的关联通过 `story-design/<design-id>/manifest.yaml` 中的 `book_id` 字段显式声明。禁止通过目录名相似性、时间戳或内容匹配来推断绑定关系。无 manifest 或 manifest 无 book_id 时视为未绑定。
+
+### 规则 4：建书失败不推进生命周期
+
+`inkos book create` 执行失败（非零退出、EPERM、超时）时，manifest 生命周期不得推进到 `created`。必须保持 `ready_to_create` 状态，等待用户排查后重试。
+
+### 规则 5：EPERM 归属
+
+Windows 上 `inkos book create` 报 EPERM 时，原因是 InkOS staging 目录的 rename 操作被占用（杀毒软件、OneDrive 同步、文件管理器预览），不是 brief 文件路径问题。诊断时应指向 InkOS staging 机制，不要建议用户修改 brief 路径或设计包位置。
 
 ---
 
@@ -197,7 +218,7 @@ CHALLENGE 流程；Steward 也不得跳过作者确认，直接把建议编译�
 3. 锁存在 → **停止一切写入**，告知用户 InkOS 正在运行，等待流水线完成
 4. 锁不存在 → 允许继续
 
-此检查适用于所有模式（ACTIVE_MAINTENANCE、CHAPTER_EDIT、YELLOW_ZONE_OPERATION、FOUNDATION_ALIGNMENT）的所有写操作。
+此检查适用于所有建书后写操作（ACTIVE_MAINTENANCE 的绿区/正文/黄区子操作，以及 FOUNDATION_ALIGNMENT 的修正写入）。
 
 ---
 
@@ -230,7 +251,7 @@ inkos --version
 
 ## 变更影响分析要求
 
-建书后（`ACTIVE_MAINTENANCE`、`CHAPTER_EDIT`、`YELLOW_ZONE_OPERATION` 模式），执行任何修改前，必须先输出变更影响分析。
+建书后（`ACTIVE_MAINTENANCE` 模式，含绿区、正文、黄区子操作），执行任何修改前，必须先输出变更影响分析。
 
 分析格式和流程见 `references/change-impact-analysis.md`。
 
@@ -250,12 +271,12 @@ inkos --version
 
 | Reference 文件                         | 加载时机                                     |
 | -------------------------------------- | -------------------------------------------- |
-| `references/prebuild-workflow.md`      | 进入 PREBUILD 模式时                         |
+| `references/prebuild-workflow.md`      | 进入 PREBUILD_STANDALONE 或 PREBUILD_IN_PROJECT 时 |
 | `references/inkos-file-contract.md`    | 需要判断文件分区时（建书后任何模式均可参考） |
 | `references/foundation-alignment.md`   | 进入 FOUNDATION_ALIGNMENT 模式时             |
-| `references/green-zone-editing.md`     | 进入 ACTIVE_MAINTENANCE 模式时               |
-| `references/yellow-zone-operations.md` | 进入 YELLOW_ZONE_OPERATION 模式时            |
-| `references/chapter-editing.md`        | 进入 CHAPTER_EDIT 模式时                     |
+| `references/green-zone-editing.md`     | ACTIVE_MAINTENANCE 中修改绿区时              |
+| `references/yellow-zone-operations.md` | ACTIVE_MAINTENANCE 中修改黄区时              |
+| `references/chapter-editing.md`        | ACTIVE_MAINTENANCE 中修改正文时              |
 | `references/change-impact-analysis.md` | 建书后执行任何修改前                         |
 | `references/story-engine-and-plot.md` | PREBUILD 阶段 5-6，或 revise-plot 时 |
 | `references/character-conflict-network.md` | PREBUILD 阶段 4，或 revise-character 时 |
@@ -272,11 +293,16 @@ inkos --version
 必须完整满足 `references/prebuild-workflow.md` 阶段 11 定义的机器编译包契约。
 仅生成 `book-brief.md` 不视为 PREBUILD 完成。
 
-1. 按 11 阶段输出设计构件（`story-design/` 目录，00-10 无断号）
-2. 最终剧情大纲（`story-design/09-story-outline.md`）
-3. Readiness Review（`story-design/10-readiness-review.md`）
-4. InkOS 精确编译包（`story-design/inkos/`）：book-brief.md + author_intent.md + story_frame.md + volume_map.md + book_rules.md + pending_hooks.md + roles/**
-5. 建书命令（`inkos book create --brief ...`）
+1. 按 11 阶段输出设计构件（`<design-root>/design/` 目录，00-10 无断号）
+2. 最终剧情大纲（`<design-root>/design/09-story-outline.md`）
+3. Readiness Review（`<design-root>/design/10-readiness-review.md`）
+4. InkOS 精确编译包（`<design-root>/compile/inkos/`）：book-brief.md + author_intent.md + story_frame.md + volume_map.md + book_rules.md + pending_hooks.md + roles/**
+5. 建书命令（`inkos book create --brief <design-root>/compile/inkos/book-brief.md`）
+6. Manifest（`<design-root>/manifest.yaml`）：记录 design-id、book_id 绑定、生命周期状态
+
+其中 `<design-root>` = `story-design/<design-id>`。
+
+Manifest 生命周期：`draft` → `reviewing` → `ready_to_create` → `creating` → `created` → `aligned`（→ `archived`）。
 
 ### FOUNDATION_ALIGNMENT 模式必须产物
 
@@ -298,14 +324,14 @@ inkos --version
 2. 修改后的绿区文件
 3. 后续建议（是否需要 plan/compose 验证）
 
-### CHAPTER_EDIT 模式必须产物
+### ACTIVE_MAINTENANCE — 正文修改子操作产物
 
 1. 修改类型判断结果
 2. 变更影响分析
 3. 修改后的正文
 4. 后续命令（sync/rewrite/无需操作）
 
-### YELLOW_ZONE_OPERATION 模式必须产物
+### ACTIVE_MAINTENANCE — 黄区操作子操作产物
 
 1. 变更影响分析
 2. 操作路径说明（为什么不能直接改文件）
@@ -343,10 +369,17 @@ InkOS 规划阶段会重新读取这些文件。普通章节流水线不会覆�
 2. 项目根下存在 `books/` 目录 → 有书
 3. `books/<bookId>/chapters/` 下有 `*.md` 文件 → 有章节
 
+判断设计包与书的绑定（manifest-based）：
+
+1. 扫描 `story-design/*/manifest.yaml`，读取 `book_id` 字段
+2. manifest 存在且 `book_id` 非空 → 已绑定，验证 `books/<bookId>/` 是否存在
+3. 多个 manifest 声明同一 `book_id` → AMBIGUOUS_BINDING
+4. 无 manifest 或 `book_id` 为空 → 未绑定（PREBUILD 状态）
+
 判断当前书：
 
-- 只有一本书时自动识别
-- 多本书时需要用户指定或从上下文推断
+- 只有一本书且 manifest 绑定时自动识别
+- 多本书时需要用户指定或从 manifest 绑定推断
 - **多本书未解析时禁止写入**（必须先确定目标 bookId）
 
 安全脚本（有终端权限时为写入前后强制步骤）：

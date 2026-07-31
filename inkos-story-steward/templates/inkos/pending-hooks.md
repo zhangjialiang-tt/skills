@@ -1,6 +1,6 @@
 # InkOS 原生格式：pending_hooks.md
 
-> 此模板用于编译包 `story-design/inkos/pending_hooks.md`。
+> 此模板用于编译包 `<design-root>/compile/inkos/pending_hooks.md`。
 > **必须使用 InkOS 表格格式，且整个文件只能有一张数据表。**
 > InkOS 的 `parseMarkdownTableRows()` 会收集文件内所有 `|` 开头行作为数据行。
 > 如果存在第二张表格（如字段说明），会被错误解析为额外伏笔。

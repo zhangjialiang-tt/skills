@@ -91,6 +91,11 @@ def main():
                         help="Allow yellow-zone files in allow list (controlled operation declared)")
     parser.add_argument("--mode", choices=["enforce", "diagnostic"], default="enforce",
                         help="enforce: require --allow, block unauthorized; diagnostic: report only")
+    parser.add_argument("--design-root", type=str, default=None,
+                        help="Current design root (e.g. story-design/活着的死者). "
+                             "Enforces: no writes outside this root to other design packages.")
+    parser.add_argument("--prebuild", action="store_true",
+                        help="PREBUILD mode: block ALL writes to books/")
     args = parser.parse_args()
 
     # Enforce mode ALWAYS requires --allow, regardless of --files
@@ -130,6 +135,20 @@ def main():
         if zone == "red":
             red_violations.append((normalized, reason))
             continue
+        # PREBUILD mode: block ALL writes to books/
+        if args.prebuild and normalized.startswith("books/"):
+            red_violations.append((normalized, "PREBUILD mode: writes to books/ forbidden before book creation"))
+            continue
+
+        # Design boundary: block writes to other design packages
+        if args.design_root:
+            dr = normalize_path(args.design_root)
+            if normalized.startswith("story-design/") and not normalized.startswith(dr + "/") and normalized != dr:
+                # Check it's actually another design-id's file
+                parts = normalized.split("/")
+                if len(parts) >= 2 and parts[0] == "story-design":
+                    red_violations.append((normalized, f"Cross-design write blocked: current design root is {dr}"))
+                    continue
 
         if args.mode == "enforce":
             # Authorization check for ALL files

@@ -226,7 +226,7 @@ class TestChapterIndexConsistency:
         # inkos not installed → exit 1, but chapter state is fine
         assert "CHAPTER_INDEX_INCONSISTENT" not in data["reason_codes"]
         assert data["chapter_state"]["consistent"] is True
-        assert data["mode"] == "ACTIVE"
+        assert data["mode"] == "ACTIVE_MAINTENANCE"
 
     def test_index_has_chapter_no_file_exit1(self, tmp_path: Path):
         """Index lists [1,2,3] but file 003 missing → CHAPTER_INDEX_INCONSISTENT."""

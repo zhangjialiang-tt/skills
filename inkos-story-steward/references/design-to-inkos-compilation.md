@@ -1,13 +1,13 @@
 # 创意设计到 InkOS 构件编译
 
-> 本文件定义 `story-design/` 到 `story-design/inkos/` 的唯一编译 seam。
+> 本文件定义 `<design-root>/design/` 到 `<design-root>/compile/inkos/` 的唯一编译 seam。
 > 在 PREBUILD 阶段 10-11 和 FOUNDATION_ALIGNMENT 编译损失检查时加载。
 
 ## 编译不变量
 
 1. 每项已确认设计必须映射到至少一个 InkOS 构件，或在 Readiness 中标记为“仅设计层保留”并说明原因。
 2. 编译只转换表达形式，不得补造源设计中不存在的事实、规则、角色关系或伏笔。
-3. InkOS 构件只保存生产所需的最小信息；完整推演和判断依据继续保留在 `story-design/00-10`。
+3. InkOS 构件只保存生产所需的最小信息；完整推演和判断依据继续保留在 `<design-root>/design/00-10`。
 4. `book_rules.md` 只接收可执行的“条件 → 结果”规则，百科描述不得伪装成规则。
 5. 编译完成不等于 InkOS 二次转换无损；建书后必须通过 FOUNDATION_ALIGNMENT 复核。
 

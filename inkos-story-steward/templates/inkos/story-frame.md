@@ -1,6 +1,6 @@
 # InkOS 原生格式：story_frame.md
 
-> 此模板用于编译包 `story-design/inkos/story_frame.md`。
+> 此模板用于编译包 `<design-root>/compile/inkos/story_frame.md`。
 > 格式对齐 InkOS architect 生成的 `story/outline/story_frame.md`。
 
 ---

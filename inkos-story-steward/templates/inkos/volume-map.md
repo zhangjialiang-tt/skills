@@ -1,6 +1,6 @@
 # InkOS 原生格式：volume_map.md
 
-> 此模板用于编译包 `story-design/inkos/volume_map.md`。
+> 此模板用于编译包 `<design-root>/compile/inkos/volume_map.md`。
 > 格式对齐 InkOS architect 生成的 `story/outline/volume_map.md`。
 
 ---

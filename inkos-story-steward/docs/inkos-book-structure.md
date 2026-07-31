@@ -128,3 +128,23 @@ books/<bookId>/
 - 控制文档：`packages/core/src/state/manager.ts`（`ensureControlDocumentsAt`，`writeIfMissing` 幂等）
 - 状态引导：`packages/core/src/state/state-bootstrap.ts`
 - 记忆库：`packages/core/src/state/memory-db.ts`（`node:sqlite`）
+
+
+### 7. Steward 设计包目录（非 InkOS 原生）
+
+`inkos-story-steward` Skill 在项目根管理一个独立的创意设计区域：
+
+```
+<project-root>/story-design/<design-id>/
+├── manifest.yaml          # 设计包元数据与 bookId 绑定
+├── design/                # 作者可读设计源构件（00-10）
+└── compile/inkos/         # InkOS 机器编译包（--brief 输入）
+```
+
+**此目录不属于 InkOS book tree。** InkOS 不读取、不管理、不覆盖 `story-design/`。
+
+- 建书前：Steward 在此区域完成创意研发和编译，不写 `books/`。
+- 建书时：`inkos book create --brief story-design/<id>/compile/inkos/book-brief.md`。InkOS 在 `books/.tmp-book-create-*` 构建 staging 目录，原子重命名为 `books/<book-id>`。
+- 建书后：Steward 通过 `manifest.yaml` 中的 `book_id` 绑定定位设计包，进入正式书目录维护。
+
+`books/.tmp-book-create-* → books/<book-id>` 的 EPERM 是 InkOS staging 提交阶段或 Windows 文件占用问题，不是 `--brief` 路径问题。

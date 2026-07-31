@@ -105,7 +105,7 @@
 ### 与 InkOS 的映射
 
 伏笔账本最终映射为 `pending_hooks.md` 的初始种子。但注意：
-- 建书前：写入编译包 `story-design/inkos/pending_hooks.md`
+- 建书前：写入编译包 `<design-root>/compile/inkos/pending_hooks.md`
 - 建书后无章节：可直接修正 `pending_hooks.md`
 - 建书后有章节：通过 `current_focus.md` 推进，让 InkOS 结算
 

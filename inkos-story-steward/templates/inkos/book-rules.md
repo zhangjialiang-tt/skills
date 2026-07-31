@@ -1,6 +1,6 @@
 # InkOS 原生格式：book_rules.md
 
-> 此模板用于编译包 `story-design/inkos/book_rules.md`。
+> 此模板用于编译包 `<design-root>/compile/inkos/book_rules.md`。
 > 格式对齐 InkOS rules-reader 解析的书籍规则结构。
 > 规则必须是可执行的（"条件 → 结果"），不是百科描述。
 

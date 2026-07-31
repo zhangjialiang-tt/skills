@@ -25,15 +25,15 @@
 
 ### 步骤 1：收集比对材料
 
-**设计包侧**（如果存在 `story-design/` 目录）：
+**设计包侧**（通过 manifest binding 定位设计包，而非目录扫描；`<design-root>` = `story-design/<design-id>`）：
 
 ```
-story-design/09-story-outline.md
-story-design/inkos/book-brief.md
-story-design/02-world-system.md
-story-design/03-character-system.md
-story-design/07-foreshadowing-and-mystery.md
-story-design/08-volume-outline.md
+<design-root>/design/09-story-outline.md
+<design-root>/compile/inkos/book-brief.md
+<design-root>/design/02-world-system.md
+<design-root>/design/03-character-system.md
+<design-root>/design/07-foreshadowing-and-mystery.md
+<design-root>/design/08-volume-outline.md
 ```
 
 **InkOS 侧**（建书生成）：
@@ -49,7 +49,7 @@ books/<bookId>/story/current_focus.md
 books/<bookId>/book.json
 ```
 
-如果没有 `story-design/` 目录，则基于用户口述的设计意图进行对齐。
+如果没有已绑定的设计包目录，则基于用户口述的设计意图进行对齐。
 
 ### 步骤 2：逐项比对
 
@@ -116,7 +116,7 @@ books/<bookId>/book.json
 
 ## 比对摘要
 
-- 设计包来源：story-design/ | 用户口述
+- 设计包来源：<design-root>/design/ | 用户口述
 - 比对时间：
 - 总体评估：通过 | 需修正 | 严重偏差
 
