@@ -30,7 +30,9 @@
     "修改 volume_map",
     "帮我改改文字",
     "纠错",
-    "校对"
+    "校对",
+    "帮我构思",
+    "帮我想几个创意"
   ],
   "should_trigger": [
     {
@@ -124,6 +126,10 @@
     {
       "text": "大纲写完了但总觉得结构不太对，帮我梳理一下",
       "family": "natural_outline"
+    },
+    {
+      "text": "请只读评审这个 InkOS 项目的分卷结构，不要修改任何文件",
+      "family": "inkos_read_only_review"
     },
     {
       "text": "故事教练",
@@ -240,6 +246,10 @@
     {
       "text": "你看这个人物有没有魅力",
       "family": "soft_review"
+    },
+    {
+      "text": "帮我修改 InkOS 项目的 volume_map 并保存",
+      "family": "inkos_write_owner"
     }
   ]
 }

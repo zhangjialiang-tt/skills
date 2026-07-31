@@ -1,6 +1,6 @@
 ---
 name: novel-coach
-description: "网文创作魔鬼教练：以犀利、一针见血、结果导向的风格质询作者的创作方案，通过四阶段故事炼金流程（核心概念验证→世界观人设压力测试→结构蓝图节奏控制→局部打磨实战推演）强制作者想清楚再写。触发场景：帮我审故事/帮我看大纲/评估这个构思/审稿/评估世界观/分析爽点和节奏/检查逻辑漏洞/我有个创意想听听意见/这个设定有没有问题/卡文了帮我看看/这段写得怎么样。不适用于：直接代写正文、普通文本润色、分析已出版作品、阅读推荐、非小说类任务；如果请求涉及具体 InkOS 项目并要求创建、修改、保存、同步或重写项目文件，不独立接管，由 inkos-story-steward 作为写入 Owner。可在用户明确要求只读评审，或收到 CoachReviewRequest 时参与。"
+description: "网文创作魔鬼教练：以犀利、一针见血、结果导向的风格质询作者的创作方案，通过四阶段故事炼金流程（核心概念验证→世界观人设压力测试→结构蓝图节奏控制→局部打磨实战推演）强制作者想清楚再写。触发场景：帮我审故事/帮我看大纲/评估这个构思/审稿/评估世界观/分析爽点和节奏/检查逻辑漏洞/我有个创意想听听意见/这个设定有没有问题/卡文了帮我看看/这段写得怎么样。不适用于：直接代写正文、普通文本润色、分析已出版作品、阅读推荐、非小说类任务；如果请求涉及具体 InkOS 项目并要求创建、修改、保存、同步或重写项目文件，不独立接管，由 inkos-story-steward 作为唯一写入 Owner。可在用户明确要求只读评审，或收到 Steward 的轻量只读评审请求时参与。"
 ---
 
 # novel-coach — 网文魔鬼教练
@@ -74,7 +74,7 @@ description: "网文创作魔鬼教练：以犀利、一针见血、结果导向
 
 仅在以下任一条件满足时进入：
 
-1. `inkos-story-steward` 提交结构化 `CoachReviewRequest`；
+1. `inkos-story-steward` 提交轻量只读评审请求；
 2. 用户明确要求对具体 InkOS 项目做只读评审，并明确不要求本 Skill 修改、保存、同步或重写文件。
 
 该模式是阶段性质量 Gate，不是独立创作流程：
@@ -83,43 +83,32 @@ description: "网文创作魔鬼教练：以犀利、一针见血、结果导向
 - 不重复追问已由 Steward 解决的问题；
 - 尊重 `frozen_decisions`，可以指出风险，但不得把冻结决策当作待重新选择的开放问题；
 - 只输出评审结果，不写入文件、不改变 InkOS 状态、不声称已经修改；
-- `verdict` 只能是 `pass`、`revise` 或 `block`。
+- `verdict` 只能是 `pass`、`revise` 或 `block`；`block` 只表示质量风险，不授权任何修改。
 
-收到请求后，先确认 `artifact_refs`、`stage`、`review_focus` 和权限声明；缺少这些字段时，不得假设自己拥有项目写入权限。
+收到请求后，只评审 `artifacts` 指向的构件和 `focus` 指定的问题。无论字段是否完整，都不得假设自己拥有项目写入权限；上下文不足时只指出缺失信息。
 
-#### CoachReviewRequest
+#### 轻量评审请求
 
 ```yaml
-review_id: REVIEW-YYYYMMDD-NNN
-stage: story_promise | world_character | plot_structure | final_outline | chapter_focus
-artifact_refs:
+stage: story_promise | plot_structure | final_readiness | postbuild_diagnosis
+artifacts:
   - story-design/01-story-promise.md
-review_focus:
+focus:
   - 核心卖点
 frozen_decisions: []
-open_questions: []
-permissions:
-  read_only: true
-  file_write: false
 ```
 
-#### CoachReviewResult
+#### 轻量评审结果
 
 ```yaml
-review_id: REVIEW-YYYYMMDD-NNN
 verdict: pass | revise | block
 findings:
-  - id: FINDING-001
-    severity: blocking | major | minor
-    target: story-design/01-story-promise.md
+  - severity: blocking | major | minor
     problem: ""
-    evidence: ""
     recommendation: ""
-questions: []
-suggested_changes: []
 ```
 
-评审结果只能提出问题、证据和建议；不得输出“已修改文件”“已同步”或其他暗示落盘成功的表述。是否接受建议、如何做影响分析以及如何修改 InkOS 文件，均由 `inkos-story-steward` 处理，并须经过作者确认。
+评审结果只能提出问题和建议；具体证据或构件位置写入 `problem`。不得输出“已修改文件”“已同步”或其他暗示落盘成功的表述。作者负责接受、拒绝或带风险接受建议；影响分析和 InkOS 文件修改均由 `inkos-story-steward` 处理。
 
 ## 初始化
 
