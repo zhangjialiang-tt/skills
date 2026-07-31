@@ -6,7 +6,8 @@ description: >
   触发：用户提到 InkOS 项目维护、修改设定、修改角色、修改大纲、修改伏笔、建书、
   创建新书、故事设计、剧情规划、分卷规划、世界观修改、角色卡维护、write sync、
   章节修改影响分析、绿区/黄区/红区、story_frame、volume_map、roles、book_rules、
-  current_focus、author_intent。即使用户只说"改一下这个世界观"或"帮我规划下一卷"，
+  current_focus、author_intent、诊断故事偏离、中期重复、角色被动、伏笔失效、InkOS 项目卡文。
+  即使用户只说"改一下这个世界观"或"帮我规划下一卷"，
   只要上下文涉及 InkOS 项目，也应触发。
   对所有 InkOS 项目相关任务，inkos-story-steward 是流程、构件和文件变更的唯一 Owner；
   可委托 novel-coach 做只读质量评审，但不得让其自动写入或改变项目状态。
@@ -37,80 +38,68 @@ description: >
 
 ### 可以委托 Coach 的场景
 
-仅在以下场景提交 `CoachReviewRequest`：
+PREBUILD 只在作品承诺、整体结构成型、最终 Readiness 三个高杠杆节点考虑委托 Coach，
+且全程最多三次。建书后仅在以下场景考虑委托：
 
-- 作品承诺需要验证核心卖点、点击理由和前三章承诺；
-- 世界观、人物和冲突发动机需要压力测试；
-- 情节架构、分卷、爽点、伏笔和节奏需要质量评审；
-- 最终大纲需要 Readiness Review；
-- 用户明确询问某章或某个方案“好不好看”，且当前动作是只读诊断；
-- 修改方案的创意风险为 medium 以上，但这不替代 InkOS 变更影响分析。
+- 大幅修改主角目标、核心冲突、结局或整卷结构；
+- Steward 无法定位卡文原因；
+- 用户明确要求质量评审。
 
-Coach 的评审结果只能是建议，不能自动落盘。收到 `pass`、`revise` 或 `block` 后，必须先让作者
-接受、拒绝或带风险接受；作者未确认前不得把 Coach 建议写入正式构件。Coach 的质量结论也不得
-替代 `FOUNDATION_ALIGNMENT`：前者判断故事是否成立，后者判断 InkOS 是否忠实保留设计。
+普通绿区修改不调用 Coach。Coach 的评审结果只能是建议，不能自动落盘。收到 `pass`、`revise`
+或 `block` 后，必须先让作者接受、拒绝或带风险接受；作者未确认前不得把 Coach 建议写入正式
+构件。Coach 的质量结论也不得替代 `FOUNDATION_ALIGNMENT`：前者判断故事是否成立，后者判断
+InkOS 是否忠实保留设计。
 
-### CoachReviewRequest / CoachReviewResult
+### 轻量评审请求 / 结果
 
-交接使用 `novel-coach` 定义的结构化契约。Steward 至少提供：
+交接只使用以下最小契约：
 
 ```yaml
-review_id: REVIEW-YYYYMMDD-NNN
-stage: story_promise | world_character | plot_structure | final_outline | chapter_focus
-artifact_refs:
+stage: story_promise | plot_structure | final_readiness | postbuild_diagnosis
+artifacts:
   - story-design/01-story-promise.md
-review_focus:
+focus:
   - 核心卖点
 frozen_decisions: []
-open_questions: []
-permissions:
-  read_only: true
-  file_write: false
 ```
 
 接收结果时只接受以下形状：
 
 ```yaml
-review_id: REVIEW-YYYYMMDD-NNN
 verdict: pass | revise | block
 findings:
-  - id: FINDING-001
-    severity: blocking | major | minor
-    target: story-design/01-story-promise.md
+  - severity: blocking | major | minor
     problem: ""
-    evidence: ""
     recommendation: ""
-questions: []
-suggested_changes: []
 ```
 
-如果缺少 `review_id`、`stage`、`artifact_refs`、权限声明或作者确认状态，不能把结果当成已批准
-的变更，也不能据此执行写入。
+具体证据或构件位置写入 `problem`。任何结果都不是已批准变更；没有作者明确选择时不能据此写入。
+不得增加评审 ID、哈希、Ledger、状态机、自动重试或结果数据库。
 
-### PREBUILD 四个质量 Gate
+### PREBUILD 三个候选质量检查点
 
-PREBUILD 的四个作者确认门与 Coach 评审对应如下；Gate 不是自动批准器，`block` 或未确认时必须
-停止自动继续，只有作者明确接受风险并记录决策后才可越过当前 Gate：
+三个检查点是 PREBUILD 中唯一可以委托 Coach 的位置。Steward 先自行检查；只有存在明显质量
+风险、需要对抗性复核或作者明确要求时才调用 Coach。作者确认仍是进入正式构件和 InkOS 编译
+的硬条件：
 
-| Gate | Steward 产物 | Coach stage | 继续条件 |
-|------|--------------|-------------|----------|
-| Gate 1 | `00-project-brief.md`、`01-story-promise.md` | `story_promise` | Coach 通过或作者明确接受风险，并确认作品承诺 |
-| Gate 2 | `02-world-system.md`、`03-character-system.md`、`04-conflict-engine.md` | `world_character` | 世界压力、主角主动性、对手合理性和角色冲突可解释 |
-| Gate 3 | `05-plot-architecture.md`、`06-payoff-system.md`、`07-foreshadowing-and-mystery.md`、`08-volume-outline.md` | `plot_structure` | 结构、节奏、爽点、伏笔和结局前置条件可运行 |
-| Gate 4 | `09-story-outline.md`、`10-readiness-review.md` | `final_outline` | Readiness 通过，作者确认进入 InkOS 编译；之后才生成 `inkos/` 包 |
+| 检查点 | Steward 产物 | Coach stage | 作者确认内容 |
+|--------|--------------|-------------|--------------|
+| 作品承诺 | `00-project-brief.md`、`01-story-promise.md` | `story_promise` | 作品承诺和冻结方向 |
+| 整体结构 | `02-world-system.md` 至 `08-volume-outline.md` | `plot_structure` | 人物、发动机、结构、爽点、伏笔和分卷 |
+| 最终 Readiness | `09-story-outline.md`、`10-readiness-review.md` | `final_readiness` | 是否进入 InkOS 编译 |
 
-每个 Gate 的执行顺序固定为：
+需要 Coach 时的顺序为：
 
 ```text
 Steward 生成阶段产物
-→ 只读提交 CoachReviewRequest
-→ Coach 返回 CoachReviewResult
+→ 提交轻量只读请求
+→ Coach 返回轻量结果
 → 作者接受 / 拒绝 / 带风险接受
 → Steward 更新正式构件并继续，或回退修订
 ```
 
-Coach 不得重新启动自己的完整 CHALLENGE 流程；Steward 也不得跳过作者确认，直接把建议编译进
-InkOS 建书包。
+不需要 Coach 时由 Steward 完成本地质量检查后直接请求作者确认。Coach 不得重新启动完整
+CHALLENGE 流程；Steward 也不得跳过作者确认，直接把建议编译进 InkOS 建书包。
 
 ---
 
@@ -272,6 +261,7 @@ inkos --version
 | `references/character-conflict-network.md` | PREBUILD 阶段 4，或 revise-character 时 |
 | `references/payoff-design.md` | PREBUILD 阶段 7，或 prepare-next-arc 时 |
 | `references/foreshadowing-and-mystery.md` | PREBUILD 阶段 8，或伏笔相关操作时 |
+| `references/design-to-inkos-compilation.md` | PREBUILD 阶段 10-11，或 FOUNDATION_ALIGNMENT 编译损失检查时 |
 
 ---
 
@@ -295,6 +285,14 @@ inkos --version
 3. 修正后的绿区文件
 
 ### ACTIVE_MAINTENANCE 模式必须产物
+
+只读 `review-foundation`：
+
+1. 七维故事诊断报告
+2. 每条发现的本地证据、严重度、建议区域、Coach 需要性和运行时动作判断
+3. 卡文主因分类；不执行写入
+
+写入操作：
 
 1. 变更影响分析（YAML 格式）
 2. 修改后的绿区文件

@@ -1,0 +1,27 @@
+interface:
+  display_name: InkOS Story Steward
+  short_description: 设计、编译和安全维护 InkOS 故事构件
+  default_prompt: 请作为 InkOS 项目的唯一写入 Owner，先判断 PREBUILD 或建书后模式，再按红黄绿边界完成故事设计、诊断或变更
+
+compatibility:
+  canonical_format: markdown
+  adapter_targets:
+    - claude
+    - codex
+    - omp
+  activation:
+    mode: implicit
+  execution:
+    context: inline
+    shell: powershell
+  trust:
+    source_tier: local
+    remote_inline_execution: forbid
+    remote_metadata_policy: strip
+  degradation:
+    claude: fallback_to_description
+    codex: fallback_to_description
+    omp: fallback_to_description
+
+owner: zhangjl
+review_cadence: per_iteration

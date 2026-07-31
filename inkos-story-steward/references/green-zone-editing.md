@@ -20,9 +20,10 @@
 
 ---
 
-## 操作 1：`review-foundation`
+## 操作 1：`review-foundation`（只读故事诊断）
 
-**目的**：系统评审当前设定，只评审不修改。
+**目的**：结合 InkOS 已保存的设计、状态和最近正文，判断故事为什么失速或偏离。诊断本身只读，
+不修改文件、不执行 InkOS 命令；用户要求修复后，必须重新进入变更影响分析和写入安全流程。
 
 **评审维度**：
 
@@ -35,6 +36,16 @@
 - 中期重复风险
 - 结局兑现可行性
 
+**固定诊断七项**：
+
+1. 作品承诺是否被近期正文持续兑现；
+2. 主角是否连续多个关键节点被动响应，没有主动选择；
+3. 爽点类型、兑现方式或见证反应是否重复；
+4. 伏笔是否超过计划回收窗口、缺少推进或公平线索；
+5. 重要角色是否长期没有独立目标和下一步行动；
+6. 下一卷是否只更换场景，没有冲突、代价和状态层级升级；
+7. 卡文根因属于信息不足、冲突不足还是选择不足。
+
 **修改前必须读取的文件**：
 
 ```
@@ -44,10 +55,36 @@ story/book_rules.md
 story/outline/story_frame.md
 story/outline/volume_map.md
 story/roles/**
-chapters/（最近 3-5 章，了解当前进度）
+story/pending_hooks.md            # 只读
+story/state/current_state.json    # 只读（存在时）
+story/state/hooks.json            # 只读（存在时）
+chapters/（最近 5-10 章，了解当前进度和重复模式）
 ```
 
-**产物**：评审报告（问题列表 + 严重度 + 建议修改方向）。
+**产物**：只读诊断报告。每条发现必须包含：
+
+```yaml
+dimension: promise_drift | protagonist_agency | payoff_repetition | hook_decay | inactive_character | next_volume_escalation | stuck_cause
+severity: blocking | major | minor
+evidence:
+  - <本地构件或正文路径 + 可定位事实>
+problem: <为什么会伤害作品承诺或后续生产>
+recommended_zone: green | yellow | chapter | none
+coach_needed: true | false
+runtime_action:
+  plan: true | false
+  compose: true | false
+  sync: true | false
+  rewrite: true | false
+recommendation: <最小可执行修正方向>
+```
+
+卡文诊断必须在 `information_missing`、`conflict_missing`、`choice_missing` 中选择一个主因；证据不足
+时写明无法判断，不得用泛化建议替代证据。
+
+只有核心目标、核心冲突、结局、整卷结构发生重大变化，Steward 无法定位卡文原因，或用户明确
+要求质量对抗时，才以 `postbuild_diagnosis` 委托 Coach。Coach 不能替代变更影响分析、区域分类
+或 InkOS 命令判断。
 
 ---
 
@@ -77,6 +114,7 @@ story/outline/volume_map.md     # 必要时同步
 - 世界观规则修改可能影响已写正文的连续性
 - 如果与已发布正文矛盾，需要评估是否需要 chapter sync/rewrite
 - `book_rules.md` 中的规则必须是可执行的（不是百科描述）
+- 普通绿区规则补充不调用 Coach；只有改变核心冲突或作品承诺时才考虑质量复核
 
 ---
 

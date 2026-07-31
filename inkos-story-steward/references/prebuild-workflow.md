@@ -9,21 +9,21 @@
 - 不要只输出一份普通大纲。内部生成一组构件，最后再汇总。
 - 暂定方案优先，只追问方向性问题。
 - 每轮只提出一个最关键的问题。
-- 不是每阶段都需要确认。只在 4 个关键 Gate 处要求作者明确确认（见下方）。
-- Coach 只作为阶段性质量 Reviewer，不改变正式构件，也不替代作者确认。
+- 不是每阶段都需要确认。只在 3 个高杠杆检查点要求作者明确确认（见下方）。
+- Coach 只作为按需、只读的质量 Reviewer，不改变正式构件，也不替代作者确认。
+- PREBUILD 全程最多调用 Coach 3 次，且只能发生在下列检查点。
 
-## 确认门（Gate）
+## 高杠杆检查点
 
-只在以下 4 个节点要求作者明确确认后才继续：
+只在以下 3 个节点要求作者明确确认后才继续：
 
-| Gate | 位置 | 确认内容 |
-|------|------|----------|
-| Gate 1 | 阶段 2 完成后 | 作品承诺是否准确 |
-| Gate 2 | 阶段 4 完成后 | 主角、核心冲突、结局方向 |
-| Gate 3 | 阶段 8 完成后 | 情节结构、爽点、伏笔和分卷架构 |
-| Gate 4 | 阶段 10 完成后 | 最终大纲 + InkOS 导入 |
+| 检查点 | 位置 | 确认内容 |
+|--------|------|----------|
+| 1 | 阶段 2 完成后 | 作品承诺是否准确 |
+| 2 | 阶段 8 完成后 | 人物、发动机、情节、爽点、伏笔和分卷架构 |
+| 3 | 阶段 10 完成后 | 最终大纲 + InkOS 导入 |
 
-其他阶段采用"先生成暂定方案，只有方向性分歧才追问"。
+其他阶段采用"先生成暂定方案，只有方向性分歧才追问"，不得新增隐式 Coach Gate。
 
 ---
 
@@ -84,7 +84,7 @@ story-design/
 
 ---
 
-## 阶段 2：作品承诺 【Gate 1】
+## 阶段 2：作品承诺【检查点 1】
 
 ### 输入
 阶段 1 的作品假设。
@@ -105,28 +105,23 @@ story-design/
 - 是否回答了"为什么追到三十章"
 - 差异化是否真实存在
 
-### Gate 1 Coach 评审
+### 检查点 1
 
-阶段 2 完成后，以只读方式提交：
+Steward 先完成质量检查；发现明显质量风险、需要对抗性复核或作者明确要求时，才以只读方式提交：
 
 ```yaml
-review_id: REVIEW-YYYYMMDD-001
 stage: story_promise
-artifact_refs:
+artifacts:
   - story-design/00-project-brief.md
   - story-design/01-story-promise.md
-review_focus:
+focus:
   - 一句话核心梗
   - 点击理由
   - 前三章承诺
 frozen_decisions: []
-open_questions: []
-permissions:
-  read_only: true
-  file_write: false
 ```
 
-作者确认作品承诺，或明确接受 Coach 记录的风险后，才进入阶段 3。
+无论是否调用 Coach，作者确认作品承诺后才进入阶段 3；若调用 Coach，作者还需接受、拒绝或带风险接受其建议。
 
 ---
 
@@ -175,7 +170,7 @@ permissions:
 
 ---
 
-## 阶段 4：人物系统 【Gate 2】
+## 阶段 4：人物系统
 
 ### 输入
 世界压力系统 + 作品承诺。
@@ -189,7 +184,10 @@ permissions:
 - 能力
 - 缺陷
 - 秘密
+- 各角色的知识边界
 - 关系债务
+- 不依赖误会的利益冲突与价值观冲突
+- 主角不在场时的独立下一步行动
 - 不可接受的底线
 - 最终弧光
 
@@ -202,39 +200,13 @@ permissions:
 - 角色之间是否存在不依赖误会的冲突
 - 删除某角色后，故事是否没有任何变化
 - 角色弧光是否通过选择体现，而非旁白说明
+- 每个重要角色是否拥有独立目标、知识边界和下一步行动
 
 ### 产物
 `story-design/03-character-system.md`
 
-### Gate 2 确认内容
-- 主角设定是否准确
-- 核心冲突是否成立
-- 结局方向是否可接受
-
-### Gate 2 Coach 评审
-
-阶段 4 完成后，以只读方式提交：
-
-```yaml
-review_id: REVIEW-YYYYMMDD-002
-stage: world_character
-artifact_refs:
-  - story-design/02-world-system.md
-  - story-design/03-character-system.md
-  - story-design/04-conflict-engine.md
-review_focus:
-  - 世界规则是否持续制造压力
-  - 主角是否主动制造剧情
-  - 对手是否有合理利益
-  - 配角和冲突网络是否独立运行
-frozen_decisions: []
-open_questions: []
-permissions:
-  read_only: true
-  file_write: false
-```
-
-作者确认主角、核心冲突和结局方向，或明确接受 Coach 记录的风险后，才进入阶段 5。
+本阶段不单独调用 Coach，也不设置作者 Gate；人物、世界与冲突发动机在阶段 8 后统一评审，
+避免相邻构件被重复检查。
 
 ---
 
@@ -272,6 +244,11 @@ permissions:
 - 代价是否递增
 - 关系是否累积变化
 - 世界状态是否不可逆
+- 主角是否通过主动选择驱动循环
+- 对手和配角是否有独立运行的支线
+
+至少推演 5 轮实例，并记录每轮的可变输入、主角选择、不可逆输出和新问题。代价必须覆盖
+资源/能力、关系/信任、身份/价值观三个递增层级。
 
 ### 产物
 `story-design/04-conflict-engine.md`
@@ -286,6 +263,7 @@ permissions:
 ### 建设内容
 
 #### 情节架构
+- 核心循环摘要及 5 轮实例验证
 - 前台故事线（读者看到的主线推进）
 - 后台故事线（读者前期不能知道的真相线）
 - 完整结局（外在目标 + 内在变化 + 代价 + 命题回答）
@@ -301,10 +279,10 @@ permissions:
 - `story-design/05-plot-architecture.md`（情节架构 + 结局 + 转折）
 - `story-design/08-volume-outline.md`（分卷规划）
 
-### 阶段性确认内容
+### 阶段性自检
 - 故事发动机是否可持续
 - 分卷架构是否合理
-- 结局方向是否确认
+- 结局前置条件是否已进入前期结构
 
 ---
 
@@ -329,10 +307,11 @@ permissions:
 每个爽点还要包含完整节奏：
 
 ```
-压抑 → 期待 → 行动 → 兑现 → 见证 → 状态变化 → 后续代价
+期待建立 → 压力累积 → 主角选择 → 兑现 → 他人见证 → 状态变化 → 新代价 → 下一轮期待
 ```
 
-为每卷标注爽点分布密度和类型轮换。
+为每卷标注爽点类型轮换、升级方式和下一轮期待。章数密度只能作为题材相关建议，不能作为
+脱离作品节奏的硬规则。
 
 ### 产物
 `story-design/06-payoff-system.md`
@@ -377,34 +356,34 @@ permissions:
 
 ---
 
-## Gate 3：情节结构质量评审
+## 检查点 2：整体结构质量评审
 
-阶段 8 完成后，Steward 将以下产物以只读方式提交给 `novel-coach` 的
-`DELEGATED_REVIEW`：
+阶段 8 完成后，Steward 先统一检查世界、人设、发动机、情节、爽点、伏笔和分卷。发现明显
+质量风险、需要对抗性复核或作者明确要求时，才提交 `novel-coach` 的 `DELEGATED_REVIEW`：
 
 ```yaml
-review_id: REVIEW-YYYYMMDD-003
 stage: plot_structure
-artifact_refs:
+artifacts:
+  - story-design/02-world-system.md
+  - story-design/03-character-system.md
+  - story-design/04-conflict-engine.md
   - story-design/05-plot-architecture.md
   - story-design/06-payoff-system.md
   - story-design/07-foreshadowing-and-mystery.md
   - story-design/08-volume-outline.md
-review_focus:
+focus:
+  - 世界压力和人物冲突是否自行运行
+  - 故事发动机是否可持续
   - 结局前置条件
   - 爽点和节奏
   - 伏笔公平线索与回收
   - 对手推演
 frozen_decisions: []
-open_questions: []
-permissions:
-  read_only: true
-  file_write: false
 ```
 
 Coach 重点检查：结局是否能反推前置条件、第一卷是否兑现作品承诺、爽点是否有铺垫和兑现、
-伏笔是否有公平线索、对手是否会降智以及中期是否会重复。Coach 只返回
-`CoachReviewResult`；作者确认后才进入阶段 9。
+伏笔是否有公平线索、对手是否会降智以及中期是否会重复。无论是否调用 Coach，作者确认整体
+结构后才进入阶段 9；若调用 Coach，作者还需接受、拒绝或带风险接受其建议。
 
 ---
 
@@ -445,7 +424,7 @@ Coach 重点检查：结局是否能反推前置条件、第一卷是否兑现�
 
 ---
 
-## 阶段 10：Readiness Review 【Gate 4】
+## 阶段 10：Readiness Review【检查点 3】
 
 ### 输入
 全部前 9 阶段产物。
@@ -457,12 +436,14 @@ Coach 重点检查：结局是否能反推前置条件、第一卷是否兑现�
 - [ ] 主角发动机能否运行 50+ 次不重复
 - [ ] 核心冲突升级路径是否清晰
 - [ ] 分卷之间是否有不可逆的状态变化
-- [ ] 爽点分布是否均匀
+- [ ] 爽点类型是否轮换、逐卷升级并建立下一轮期待
 - [ ] 伏笔回收位置是否在分卷规划中有对应
 - [ ] 结局是否回应核心命题
 - [ ] 前三十章方向是否足够具体
 - [ ] 是否存在作者禁止的方向被无意引入
 - [ ] 长篇可持续性是否有结构性保障
+- [ ] 每项已确认设计是否已映射到 InkOS 构件，或标明仅设计层保留及原因
+- [ ] 编译映射是否没有引入原设计不存在的新事实
 
 ### 产物
 `story-design/10-readiness-review.md`
@@ -480,35 +461,36 @@ Coach 重点检查：结局是否能反推前置条件、第一卷是否兑现�
 ## 阻塞项（必须修复才能建书）
 - ...
 
+## 编译覆盖与损失检查
+- 已映射设计：...
+- 仅设计层保留：...（原因）
+- 丢失或冲突：...
+
 ## 结论
 - [ ] 可以进入 InkOS 编译
 - [ ] 需要回退修复（指明回退到哪个阶段）
 ```
 
-### Gate 4 Coach 评审
+### 检查点 3
 
-在确认进入 InkOS 编译前，提交以下只读评审请求：
+Steward 完成 Readiness 和编译覆盖检查；发现明显质量风险、需要对抗性复核或作者明确要求时，
+才在确认进入 InkOS 编译前提交：
 
 ```yaml
-review_id: REVIEW-YYYYMMDD-004
-stage: final_outline
-artifact_refs:
+stage: final_readiness
+artifacts:
   - story-design/09-story-outline.md
   - story-design/10-readiness-review.md
-review_focus:
+focus:
   - 最终大纲可执行性
   - 前三章和第一卷承诺
   - 长篇可持续性
 frozen_decisions: []
-open_questions: []
-permissions:
-  read_only: true
-  file_write: false
 ```
 
-只有 `CoachReviewResult.verdict` 为 `pass`，或作者明确接受 `revise` / `block` 中的风险，且
-`10-readiness-review.md` 已记录结论，才允许进入阶段 11。Coach 的建议不直接修改大纲；如需
-修订，回退到对应阶段重新生成产物。
+无论是否调用 Coach，只有作者确认 Readiness 和编译覆盖结论后才允许进入阶段 11。若调用
+Coach，作者还需接受、拒绝或带风险接受其建议。Coach 的建议不直接修改大纲；如需修订，回退
+到对应阶段重新生成产物。
 
 ---
 
@@ -518,6 +500,8 @@ permissions:
 Readiness Review 通过后的全部产物。
 
 ### 编译内容
+
+先读取 `references/design-to-inkos-compilation.md`，按唯一映射规则编译，禁止凭格式需要补造事实。
 
 生成 InkOS 建书包（机器交付包）：
 
@@ -556,7 +540,7 @@ inkos book create \
 
 ### 编译前确认
 
-- Gate 4 已通过，或作者已明确接受记录在 `10-readiness-review.md` 中的风险。
+- 检查点 3 已完成，作者已确认记录在 `10-readiness-review.md` 中的风险与编译覆盖结论。
 - 最终大纲已定稿。
 - 编译包准确反映设计意图。
 - 作者确认执行建书命令。

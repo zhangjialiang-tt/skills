@@ -60,6 +60,36 @@
       "prompt": "帮我把 pending_hooks.md 里的 H001 标记为已回收，我在第五章已经揭示了仓库偷窃的真相。",
       "expected_output": "Skill 应识别 pending_hooks.md 为黄区文件。检测到已有章节且 state/hooks.json 存在，不能直接修改 Markdown。正确路径：通过第五章正文体现回收 + inkos write sync 5，或将回收推进写入 current_focus.md 让后续章节自然结算。执行命令后必须验证退出码和 inkos status。如果命令失败，不得声称操作已完成。",
       "files": ["evals/fixtures/active-book/"]
+    },
+    {
+      "id": 11,
+      "prompt": "PREBUILD 的人物系统刚完成，继续下一步。",
+      "expected_output": "阶段 4 不得单独调用 novel-coach，也不得创建世界人设 Gate。Steward 应完成角色主动性、利益/价值观冲突、关系债务、知识边界、独立下一步和删除测试的本地自检，然后继续阶段 5；世界、人设与结构在阶段 8 后统一检查。",
+      "files": ["evals/fixtures/no-project/"]
+    },
+    {
+      "id": 12,
+      "prompt": "PREBUILD 已完成阶段 8，整体结构有中期重复风险，请做质量复核。",
+      "expected_output": "Skill 应在检查点 2 生成最多一份轻量只读请求，stage=plot_structure，artifacts 覆盖 02-world-system.md 至 08-volume-outline.md，focus 包含中期重复和发动机可持续性，保留 frozen_decisions。请求不得包含 review_id、artifact_refs、permissions、哈希或 Ledger。Coach 结果只是建议；作者确认前 Steward 不得落盘建议或进入阶段 9。",
+      "files": ["evals/fixtures/no-project/"]
+    },
+    {
+      "id": 13,
+      "prompt": "给当前 InkOS 项目的 book_rules.md 增加一条不改变核心冲突的未来规则：基地内明火必须登记。",
+      "expected_output": "Skill 应进入 ACTIVE_MAINTENANCE，执行写锁、版本、路径分类和变更影响分析。该请求是普通绿区未来规则补充，不应调用 novel-coach；应把规则写成条件到结果的可执行形式，并按现有安全脚本验证。",
+      "files": ["evals/fixtures/active-book/"]
+    },
+    {
+      "id": 14,
+      "prompt": "我想把主角目标从建设基地改成摧毁所有基地，这会改变后面整卷结构。先帮我评估并修改。",
+      "expected_output": "Skill 应识别为重大核心目标和整卷结构变化，先只读诊断与变更影响分析，可使用 stage=postbuild_diagnosis 委托 Coach。Coach 只能返回 verdict/findings，不得写文件。作者必须接受、拒绝或带风险接受建议；确认前不得实施修改，确认后仍由 Steward 按红黄绿和 sync/rewrite 规则执行。",
+      "files": ["evals/fixtures/active-book/"]
+    },
+    {
+      "id": 15,
+      "prompt": "最近十章越来越重复，主角也总是在等别人出事，帮我诊断为什么卡文，只评审不修改。",
+      "expected_output": "Skill 应执行只读 review-foundation，至少检查作品承诺偏离、主角主动性、爽点重复、伏笔衰减、角色独立目标、下一卷升级，并把卡文主因归入 information_missing、conflict_missing 或 choice_missing。每条发现需给本地证据、严重度、建议区域、coach_needed、runtime_action 和建议；不得修改文件或执行 InkOS 命令。",
+      "files": ["evals/fixtures/active-book/"]
     }
   ]
 }
