@@ -225,9 +225,18 @@ inkos --version
 | 版本范围 | 行为 |
 |----------|------|
 | `>=1.7.2 <1.8.0` | 正常操作 |
-| 其他版本 | 切换为只读模式：可评审、可输出建议，但不执行黄区写入或 sync/rewrite |
+| 其他版本或未知 | 完整只读模式（见下方） |
 
-版本不匹配时，明确告知用户当前 Skill 未验证该版本，建议升级或降级 InkOS。
+**完整只读模式**（版本不支持或未知时）：
+
+- 禁止绿区写入
+- 禁止黄区写入
+- 禁止正文写入
+- 禁止 sync/rewrite
+- 只允许读取、评审、影响分析和输出补丁建议
+- 不得声称项目已被修改
+
+与 `preflight.py` 输出 `{"write_allowed": false, "review_only": true}` 一致。
 
 
 ## 变更影响分析要求
@@ -270,10 +279,14 @@ inkos --version
 
 ### PREBUILD 模式必须产物
 
-1. 按阶段输出设计构件（`story-design/` 目录）
+必须完整满足 `references/prebuild-workflow.md` 阶段 11 定义的机器编译包契约。
+仅生成 `book-brief.md` 不视为 PREBUILD 完成。
+
+1. 按 11 阶段输出设计构件（`story-design/` 目录，00-10 无断号）
 2. 最终剧情大纲（`story-design/09-story-outline.md`）
-3. InkOS 建书 brief（`story-design/inkos/book-brief.md`）
-4. 建书命令（`inkos book create --brief ...`）
+3. Readiness Review（`story-design/10-readiness-review.md`）
+4. InkOS 精确编译包（`story-design/inkos/`）：book-brief.md + author_intent.md + story_frame.md + volume_map.md + book_rules.md + pending_hooks.md + roles/**
+5. 建书命令（`inkos book create --brief ...`）
 
 ### FOUNDATION_ALIGNMENT 模式必须产物
 
@@ -346,3 +359,10 @@ InkOS 规划阶段会重新读取这些文件。普通章节流水线不会覆�
 | `scripts/classify_path.py` | 每个待修改路径**必须分类** | 手动判断并标注 |
 | `scripts/verify_diff.py` | 修改完成后**必须执行** | 不声称已安全完成 |
 | `scripts/verify_runtime_context.py` | 修改影响 plan/compose 的绿区后**必须执行** | 建议用户手动运行 |
+
+**脚本模式契约**：
+
+- `verify_diff.py` 和 `verify_runtime_context.py` 均支持 `--mode enforce`（默认）和 `--mode diagnostic`。
+- **只有 enforce 模式的成功结果可作为"写入已安全完成"的证明**（`completion_proof: true`）。
+- diagnostic 模式的成功不得被包装为安全完成（`completion_proof: false`）。
+- 无终端权限时只输出修改提案，不声称已完成项目写入。

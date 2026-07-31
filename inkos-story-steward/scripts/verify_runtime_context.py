@@ -2,24 +2,43 @@
 """Verify InkOS runtime context after plan/compose.
 
 Strictly validates that green-zone modifications are reflected in runtime output.
-Requires all three runtime files, at least one content assertion, and source freshness.
+
+Modes:
+  enforce (default): requires --source-file, content assertions, all three runtime files,
+                     correct chapter, freshness proof. completion_proof=true on success.
+  diagnostic: allows missing --source-file, but completion_proof=false always.
 
 Usage:
     python scripts/verify_runtime_context.py \
         --project-root . --book-id test-book --chapter 6 \
+        --mode enforce \
         --source-file books/test-book/story/book_rules.md \
         --expect-text "抑制剂只能延缓感染" \
         --expect-source "story/book_rules.md" \
         --reject-text "感染后无法进行任何干预"
 
-Exit: 0 = verified, 1 = failure (missing files, parse error, assertion failed, stale).
+Exit: 0 = verified, 1 = failure.
 """
 
 import argparse
 import json
-import os
 import sys
 from pathlib import Path
+
+
+# Formal InkOS trace source fields (v1.7.2). Only these are searched for --expect-source.
+TRACE_SOURCE_FIELDS = [
+    "plannerInputs",
+    "composerInputs",
+    "selectedSources",
+]
+
+TRACE_SOURCE_NESTED = [
+    ("contextTiers", "protectedSources"),
+    ("contextTiers", "compressibleSources"),
+    ("compression", "protectedSources"),
+    ("compression", "compressedSources"),
+]
 
 
 def find_book_path(project_root: Path, book_id: str | None) -> Path | None:
@@ -68,90 +87,86 @@ def safe_json_load(path: Path) -> tuple[dict | None, str | None]:
         return None, f"Cannot read {path.name}: {e}"
 
 
-def safe_yaml_load(path: Path) -> tuple[dict | list | None, str | None]:
-    """Load YAML safely. Uses yaml if available, else minimal parser."""
+def safe_yaml_load(path: Path) -> tuple[object | None, str | None]:
+    """Load YAML using PyYAML. No fallback — PyYAML unavailable = fail."""
+    try:
+        import yaml
+    except ImportError:
+        return None, "YAML_PARSER_UNAVAILABLE: PyYAML is required. Install: pip install pyyaml"
+
     try:
         content = path.read_text(encoding="utf-8")
     except OSError as e:
         return None, f"Cannot read {path.name}: {e}"
 
     try:
-        import yaml
         data = yaml.safe_load(content)
         if data is None:
             return None, f"YAML file {path.name} is empty or null"
         return data, None
-    except ImportError:
-        # Minimal fallback: just verify it's not empty and looks like YAML
-        stripped = content.strip()
-        if not stripped:
-            return None, f"YAML file {path.name} is empty"
-        # Basic sanity: should have at least one key: value or - item
-        if ":" not in stripped and not stripped.startswith("-"):
-            return None, f"YAML file {path.name} does not appear to be valid YAML"
-        return {"_raw": content}, None
-    except Exception as e:
+    except yaml.YAMLError as e:
         return None, f"YAML parse error in {path.name}: {e}"
 
 
-def extract_chapter_from_json(data: dict) -> int | None:
-    """Try to extract chapter number from context/trace JSON."""
-    for key in ["chapter", "chapterNumber", "chapter_number", "targetChapter"]:
-        if key in data:
-            try:
-                return int(data[key])
-            except (ValueError, TypeError):
-                pass
+def validate_chapter_field(data: dict, filename: str, expected: int) -> str | None:
+    """Validate that data has a valid chapter field matching expected."""
+    if "chapter" not in data:
+        return f"{filename}: 'chapter' field missing (required by InkOS schema)"
+    chapter_val = data["chapter"]
+    if not isinstance(chapter_val, int):
+        try:
+            chapter_val = int(chapter_val)
+        except (ValueError, TypeError):
+            return f"{filename}: 'chapter' is not a valid integer: {data['chapter']!r}"
+    if chapter_val != expected:
+        return f"{filename}: chapter={chapter_val}, expected {expected}"
     return None
 
 
-def check_source_in_trace(trace_data: dict, expect_source: str) -> bool:
-    """Check if expect_source appears in structured trace fields."""
-    # Normalize the expected source for comparison
-    norm_expect = expect_source.replace("\\", "/").lstrip("./")
+def collect_trace_sources(trace: dict) -> list[str]:
+    """Collect source paths ONLY from formal InkOS trace fields."""
+    sources = []
 
-    # Fields to search in trace
-    search_fields = [
-        "plannerInputs", "composerInputs", "selectedSources",
-        "sources", "inputs", "files",
-    ]
+    # Top-level list fields
+    for field in TRACE_SOURCE_FIELDS:
+        val = trace.get(field)
+        if isinstance(val, list):
+            sources.extend(str(item) for item in val if isinstance(item, str))
+        elif isinstance(val, str):
+            sources.append(val)
 
-    # Also check nested contextTiers and compression
-    for tier_key in ["contextTiers", "compression"]:
-        tier = trace_data.get(tier_key)
-        if isinstance(tier, dict):
-            for sub_key in ["protectedSources", "compressibleSources",
-                            "compressedSources", "sources"]:
-                sub = tier.get(sub_key)
-                if isinstance(sub, list):
-                    search_fields.append(f"{tier_key}.{sub_key}")
+    # Nested fields
+    for parent_key, child_key in TRACE_SOURCE_NESTED:
+        parent = trace.get(parent_key)
+        if isinstance(parent, dict):
+            val = parent.get(child_key)
+            if isinstance(val, list):
+                sources.extend(str(item) for item in val if isinstance(item, str))
 
-    def matches(path_str: str) -> bool:
-        """Component-level path match."""
-        norm = path_str.replace("\\", "/").lstrip("./")
-        # Exact match
-        if norm == norm_expect:
+    return sources
+
+
+def source_matches(source_path: str, expect: str) -> bool:
+    """Component-level path match between a trace source and expected path."""
+    norm_source = source_path.replace("\\", "/").lstrip("./")
+    norm_expect = expect.replace("\\", "/").lstrip("./")
+
+    # Exact match
+    if norm_source == norm_expect:
+        return True
+
+    # Suffix match at component boundary
+    # e.g. "books/test-book/story/book_rules.md" matches "story/book_rules.md"
+    if norm_source.endswith("/" + norm_expect):
+        return True
+
+    # Absolute path contains the relative path at component boundary
+    if norm_expect in norm_source:
+        idx = norm_source.rfind(norm_expect)
+        if idx > 0 and norm_source[idx - 1] == "/":
             return True
-        # Suffix match at component boundary (e.g. "story/book_rules.md" matches
-        # "books/test-book/story/book_rules.md")
-        if norm.endswith("/" + norm_expect) or norm.endswith(norm_expect):
-            # Verify component boundary
-            idx = norm.rfind(norm_expect)
-            if idx == 0 or norm[idx - 1] == "/":
-                return True
-        return False
 
-    # Deep search through the trace structure
-    def search_obj(obj) -> bool:
-        if isinstance(obj, str):
-            return matches(obj)
-        elif isinstance(obj, list):
-            return any(search_obj(item) for item in obj)
-        elif isinstance(obj, dict):
-            return any(search_obj(v) for v in obj.values())
-        return False
-
-    return search_obj(trace_data)
+    return False
 
 
 def check_text_in_files(files_content: list[str], text: str) -> bool:
@@ -165,42 +180,60 @@ def main():
     parser.add_argument("--book-id", type=str, default=None)
     parser.add_argument("--chapter", type=int, required=True,
                         help="Chapter number whose runtime context to verify")
+    parser.add_argument("--mode", choices=["enforce", "diagnostic"], default="enforce",
+                        help="enforce: full proof required; diagnostic: best-effort, no proof")
     parser.add_argument("--expect-text", action="append", default=[],
                         help="Text that must appear in context or rule-stack (repeatable)")
     parser.add_argument("--expect-source", action="append", default=[],
-                        help="Source file that must appear in trace (repeatable)")
+                        help="Source file that must appear in formal trace fields (repeatable)")
     parser.add_argument("--reject-text", action="append", default=[],
                         help="Old text that must NOT appear (repeatable)")
     parser.add_argument("--source-file", action="append", default=[],
                         help="Source files whose mtime must be <= runtime files (repeatable)")
     parser.add_argument("--max-age", type=float, default=None,
-                        help="Optional: max age in seconds for runtime files (warning only)")
+                        help="Optional: max age in seconds for runtime files (warning)")
     parser.add_argument("--json", action="store_true")
     args = parser.parse_args()
 
     issues = []
+    warnings = []
+    checked_sources = []
+    runtime_files_found = {}
 
-    # Require at least one content assertion
+    # Mode-specific requirements
+    if args.mode == "enforce":
+        if not args.source_file:
+            issues.append(
+                "enforce mode requires at least one --source-file to prove freshness. "
+                "Without it, cannot verify this session's modifications entered runtime.")
+        if not args.expect_text and not args.expect_source and not args.reject_text:
+            issues.append(
+                "enforce mode requires at least one content assertion "
+                "(--expect-text, --expect-source, or --reject-text).")
+
+    # Even diagnostic needs at least one assertion to be useful
     if not args.expect_text and not args.expect_source and not args.reject_text:
-        issues.append(
-            "No content assertions provided. At least one of --expect-text, "
-            "--expect-source, or --reject-text is required. "
-            "Weak verification cannot prove modifications entered runtime."
-        )
-        _finish(issues, [], args.json, args.chapter)
+        if args.mode == "diagnostic" and not issues:
+            warnings.append("No content assertions — diagnostic only, cannot prove modification entered runtime.")
+        elif not issues:
+            issues.append("No content assertions provided.")
+
+    # Early exit if fundamental requirements missing
+    if issues and args.mode == "enforce":
+        _finish(issues, warnings, args)
         return
 
     # Resolve book path
     book_path = find_book_path(args.project_root, args.book_id)
     if book_path is None:
         issues.append("Cannot resolve book path.")
-        _finish(issues, [], args.json, args.chapter)
+        _finish(issues, warnings, args)
         return
 
     runtime_dir = book_path / "story" / "runtime"
     if not runtime_dir.is_dir():
         issues.append("story/runtime/ directory does not exist. Run inkos plan/compose first.")
-        _finish(issues, [], args.json, args.chapter)
+        _finish(issues, warnings, args)
         return
 
     # Find all three required files
@@ -209,18 +242,23 @@ def main():
     trace_path = find_runtime_file(runtime_dir, args.chapter, ".trace.json")
 
     if context_path is None:
-        issues.append(f"Missing: chapter-{args.chapter:04d}.context.json. Run: inkos compose chapter")
+        issues.append(f"Missing: chapter-{args.chapter:04d}.context.json")
+    else:
+        runtime_files_found["context"] = str(context_path)
     if rule_stack_path is None:
-        issues.append(f"Missing: chapter-{args.chapter:04d}.rule-stack.yaml. Run: inkos compose chapter")
+        issues.append(f"Missing: chapter-{args.chapter:04d}.rule-stack.yaml")
+    else:
+        runtime_files_found["rule_stack"] = str(rule_stack_path)
     if trace_path is None:
-        issues.append(f"Missing: chapter-{args.chapter:04d}.trace.json. Run: inkos compose chapter")
+        issues.append(f"Missing: chapter-{args.chapter:04d}.trace.json")
+    else:
+        runtime_files_found["trace"] = str(trace_path)
 
-    # If any file missing, fail immediately
     if issues:
-        _finish(issues, [], args.json, args.chapter)
+        _finish(issues, warnings, args)
         return
 
-    # Parse files
+    # Parse files — all must succeed
     context_data, ctx_err = safe_json_load(context_path)
     if ctx_err:
         issues.append(ctx_err)
@@ -234,45 +272,47 @@ def main():
         issues.append(yaml_err)
 
     if issues:
-        _finish(issues, [], args.json, args.chapter)
+        _finish(issues, warnings, args)
         return
 
-    # Chapter consistency: verify chapter number in files matches --chapter
-    if context_data:
-        file_chapter = extract_chapter_from_json(context_data)
-        if file_chapter is not None and file_chapter != args.chapter:
-            issues.append(
-                f"context.json chapter={file_chapter}, expected {args.chapter}")
+    # Chapter field validation — mandatory
+    ctx_chapter_err = validate_chapter_field(context_data, "context.json", args.chapter)
+    if ctx_chapter_err:
+        issues.append(ctx_chapter_err)
 
-    if trace_data:
-        file_chapter = extract_chapter_from_json(trace_data)
-        if file_chapter is not None and file_chapter != args.chapter:
-            issues.append(
-                f"trace.json chapter={file_chapter}, expected {args.chapter}")
+    trace_chapter_err = validate_chapter_field(trace_data, "trace.json", args.chapter)
+    if trace_chapter_err:
+        issues.append(trace_chapter_err)
 
-    # Freshness: runtime files must be newer than source files
+    if issues:
+        _finish(issues, warnings, args)
+        return
+
+    # Freshness: runtime files must be newer than ALL source files
     if args.source_file:
         runtime_paths = [context_path, rule_stack_path, trace_path]
         runtime_mtimes = [p.stat().st_mtime for p in runtime_paths]
-        min_runtime_mtime = min(runtime_mtimes)
+        earliest_runtime_mtime = min(runtime_mtimes)
 
+        source_mtimes = []
         for sf in args.source_file:
             sf_path = Path(sf)
             if not sf_path.exists():
-                # Try relative to project root
                 sf_path = args.project_root / sf
             if not sf_path.exists():
                 issues.append(f"Source file not found: {sf}")
                 continue
-            sf_mtime = sf_path.stat().st_mtime
-            if min_runtime_mtime < sf_mtime:
+            source_mtimes.append(sf_path.stat().st_mtime)
+            checked_sources.append(str(sf))
+
+        if source_mtimes:
+            latest_source_mtime = max(source_mtimes)
+            if earliest_runtime_mtime < latest_source_mtime:
                 issues.append(
-                    f"Runtime files are OLDER than source file {sf}. "
-                    f"Re-run plan/compose after editing green-zone files.")
-                break  # One staleness error is enough
+                    "Runtime files are OLDER than source file(s). "
+                    "Re-run plan/compose after editing green-zone files.")
 
     # Content assertions
-    # Read raw content for text matching
     context_content = context_path.read_text(encoding="utf-8", errors="replace")
     rule_stack_content = rule_stack_path.read_text(encoding="utf-8", errors="replace")
     searchable_contents = [context_content, rule_stack_content]
@@ -285,14 +325,16 @@ def main():
         if check_text_in_files(searchable_contents, text):
             issues.append(f"Rejected text still present in context/rule-stack: \"{text}\"")
 
+    # Source verification — ONLY from formal trace fields
     for source in args.expect_source:
-        if trace_data and not check_source_in_trace(trace_data, source):
-            issues.append(f"Expected source not found in trace: \"{source}\"")
-        elif trace_data is None:
-            issues.append(f"Cannot verify source (trace not parsed): \"{source}\"")
+        trace_sources = collect_trace_sources(trace_data)
+        if not any(source_matches(ts, source) for ts in trace_sources):
+            issues.append(
+                f"Expected source not found in formal trace fields: \"{source}\". "
+                f"Searched: {TRACE_SOURCE_FIELDS} + nested contextTiers/compression. "
+                f"Found sources: {trace_sources[:10]}")
 
     # Optional max-age warning
-    warnings = []
     if args.max_age is not None:
         import time
         now = time.time()
@@ -301,16 +343,27 @@ def main():
             if age > args.max_age:
                 warnings.append(f"{p.name} is {age:.0f}s old (max-age={args.max_age}s)")
 
-    _finish(issues, warnings, args.json, args.chapter)
+    _finish(issues, warnings, args, checked_sources, runtime_files_found)
 
 
-def _finish(issues: list[str], warnings: list[str], as_json: bool, chapter: int):
-    if as_json:
+def _finish(issues: list[str], warnings: list[str], args,
+            checked_sources: list[str] | None = None,
+            runtime_files: dict | None = None):
+    passed = len(issues) == 0
+    completion_proof = passed and args.mode == "enforce"
+    proof_level = "enforced" if args.mode == "enforce" else "diagnostic"
+
+    if args.json:
         print(json.dumps({
-            "chapter": chapter,
+            "mode": args.mode,
+            "chapter": args.chapter,
+            "passed": passed,
+            "completion_proof": completion_proof,
+            "proof_level": proof_level,
             "issues": issues,
             "warnings": warnings,
-            "passed": len(issues) == 0,
+            "checked_sources": checked_sources or [],
+            "runtime_files": runtime_files or {},
         }, ensure_ascii=False, indent=2))
     else:
         if issues:
@@ -321,10 +374,12 @@ def _finish(issues: list[str], warnings: list[str], as_json: bool, chapter: int)
             print("⚠️  WARNINGS:")
             for w in warnings:
                 print(f"  {w}")
-        if not issues and not warnings:
-            print(f"✅ Runtime context for chapter {chapter} verified.")
+        if passed:
+            print(f"✅ Runtime context for chapter {args.chapter} verified.")
+            print(f"completion_proof: {str(completion_proof).lower()}")
+            print(f"proof_level: {proof_level}")
 
-    sys.exit(1 if issues else 0)
+    sys.exit(0 if passed else 1)
 
 
 if __name__ == "__main__":

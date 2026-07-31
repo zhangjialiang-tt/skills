@@ -146,3 +146,112 @@ class TestSingleBookAutoResolved:
         data = json.loads(result.stdout)
         assert data["book_id"] == "test-book"
         assert data["write_allowed"] is False
+
+
+
+class TestChapterIndexConsistency:
+    """Tests for inspect_chapter_state via preflight --json output."""
+
+    def _make_project_with_chapters(self, root: Path, *, book_id: str = "test-book"):
+        """Create project + chapters dir, return (book_path, chapters_dir)."""
+        make_project(root, book_id=book_id)
+        book_path = root / "books" / book_id
+        chapters_dir = book_path / "chapters"
+        chapters_dir.mkdir(exist_ok=True)
+        return book_path, chapters_dir
+
+    def _write_index(self, chapters_dir: Path, numbers: list[int]):
+        """Write index.json listing given chapter numbers."""
+        entries = [
+            {"number": n, "title": f"ch{n}", "path": f"{n:03d}_test.md"}
+            for n in numbers
+        ]
+        (chapters_dir / "index.json").write_text(
+            json.dumps({"chapters": entries}), encoding="utf-8"
+        )
+
+    def _write_chapter_file(self, chapters_dir: Path, number: int):
+        """Create a chapter markdown file like 001_test.md."""
+        (chapters_dir / f"{number:03d}_test.md").write_text(
+            f"# Chapter {number}", encoding="utf-8"
+        )
+
+    def test_no_index_no_files_foundation(self, tmp_path: Path):
+        """Empty chapters/ dir → consistent, mode=FOUNDATION_ALIGNMENT."""
+        self._make_project_with_chapters(tmp_path)
+        git_init_clean(tmp_path)
+
+        result = run_preflight(tmp_path, "--json")
+        data = json.loads(result.stdout)
+        # inkos not installed → exit 1, but chapter state is consistent
+        assert "CHAPTER_INDEX_INCONSISTENT" not in data["reason_codes"]
+        assert data["chapter_state"]["consistent"] is True
+        assert data["mode"] == "FOUNDATION_ALIGNMENT"
+
+    def test_files_but_no_index_exit1(self, tmp_path: Path):
+        """Chapter .md files exist but no index.json → CHAPTER_INDEX_INCONSISTENT."""
+        _, chapters_dir = self._make_project_with_chapters(tmp_path)
+        self._write_chapter_file(chapters_dir, 1)
+        self._write_chapter_file(chapters_dir, 2)
+        git_init_clean(tmp_path)
+
+        result = run_preflight(tmp_path, "--json")
+        assert result.returncode == 1
+        data = json.loads(result.stdout)
+        assert "CHAPTER_INDEX_INCONSISTENT" in data["reason_codes"]
+
+    def test_corrupt_index_exit1(self, tmp_path: Path):
+        """Corrupt index.json → CHAPTER_INDEX_INCONSISTENT."""
+        _, chapters_dir = self._make_project_with_chapters(tmp_path)
+        (chapters_dir / "index.json").write_text("{{{bad json", encoding="utf-8")
+        self._write_chapter_file(chapters_dir, 1)
+        git_init_clean(tmp_path)
+
+        result = run_preflight(tmp_path, "--json")
+        assert result.returncode == 1
+        data = json.loads(result.stdout)
+        assert "CHAPTER_INDEX_INCONSISTENT" in data["reason_codes"]
+
+    def test_index_matches_files_active(self, tmp_path: Path):
+        """Index and files match → consistent=True, mode=ACTIVE (no CHAPTER_INDEX_INCONSISTENT)."""
+        _, chapters_dir = self._make_project_with_chapters(tmp_path)
+        self._write_index(chapters_dir, [1, 2, 3])
+        self._write_chapter_file(chapters_dir, 1)
+        self._write_chapter_file(chapters_dir, 2)
+        self._write_chapter_file(chapters_dir, 3)
+        git_init_clean(tmp_path)
+
+        result = run_preflight(tmp_path, "--json")
+        data = json.loads(result.stdout)
+        # inkos not installed → exit 1, but chapter state is fine
+        assert "CHAPTER_INDEX_INCONSISTENT" not in data["reason_codes"]
+        assert data["chapter_state"]["consistent"] is True
+        assert data["mode"] == "ACTIVE"
+
+    def test_index_has_chapter_no_file_exit1(self, tmp_path: Path):
+        """Index lists [1,2,3] but file 003 missing → CHAPTER_INDEX_INCONSISTENT."""
+        _, chapters_dir = self._make_project_with_chapters(tmp_path)
+        self._write_index(chapters_dir, [1, 2, 3])
+        self._write_chapter_file(chapters_dir, 1)
+        self._write_chapter_file(chapters_dir, 2)
+        # 003_test.md deliberately missing
+        git_init_clean(tmp_path)
+
+        result = run_preflight(tmp_path, "--json")
+        assert result.returncode == 1
+        data = json.loads(result.stdout)
+        assert "CHAPTER_INDEX_INCONSISTENT" in data["reason_codes"]
+
+    def test_file_exists_not_in_index_exit1(self, tmp_path: Path):
+        """Index lists [1,2] but file 003 exists → CHAPTER_INDEX_INCONSISTENT."""
+        _, chapters_dir = self._make_project_with_chapters(tmp_path)
+        self._write_index(chapters_dir, [1, 2])
+        self._write_chapter_file(chapters_dir, 1)
+        self._write_chapter_file(chapters_dir, 2)
+        self._write_chapter_file(chapters_dir, 3)  # not in index
+        git_init_clean(tmp_path)
+
+        result = run_preflight(tmp_path, "--json")
+        assert result.returncode == 1
+        data = json.loads(result.stdout)
+        assert "CHAPTER_INDEX_INCONSISTENT" in data["reason_codes"]

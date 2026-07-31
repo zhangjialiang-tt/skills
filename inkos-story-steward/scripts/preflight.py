@@ -45,20 +45,79 @@ def check_write_lock(book_path: Path) -> bool:
     return (book_path / ".write.lock").exists()
 
 
-def get_latest_chapter(book_path: Path) -> int | None:
-    """Return latest chapter number from index.json, or None."""
-    index_file = book_path / "chapters" / "index.json"
-    if not index_file.exists():
-        return None
-    try:
-        data = json.loads(index_file.read_text(encoding="utf-8"))
-        chapters = data if isinstance(data, list) else data.get("chapters", [])
-        if not chapters:
-            return None
-        nums = [c.get("number", c.get("id", 0)) for c in chapters]
-        return max(nums) if nums else None
-    except (json.JSONDecodeError, KeyError):
-        return None
+def inspect_chapter_state(book_path: Path) -> dict:
+    """Inspect chapter index and files for consistency.
+    Returns dict with: latest_chapter, index_exists, index_valid,
+    indexed_chapters, chapter_files, consistent, error."""
+    result = {
+        "latest_chapter": None,
+        "index_exists": False,
+        "index_valid": False,
+        "indexed_chapters": [],
+        "chapter_files": [],
+        "consistent": True,
+        "error": None,
+    }
+
+    chapters_dir = book_path / "chapters"
+    index_file = chapters_dir / "index.json"
+
+    # Discover chapter markdown files on disk
+    if chapters_dir.is_dir():
+        import re
+        for f in chapters_dir.iterdir():
+            if f.suffix == ".md" and f.name != "index.json":
+                m = re.match(r"^(\d+)", f.name)
+                if m:
+                    result["chapter_files"].append(int(m.group(1)))
+        result["chapter_files"].sort()
+
+    # Read index
+    if index_file.exists():
+        result["index_exists"] = True
+        try:
+            data = json.loads(index_file.read_text(encoding="utf-8"))
+            chapters = data if isinstance(data, list) else data.get("chapters", [])
+            nums = []
+            for c in chapters:
+                n = c.get("number", c.get("id"))
+                if n is not None:
+                    nums.append(int(n))
+            result["indexed_chapters"] = sorted(nums)
+            result["index_valid"] = True
+        except (json.JSONDecodeError, KeyError, ValueError, TypeError):
+            result["index_valid"] = False
+
+    # Consistency checks
+    indexed = set(result["indexed_chapters"])
+    files = set(result["chapter_files"])
+
+    if not result["index_exists"] and files:
+        result["consistent"] = False
+        result["error"] = "Chapter markdown files exist but index.json is missing"
+    elif result["index_exists"] and not result["index_valid"]:
+        result["consistent"] = False
+        result["error"] = "index.json exists but is corrupt/unparseable"
+    elif result["index_valid"]:
+        missing_files = indexed - files
+        unindexed_files = files - indexed
+        if missing_files:
+            result["consistent"] = False
+            result["error"] = f"Index references chapters with no markdown file: {sorted(missing_files)}"
+        elif unindexed_files:
+            result["consistent"] = False
+            result["error"] = f"Markdown files exist but not in index: {sorted(unindexed_files)}"
+        # Check duplicates
+        if result["index_valid"] and len(result["indexed_chapters"]) != len(indexed):
+            result["consistent"] = False
+            result["error"] = "Duplicate chapter numbers in index"
+
+    # Determine latest chapter
+    all_chapters = indexed | files
+    if all_chapters:
+        result["latest_chapter"] = max(all_chapters)
+
+    return result
 
 
 def check_inkos_version() -> tuple[int, ...] | None:
@@ -189,10 +248,18 @@ def main():
         block("WRITE_LOCK_ACTIVE",
               ".write.lock exists. InkOS pipeline is running. Wait for it to finish.")
 
-    # 6. Determine mode
-    latest_chapter = get_latest_chapter(book_path)
-    report["latest_chapter"] = latest_chapter
-    if latest_chapter is None:
+    # 6. Determine mode with chapter index consistency
+    chapter_state = inspect_chapter_state(book_path)
+    report["chapter_state"] = chapter_state
+    report["latest_chapter"] = chapter_state["latest_chapter"]
+
+    if not chapter_state["consistent"]:
+        block("CHAPTER_INDEX_INCONSISTENT",
+              f"Chapter index inconsistency: {chapter_state['error']}. "
+              f"Do NOT modify chapters/index.json (red zone). "
+              f"Use InkOS repair/audit or re-confirm project state.")
+        report["mode"] = "UNKNOWN"
+    elif chapter_state["latest_chapter"] is None:
         report["mode"] = "FOUNDATION_ALIGNMENT"
     else:
         report["mode"] = "ACTIVE"

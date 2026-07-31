@@ -180,3 +180,33 @@ def test_staged_and_untracked_detected(tmp_path):
         cwd=str(tmp_path),
     )
     assert r_fail.returncode == 1
+
+
+
+# ---------------------------------------------------------------------------
+# Boundary tests: enforce requires --allow; diagnostic relaxes rules
+# ---------------------------------------------------------------------------
+
+
+def test_explicit_files_without_allow_blocked():
+    """enforce + --files + no --allow must exit 1."""
+    result = run_verify("--mode", "enforce", "--files", "books/test/story/book_rules.md")
+    assert result.returncode == 1
+
+
+def test_diagnostic_yellow_exit0():
+    """diagnostic mode: yellow zone is warning, not failure."""
+    result = run_verify("--mode", "diagnostic", "--files", "books/test/story/pending_hooks.md")
+    assert result.returncode == 0
+
+
+def test_diagnostic_red_exit1():
+    """diagnostic mode: red zone still fails."""
+    result = run_verify("--mode", "diagnostic", "--files", "books/test/chapters/index.json")
+    assert result.returncode == 1
+
+
+def test_diagnostic_no_allow_needed():
+    """diagnostic mode does not require --allow."""
+    result = run_verify("--mode", "diagnostic", "--files", "books/test/story/author_intent.md")
+    assert result.returncode == 0

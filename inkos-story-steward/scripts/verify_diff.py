@@ -2,15 +2,17 @@
 """Verify a git diff contains no unauthorized modifications.
 
 Modes:
-  enforce (default): --allow required, all changes must be authorized, red always blocked.
-  diagnostic: report only, no --allow required, but exit 1 on red zone.
+  enforce (default): --allow required (even with --files), all changes must be authorized,
+                     red always blocked, yellow needs --allow-yellow.
+  diagnostic: report only, red → exit1, yellow/unknown → warning+exit0.
+              NOT a completion proof — Steward must not treat diagnostic success as safe.
 
 Checks unstaged + staged + untracked combined. Fail-closed on git errors.
 
 Usage:
     python scripts/verify_diff.py --mode enforce --allow <path> [--allow <path> ...]
     python scripts/verify_diff.py --mode diagnostic
-    python scripts/verify_diff.py --files <path> [<path> ...] --mode enforce --allow <path>
+    python scripts/verify_diff.py --files <path> [...] --mode enforce --allow <path> [...]
 
 Exit: 0 = clean, 1 = violation or error.
 """
@@ -18,7 +20,7 @@ Exit: 0 = clean, 1 = violation or error.
 import argparse
 import subprocess
 import sys
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 from classify_path import classify
@@ -73,7 +75,7 @@ def is_authorized(normalized: str, allow_list: list[str]) -> bool:
             if normalized.startswith(a):
                 return True
         else:
-            # Treat as directory prefix too (with / separator)
+            # Also allow as directory prefix (with / separator for component safety)
             if normalized.startswith(a + "/"):
                 return True
     return False
@@ -91,9 +93,10 @@ def main():
                         help="enforce: require --allow, block unauthorized; diagnostic: report only")
     args = parser.parse_args()
 
-    # Enforce mode requires --allow
-    if args.mode == "enforce" and not args.allow and not args.files:
+    # Enforce mode ALWAYS requires --allow, regardless of --files
+    if args.mode == "enforce" and not args.allow:
         print("ERROR: --mode enforce requires at least one --allow path.", file=sys.stderr)
+        print("completion_proof: false", file=sys.stderr)
         sys.exit(1)
 
     # Get file list
@@ -109,11 +112,13 @@ def main():
 
     if not files:
         print("No modified files to check.")
+        if args.mode == "enforce":
+            print("completion_proof: true (no modifications)")
         sys.exit(0)
 
-    violations = []
+    red_violations = []
     unauthorized = []
-    yellow_uncontrolled = []
+    yellow_warnings = []
 
     allow_normalized = [normalize_path(a) for a in args.allow]
 
@@ -121,27 +126,34 @@ def main():
         normalized = normalize_path(f)
         zone, reason = classify(normalized)
 
-        # Red zone: ALWAYS blocked regardless of allow list
+        # Red zone: ALWAYS blocked regardless of mode or allow list
         if zone == "red":
-            violations.append((normalized, reason))
+            red_violations.append((normalized, reason))
             continue
 
-        # In enforce mode, check authorization for ALL files (not just books/)
-        if args.mode == "enforce" and allow_normalized:
+        if args.mode == "enforce":
+            # Authorization check for ALL files
             if not is_authorized(normalized, allow_normalized):
                 unauthorized.append((normalized, zone))
                 continue
 
-        # Yellow zone: blocked unless --allow-yellow is declared
-        if zone == "yellow" and not args.allow_yellow:
-            yellow_uncontrolled.append((normalized, reason))
+            # Yellow zone: blocked unless --allow-yellow is declared
+            if zone == "yellow" and not args.allow_yellow:
+                yellow_warnings.append((normalized, reason, "blocked"))
+            else:
+                pass  # authorized and (green or yellow-with-declaration)
 
-    # Report
+        else:  # diagnostic
+            # Yellow/unknown: report as warning, do NOT block
+            if zone == "yellow":
+                yellow_warnings.append((normalized, reason, "warning"))
+
+    # Determine failure
     has_failure = False
 
-    if violations:
+    if red_violations:
         print("❌ RED ZONE VIOLATIONS (always forbidden):", file=sys.stderr)
-        for f, reason in violations:
+        for f, reason in red_violations:
             print(f"  {f}: {reason}", file=sys.stderr)
         has_failure = True
 
@@ -151,18 +163,29 @@ def main():
             print(f"  {f} ({zone}): not in --allow list", file=sys.stderr)
         has_failure = True
 
-    if yellow_uncontrolled:
+    # Yellow handling differs by mode
+    blocked_yellow = [(f, r) for f, r, kind in yellow_warnings if kind == "blocked"]
+    warned_yellow = [(f, r) for f, r, kind in yellow_warnings if kind == "warning"]
+
+    if blocked_yellow:
         print("❌ YELLOW ZONE without --allow-yellow (controlled operation not declared):",
               file=sys.stderr)
-        for f, reason in yellow_uncontrolled:
+        for f, reason in blocked_yellow:
             print(f"  {f}: {reason}", file=sys.stderr)
         has_failure = True
 
+    if warned_yellow:
+        print("⚠️  Yellow zone modifications (diagnostic — not a completion proof):")
+        for f, reason in warned_yellow:
+            print(f"  {f}: {reason}")
+
+    # Final output
     if not has_failure:
         if args.mode == "diagnostic":
-            print("✅ Diagnostic: no red zone violations found.")
+            print("Diagnostic: no red zone violations. completion_proof: false")
         else:
             print("✅ All modifications authorized and within zone constraints.")
+            print("completion_proof: true")
 
     sys.exit(1 if has_failure else 0)
 
