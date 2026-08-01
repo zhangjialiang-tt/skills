@@ -1,0 +1,28 @@
+execution_graph:
+  O0: 编排（已完成）
+  S0: 文本预处理 -> 输出 standardized_chapters.md, chapter_index.csv, batch_manifest.yaml, preprocessing_issues.csv
+  S1: 叙事结构拆解（S0 后，可与 S2/S3/S4 并行）
+  S2: 情绪节奏打分（S0 后，可与 S1/S3/S4 并行）
+  S3: 人物关系网（S0 后，可与 S1/S2/S4 并行）
+  S4: 爽点工程（S0 后，可与 S1/S2/S3 并行）
+  S5: 商业卡点（S1/S2/S4 完成后）
+  Q0: 质量审计（每批 S6 后）
+  S6: 数据聚合（S1-S5 完成后）
+  S7: 可视化（S6 后）
+  S8: 题材配方提炼（S6 全书聚合后）
+  S9: 章节模板生成（S8 后或 Schema 冻结后）
+  order: O0 -> S0 -> [S1,S2,S3,S4] -> S5 -> S6 -> Q0 -> [S7,S8,S9]
+
+checkpoint_policy:
+  checkpoint_1: S0 完成，验收 standardized_chapters.md 与 chapter_index.csv 后进入 S1-S5
+  checkpoint_2: 批次1 (ch01-10) S1-S5 完成
+  checkpoint_3: 批次2 (ch11-20) S1-S5 完成
+  checkpoint_4: S6 聚合 + Q0 审计
+  recovery: 任一批失败后从该批最近完成的 Skill 恢复，不重跑已完成批
+
+manual_review_policy:
+  sampling_rate: 0.2
+  review_points:
+    - S0 后抽检 4 章切章正确性
+    - 每批 S1-S5 后抽检 2 章
+    - S6 聚合后抽检字段冲突

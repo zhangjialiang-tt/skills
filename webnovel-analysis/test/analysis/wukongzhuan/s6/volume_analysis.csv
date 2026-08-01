@@ -1,0 +1,5 @@
+﻿volume_id,name,chapter_range,chapters,mean_emotion,mean_pressure,mean_release,payoff_chapters,core_conflict,confidence
+V01,迷途（现在线开篇）,CH01-CH05,5,3.8,4.6,1.2,2,孙悟空与自身失忆/被操纵命运的抗争,推断
+V02,前尘（过去线与更早线）,CH06-CH13,8,4.4,5.0,1.6,4,孙悟空与紫霞/天庭，自由与服从,推断
+V03,轮回（现在线终局）,CH14-CH20,7,4.0,6.7,1.9,4,被驯化的孙悟空与自由意志孙悟空（真我）,推断
+V04,篇外,CH21,1,5.0,2.0,1.0,0,无/寓言式,推断

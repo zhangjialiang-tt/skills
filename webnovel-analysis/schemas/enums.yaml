@@ -112,6 +112,11 @@ payoff_novelty:
   - 重复
   - 过度重复
 
+payoff_nature:
+  - commercial
+  - literary
+  - reverse
+
 paywall_suitability:
   - 低
   - 中

@@ -1,0 +1,11 @@
+task_id: BK20260801-001
+book_id: BK001
+book_title: 悟空传
+author: 今何在
+genre: 西游同人 / 神话文学（存疑，待 S1-S5 确认）
+analysis_version: v1.0
+purpose: 竞品拆解 / 结构研究（用户未明示，存疑）
+default_batch_size: 10
+manual_sampling_rate: 0.2
+source_encoding: GBK
+source_note: 原始 txt 为 GBK 编码，Read 工具按 UTF-8 读取会乱码，S0 必须先转码

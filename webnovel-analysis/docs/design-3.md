@@ -1361,6 +1361,127 @@ audit_severity:
   - P0
   - P1
   - P2
+
+payoff_nature:
+  - commercial
+  - literary
+  - reverse
+
+character_narrative_function:
+  - 主角行动发动机
+  - 核心对手
+  - 阶段对手
+  - 资源提供者
+  - 信息提供者
+  - 能力导师
+  - 情感支点
+  - 价值观镜像
+  - 见证者
+  - 喜剧调节
+  - 危机制造者
+  - 任务发布者
+  - 世界观入口
+  - 奖励确认者
+  - 其他
+
+relationship_type:
+  - 亲属
+  - 伴侣
+  - 朋友
+  - 师徒
+  - 同事
+  - 上下级
+  - 交易
+  - 合作
+  - 竞争
+  - 敌对
+  - 控制
+  - 利用
+  - 债务
+  - 秘密关联
+  - 单向崇拜
+  - 单向警惕
+  - 未知
+
+cliffhanger_type:
+  - 危机迫近
+  - 行动即将发生
+  - 身份将揭露
+  - 结果未公布
+  - 反转刚发生
+  - 新敌人登场
+  - 收益即将兑现
+  - 关系即将表态
+  - 信息差扩大
+  - 倒计时
+  - 场景硬切
+  - 自然收束
+  - 无明显钩子
+
+purchase_motivation:
+  - 看结果
+  - 看反击
+  - 看他人反应
+  - 看身份揭露
+  - 看收益
+  - 看真相
+  - 看关系进展
+  - 看危机解决
+  - 看新地图
+  - 看能力升级
+  - 其他
+
+break_phase:
+  - 爽前
+  - 爽中
+  - 爽后
+  - 自然收束
+
+suppression_level:
+  - 0
+  - 1
+  - 2
+  - 3
+  - 4
+
+publicness:
+  - 私下
+  - 小范围
+  - 公开
+  - 全局
+
+irreversibility:
+  - 低
+  - 中
+  - 高
+
+expected_resolution_distance:
+  - 下一章
+  - 1-3章
+  - 4章以上
+  - 存疑
+
+plot_progress_type:
+  - 新事件
+  - 旧事件升级
+  - 揭密
+  - 关系变化
+  - 资源变化
+
+story_unit_status:
+  - 候选
+  - 确认
+  - 存疑
+
+volume_status:
+  - 候选
+  - 确认
+  - 存疑
+
+execution_mode:
+  - incremental
+  - consolidation
+  - calibration
 ```
 
 ---

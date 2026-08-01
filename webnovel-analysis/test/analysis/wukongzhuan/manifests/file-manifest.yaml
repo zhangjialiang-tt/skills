@@ -1,0 +1,25 @@
+source_plan:
+  - file_name: 《悟空传》（校对版全本）作者：今何在.txt
+    path: docs/《悟空传》（校对版全本）作者：今何在.txt
+    format: txt
+    encoding: GBK（已确认）
+    estimated_chapters: 20（已确认）
+    total_chars: 约 73465（清洗前，按章节行统计）
+    preprocessing_needed: true
+    preprocessing_notes:
+      - 需转码 GBK -> UTF-8
+      - 删除文件头站点广告（zxcs.zip 横幅，第 1-3 行）
+      - 每章起始为“第X章”独立行（X 为中文数字），已确认 20 章无跳号
+    risk_notes:
+      - 章节行号: ch1 L11, ch2 L173, ch3 L274, ch4 L365, ch5 L495, ch6 L592, ch7 L733, ch8 L793, ch9 L921, ch10 L1066, ch11 L1223, ch12 L1343, ch13 L1497, ch14 L1634, ch15 L1731, ch16 L1825, ch17 L1990, ch18 L2138, ch19 L2221, ch20 L2312
+      - 超长章: ch1(5230字), ch20(9323字) 超 5000 字阈值
+      - 异常短章: 无（最短 ch19 2336 字）
+      - 该书为文学性西游同人，S4 爽点/S5 商业卡点字段适配性存疑，Q0 需关注
+
+batching_policy:
+  default_rule: 每批 10 章，按事件单元完整性优先
+  boundary_rules:
+    - 批次内尽量保持事件/单元闭合，如 S1 识别到跨批单元则调整
+  estimated_batches: 2
+  batch_1: ch01-ch10
+  batch_2: ch11-ch20

@@ -5,7 +5,7 @@
 ```yaml
 mode: 【incremental/consolidation】
 chapters: 【当前批次文本】
-emotion_records: 【S2结果；可为空】
+emotion_records: 【S2结果；必需，用于 payoff_nature literary 判定】
 story_units: 【S1结果；可为空】
 previous_payoffs:
   last_major_payoff: 【最近主要爽点】
@@ -63,6 +63,7 @@ previous_payoffs:
       "primary_payoff_event_id": "",
       "payoff_type": "",
       "payoff_strength": 0,
+      "payoff_nature": "",
       "payoff_interval_chapters": null,
       "payoff_novelty": "",
       "reader_reward": [],
@@ -109,3 +110,26 @@ previous_payoffs:
 | payoff_present=true 且 reader_reward 为空 | P1 | 人工检查 |
 | 连续3个主要爽点类型相同 | P2 | 重复风险 |
 | 超过5章无正反馈 | P2 | 检查有意压抑 |
+
+## payoff_nature 判定规则
+
+`payoff_nature` 字段标识爽点的**性质归属**，决定其进入哪些下游统计：
+
+| 取值 | 定义 | 适用场景 | 下游影响 |
+|------|------|---------|---------|
+| `commercial` | 商业性爽点 | 主角获得资源/打脸/升级/利益等"获得型"正反馈 | 全量进入 S5/S6/S7/S8/S9 |
+| `literary` | 文学性情感释放 | 非反向但情绪回报偏文学性（如悲剧式情感兑现、哲思顿悟），且 S2 release_score ≤ 2 | 进入 S6/S7，降低 S8 商业配方权重，不进入 S5 |
+| `reverse` | 反向释放 | 以死亡/自毁/杀死真我等方式完成反叛或情感兑现（release_mode = 反向释放） | 仅进入 S7 热力图（标记为反向释放），**不进入 S5 商业卡点**，**不计入 S4 商业爽点密度统计** |
+
+### 判定优先级
+
+1. **release_mode = 反向释放** → `reverse`
+2. **S2 release_score ≤ 2 且 payoff_present = true** → `literary`
+3. 其余 → `commercial`
+
+### 注意事项
+
+- `reverse` 类事件仍需完整记录 payoff_strength、reader_reward 等字段，供 S7 热力图使用
+- S4 的 `batch_statistics.payoff_density` **仅统计 commercial + literary**，排除 reverse
+- S4 的 `batch_statistics.payoff_type_distribution` **仅统计 commercial + literary**，排除 reverse
+- `reverse` 类事件在 `batch_summary` 中需单独计数（`reverse_payoff_count`），供 S6 聚合与 S8 配方使用

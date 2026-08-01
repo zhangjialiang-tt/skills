@@ -42,6 +42,23 @@ description: 将格式混乱的小说文本清洗、切章、编号并打包为�
 - `batch_manifest.yaml` → O0 和各分析 Skill
 - `preprocessing_issues.csv` → Q0
 
+### preprocessing_issues.csv 格式
+
+```csv
+issue_id,chapter_id,issue_type,description,severity,evidence,confidence
+ISS-001,BK001-CH0003,缺章,标题跳号：CH0002后直接CH0004,高,章节索引中无CH0003,确定
+ISS-002,BK001-CH0015,异常短章,清洗后仅120字，疑似非正文内容,中,字数统计异常,推断
+ISS-003,BK001-CH0022,疑似乱码,发现无法识别的Unicode字符片段,低,"段落：'asdfg乱码内容'",确定
+```
+
+**字段说明**：
+- `issue_id`：唯一编号，格式 `ISS-NNN`
+- `chapter_id`：关联章节；若全书级问题则填 `BOOK`
+- `issue_type`：缺章 / 重章 / 标题跳号 / 异常短章 / 异常长章 / 疑似乱码 / 疑似非正文 / 章节边界存疑
+- `severity`：高 / 中 / 低
+- `evidence`：问题证据原文
+- `confidence`：确定 / 推断 / 存疑
+
 ## 禁止事项
 
 - 分析情节、人物、情绪或结构

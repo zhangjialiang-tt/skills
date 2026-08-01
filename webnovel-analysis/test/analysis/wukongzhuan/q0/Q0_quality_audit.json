@@ -1,0 +1,295 @@
+{
+  "task_id": "BK20260801-001",
+  "skill_id": "Q0",
+  "audit_scope": "book",
+  "audit_summary": {
+    "records_checked": 21,
+    "p0_count": 0,
+    "p1_count": 4,
+    "p2_count": 9,
+    "overall_status": "PASS_WITH_REVIEW"
+  },
+  "issues": [
+    {
+      "issue_id": "AUD-P1-001",
+      "severity": "P1",
+      "category": "跨章节悬念兑现距离",
+      "chapter_ids": ["BK001-CH0002", "BK001-CH0020"],
+      "fields": ["open_loop", "ending_hook"],
+      "problem": "CH02弑师真相(谁冒充孙悟空杀唐僧)的悬念直至CH20才兑现，间隔18章，远超爽文常规兑现距离",
+      "evidence": "CH02 open_loop_added: '谁冒充孙悟空杀了唐僧'；CH20 open_loop_closed: '真假悟空谜局'",
+      "impact": "若为付费连载，长距离悬念需中间持续供给价值；本书以非线性结构天然承载",
+      "suggested_resolution": "人工确认该长线悬念是否被中间信息增量有效支撑",
+      "auto_fix_allowed": false
+    },
+    {
+      "issue_id": "AUD-P1-002",
+      "severity": "P1",
+      "category": "关键字段冲突",
+      "chapter_ids": ["BK001-CH0020"],
+      "fields": ["真假悟空身份"],
+      "problem": "如来宣称活者为六耳猕猴，但S1/S3/S4/S5均倾向'被杀的才是真悟空/真我'，文本存在双关解读空间",
+      "evidence": "S1 uncertain_items: '真假悟空的最终归属存在解读歧义'",
+      "impact": "若解读错误将影响核心结论与S8配方可信度",
+      "suggested_resolution": "人工复核CH19-CH20原文判定最终口径",
+      "auto_fix_allowed": false
+    },
+    {
+      "issue_id": "AUD-P1-003",
+      "severity": "P1",
+      "category": "评分极值",
+      "chapter_ids": ["BK001-CH0013"],
+      "fields": ["emotion_score"],
+      "problem": "全书最低分1分且相邻章节CH12(7)→CH13(1)跳变6分，需确认无过度压分",
+      "evidence": "S2: '全书情绪谷底，主角心死而亡，无任何释放'；CH13 pressure_score=9",
+      "impact": "影响热力图谷底判定",
+      "suggested_resolution": "人工复核CH13是否应保留1分",
+      "auto_fix_allowed": false
+    },
+    {
+      "issue_id": "AUD-P1-004",
+      "severity": "P1",
+      "category": "存疑结论",
+      "chapter_ids": ["BK001-CH0016", "BK001-CH0021"],
+      "fields": ["analysis_confidence"],
+      "problem": "CH16/CH21在S1/S2中标注'推断'，涉及方寸山超时空线与篇外寓言，属全书结构关键段",
+      "evidence": "S1: CH16 analysis_confidence='推断'，CH21 analysis_confidence='推断'",
+      "impact": "超时空线与篇外解读影响S8题材配方",
+      "suggested_resolution": "抽样复核CH16/CH21",
+      "auto_fix_allowed": false
+    },
+    {
+      "issue_id": "AUD-P1-004",
+      "severity": "P1",
+      "category": "跨章节悬念兑现距离",
+      "chapter_ids": ["BK001-CH0002", "BK001-CH0020"],
+      "fields": ["open_loop", "ending_hook"],
+      "problem": "CH02弑师真相(谁冒充孙悟空杀唐僧)的悬念直至CH20才兑现，间隔18章，远超爽文常规兑现距离",
+      "evidence": "CH02 open_loop_added: '谁冒充孙悟空杀了唐僧'；CH20 open_loop_closed: '真假悟空谜局'",
+      "impact": "若为付费连载，长距离悬念需中间持续供给价值；本书以非线性结构天然承载",
+      "suggested_resolution": "人工确认该长线悬念是否被中间信息增量有效支撑",
+      "auto_fix_allowed": false
+    },
+    {
+      "issue_id": "AUD-P1-005",
+      "severity": "P1",
+      "category": "关键字段冲突",
+      "chapter_ids": ["BK001-CH0020"],
+      "fields": ["真假悟空身份"],
+      "problem": "如来宣称活者为六耳猕猴，但S1/S3/S4/S5均倾向'被杀的才是真悟空/真我'，文本存在双关解读空间",
+      "evidence": "S1 uncertain_items: '真假悟空的最终归属存在解读歧义'",
+      "impact": "若解读错误将影响核心结论与S8配方可信度",
+      "suggested_resolution": "人工复核CH19-CH20原文判定最终口径",
+      "auto_fix_allowed": false
+    },
+    {
+      "issue_id": "AUD-P1-006",
+      "severity": "P1",
+      "category": "评分极值",
+      "chapter_ids": ["BK001-CH0013"],
+      "fields": ["emotion_score"],
+      "problem": "全书最低分1分且相邻章节CH12(7)→CH13(1)跳变6分，需确认无过度压分",
+      "evidence": "S2: '全书情绪谷底，主角心死而亡，无任何释放'；CH13 pressure_score=9",
+      "impact": "影响热力图谷底判定",
+      "suggested_resolution": "人工复核CH13是否应保留1分",
+      "auto_fix_allowed": false
+    },
+    {
+      "issue_id": "AUD-P1-004",
+      "severity": "P1",
+      "category": "存疑结论",
+      "chapter_ids": ["BK001-CH0016", "BK001-CH0021"],
+      "fields": ["analysis_confidence"],
+      "problem": "CH16/CH21在S1/S2中标注'推断'，涉及方寸山超时空线与篇外寓言，属全书结构关键段",
+      "evidence": "S1: CH16 analysis_confidence='推断'，CH21 analysis_confidence='推断'",
+      "impact": "超时空线与篇外解读影响S8题材配方",
+      "suggested_resolution": "抽样复核CH16/CH21",
+      "auto_fix_allowed": false
+    },
+    {
+      "issue_id": "AUD-P2-001",
+      "severity": "P2",
+      "category": "反向释放备注",
+      "chapter_ids": ["BK001-CH0018", "BK001-CH0019", "BK001-CH0020"],
+      "fields": ["payoff_nature", "release_score"],
+      "problem": "本章含反向释放事件（悲剧式兑现），已排除跨Skill冲突检查",
+      "evidence": "S4 payoff_nature='reverse'（以死/毁灭完成情感兑现）",
+      "impact": "低，反向释放仅作文学性节奏参考",
+      "suggested_resolution": "若反向释放强度>=7（CH19/CH20），建议人工确认口径",
+      "auto_fix_allowed": true
+    },
+    {
+      "issue_id": "AUD-P2-002",
+      "severity": "P2",
+      "category": "枚举合规",
+      "chapter_ids": [],
+      "fields": ["dominant_emotion", "relationship_type"],
+      "problem": "S2使用组合型情绪名(如'悬疑与怅然')超出单一枚举；S3关系类型使用'前世恋人''深情'等非标准relationship_type枚举",
+      "evidence": "S2 records dominant_emotion字段；S3 relationship_events relationship_type_before字段",
+      "impact": "影响自动化聚合与跨书比较",
+      "suggested_resolution": "后续版本将组合情绪拆为主情绪+副情绪字段",
+      "auto_fix_allowed": true
+    },
+    {
+      "issue_id": "AUD-P2-003",
+      "severity": "P2",
+      "category": "重复度风险",
+      "chapter_ids": ["BK001-CH0004", "BK001-CH0005"],
+      "fields": ["payoff_type"],
+      "problem": "CH04/CH05连续两章主要爽点均为'反杀制敌'，存在类型重复风险",
+      "evidence": "S4 payoff_events PAY-E001/PAY-E002",
+      "impact": "低，压抑源不同属变体",
+      "suggested_resolution": "无需处理，S4已标注变体",
+      "auto_fix_allowed": true
+    },
+    {
+      "issue_id": "AUD-P2-004",
+      "severity": "P2",
+      "category": "商业风险",
+      "chapter_ids": ["BK001-CH0002", "BK001-CH0003"],
+      "fields": ["break_phase"],
+      "problem": "CH02/CH03连续爽前卡且两章均无爽点兑现，付费连载中存在透支信任风险",
+      "evidence": "S5 break_phase: CH02='爽前'，CH03='爽前'；S4 payoff_present均false",
+      "impact": "低，本书非付费设计，但作为商业改造参考需注意",
+      "suggested_resolution": "若改造付费版，CH03应增加正反馈",
+      "auto_fix_allowed": true
+    },
+    {
+      "issue_id": "AUD-P2-005",
+      "severity": "P2",
+      "category": "跨章节一致性",
+      "chapter_ids": ["BK001-CH0008", "BK001-CH0013"],
+      "fields": ["紧箍咒回忆段"],
+      "problem": "CH08与CH13均出现近乎重复的紧箍咒痛苦回忆段，疑为作者循环叙事",
+      "evidence": "S1 conflicts: '两章均出现紧箍咒痛苦回忆段（近乎重复）'",
+      "impact": "低，属作者写作特征",
+      "suggested_resolution": "S8提炼时可作'循环母题'记录",
+      "auto_fix_allowed": true
+    },
+    {
+      "issue_id": "AUD-P2-006",
+      "severity": "P2",
+      "category": "格式问题",
+      "chapter_ids": ["BK001-CH0001", "BK001-CH0021"],
+      "fields": ["word_count", "issue_flags"],
+      "problem": "CH01(5227字)/CH21(6624字)超5000字阈值；CH21为'篇外：花果山'非标准章标题",
+      "evidence": "S0 chapter_index issue_flags",
+      "impact": "超长章可能稀释情绪密度统计",
+      "suggested_resolution": "后续分析可考虑将CH21拆分为子段",
+      "auto_fix_allowed": true
+    },
+    {
+      "issue_id": "AUD-P2-007",
+      "severity": "P2",
+      "category": "评分分布",
+      "chapter_ids": [],
+      "fields": ["emotion_score"],
+      "problem": "emotion_score分数集中在2-7区间无8-10分，且0/低分分布正常；无过度集中，但全书无高分章反映其悲剧基调",
+      "evidence": "S2 batch_statistics: mean_emotion=4.0, highest=7",
+      "impact": "低，符合文学性作品特征",
+      "suggested_resolution": "无需处理",
+      "auto_fix_allowed": true
+    },
+    {
+      "issue_id": "AUD-P2-008",
+      "severity": "P2",
+      "category": "数据兼容",
+      "chapter_ids": [],
+      "fields": ["payoff_nature"],
+      "problem": "S4输出中12个爽点事件缺少payoff_nature字段，需补充以支持Q0自动排除与S8配方权重计算",
+      "evidence": "S4 chapter_records中仅PAY-E009标有release_mode='反向释放'但无独立payoff_nature字段",
+      "impact": "影响Q0冲突排除与S8配方自动分类",
+      "suggested_resolution": "后续S4运行补全payoff_nature字段（commercial/literary/reverse）",
+      "auto_fix_allowed": true
+    },
+    {
+      "issue_id": "AUD-P2-009",
+      "severity": "P2",
+      "category": "数据兼容",
+      "chapter_ids": [],
+      "fields": ["field_name"],
+      "problem": "S1中plot_progress_type使用了'开篇引入''危机升级''高潮''转折''番外收束'等自定义值，不完全匹配enums.yaml中plot_progress_type枚举",
+      "evidence": "S1 records plot_progress_type字段",
+      "impact": "低，枚举扩展建议",
+      "suggested_resolution": "后续版本扩展plot_progress_type枚举或添加自定义标记",
+      "auto_fix_allowed": true
+    },
+    {
+      "issue_id": "AUD-P2-006",
+      "severity": "P2",
+      "category": "评分分布",
+      "chapter_ids": [],
+      "fields": ["emotion_score"],
+      "problem": "emotion_score分数集中在2-7区间无8-10分，且0/低分分布正常；无过度集中，但全书无高分章反映其悲剧基调",
+      "evidence": "S2 batch_statistics: mean_emotion=4.0, highest=7",
+      "impact": "低，符合文学性作品特征",
+      "suggested_resolution": "无需处理",
+      "auto_fix_allowed": true
+    }
+  ],
+  "minimal_review_queue": [
+    {
+      "chapter_id": "BK001-CH0019",
+      "reason": ["反向释放强度>=7", "最强反转(8)", "付费点候选"],
+      "questions_for_reviewer": [
+        "击杀假悟空对读者是满足还是期待/压抑？",
+        "反向释放是否应计入爽点口径？"
+      ]
+    },
+    {
+      "chapter_id": "BK001-CH0020",
+      "reason": ["反向释放强度>=7", "结局章", "真假悟空身份存疑"],
+      "questions_for_reviewer": [
+        "以死反叛是否构成正义补偿式爽点？",
+        "如来宣称活者为六耳猕猴，与'被杀的才是真悟空'两种解读以哪个为准？"
+      ]
+    },
+    {
+      "chapter_id": "BK001-CH0013",
+      "reason": ["评分极值", "卷末", "情绪谷底"],
+      "questions_for_reviewer": ["全书最低分1分是否合理？", "相邻CH12→CH13跳变6分是否有文本支撑？"]
+    },
+    {
+      "chapter_id": "BK001-CH0016",
+      "reason": ["存疑结论", "超时空线关键段"],
+      "questions_for_reviewer": ["方寸山线的'推断'结论是否准确？", "草裙猴=过去悟空是否成立？"]
+    },
+    {
+      "chapter_id": "BK001-CH0021",
+      "reason": ["存疑结论", "篇外寓言"],
+      "questions_for_reviewer": ["篇外与正史的互文解读是否准确？"]
+    },
+    {
+      "chapter_id": "BK001-CH0002",
+      "reason": ["超长距离悬念", "强钩子(7)"],
+      "questions_for_reviewer": ["弑师真相18章后兑现是否被中间信息有效支撑？"]
+    }
+  ],
+  "distribution_checks": {
+    "emotion_score_distribution": {"1":1,"2":5,"3":5,"4":4,"5":3,"6":3,"7":3,"8":0,"9":0,"10":0},
+    "pressure_score_distribution": {"2":1,"3":1,"4":6,"5":3,"6":2,"7":3,"8":3,"9":2},
+    "release_score_distribution": {"0":5,"1":6,"2":6,"3":4,"4":1,"5":1},
+    "suppression_level_distribution": {"0":1,"1":3,"2":8,"3":4,"4":5},
+    "payoff_strength_distribution": {"3":4,"4":3,"5":1,"6":1,"7":2},
+    "chapter_break_strength_distribution": {"3":6,"4":4,"5":6,"6":2,"7":2,"8":1},
+    "concentration_warning": false,
+    "note": "分数分布无明显病态集中，符合文学性作品分布特征；9-10分爽点/情绪均为0，与S2/S4结论一致"
+  },
+  "cross_skill_checks": {
+    "s2_release_low_but_s4_payoff_high": [],
+    "s1_no_hook_but_s5_high_break": [],
+    "s1_no_hook_but_s5_moderate": ["BK001-CH0020(无明显钩子但断章7，因结局情感冲击)"],
+    "s2_low_emotion_but_s4_payoff_high": [],
+    "payoff_without_evidence": [],
+    "note": "3处原S2低释放+S4高爽点（CH18/19/20）均为反向释放事件，已按Q0规则排除冲突检查（reverse类不触发P1）。相关口径待人工确认后，若确认不计入爽点则S8配方需降级权重。",
+    "reverse_excluded_chapters": ["BK001-CH0018", "BK001-CH0019", "BK001-CH0020"],
+    "reverse_exclusion_reason": "S4 payoff_nature='reverse'，释放模式为悲剧式/死亡式兑现，按Q0规则绝对排除跨Skill冲突检查"
+  },
+  "cross_batch_checks": {
+    "unclosed_loops_at_book_end": [],
+    "character_state_regression": [],
+    "note": "全书为单批分析，无跨批次问题；结束时所有open_loop均已在CH20闭环"
+  },
+  "unresolved_items": ["反向释放是否计入爽点统计口径(影响CH18/19/20三章，已排除P1冲突但需人工最终确认)", "真假悟空身份双关解读的最终口径"],
+  "next_action": "将Q0复核队列转交人工（4项P1+9项P2）。特别注意：CH18/19/20为反向释放事件已排除P1冲突，但需人工确认是否计入S8配方权重。确认后S7/S8/S9可继续。"
+}

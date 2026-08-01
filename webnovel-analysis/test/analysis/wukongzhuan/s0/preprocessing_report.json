@@ -1,0 +1,17 @@
+{
+  "task_id": "BK20260801-001",
+  "skill_id": "S0",
+  "source_file": "C:\\Users\\zhangjl\\workspace-novel-analyse\\docs\\《悟空传》（校对版全本）作者：今何在.txt",
+  "preprocessing_report": {
+    "raw_character_count": 75015,
+    "clean_character_count": 74617,
+    "chapter_count": 21,
+    "removed_content_types": [
+      "站点广告横幅(头部)",
+      "站点广告横幅(尾部)"
+    ],
+    "text_modified_beyond_cleaning": false
+  },
+  "chapter_count": 21,
+  "extra_chapter": 1
+}

@@ -474,10 +474,6 @@ webnovel-analysis-skills/
 │  ├─ chapter-analysis-schema.md
 │  ├─ enums.yaml
 │  └─ output-envelope-schema.json
-├─ templates/
-│  ├─ task-manifest.yaml
-│  ├─ batch-context-pack.yaml
-│  └─ chapter-analysis-master.xlsx
 ├─ projects/
 │  └─ 【书籍名称】/
 │     ├─ source/

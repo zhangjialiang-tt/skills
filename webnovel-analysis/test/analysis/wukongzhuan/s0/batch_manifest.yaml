@@ -1,0 +1,13 @@
+task_id: BK20260801-001
+skill_id: S0
+batches:
+  - batch_id: BATCH-01
+    chapter_ids: ['BK001-CH0001', 'BK001-CH0002', 'BK001-CH0003', 'BK001-CH0004', 'BK001-CH0005', 'BK001-CH0006', 'BK001-CH0007', 'BK001-CH0008', 'BK001-CH0009', 'BK001-CH0010']
+    reason: 开篇-中段连续事件单元（ch01-10）
+    estimated_characters: 34860
+    boundary_confidence: 确定
+  - batch_id: BATCH-02
+    chapter_ids: ['BK001-CH0011', 'BK001-CH0012', 'BK001-CH0013', 'BK001-CH0014', 'BK001-CH0015', 'BK001-CH0016', 'BK001-CH0017', 'BK001-CH0018', 'BK001-CH0019', 'BK001-CH0020', 'BK001-CH0021']
+    reason: 后段-结局与篇外（ch11-20 + 篇外花果山）
+    estimated_characters: 39681
+    boundary_confidence: 确定

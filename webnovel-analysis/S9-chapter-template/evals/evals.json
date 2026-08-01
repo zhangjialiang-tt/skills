@@ -12,6 +12,12 @@
       "prompt": "以下模板字段有什么问题？\n\nchapter_id, chapter_title, 林川的行动, 赵海的反应, emotion_score",
       "expected_output": "应指出：'林川的行动''赵海的反应'包含专有名词，应改为通用字段如'主角行动''对手反应'；缺少 evidence/confidence 字段",
       "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "基于以下题材配方生成都市修仙题材的章节分析模板：\n题材配方：核心读者承诺='废柴逆袭'，主角配方={初始缺口:灵根被夺,核心欲望:复仇,不对称优势:上古传承}，可迁移元素=['宗门大比','秘境探险','丹道比拼']\n要求：(1)生成genre-specific模板 (2)不删除通用核心字段 (3)题材扩展字段标注owner_skill",
+      "expected_output": "应生成包含以下结构的模板：(1)通用核心字段完整保留（chapter_id, chapter_title, emotion_score, release_score, payoff_strength, evidence, confidence, manual_review_status等）(2)题材扩展字段追加在通用字段之后，如'复仇进度'(owner_skill=S4)、'传承觉醒阶段'(owner_skill=S1)、'宗门阵营'(owner_skill=S3) (3)所有字段均有owner_skill标注 (4)题材扩展字段不得覆盖或删除通用字段 (5)deprecated_fields列出已废弃的字段（如无则空数组）",
+      "files": ["references/prompt-template.md", "reports/output-risk-profile.md"]
     }
   ]
 }
