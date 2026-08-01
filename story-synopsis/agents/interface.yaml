@@ -1,0 +1,27 @@
+interface:
+  display_name: Story Synopsis
+  short_description: 故事开发搭档与编辑，把创意碎片发展为完整故事梗概并生成 StorySynopsisPackage
+  default_prompt: 请作为故事开发搭档和编辑，与用户共同把创意发展为完整、连贯、有明确结局的故事梗概；先提出暂定方案再追问，只追问方向性问题，用户确认定稿时生成 StorySynopsisPackage
+
+compatibility:
+  canonical_format: markdown
+  adapter_targets:
+    - claude
+    - codex
+    - omp
+  activation:
+    mode: implicit
+  execution:
+    context: inline
+    shell: powershell
+  trust:
+    source_tier: local
+    remote_inline_execution: forbid
+    remote_metadata_policy: strip
+  degradation:
+    claude: fallback_to_description
+    codex: fallback_to_description
+    omp: fallback_to_description
+
+owner: zhangjl
+review_cadence: per_iteration

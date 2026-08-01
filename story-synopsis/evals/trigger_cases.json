@@ -1,0 +1,116 @@
+{
+  "recommended_threshold": 0.36,
+  "negative_patterns": [
+    "写正文",
+    "章节卡",
+    "分卷节奏",
+    "世界观百科",
+    "随机点子",
+    "InkOS",
+    "NovelOS",
+    "工程化",
+    "只读评审"
+  ],
+  "should_trigger": [
+    {
+      "text": "我想把这个创意发展成一个完整故事。",
+      "family": "story_development"
+    },
+    {
+      "text": "我有个模糊的灵感：一个能看到死亡倒计时的外卖员，帮我把它发展成故事。",
+      "family": "story_development"
+    },
+    {
+      "text": "帮我把这句话发展成完整故事：死去的人会在七天后回家。",
+      "family": "story_development"
+    },
+    {
+      "text": "检查这个点子能不能成为故事。",
+      "family": "story_check"
+    },
+    {
+      "text": "这个点子能成故事吗？",
+      "family": "story_check"
+    },
+    {
+      "text": "我们讨论和修改一下这个故事。",
+      "family": "story_revision"
+    },
+    {
+      "text": "帮我确定这个故事真相和结局。",
+      "family": "story_development"
+    },
+    {
+      "text": "我有一份不完整的故事梗概，帮我补强和修复。",
+      "family": "story_revision"
+    },
+    {
+      "text": "帮我完善这个创意。",
+      "family": "story_revision"
+    }
+  ],
+  "should_not_trigger": [
+    {
+      "text": "按这份已确认的大纲直接写第一章正文。",
+      "family": "write_body"
+    },
+    {
+      "text": "把这个故事的连载分卷节奏和爽点密度设计一下。",
+      "family": "serial_design"
+    },
+    {
+      "text": "帮我写世界观百科和人物设定集。",
+      "family": "world_bible"
+    },
+    {
+      "text": "把这个故事改编成短剧。",
+      "family": "adaptation"
+    },
+    {
+      "text": "帮我生成简介、书名和封面。",
+      "family": "blurb"
+    },
+    {
+      "text": "给我十个随机故事点子就行。",
+      "family": "random_idea"
+    },
+    {
+      "text": "用 InkOS 把这本书的状态文件同步一下。",
+      "family": "engineering"
+    },
+    {
+      "text": "帮我把这个研究主题生成深度研究提示词。",
+      "family": "research"
+    },
+    {
+      "text": "分析这本小说的悬念结构。",
+      "family": "research"
+    },
+    {
+      "text": "我有个创意想听听意见，只要只读评审，不要发展成完整故事。",
+      "family": "review_only"
+    }
+  ],
+  "near_neighbor": [
+    {
+      "text": "把这个已确认的完整梗概改造成长篇连载设计。",
+      "family": "webnovel_serial_designer"
+    },
+    {
+      "text": "用 InkOS 建书并生成建书包。",
+      "family": "inkos_story_steward"
+    },
+    {
+      "text": "把冻结的连载设计包编译成建书输入。",
+      "family": "inkos_brief_compiler"
+    },
+    {
+      "text": "审一下我的大纲，指出问题就好。",
+      "family": "novel_coach"
+    },
+    {
+      "text": "帮我按大纲直接写正文。",
+      "family": "novel_master"
+    }
+  ]
+}
