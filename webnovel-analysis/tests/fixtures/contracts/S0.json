@@ -1,0 +1,1 @@
+{"task_id":"TASK-001","batch_id":"BOOK","skill_id":"S0","skill_version":"1.0.0","schema_version":"1.0.0","operation":"preprocess","payload":{"preprocessing_report":{},"chapter_index":[],"batch_manifest":{}},"uncertain_items":[],"conflicts":[],"manual_review_items":[]}

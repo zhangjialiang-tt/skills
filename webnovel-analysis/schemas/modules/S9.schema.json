@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "allOf": [
+    {"$ref": "../output-envelope.schema.json"},
+    {"properties": {"skill_id": {"const": "S9"}, "operation": {"enum": ["generic_template", "genre_specific_template"]}, "payload": {"type": "object", "required": ["template_schema", "field_dictionary"], "properties": {"template_schema": {"type": "object"}, "field_dictionary": {"type": "array"}}, "additionalProperties": true}}}
+  ]
+}

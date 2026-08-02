@@ -1,0 +1,17 @@
+schema_version: "1.0.0"
+external_entry: webnovel-analysis
+modules:
+  - {id: O0, name: orchestrator, entry: O0-orchestrator/MODULE.md, external_routeable: false}
+  - {id: S0, name: text-preprocess, entry: S0-text-preprocess/MODULE.md, external_routeable: false}
+  - {id: S1, name: narrative-structure, entry: S1-narrative-structure/MODULE.md, external_routeable: false}
+  - {id: S2, name: emotion-rhythm, entry: S2-emotion-rhythm/MODULE.md, external_routeable: false}
+  - {id: S3, name: character-network, entry: S3-character-network/MODULE.md, external_routeable: false}
+  - {id: S4, name: payoff-engineering, entry: S4-payoff-engineering/MODULE.md, external_routeable: false}
+  - {id: S5, name: commercial-hooks, entry: S5-commercial-hooks/MODULE.md, external_routeable: false}
+  - {id: S6, name: data-aggregation, entry: S6-data-aggregation/MODULE.md, external_routeable: false}
+  - {id: S7, name: visualization, entry: S7-visualization/MODULE.md, external_routeable: false}
+  - {id: S8, name: genre-formula, entry: S8-genre-formula/MODULE.md, external_routeable: false}
+  - {id: S9, name: chapter-template, entry: S9-chapter-template/MODULE.md, external_routeable: false}
+  - {id: Q0, name: quality-audit, entry: Q0-quality-audit/MODULE.md, external_routeable: false}
+internal_stages:
+  - {id: R0, name: final-report, entry: references/r0-final-report.md, external_routeable: false}

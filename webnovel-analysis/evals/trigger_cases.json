@@ -1,0 +1,22 @@
+{
+  "recommended_threshold": 0.36,
+  "should_trigger": [
+    {"text": "帮我系统拆解这本网文的叙事结构和爽点。", "family": "full_analysis"},
+    {"text": "分析这些章节的情绪曲线、人物关系和商业钩子。", "family": "full_analysis"},
+    {"text": "给这部连载做拆书，最后形成有证据的分析报告。", "family": "full_analysis"},
+    {"text": "只分析这本小说的爽点铺垫与兑现。", "family": "focused_analysis"},
+    {"text": "审计我已有的网文拆书结构化结果。", "family": "audit"}
+  ],
+  "should_not_trigger": [
+    {"text": "按这个大纲写第一章正文。", "family": "write_body"},
+    {"text": "把一句灵感发展成完整故事。", "family": "story_development"},
+    {"text": "给我设计三卷章节卡。", "family": "serial_design"},
+    {"text": "写一篇简短读后感。", "family": "book_review"},
+    {"text": "把这份销售数据画成折线图。", "family": "generic_visualization"}
+  ],
+  "near_neighbor": [
+    {"text": "先审一下我的大纲，不要做拆书。", "family": "novel_coach"},
+    {"text": "把这个创意发展成故事梗概。", "family": "story_synopsis"},
+    {"text": "依据冻结大纲直接创作正文。", "family": "novel_master"}
+  ]
+}

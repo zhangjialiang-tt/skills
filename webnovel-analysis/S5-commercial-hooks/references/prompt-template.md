@@ -1,5 +1,7 @@
 # S5 商业卡点分析 — 完整 Prompt 模板
 
+> Milestone 1 规范：本模块仅由根 Skill 内部调用。完整输出必须遵循 `../../references/model-output-contract.md` 与 `../../schemas/modules/S5.schema.json`；硬依赖为 S1、S2、S4。下方旧示例仅作为 `payload` 字段语义参考。
+
 ## 输入格式
 
 ```yaml
@@ -48,7 +50,7 @@ platform_context:
 看关系进展、看危机解决、看新地图、看能力升级、其他。
 ```
 
-## 输出 Schema
+## 领域 payload 参考（旧稿，不可直接输出）
 
 ```json
 {

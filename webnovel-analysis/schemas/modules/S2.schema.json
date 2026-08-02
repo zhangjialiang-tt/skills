@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "allOf": [
+    {"$ref": "../output-envelope.schema.json"},
+    {"properties": {"skill_id": {"const": "S2"}, "operation": {"enum": ["analyze", "merge"]}, "payload": {"type": "object", "required": ["records", "batch_statistics", "batch_summary"], "properties": {"records": {"type": "array"}, "batch_statistics": {"type": "object"}, "batch_summary": {"type": "object"}}, "additionalProperties": true}}}
+  ]
+}

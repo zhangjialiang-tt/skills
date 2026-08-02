@@ -1,0 +1,27 @@
+schema_version: "1.0.0"
+dependencies:
+  O0: []
+  S0: [O0]
+  S1: [S0]
+  S2: [S0]
+  S3: [S0]
+  S4: [S2]
+  S5: [S1, S2, S4]
+  S6: [S1, S2, S3, S4, S5]
+  Q0: [S6]
+  S7: [Q0]
+  S8: [Q0]
+  S9: [Q0]
+  R0: [Q0]
+parallel_groups:
+  primary_analysis: [S1, S2, S3]
+  post_audit_outputs: [S7, S8]
+conditions:
+  S4:
+    optional_context: [S1]
+  S9:
+    generic: [Q0]
+    genre_specific: [Q0, S8]
+gates:
+  before_S6: "S1-S5 contracts valid; P0 blocks"
+  before_outputs: "Q0 complete; P0 blocks; P1 follows risk_based_blocking"

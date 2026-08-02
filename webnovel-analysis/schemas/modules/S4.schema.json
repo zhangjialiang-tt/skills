@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "allOf": [
+    {"$ref": "../output-envelope.schema.json"},
+    {"properties": {"skill_id": {"const": "S4"}, "operation": {"enum": ["analyze", "merge"]}, "payload": {"type": "object", "required": ["chapter_records", "payoff_events"], "properties": {"chapter_records": {"type": "array"}, "payoff_events": {"type": "array", "items": {"type": "object", "required": ["event_id", "payoff_nature"], "properties": {"event_id": {"type": "string"}, "payoff_nature": {"type": "string", "minLength": 1}}, "additionalProperties": true}}}, "additionalProperties": true}}}
+  ]
+}

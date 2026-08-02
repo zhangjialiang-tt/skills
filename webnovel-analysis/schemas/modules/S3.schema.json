@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "allOf": [
+    {"$ref": "../output-envelope.schema.json"},
+    {"properties": {"skill_id": {"const": "S3"}, "operation": {"enum": ["analyze", "merge"]}, "payload": {"type": "object", "required": ["chapter_records", "character_registry_updates", "relationship_events"], "properties": {"chapter_records": {"type": "array"}, "character_registry_updates": {"type": "array"}, "relationship_events": {"type": "array"}}, "additionalProperties": true}}}
+  ]
+}

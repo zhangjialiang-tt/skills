@@ -1,6 +1,6 @@
-# S6 分析报告模板
+# R0 最终分析报告模板
 
-本文件定义 `analysis_report.md` 的结构与生成原则。S6 聚合完成后按此模板生成人类可读的 Markdown 报告。
+本文件定义 `analysis_report.md` 的结构与生成原则。Q0 审计完成后，由根 Skill 的 R0 阶段按此模板生成人类可读的 Markdown 报告。
 
 ---
 
@@ -194,7 +194,7 @@
 | volume_analysis.csv | S6 | 卷级统计 |
 | payoff_events.csv | S4 | 爽点事件明细 |
 | relationship_events.csv | S3 | 关系变化事件 |
-| analysis_report.md | S6 | 本报告 |
+| analysis_report.md | R0 | 本报告 |
 
 ### Q0 完整审计队列
 

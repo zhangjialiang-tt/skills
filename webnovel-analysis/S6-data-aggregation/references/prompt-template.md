@@ -1,5 +1,7 @@
 # S6 数据聚合 — 完整 Prompt 模板
 
+> Milestone 1 规范：本模块仅由根 Skill 内部调用，只做结构化聚合。完整输出必须遵循 `../../references/model-output-contract.md` 与 `../../schemas/modules/S6.schema.json`；最终报告由 R0 生成。下方旧示例仅作为 `payload` 字段语义参考。
+
 ## 输入格式
 
 ```yaml
@@ -58,7 +60,7 @@ merge_mode: 【append/update/rebuild】
 中文
 ```
 
-## 输出 Schema
+## 领域 payload 参考（旧稿，不可直接输出）
 
 ```json
 {
@@ -78,8 +80,7 @@ merge_mode: 【append/update/rebuild】
     "master_xlsx": "chapter_analysis_master.xlsx",
     "volume_csv": "volume_analysis.csv",
     "payoff_events_csv": "payoff_events.csv",
-    "relationship_events_csv": "relationship_events.csv",
-    "analysis_report_md": "analysis_report.md"
+    "relationship_events_csv": "relationship_events.csv"
   }
 }
 ```
@@ -95,16 +96,6 @@ merge_mode: 【append/update/rebuild】
 - 派生字段能否由原始字段重新计算
 - 汇总章节范围是否包含未分析章节
 
-## 报告生成指引
+## 职责边界
 
-聚合完成后，基于合并数据生成 `analysis_report.md`。报告面向作者/编辑/研究人员，中文输出。
-
-**完整模板**：`references/report-template.md`
-
-模板定义了：
-- 报告九节结构（概况/结构/情绪/人物/爽点/商业/配方/审计/附录）
-- 生成原则（数据驱动、不重复JSON、中文流畅、保留歧义、体裁自觉）
-- 缺失处理规则
-- 文件引用规范
-
-**注意**：模板中的 `字段占位符` 需替换为 S1-S5+Q0 实际数据，禁止保留占位符文本。
+S6 不生成 `analysis_report.md`。审计完成后由根 Skill 的 R0 阶段依据 `../../references/r0-final-report.md` 生成最终报告。

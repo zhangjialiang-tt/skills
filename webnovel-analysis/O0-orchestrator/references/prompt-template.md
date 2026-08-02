@@ -1,5 +1,7 @@
 # O0 拆解任务编排器 — 完整 Prompt 模板
 
+> Milestone 1 规范：本模块仅由根 Skill 内部调用。完整输出必须遵循 `../../references/model-output-contract.md` 与 `../../schemas/modules/O0.schema.json`；下方旧示例仅作为 `payload` 字段语义参考。
+
 ## 输入格式
 
 ```yaml
@@ -73,7 +75,7 @@ G. 给出五项最终交付物的验收条件
 - 若用户仅表达意向但未提供任何具体信息 → next_action: "向用户确认书名、分析目的与原始文本来源"
 ```
 
-## 输出 Schema
+## 领域 payload 参考（旧稿，不可直接输出）
 
 ```json
 {

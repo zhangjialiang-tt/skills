@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "allOf": [
+    {"$ref": "../output-envelope.schema.json"},
+    {"properties": {"skill_id": {"const": "S6"}, "operation": {"enum": ["aggregate"]}, "payload": {"type": "object", "required": ["master_records", "stats", "validation", "export_plan"], "properties": {"master_records": {"type": "array"}, "stats": {"type": "object"}, "validation": {"type": "object"}, "export_plan": {"type": "object"}}, "additionalProperties": false}}}
+  ]
+}

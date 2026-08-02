@@ -1,0 +1,1 @@
+{"task_id":"TASK-001","batch_id":"BOOK","skill_id":"S8","skill_version":"1.0.0","schema_version":"1.0.0","operation":"derive_formula","payload":{"genre_formula":{}},"uncertain_items":[],"conflicts":[],"manual_review_items":[]}

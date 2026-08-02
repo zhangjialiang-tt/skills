@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "allOf": [
+    {"$ref": "../output-envelope.schema.json"},
+    {"properties": {"skill_id": {"const": "S8"}, "operation": {"enum": ["derive_formula"]}, "payload": {"type": "object", "required": ["genre_formula"], "properties": {"genre_formula": {"type": "object"}}, "additionalProperties": true}}}
+  ]
+}

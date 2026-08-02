@@ -1,0 +1,27 @@
+{
+  "optimizer_hints": {
+    "capability": "对既有网文文本进行系统拆书分析",
+    "inputs": ["网文正文", "章节样本", "拆书结构化结果"],
+    "trigger_actions": ["拆书", "网文分析", "结构分析", "爽点分析", "商业钩子分析", "拆书审计"],
+    "exclusions": ["正文创作", "故事开发", "章节卡设计", "普通书评", "通用可视化"]
+  },
+  "fallback_positive_concepts": ["webnovel_analysis"],
+  "positive_concepts": {
+    "webnovel_analysis": {
+      "weight": 0.7,
+      "phrases": ["拆书", "网文分析", "小说结构分析", "爽点", "商业钩子", "情绪曲线", "人物关系"]
+    }
+  },
+  "negative_concepts": {
+    "outline_review": {
+      "weight": 0.8,
+      "exclusive": true,
+      "phrases": ["审一下我的大纲", "评审大纲", "只读审稿", "不要做拆书"]
+    },
+    "content_creation": {
+      "weight": 0.5,
+      "exclusive": true,
+      "phrases": ["写正文", "续写", "章节卡", "发展故事", "读后感"]
+    }
+  }
+}

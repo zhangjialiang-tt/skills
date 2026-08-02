@@ -1,5 +1,7 @@
 # S4 爽点工程 — 完整 Prompt 模板
 
+> Milestone 1 规范：本模块仅由根 Skill 内部调用。完整输出必须遵循 `../../references/model-output-contract.md` 与 `../../schemas/modules/S4.schema.json`；S2 是硬依赖，S1 仅为可选上下文。下方旧示例仅作为 `payload` 字段语义参考。
+
 ## 输入格式
 
 ```yaml
@@ -45,7 +47,7 @@ previous_payoffs:
 复仇满足、财富想象、权力想象、知识满足、情感慰藉、其他。
 ```
 
-## 输出 Schema
+## 领域 payload 参考（旧稿，不可直接输出）
 
 ```json
 {
@@ -84,6 +86,7 @@ previous_payoffs:
       "release_action": "用账目异常反问厂长",
       "payoff_result": "暂时保住证据并迫使对方暴露急迫性",
       "payoff_type": "智识碾压",
+      "payoff_nature": "literary",
       "release_mode": "部分释放",
       "payoff_strength": 5,
       "publicness": "小范围",

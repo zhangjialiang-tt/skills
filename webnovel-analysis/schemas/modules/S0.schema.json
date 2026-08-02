@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "allOf": [
+    {"$ref": "../output-envelope.schema.json"},
+    {"properties": {"skill_id": {"const": "S0"}, "operation": {"enum": ["preprocess"]}, "payload": {"type": "object", "required": ["preprocessing_report", "chapter_index", "batch_manifest"], "properties": {"preprocessing_report": {"type": "object"}, "chapter_index": {"type": "array"}, "batch_manifest": {"type": "object"}}, "additionalProperties": true}}}
+  ]
+}

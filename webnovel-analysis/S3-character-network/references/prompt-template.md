@@ -1,5 +1,7 @@
 # S3 人物关系网 — 完整 Prompt 模板
 
+> Milestone 1 规范：本模块仅由根 Skill 内部调用。完整输出必须遵循 `../../references/model-output-contract.md` 与 `../../schemas/modules/S3.schema.json`；下方旧示例仅作为 `payload` 字段语义参考。
+
 ## 输入格式
 
 ```yaml
@@ -40,7 +42,7 @@ previous_character_states: 【上一批角色状态】
 敌对、控制、利用、债务、秘密关联、单向崇拜、单向警惕、未知。
 ```
 
-## 输出 Schema
+## 领域 payload 参考（旧稿，不可直接输出）
 
 ```json
 {

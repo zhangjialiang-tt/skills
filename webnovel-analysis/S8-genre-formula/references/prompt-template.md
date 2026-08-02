@@ -1,5 +1,7 @@
 # S8 题材套路公式提炼 — 完整 Prompt 模板
 
+> Milestone 1 规范：本模块仅由根 Skill 内部调用。完整输出必须遵循 `../../references/model-output-contract.md` 与 `../../schemas/modules/S8.schema.json`；下方 YAML 旧示例仅作为 `payload.genre_formula` 字段语义参考。
+
 ## 输入格式
 
 ```yaml
@@ -60,7 +62,7 @@ audit_summary: 【Q0】
 14. 用于新书设计的参数化模板
 ```
 
-## 输出 Schema（YAML）
+## 领域 payload 参考（旧稿，不可直接输出）
 
 ```yaml
 formula_id: ""

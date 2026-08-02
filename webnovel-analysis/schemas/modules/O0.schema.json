@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "allOf": [
+    {"$ref": "../output-envelope.schema.json"},
+    {"properties": {"skill_id": {"const": "O0"}, "operation": {"enum": ["plan"]}, "payload": {"type": "object", "required": ["task_manifest", "execution_graph"], "properties": {"task_manifest": {"type": "object"}, "execution_graph": {"type": "object"}}, "additionalProperties": true}}}
+  ]
+}

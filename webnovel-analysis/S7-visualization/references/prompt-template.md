@@ -1,5 +1,7 @@
 # S7 可视化 — 完整 Prompt 模板
 
+> Milestone 1 规范：本模块仅由根 Skill 内部调用。完整输出必须遵循 `../../references/model-output-contract.md` 与 `../../schemas/modules/S7.schema.json`；本里程碑只产出图表规格，不声明实际渲染完成。下方旧示例仅作为 `payload` 字段语义参考。
+
 ## 输入格式
 
 ```yaml
@@ -37,7 +39,7 @@ output_preferences:
 7. 哪些异常需要人工复核？
 ```
 
-## 输出 Schema
+## 领域 payload 参考（旧稿，不可直接输出）
 
 ```json
 {

@@ -1,0 +1,33 @@
+{
+  "name": "webnovel-analysis",
+  "version": "1.0.0",
+  "owner": "zhangjl",
+  "updated_at": "2026-08-02",
+  "status": "active",
+  "maturity_tier": "experimental",
+  "lifecycle_stage": "milestone-1-contract-frozen",
+  "context_budget_tier": "large",
+  "review_cadence": "per-milestone",
+  "target_platforms": ["openai", "generic"],
+  "factory_components": [
+    "agents",
+    "evals",
+    "references",
+    "schemas",
+    "tests",
+    "O0-orchestrator",
+    "S0-text-preprocess",
+    "S1-narrative-structure",
+    "S2-emotion-rhythm",
+    "S3-character-network",
+    "S4-payoff-engineering",
+    "S5-commercial-hooks",
+    "S6-data-aggregation",
+    "S7-visualization",
+    "S8-genre-formula",
+    "S9-chapter-template",
+    "Q0-quality-audit",
+    "docs",
+    "test"
+  ]
+}

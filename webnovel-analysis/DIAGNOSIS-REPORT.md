@@ -1,5 +1,7 @@
 # webnovel-analysis Skill 库系统性诊断报告
 
+> 历史诊断快照（2026-08-01）：其中关于多 Skill 入口、S6 报告职责和测试状态的结论已被 Milestone 1 冻结替代。当前规范见 `SKILL.md` 与 `docs/architecture-freeze-m1.md`。
+
 > 诊断时间：2026-08-01 | 诊断人：AI Agent（小龙） | 目标：评估 Skill 库能否稳定发挥"对网文进行拆书分析"的预期作用
 
 ---

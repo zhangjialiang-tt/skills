@@ -1,0 +1,20 @@
+interface:
+  display_name: "网文拆书分析"
+  short_description: "对网文正文进行结构、节奏、人物、爽点和商业钩子的系统拆解"
+  default_prompt: "使用 $webnovel-analysis 对我提供的网文材料进行拆书分析，并输出可追溯的结构化结果与最终报告。"
+compatibility:
+  canonical_format: "agent-skills"
+  adapter_targets: ["openai", "generic"]
+  activation:
+    mode: "implicit"
+    paths: []
+  execution:
+    context: "inline"
+    shell: "powershell"
+  trust:
+    source_tier: "local"
+    remote_inline_execution: "forbid"
+    remote_metadata_policy: "allow-metadata-only"
+  degradation:
+    openai: "metadata-adapter"
+    generic: "neutral-source"

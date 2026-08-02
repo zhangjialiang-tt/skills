@@ -1,5 +1,7 @@
 # S1 叙事结构拆解 — 完整 Prompt 模板
 
+> Milestone 1 规范：本模块仅由根 Skill 内部调用。完整输出必须遵循 `../../references/model-output-contract.md` 与 `../../schemas/modules/S1.schema.json`；下方旧示例仅作为 `payload` 字段语义参考。
+
 ## 输入格式
 
 ```yaml
@@ -65,7 +67,7 @@ existing_structure_records: 【已有S1结果】
 - 无法判断时标"存疑"。
 ```
 
-## 输出 Schema
+## 领域 payload 参考（旧稿，不可直接输出）
 
 ```json
 {

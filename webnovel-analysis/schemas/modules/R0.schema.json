@@ -1,0 +1,7 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "allOf": [
+    {"$ref": "../output-envelope.schema.json"},
+    {"properties": {"skill_id": {"const": "R0"}, "operation": {"enum": ["render_final_report"]}, "payload": {"type": "object", "required": ["analysis_report_md", "evidence_index"], "properties": {"analysis_report_md": {"type": "string", "minLength": 1}, "evidence_index": {"type": "array"}}, "additionalProperties": false}}}
+  ]
+}

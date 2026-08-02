@@ -1,5 +1,7 @@
 # Q0 质量审计 — 完整 Prompt 模板
 
+> Milestone 1 规范：本模块仅由根 Skill 内部调用。完整输出必须遵循 `../../references/model-output-contract.md` 与 `../../schemas/modules/Q0.schema.json`；P0 必须阻断，P1 采用风险判定。下方旧示例仅作为 `payload` 字段语义参考。
+
 ## 输入格式
 
 ```yaml
@@ -45,7 +47,7 @@ previous_audit: 【上一轮审计结果】
 【previous_audit】
 ```
 
-## 输出 Schema
+## 领域 payload 参考（旧稿，不可直接输出）
 
 ```json
 {
