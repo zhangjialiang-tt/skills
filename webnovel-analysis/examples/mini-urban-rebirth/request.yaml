@@ -1,0 +1,5 @@
+task_id: TASK-0001
+book_id: BOOK-0001
+source: source.md
+batch_id: BATCH-001
+chapter_ids: [BOOK-0001-CH0001, BOOK-0001-CH0002, BOOK-0001-CH0003]

@@ -1,0 +1,10 @@
+schema_version: "1.0.0"
+gate_a:
+  blocking: [duplicate_chapter_id, missing_chapter_text, unresolved_high_risk_boundary, severe_garbled_text, empty_batch, invalid_chapter_order]
+  non_blocking: [minor_title_normalization, author_note_detected, unusual_but_valid_chapter_length]
+gate_b:
+  p0: always_block
+  p1: use_blocking_field
+  decisions: [ACCEPT, REJECT_AND_RERUN, ACCEPT_WITH_RISK]
+gate_c:
+  runtime: test_decision_file_only

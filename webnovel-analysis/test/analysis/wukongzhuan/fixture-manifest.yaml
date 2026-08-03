@@ -1,0 +1,12 @@
+fixture_id: wukongzhuan
+classification: historical_snapshot
+golden: false
+captured_before: milestone-1-contract-freeze
+known_incompatibilities:
+  - missing skill_version and schema_version in multiple module outputs
+  - batch_id is absent from multiple module outputs
+  - manual_review_items contains legacy string entries
+  - S4 payoff_events may omit payoff_nature
+  - Q0 contains duplicate issue_id values
+  - S7 uses a legacy visualization output shape
+policy: preserve_source_files_without_rewriting

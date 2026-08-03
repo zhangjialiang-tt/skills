@@ -1,0 +1,1 @@
+{"task_id":"TASK-0001","batch_id":"TASK","skill_id":"O0","skill_version":"1.0.0","schema_version":"1.0.0","operation":"plan","payload":{"task_manifest":{"book_id":"BOOK-0001"},"execution_graph":{"batch":"BATCH-001"}},"uncertain_items":[],"conflicts":[],"manual_review_items":[]}

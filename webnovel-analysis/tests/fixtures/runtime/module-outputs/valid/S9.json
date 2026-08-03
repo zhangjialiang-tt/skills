@@ -1,0 +1,1 @@
+{"task_id":"TASK-0001","batch_id":"BOOK","skill_id":"S9","skill_version":"1.0.0","schema_version":"1.0.0","operation":"genre_specific_template","payload":{"template_schema":{"fields":["setup","pressure","evidence","payoff","hook"]},"field_dictionary":[]},"uncertain_items":[],"conflicts":[],"manual_review_items":[]}

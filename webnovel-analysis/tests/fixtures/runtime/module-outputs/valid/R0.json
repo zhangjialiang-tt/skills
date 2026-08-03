@@ -1,0 +1,1 @@
+{"task_id":"TASK-0001","batch_id":"BOOK","skill_id":"R0","skill_version":"1.0.0","schema_version":"1.0.0","operation":"render_final_report","payload":{"analysis_report_md":"# 《回到裁员日》拆书分析报告\n\n三章形成困境、取证、反制与新危机的最小闭环。\n","evidence_index":["ART-S6-BATCH-001-R1","ART-Q0-BATCH-001-R1"]},"uncertain_items":[],"conflicts":[],"manual_review_items":[]}

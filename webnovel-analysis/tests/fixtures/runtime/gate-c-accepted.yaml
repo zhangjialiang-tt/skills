@@ -1,0 +1,4 @@
+gate_id: GATE-C-TEST
+decision: ACCEPTED
+decided_by: deterministic-test-fixture
+fixture_type: deterministic_contract_fixture

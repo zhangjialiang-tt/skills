@@ -16,6 +16,18 @@ description: 对已提供的网文正文、章节样本或既有拆书材料进�
 5. S6 只做结构化聚合；Q0 只做质量审计；R0 根据审计后的结构化产物生成最终报告。
 6. P0 问题必须阻断下游；P1 是否阻断按风险与任务要求判定，并在 `manual_review_items` 中说明。
 
+## 确定性运行时
+
+Milestone 2 提供用于契约验证的 fixture 运行时：
+
+```powershell
+python .\webnovel-analysis\runtime\cli.py create --request .\webnovel-analysis\examples\mini-urban-rebirth\request.yaml
+python .\webnovel-analysis\runtime\cli.py run-batch --task TASK-0001 --batch BATCH-001 --adapter fixture --scenario valid
+python .\webnovel-analysis\runtime\cli.py finalize --task TASK-0001 --gate-c-decision .\webnovel-analysis\tests\fixtures\runtime\gate-c-accepted.yaml
+```
+
+运行时合同见 [runtime-contract-m2.md](references/runtime-contract-m2.md)，Gate 策略见 [gate-policy-m2.yaml](references/gate-policy-m2.yaml)。fixture 结果不代表真实模型调用或文学质量评测。
+
 ## 路由与模块
 
 - 外部路由边界见 [route-policy.md](references/route-policy.md)。
@@ -41,6 +53,6 @@ manual_review_items: []
 
 领域结果全部置于 `payload`。不得输出 `output_hash`、`validated_at`、`invalidated_by` 或 `status`。
 
-## Milestone 1 边界
+## Milestone 2 边界
 
-本里程碑冻结包结构、路由、Schema、模块依赖和 S6/R0 职责。它不提供可执行 runner、持久化状态机、哈希/断点恢复、模型调用器或全书规模证明。
+本里程碑提供确定性调度、Schema 阻断、最小 artifact registry、Gate A/B、人工复核、直接依赖失效、显式重跑和测试专用 Gate C 最终交付。它不提供真实 LLM、内容 hash、进程崩溃恢复、传递失效闭包、长篇 consolidation 或生产级恢复承诺。

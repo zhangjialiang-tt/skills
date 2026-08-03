@@ -1,5 +1,7 @@
 # 爆款网文拆解 Skill 库
 
+> 历史设计稿：Milestone 1 的规范入口为 `../SKILL.md`，架构冻结见 `architecture-freeze-m1.md`；冲突时以后者为准。
+
 ## 第二阶段下：S5—S9、Q0与共享枚举
 
 # S5 商业卡点 Skill
