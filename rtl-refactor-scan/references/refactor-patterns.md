@@ -121,6 +121,22 @@ xxx_ram #(
 );
 ```
 
+### Transformation Contract: RAM_SUBMODULE-001
+
+**preconditions**:
+- 原模块的 RAM 读时序已明确（组合读 vs 寄存读）
+- 子模块的读延迟与原设计一致，或延迟变化已被用户接受
+
+**observable_changes**:
+- 若原为组合读、子模块用寄存读（如上例 `output reg rd_data`），则读延迟 +1 cycle（**必须声明**）
+
+**invariants**:
+- RAM 容量和数据完整性不变
+- 读写时序语义不变（除非 observable_changes 已声明并获批准）
+
+**forbidden_when**:
+- 读延迟变化会导致已有 testbench 失败且未获授权
+
 ---
 
 ## §3 Function 去综合路径化
@@ -231,6 +247,24 @@ assign out_data[111:96]  = in_data[111:96];   // byte[6]
 ## §5 Debug Bus 标准化
 
 **目标**: 为上板调试提供标准化的 64-bit debug bus，寄存输出、宏控制。
+
+> ⚠️ **此变换会修改模块外部接口（新增 output 端口），违反 output_contract 默认约束。**
+> 仅当用户明确授权接口变更、且所有上层实例化已更新时才可应用。必须列入 observable_changes 并在 change_plan 中声明。
+
+### Transformation Contract: DEBUG_BUS-001
+
+**preconditions**:
+- 用户明确授权新增输出端口
+- 所有上层实例化已更新或使用 `ifdef DEBUG 隔离
+- debug 端口不影响默认功能路径
+
+**observable_changes**:
+- 模块端口列表新增 debug output（受宏控制）
+- 综合资源略有增加
+
+**forbidden_when**:
+- 用户未授权接口变更
+- debug 逻辑无法通过宏完全关闭
 
 ### 框架代码
 ```verilog
@@ -355,3 +389,37 @@ assign block_ready = block_ready_r;
 ```
 
 **注意**: 改后 ready 输出延迟 1 cycle。对 drain-first pipeline 模型，只要上游不依赖 ready 的零延迟响应，此改动安全。需在回归中验证时间行为。
+
+### Transformation Contract: REGISTER_READY-001
+
+**purpose**: 切断长 ready 组合路径
+
+**preconditions**（全部满足才能列入候选）:
+- 上游协议允许单周期反压延迟
+- 无同周期组合接受要求
+- 缓冲容量充足
+- 现有 testbench 覆盖 stall 和 drain 场景
+
+**forbidden_when**（任一成立则禁止）:
+- 零延迟 ready 是外部契约的一部分
+- 无 skid buffer 且数据可能连续到达
+- 帧边界依赖同周期 ready
+
+**observable_changes**（必须向用户声明）:
+- ready latency 增加 1 cycle
+- 过渡期间吞吐量可能变化
+
+**invariants**（变换后必须保持）:
+- 不丢失已接受的事务
+- valid 不依赖 ready
+- 事务顺序不变
+- 帧/tlast 语义不变
+
+**required_verification**:
+- 连续流量测试
+- 随机反压测试
+- pipeline drain 测试
+- 帧边界测试
+- 原有回归
+
+**rollback**: 回退变更单元 CR-XXX
