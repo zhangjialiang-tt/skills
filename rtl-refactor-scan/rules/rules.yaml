@@ -1,0 +1,184 @@
+# rtl-refactor-scan v2.0 唯一规则目录
+# 每条规则的三轴值是权威定义；risk-classification.md / scan-checklist.md / evals.json 不得再独立定义分级。
+# A/B/C 仅由 risk-axes.schema.json 的 _abc_compatible_display 派生。
+
+rules:
+  # ===== synthesis =====
+  - rule_id: SYN-MIXED-BLOCKING-001
+    category: synthesis
+    title: 同一 always @(posedge clk) 内混合 blocking/non-blocking
+    default_severity: critical
+    default_confidence: confirmed
+    default_actionability: plan_required
+    change_policy: requires_approval
+    detection:
+      method: deterministic
+      evidence_required:
+        - always block with posedge clk
+        - blocking assignment (=) to reg also assigned with <=
+    references:
+      - "Verilog-2001 sequential logic invariant"
+
+  - rule_id: SYN-VARIABLE-PART-SELECT-001
+    category: synthesis
+    title: variable part-select 导致 EDA debug 不稳定
+    default_severity: medium
+    default_confidence: probable
+    default_actionability: plan_required
+    change_policy: requires_approval
+    detection:
+      method: deterministic
+      pattern: "data[idx*W +: W]"
+      evidence_required:
+        - part-select expression with variable base
+    references:
+      - "综合可但 EDA debug 不稳定"
+
+  - rule_id: SYN-LATCH-001
+    category: synthesis
+    title: always @(*) 中分支不完整推断 latch
+    default_severity: high
+    default_confidence: confirmed
+    default_actionability: plan_required
+    change_policy: requires_approval
+    detection:
+      method: deterministic
+      evidence_required:
+        - combinational always block
+        - missing default/else branch
+
+  - rule_id: SYN-MULTI-DRIVER-001
+    category: synthesis
+    title: 多 always 块驱动同一变量
+    default_severity: critical
+    default_confidence: confirmed
+    default_actionability: plan_required
+    change_policy: requires_approval
+    detection:
+      method: deterministic
+      evidence_required:
+        - reg driven in multiple always blocks
+
+  - rule_id: SYN-UNSUPPORTED-CONSTRUCT-001
+    category: synthesis
+    title: 不适合综合的写法（initial/fork-join/延时）
+    default_severity: high
+    default_confidence: confirmed
+    default_actionability: plan_required
+    change_policy: requires_approval
+    detection:
+      method: deterministic
+      evidence_required:
+        - initial block outside testbench
+        - delay control # in synthesizable code
+
+  # ===== reset =====
+  - rule_id: RST-MISSING-001
+    category: reset
+    title: 关键路径寄存器缺复位
+    default_severity: high
+    default_confidence: probable
+    default_actionability: plan_required
+    change_policy: requires_approval
+    detection:
+      method: deterministic
+      evidence_required:
+        - sequential reg without reset branch
+
+  # ===== cdc =====
+  - rule_id: CDC-SINGLEBIT-DIRECT-001
+    category: cdc
+    title: 单 bit 信号跨时钟无同步器
+    default_severity: critical
+    default_confidence: confirmed
+    default_actionability: manual_design_required
+    change_policy: do_not_auto_fix
+    detection:
+      method: deterministic
+      evidence_required:
+        - signal assigned in clk_a domain
+        - same signal used in clk_b domain without 2-stage synchronizer
+    references:
+      - "CDC single-bit metastability"
+
+  - rule_id: CDC-MULTIBIT-DIRECT-001
+    category: cdc
+    title: 多 bit 总线直接打拍跨时钟
+    default_severity: critical
+    default_confidence: confirmed
+    default_actionability: manual_design_required
+    change_policy: do_not_auto_fix
+    detection:
+      method: deterministic
+      evidence_required:
+        - multi-bit signal assigned in clk_a
+        - same signal used in clk_b without async FIFO or handshake
+    references:
+      - "CDC multi-bit data tearing"
+
+  # ===== handshake =====
+  - rule_id: HS-VALID-DEPENDS-READY-001
+    category: handshake
+    title: valid 组合依赖 ready（违反协议不变量）
+    default_severity: high
+    default_confidence: probable
+    default_actionability: manual_design_required
+    change_policy: do_not_auto_fix
+    detection:
+      method: deterministic
+      semantic_review: required
+      evidence_required:
+        - valid assignment expression
+        - ready dependency path
+
+  # ===== memory =====
+  - rule_id: MEM-UNPACKED-LARGE-001
+    category: memory
+    title: unpacked array 大量层级引用，EDA LA 不稳定
+    default_severity: medium
+    default_confidence: probable
+    default_actionability: plan_required
+    change_policy: requires_approval
+    detection:
+      method: deterministic
+      evidence_required:
+        - unpacked reg array declaration
+        - cross-module direct reference
+
+  # ===== timing-heuristic（需 EDA 工具确认，标为 semantic） =====
+  - rule_id: TIM-LONG-COMBINATIONAL-001
+    category: timing-heuristic
+    title: 长组合路径（需综合/时序报告确认）
+    default_severity: medium
+    default_confidence: hypothesis
+    default_actionability: report_only
+    change_policy: do_not_auto_fix
+    detection:
+      method: semantic
+      evidence_required:
+        - source-level combinational chain hint
+      note: "无法仅靠源码确认实际 LUT 级数，需综合报告（E3）"
+
+  - rule_id: TIM-WIDE-MUX-001
+    category: timing-heuristic
+    title: 宽 mux（>32:1）考虑分级
+    default_severity: medium
+    default_confidence: hypothesis
+    default_actionability: plan_required
+    change_policy: requires_approval
+    detection:
+      method: semantic
+      threshold: ">32:1"
+      note: "统一阈值为 >32:1（修复 risk-classification.md L37 >8:1 与 scan-checklist.md L26 >32:1 的冲突）"
+
+  - rule_id: TIM-HIGH-FANOUT-001
+    category: timing-heuristic
+    title: 高扇出控制信号（如 reset 扇出 >1000）
+    default_severity: medium
+    default_confidence: hypothesis
+    default_actionability: report_only
+    change_policy: do_not_auto_fix
+    detection:
+      method: semantic
+      evidence_required:
+        - requires implementation report (E3)
