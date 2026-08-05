@@ -3,9 +3,11 @@ name: rtl-refactor-scan
 description: RTL 工程成熟化扫描与小步重构。对 Verilog/SystemVerilog 模块执行五大维度（可综合性/可实现性/时序/仿真上板一致性/EDA调试友好性）成熟度评估，输出结构化审计报告并制定最小安全重构计划。快速语法检查/注释增强类请求请走 rtl-annotator。触发：RTL代码评审、工程成熟度检查、综合/时序问题诊断、小步重构。
 output_contract:
   artifacts:
-    - "审计报告_<模块名>.md — 结构化扫描结果（A/B/C 三级风险）"
-    - "修改计划_<模块名>.md — 分阶段重构计划（含回归测试命令）"
-    - "最终报告_<模块名>.md — 重构完成摘要"
+    - "rtl_context.json — 工程上下文（模块/clocks/resets/files）"
+    - "findings.json — 唯一权威审计结果（结构化 Finding）"
+    - "审计报告_<模块名>.md — 由 findings.json 渲染的派生阅读物"
+    - "修改计划_<模块名>.md — refactor 模式产出（M3 交付）"
+    - "最终报告_<模块名>.md — refactor 模式产出（M3 交付）"
   format: "markdown"
   constraints:
     - "不改变模块外部接口"
@@ -34,17 +36,18 @@ triggers:
 ```
 用户指定模块/目录
     ↓
-[Phase 1] 定义扫描范围 → 确认时钟/复位/接口/协议
+INIT → SCOPE_RESOLVED → CONTEXT_BUILT
+    ↓（collect_context.py 提取 clocks/resets/files → rtl_context.json）
+EVIDENCE_COLLECTED → FINDINGS_GENERATED
+    ↓（rtl_audit.py 按规则扫描 → findings.json，validate_findings.py 校验）
+FINDINGS_VALIDATED → AUDIT_READY
+    ↓（render_report.py 渲染 → 审计报告.md）
+[audit 模式到此结束，只读输出]
+
+=== refactor 模式（M3 交付，M0-M2 仅冻结定义）===
+PLAN_READY →（用户批准）→ PLAN_APPROVED → CHANGE_APPLIED
     ↓
-[Phase 2] 结构化扫描 → 按 5 大维度 + A/B/C 三级风险检查
-    ↓
-[Phase 3] 输出审计报告 → 含风险列表/严重度/位置/说明
-    ↓
-[Phase 4] 最小安全重构计划 → 分阶段、可验证、可回退
-    ↓
-[Phase 5] 小步实施 + 回归验证 → 每阶段跑 testbench
-    ↓
-[Phase 6] 最终报告 → 修改摘要/风险消除/剩余风险/下一步建议
+LOCAL_VERIFY_PASS → REGRESSION_PASS → CLOSED
 ```
 
 **每个阶段必须先完成再进下一阶段，不能跳步。**
@@ -80,7 +83,9 @@ triggers:
 
 ## Phase 2：结构化扫描
 
-按以下**五大维度**分别检查，每个发现点记录：位置(行号)、分类(A/B/C)、详细描述、影响评估。风险分级标准见 `references/risk-classification.md`。
+按以下**五大维度**分别检查。每个发现点生成为结构化 Finding（见 `schemas/finding.schema.json`），记录：rule_id、位置(行号)、severity、confidence、evidence_level、actionability。风险分级标准见 `rules/rules.yaml`（唯一权威源），A/B/C 仅作显示层映射。
+
+> **核心原则**：Finding 是唯一权威事实，Markdown 是派生产物。无证据（E0）的发现不得标为 confirmed。
 
 ### 五大检查维度
 
@@ -141,6 +146,8 @@ pipeline 阶段图或状态机描述
 ```
 
 详细模板见 `references/output-format.md` §1。
+
+> **v2.0 变更**：审计报告由 `scripts/render_report.py` 从 `findings.json` 渲染生成。`findings.json` 是唯一权威审计结果，Markdown 报告是派生阅读物。直接手写报告而不经过 findings.json 不被允许。
 
 ---
 
@@ -261,7 +268,11 @@ make sim
 |------|------|------|
 | 可移植接口 | `agents/interface.yaml` | 外部化 Skill IR（job/triggers/excludes/near-neighbor/workflow/decision/failure/evals/trust） |
 | 元数据 | `manifest.json` | 打包/安装/registry 识别 |
-| 确定性检查 | `scripts/scan_check.py` | 校验生成的审计报告是否满足 5 维度 + A/B/C + 必需章节契约 |
+| Finding IR schemas | `schemas/*.schema.json` | finding/rtl-context/risk-axes/evidence-model 契约 |
+| 唯一规则源 | `rules/rules.yaml` | 所有规则的三轴分级权威定义 |
+| 上下文提取 | `scripts/collect_context.py` | 从 RTL 源码提取 clocks/resets/files（E1） |
+| Finding 校验 | `scripts/validate_findings.py` | 校验 findings.json schema + 业务规则 |
+| 报告渲染 | `scripts/render_report.py` | 从 findings.json 渲染 Markdown（A/B/C 派生） |
 | 实证 | `evals/evals.json` + `evals/smoke_runner.py` | 3 用例（1 smoke + 2 近邻边界）+ 确定性 smoke runner |
 | 风险档案 | `reports/output-risk-profile.md` | 输出失败模式与防御策略 |
 | 成熟度评分卡 | `reports/output_quality_scorecard.md` | yao-meta-skill 评估门结果 |
