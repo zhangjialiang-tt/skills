@@ -1,0 +1,30 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "schemas/risk-axes.schema.json",
+  "title": "Risk Three-Axis Model",
+  "description": "三轴分类模型（提案 §5.2），替代单一 A/B/C 分级。A/B/C 仅作兼容显示层映射。",
+  "type": "object",
+  "properties": {
+    "severity": {
+      "type": "string",
+      "enum": ["critical", "high", "medium", "low", "info"],
+      "description": "轴一：问题有多严重"
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["confirmed", "probable", "hypothesis", "unknown"],
+      "description": "轴二：结论有多可信"
+    },
+    "actionability": {
+      "type": "string",
+      "enum": ["safe_candidate", "plan_required", "manual_design_required", "report_only", "out_of_scope"],
+      "description": "轴三：现在如何处理。是否修改由此决定，不再由风险字母决定。"
+    }
+  },
+  "required": ["severity", "confidence", "actionability"],
+  "_abc_compatible_display": {
+    "A": ["critical", "high"],
+    "B": ["medium"],
+    "C": ["low", "info"]
+  }
+}

@@ -29,18 +29,32 @@ output_contract:
   - "默认不修改代码；进入修改前必须输出计划并等待用户确认（无计划不修改）"
 
 deterministic_logic:
-  - path: "scripts/scan_check.py"
-    role: "Read-only checker: validate a generated 审计报告 against the 5-dimension + A/B/C + required-section contract"
+  - path: "scripts/collect_context.py"
+    role: "从 RTL 源码提取 clocks/resets/files → rtl_context.json（E1）"
+    runs_in: "skill root"
+    side_effects: "none (read-only)"
+  - path: "scripts/rtl_audit.py"
+    role: "按规则扫描 RTL → findings.json（E2）（M2 交付）"
+    runs_in: "skill root"
+    side_effects: "none (read-only)"
+  - path: "scripts/validate_findings.py"
+    role: "校验 findings.json 的 schema + 业务规则（E0 不能 confirmed 等）"
+    runs_in: "skill root"
+    side_effects: "none (read-only)"
+  - path: "scripts/render_report.py"
+    role: "从 findings.json 渲染 Markdown 审计报告（A/B/C 由 severity 派生）"
     runs_in: "skill root"
     side_effects: "none (read-only)"
 
 references:
-  - "references/scan-checklist.md — 五大维度详细检查清单 + 验证条件"
-  - "references/risk-classification.md — A/B/C 三级风险分类标准"
-  - "references/refactor-patterns.md — 7 种具体重构模式及代码示例"
-  - "references/output-format.md — 审计报告/修改计划/最终报告模板"
-  - "references/trigger-eval.md — 触发条件评估（应该/不应该/边界）"
-  - "references/quality-gates.md — 质量门控检查清单 + 100 分评分 rubric"
+  - "references/scan-checklist.md — 五大维度详细检查清单 + 证据等级标注"
+  - "references/risk-classification.md — 三轴映射层（指向 rules.yaml 唯一权威源）"
+  - "references/refactor-patterns.md — 重构模式 + Transformation Contract"
+  - "references/transformation-contracts.md — 安全变换契约模板"
+  - "references/evidence-model.md — 证据等级模型 E0-E5"
+  - "references/output-format.md — 审计报告模板（由 findings.json 渲染）"
+  - "references/trigger-eval.md — 触发条件评估（quick/audit/refactor 模式）"
+  - "references/quality-gates.md — 质量门控检查清单"
 
 constraints:
   - "不改变模块外部接口"
@@ -82,11 +96,11 @@ workflow_steps:
   - "每个阶段必须先完成再进下一阶段，不能跳步"
 
 decision_points:
-  - "Phase 1 必须先确认扫描深度模式（快速/报告/完整），默认报告模式"
-  - "是否进入修改阶段：基于风险严重度与修改收益评估（Phase 3 末尾）；仅在完整模式下生效"
+  - "Phase 1 必须先确认扫描深度模式（quick/audit/refactor），默认 audit 模式（只读）"
+  - "是否进入修改阶段：基于风险严重度与修改收益评估（Phase 3 末尾）；仅在 refactor 模式下生效（M0-M2 仅冻结定义，M3 交付执行）"
   - "是否拆分扫描：模块 >5000 行 → 建议分模块或只扫关键路径"
   - "语言混合：Verilog + SystemVerilog 按文件类型分别处理，优先 Verilog-2001"
-  - "无 testbench：仍可扫描，但 Phase 5 回归验证降级为人工确认"
+  - "无 testbench：仍可进入 audit 模式（只读扫描 + findings.json）；但 refactor 模式被阻断（无回归入口不得宣称重构验证完成）"
 
 failure_modes:
   - mode: "路径假设错误"
@@ -101,9 +115,9 @@ failure_modes:
     guard: "Phase 4 无计划不修改；计划需用户确认"
 
 evals:
-  - "evals/evals.json — 3 个用例（1 smoke + 2 近邻边界）"
-  - "evals/smoke_runner.py — 确定性 smoke runner（命令式，无外部模型凭证）"
-  - "scripts/scan_check.py — 输出契约机器校验"
+  - "evals/evals.json — 4 个用例（1 deterministic-audit + 2 边界 + 1 模式边界）"
+  - "evals/smoke_runner.py — Finding 链路 smoke runner（collect→audit→validate→render）"
+  - "scripts/validate_findings.py — findings.json schema + 业务规则校验"
 
 output_risk:
   report: "reports/output-risk-profile.md"

@@ -1,6 +1,6 @@
 {
   "name": "rtl-refactor-scan",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "mode": "production",
   "archetype": "library",
   "context_budget_tier": "production",
@@ -25,14 +25,30 @@
     "代码格式化"
   ],
   "factory_components": {
-    "scripts": ["scripts/scan_check.py"],
+    "scripts": [
+      "scripts/collect_context.py",
+      "scripts/validate_findings.py",
+      "scripts/render_report.py",
+      "scripts/validate_rules.py"
+    ],
+    "schemas": [
+      "schemas/finding.schema.json",
+      "schemas/rtl-context.schema.json",
+      "schemas/risk-axes.schema.json",
+      "schemas/evidence-model.schema.json"
+    ],
+    "rules": [
+      "rules/rules.yaml"
+    ],
     "references": [
       "references/scan-checklist.md",
       "references/risk-classification.md",
       "references/refactor-patterns.md",
       "references/output-format.md",
       "references/trigger-eval.md",
-      "references/quality-gates.md"
+      "references/quality-gates.md",
+      "references/evidence-model.md",
+      "references/transformation-contracts.md"
     ]
   }
 }
