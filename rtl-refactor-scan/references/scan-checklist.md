@@ -22,28 +22,32 @@
 
 ## §2 可实现性
 
-- [ ] 宽组合路径 — 单时钟内超过 10 级 LUT 的路径
-- [ ] 大 mux（>32:1）— 考虑 case 分级或二叉树
-- [ ] 超宽数据总线直接进入复杂逻辑 — 如 512-bit 总线直接进加法/比较
-- [ ] RAM/FIFO 推断不稳定
-- [ ] block RAM / distributed RAM 推断是否符合预期
-- [ ] reset 过重导致资源浪费或时序压力（复位所有数据路径寄存器）
-- [ ] 大量高扇出控制信号 — 如复位信号扇出 >1000
-- [ ] 大量跨层级 internal net 被 debug core 探测后可能影响实现
-- [ ] 是否需要将 memory、FIFO、line buffer、history buffer 拆成独立子模块
+> **证据等级提示**：本节多数指标无法仅靠源码确认，需综合/实现报告（E3）。仅基于源码的判断只能标 hypothesis，不得标 confirmed。
+
+- [ ] `E1` 宽组合路径 — 源码可见结构；实际 LUT 级数需综合报告 `E3`（对应规则 TIM-LONG-COMBINATIONAL-001）
+- [ ] `E3` 大 mux（>32:1）— 需综合报告 mux fanin 统计（对应规则 TIM-WIDE-MUX-001，阈值已统一为 >32:1）
+- [ ] `E1` 超宽数据总线直接进入复杂逻辑 — 源码可见位宽，"复杂度"需综合确认
+- [ ] `E3` RAM/FIFO 推断不稳定 — 需综合日志
+- [ ] `E3` block RAM / distributed RAM 推断是否符合预期 — 需综合资源报告
+- [ ] `E3` reset 过重导致资源浪费或时序压力 — 需时序/资源报告
+- [ ] `E3` 大量高扇出控制信号（复位扇出 >1000）— 需实现报告 fanout 统计
+- [ ] `E3` 大量跨层级 internal net 被 debug core 探测后可能影响实现 — 需实现报告
+- [ ] `E1` 是否需要将 memory/FIFO/line buffer 拆成独立子模块 — 源码可初判
 
 ## §3 时序优化
 
-- [ ] 目标时钟域下是否存在长组合路径
-- [ ] ready/valid 反压链是否过长 — ready 条件是否跨多级组合逻辑
-- [ ] input valid 到 output ready 是否存在组合环
-- [ ] 宽数据路径是否缺少寄存器切分
-- [ ] 计数器/比较器/地址计算是否在同一拍堆叠过多
-- [ ] min/max/sum/checksum/encode 等计算是否需要 rolling 或 pipeline
-- [ ] 状态机 next-state 是否过重
-- [ ] FIFO full/empty 到 upstream ready 是否组合路径过深
-- [ ] 是否需要使用 registered ready
-- [ ] 是否需要把"计算"和"状态推进"拆拍
+> **证据等级提示**：本节核心指标依赖时序报告（E3）。源码只能给出启发式怀疑（E0/E1）。
+
+- [ ] `E3` 目标时钟域下是否存在长组合路径 — 需时序报告
+- [ ] `E1` ready/valid 反压链是否过长 — 源码可初判组合深度（对应规则 HS-VALID-DEPENDS-READY-001）
+- [ ] `E1` input valid 到 output ready 是否存在组合环 — 源码可初判
+- [ ] `E3` 宽数据路径是否缺少寄存器切分 — 需时序报告
+- [ ] `E3` 计数器/比较器/地址计算是否在同一拍堆叠过多 — 需时序报告
+- [ ] `E1` min/max/sum/checksum/encode 等计算是否需要 rolling 或 pipeline — 源码可见结构
+- [ ] `E1` 状态机 next-state 是否过重 — 源码可初判
+- [ ] `E3` FIFO full/empty 到 upstream ready 是否组合路径过深 — 需时序报告
+- [ ] `E1` 是否需要使用 registered ready — 源码可初判（注意：此变换会改变 latency，必须遵守 Transformation Contract）
+- [ ] `E1` 是否需要把"计算"和"状态推进"拆拍 — 源码可初判
 
 ## §4 仿真与上板一致性
 
