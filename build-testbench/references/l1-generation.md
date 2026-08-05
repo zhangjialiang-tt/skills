@@ -4,7 +4,9 @@ L1 目标是可运行骨架：依赖闭包可解析、路径正确、ModelSim �
 
 ## 端口提取
 
-脚本：`scripts/tb_extract_ports.py`
+**正常流程**：`scripts/bootstrap_testbench.py` 已在 Step 2 从 resolver 选定的 top 文件提取端口并写入 `ports.json`（复用 `tb_extract_ports._extract_ports_from_file`，避免全 workspace 重搜读到错误历史版本）。Agent 直接读取该文件，无需再单独跑端口提取。
+
+**手动重跑（可选）**：脚本 `scripts/tb_extract_ports.py` 仍可独立使用：
 
 ```powershell
 python .pi\skills\build-testbench\scripts\tb_extract_ports.py `

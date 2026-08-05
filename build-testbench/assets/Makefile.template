@@ -6,6 +6,9 @@
 # The main Makefile is NEVER edited after generation — level switching is a single
 # explicit state update in config.mk.
 #
+# Compilation is split into independent stamps (compile_rtl / compile_l1 /
+# compile_l2) so adding an L2 TB after L1 forces its own recompile (P0-06 fix).
+#
 # WORKSPACE_ROOT points two levels up (this Makefile lives in sim/sub{x}-{modulename}/).
 
 VCOM            = vcom
@@ -23,17 +26,9 @@ DEFAULT_LEVEL   ?= l1
 TOP_L1          = tb_<TOP_MODULE>_l1
 TOP_L2          = tb_<TOP_MODULE>_l2
 
-# LICENSE HANDLING — MSYS2/MinGW/Git-Bash pitfall
-# ---------------------------------------------------------
-# Windows-native env vars (set in System Properties) are NOT automatically
-# forwarded to MSYS2/Git-Bash make or child processes. ModelSim vsim will
-# fail with 'Invalid license environment' even though LM_LICENSE_FILE is
-# correctly set in Windows.
-#
-# Resolution: This Makefile auto-detects the Windows system-level
-# LM_LICENSE_FILE via PowerShell and writes it here. If this line still
-# shows a placeholder, run: powershell -Command "[Environment]::GetEnvironmentVariable('LM_LICENSE_FILE', 'Machine')"
-# and replace below. Path separators may use forward slashes or escaped backslashes.
+# MSYS2/MinGW make may not forward Windows-native env vars (LM_LICENSE_FILE)
+# to spawned processes. Default exported with placeholder; replace with your path,
+# or provide it via a local.mk (see references/troubleshooting.md).
 export LM_LICENSE_FILE = <YOUR_LICENSE_FILE_OR_LICENSE_SERVER>
 
 # fileset entries are relative to the workspace root, not this sim directory.
@@ -42,11 +37,12 @@ RTL_FILES       = $(addprefix $(WORKSPACE_ROOT)/,$(FILES))
 VLOG_FILES      = $(filter %.v %.sv,$(RTL_FILES))
 VHDL_FILES      = $(filter %.vhd %.vhdl,$(RTL_FILES))
 
-.PHONY: compile l1 l2 sim sim_l1 wave clean
+.PHONY: compile compile_rtl compile_l1 compile_l2 l1 l2 sim sim_l1 wave clean
 
-compile: $(WORKDIR)/_done
+# Compile RTL (vlog/vcom) — depends only on the fileset.
+compile_rtl: $(WORKDIR)/_rtl_done
 
-$(WORKDIR)/_done: fileset.f tb/tb_<TOP_MODULE>_l1.v
+$(WORKDIR)/_rtl_done: fileset.f
 	mkdir -p $(WORKDIR) $(LOG_DIR)
 	vlib $(WORKDIR)
 ifneq ($(strip $(VLOG_FILES)),)
@@ -55,17 +51,36 @@ endif
 ifneq ($(strip $(VHDL_FILES)),)
 	$(VCOM) -l $(LOG_DIR)/vcom.log $(VHDL_FILES)
 endif
-	$(VLOG) -l $(LOG_DIR)/tb.log tb/tb_<TOP_MODULE>_l1.v
-ifneq ($(wildcard tb/tb_<TOP_MODULE>_l2.v),)
-	$(VLOG) -l $(LOG_DIR)/tb_l2.log tb/tb_<TOP_MODULE>_l2.v
-endif
 	@touch $@
 
+# Compile L1 TB — independent stamp; its own prerequisite triggers recompile on change.
+compile_l1: compile_rtl $(WORKDIR)/_l1_done
+
+$(WORKDIR)/_l1_done: tb/tb_<TOP_MODULE>_l1.v
+	mkdir -p $(LOG_DIR)
+	$(VLOG) -l $(LOG_DIR)/tb.log tb/tb_<TOP_MODULE>_l1.v
+	@touch $@
+
+# Compile L2 TB — independent stamp. Adding the L2 TB after an L1 run forces
+# this stamp to rebuild without disturbing _l1_done (P0-06 fix).
+compile_l2: compile_rtl $(WORKDIR)/_l2_done
+
+$(WORKDIR)/_l2_done: tb/tb_<TOP_MODULE>_l2.v
+	mkdir -p $(LOG_DIR)
+	$(VLOG) -l $(LOG_DIR)/tb_l2.log tb/tb_<TOP_MODULE>_l2.v
+	@touch $@
+
+# Backward-compatible alias: compile = compile_rtl (+ L1/L2 if their TBs exist).
+compile: compile_l1
+ifneq ($(wildcard tb/tb_<TOP_MODULE>_l2.v),)
+compile: compile_l2
+endif
+
 # Stable targets — never change names after generation.
-l1: compile
+l1: compile_l1
 	$(VSIM) -c -l $(LOG_DIR)/vsim_l1.log -do "run -all; quit -f" $(WORKDIR).$(TOP_L1)
 
-l2: compile
+l2: compile_l2
 	$(VSIM) -c -l $(LOG_DIR)/vsim_l2.log -do "run -all; quit -f" $(WORKDIR).$(TOP_L2)
 
 # `make sim` runs whatever DEFAULT_LEVEL selects (l1 by default, l2 after config.mk).
@@ -74,7 +89,7 @@ sim: $(DEFAULT_LEVEL)
 # Backward-compatible alias.
 sim_l1: l1
 
-wave: compile
+wave: compile_l1
 	$(VSIM) -t ns -voptargs=+acc $(WORKDIR).$(TOP_L1) -do "do $(WAVE_DO)"
 
 clean:

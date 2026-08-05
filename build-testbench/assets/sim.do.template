@@ -1,12 +1,24 @@
-# ModelSim compile and batch simulation script — generated under sim/sub{x}-{modulename}/scripts/
+# ModelSim L1 GUI debugging script — generated under sim/sub{x}-{modulename}/scripts/
+#
+# IMPORTANT — role of this script:
+#   This is an INTERACTIVE waveform-debugging entry for L1 only. It is NOT a batch
+#   entrypoint and does NOT honor config.mk / DEFAULT_LEVEL. It always compiles and
+#   runs the L1 smoke testbench.
+#   For batch simulation (the authoritative flow), use the Makefile:
+#       make l1 | make l2 | make sim
+#   Keeping this script L1-only avoids the two-entrypoint divergence (P0-08 fix):
+#   `make sim` may run L2 after config.mk is written, but `do scripts/sim.do` is
+#   explicitly L1 GUI debugging — they are not equivalent and this is by design.
+#
+# cwd: run from sim/sub{x}-{modulename}/ (the sim dir, not scripts/).
+#   do scripts/sim.do
 
 quit -sim
 if {[file exists work]} { vdel -lib work -all }
 vlib work
 file mkdir log
 
-# The fileset is workspace-root-relative; this script is run from sim/sub{x}-{modulename}/scripts/.
-# WORKSPACE_ROOT points two levels up to reach the workspace root.
+# The fileset is workspace-root-relative; WORKSPACE_ROOT points two levels up.
 set WORKSPACE_ROOT [file normalize "../.."]
 set FILESET_HANDLE [open "fileset.f" r]
 set VLOG_FILES {}
@@ -30,7 +42,7 @@ if {[llength $VHDL_FILES] > 0} {
     vcom -l log/vcom.log {*}$VHDL_FILES
 }
 
+# Always L1 — this script's stated role is L1 GUI debugging.
 vlog -l log/tb.log tb/tb_<TOP_MODULE>_l1.v
 vsim -t ns -voptargs=+acc work.tb_<TOP_MODULE>_l1
 run -all
-quit -f

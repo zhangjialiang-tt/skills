@@ -59,19 +59,21 @@ $WorkspaceRoot = python .pi\skills\build-testbench\scripts\workspace_root.py --s
 
 找不到 `.git` 时停止，不要把 RTL 子目录默认为 workspace 根。安装方式见 `docs/installation.md`。
 
-### Step 2：Bootstrap framework（解析依赖、提取模块名、建目录、注入 license）
+### Step 2：Bootstrap framework（解析依赖、建目录、写 fileset/ports，注入 license）
 
-**关键：模块名来自脚本输出，不从文件名推导。** 先跑依赖解析：
+**单步 bootstrap，消除循环依赖**（解析 → 取权威模块名 → 分配序号 → 建目录 → 写 fileset/ports，事务性：解析失败不建任何目录）：
 
 ```powershell
-$FilesetJson = python .pi\skills\build-testbench\scripts\build_fileset.py `
-  --root $WorkspaceRoot `
+$Bootstrap = python .pi\skills\build-testbench\scripts\bootstrap_testbench.py `
+  --workspace $WorkspaceRoot `
   --top <workspace-relative-rtl-path> `
-  --output "$WorkspaceRoot\sim\$SimSubDir\fileset.f" `
+  --level l1 `
   --json
 ```
 
-从 JSON 的 `top.name` 读取**权威模块名**用于目录命名和后续步骤。检查 JSON 的 `diagnostics`（path proximity / path priority / language 选择），不要静默接受错误候选。
+从 JSON 读取：`sim_dir` / `module_name` / `dut.path` / `dut.name`（权威模块名，来自 `module` 声明）/ `ports`（已写入 `ports.json`）。**模块名必须来自此输出的 `module_name`，禁止从文件名推导。** 端口已由 bootstrap 从 resolver 选定的同一 top 文件提取，避免历史版本同名模块串扰。
+
+检查 `diagnostics`（path proximity / path priority / language 选择）和 `summary.unresolved_dependencies`，不要静默接受错误候选。依赖选择顺序：版本/项目路径前缀 → 已知共享 IP 路径 → HDL 语言匹配 → root priority → 失败。详见 `scripts/README.md`。
 
 **⚠️ License 注入（Windows/MSYS2 必做）**：
 在写入 Makefile 之前，通过 PowerShell 读取 Windows 系统级 `LM_LICENSE_FILE`，
@@ -91,28 +93,13 @@ if (-not $LicensePath) {
 此举解决 MSYS2/Git-Bash 子进程不继承 Windows 环境变量导致的
 `Invalid license environment` 错误。
 
-序号计算（无歧义，可用 PowerShell）：
-
-```powershell
-$MaxIndex = 0
-Get-ChildItem -Path "$WorkspaceRoot\sim" -Directory -ErrorAction SilentlyContinue |
-    Where-Object { $_.Name -match '^sub(\d+)-' } |
-    ForEach-Object { $Idx = [int]$Matches[1]; if ($Idx -gt $MaxIndex) { $MaxIndex = $Idx } }
-$NextIndex = $MaxIndex + 1
-$SimSubDir = "sub${NextIndex}-$ModuleName"   # $ModuleName 来自 build_fileset 的 top.name
-```
-
-创建 `sim/sub{x}-{modulename}/` 下 `tb/ data/ scripts/ log/` 子目录。`fileset.f` 条目相对 workspace 根；Makefile/sim.do 以 `../..` 为 workspace root 前缀。
-
-依赖选择顺序：版本/项目路径前缀 → 已知共享 IP 路径 → HDL 语言匹配 → root priority → 失败。详见 `scripts/README.md`。
-
 ### Step 3：Inspect diagnostics
 
-检查 `build_fileset` 的 `diagnostics`、`summary.unresolved_dependencies`。有未解析项时暴露完整候选列表，不猜测。VHDL component / 厂商 IP / `include` 可能不在正则闭包内，需从工程脚本补进 `fileset.f`（见 `references/troubleshooting.md`）。
+检查 bootstrap 输出的 `diagnostics` 和 `summary.unresolved_dependencies`（status 非 SUCCESS 时停止，bootstrap 已保证不建目录）。有未解析项时暴露完整候选列表，不猜测。VHDL component / 厂商 IP / `include` 可能不在正则闭包内，需从工程脚本补进 `fileset.f`（见 `references/troubleshooting.md`）。
 
 ### Step 4：Run L1
 
-提取端口、生成 L1 TB、生成 Makefile/sim.do/wave.do，然后编译仿真。端口提取与 L1 TB 生成详见 `references/l1-generation.md`，模板见 `assets/Makefile.template`、`assets/sim.do.template`、`assets/wave.do.template`。
+bootstrap 已写好 `fileset.f` 和 `ports.json`。本步生成 L1 TB、Makefile/sim.do/wave.do，然后编译仿真。L1 TB 生成（读 `ports.json`）详见 `references/l1-generation.md`；Makefile 已拆分为 `compile_rtl`/`compile_l1`/`compile_l2` 独立 stamp，新增 L2 TB 会自动触发重编，无需手动 `make clean`。模板见 `assets/Makefile.template`、`assets/sim.do.template`（仅 L1 GUI 调试，批处理走 Makefile）、`assets/wave.do.template`。
 
 ```powershell
 Set-Location "$WorkspaceRoot\sim\$SimSubDir"
