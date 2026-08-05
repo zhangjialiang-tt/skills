@@ -1,0 +1,7 @@
+# config.mk — written by the skill AFTER L2 verification passes.
+#
+# Purpose: switch `make sim` to L2 WITHOUT editing the generated Makefile.
+# The main Makefile does `-include config.mk`, so this file overrides DEFAULT_LEVEL.
+# Delete this file to revert `make sim` back to L1.
+
+DEFAULT_LEVEL := l2

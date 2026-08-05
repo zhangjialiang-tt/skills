@@ -1,0 +1,81 @@
+# ModelSim Makefile — generated under <workspace_root>/sim/sub{x}-{modulename}/
+#
+# Design: stable targets l1 / l2 / sim. DEFAULT_LEVEL picks which one `make sim` runs.
+# - L1 phase: DEFAULT_LEVEL=l1 (built-in default below)
+# - After L2 passes: write config.mk with DEFAULT_LEVEL=l2 (see assets/config.mk.template)
+# The main Makefile is NEVER edited after generation — level switching is a single
+# explicit state update in config.mk.
+#
+# WORKSPACE_ROOT points two levels up (this Makefile lives in sim/sub{x}-{modulename}/).
+
+VCOM            = vcom
+VLOG            = vlog
+VSIM            = vsim
+WORKDIR         = work
+WORKSPACE_ROOT  ?= ../..
+LOG_DIR         = log
+WAVE_DO         = scripts/wave.do
+
+# Level state — config.mk (written after L2 passes) overrides these defaults
+# without touching this generated Makefile. See assets/config.mk.template.
+-include config.mk
+DEFAULT_LEVEL   ?= l1
+TOP_L1          = tb_<TOP_MODULE>_l1
+TOP_L2          = tb_<TOP_MODULE>_l2
+
+# LICENSE HANDLING — MSYS2/MinGW/Git-Bash pitfall
+# ---------------------------------------------------------
+# Windows-native env vars (set in System Properties) are NOT automatically
+# forwarded to MSYS2/Git-Bash make or child processes. ModelSim vsim will
+# fail with 'Invalid license environment' even though LM_LICENSE_FILE is
+# correctly set in Windows.
+#
+# Resolution: This Makefile auto-detects the Windows system-level
+# LM_LICENSE_FILE via PowerShell and writes it here. If this line still
+# shows a placeholder, run: powershell -Command "[Environment]::GetEnvironmentVariable('LM_LICENSE_FILE', 'Machine')"
+# and replace below. Path separators may use forward slashes or escaped backslashes.
+export LM_LICENSE_FILE = <YOUR_LICENSE_FILE_OR_LICENSE_SERVER>
+
+# fileset entries are relative to the workspace root, not this sim directory.
+FILES           = $(shell cat fileset.f)
+RTL_FILES       = $(addprefix $(WORKSPACE_ROOT)/,$(FILES))
+VLOG_FILES      = $(filter %.v %.sv,$(RTL_FILES))
+VHDL_FILES      = $(filter %.vhd %.vhdl,$(RTL_FILES))
+
+.PHONY: compile l1 l2 sim sim_l1 wave clean
+
+compile: $(WORKDIR)/_done
+
+$(WORKDIR)/_done: fileset.f tb/tb_<TOP_MODULE>_l1.v
+	mkdir -p $(WORKDIR) $(LOG_DIR)
+	vlib $(WORKDIR)
+ifneq ($(strip $(VLOG_FILES)),)
+	$(VLOG) -l $(LOG_DIR)/vlog.log +incdir+$(WORKSPACE_ROOT) $(VLOG_FILES)
+endif
+ifneq ($(strip $(VHDL_FILES)),)
+	$(VCOM) -l $(LOG_DIR)/vcom.log $(VHDL_FILES)
+endif
+	$(VLOG) -l $(LOG_DIR)/tb.log tb/tb_<TOP_MODULE>_l1.v
+ifneq ($(wildcard tb/tb_<TOP_MODULE>_l2.v),)
+	$(VLOG) -l $(LOG_DIR)/tb_l2.log tb/tb_<TOP_MODULE>_l2.v
+endif
+	@touch $@
+
+# Stable targets — never change names after generation.
+l1: compile
+	$(VSIM) -c -l $(LOG_DIR)/vsim_l1.log -do "run -all; quit -f" $(WORKDIR).$(TOP_L1)
+
+l2: compile
+	$(VSIM) -c -l $(LOG_DIR)/vsim_l2.log -do "run -all; quit -f" $(WORKDIR).$(TOP_L2)
+
+# `make sim` runs whatever DEFAULT_LEVEL selects (l1 by default, l2 after config.mk).
+sim: $(DEFAULT_LEVEL)
+
+# Backward-compatible alias.
+sim_l1: l1
+
+wave: compile
+	$(VSIM) -t ns -voptargs=+acc $(WORKDIR).$(TOP_L1) -do "do $(WAVE_DO)"
+
+clean:
+	rm -rf $(WORKDIR) transcript wlf* *.vcd $(LOG_DIR)/*.log $(LOG_DIR)/*.vcd

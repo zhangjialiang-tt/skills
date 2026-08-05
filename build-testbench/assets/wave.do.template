@@ -1,0 +1,13 @@
+# ModelSim waveform configuration — generated under sim/scripts/
+
+view wave
+configure wave -signalnamewidth 1
+configure wave -timelineunits ns
+
+add wave -noupdate -divider "CLOCK / RESET"
+add wave -noupdate -color Yellow /tb_<TOP_MODULE>_l1/<CLK_NAME>
+add wave -noupdate -color Red /tb_<TOP_MODULE>_l1/<RST_NAME>
+add wave -noupdate -divider "DUT"
+add wave -noupdate -expand /tb_<TOP_MODULE>_l1/u_dut/*
+
+run 10us

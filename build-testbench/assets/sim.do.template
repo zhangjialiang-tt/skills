@@ -1,0 +1,36 @@
+# ModelSim compile and batch simulation script — generated under sim/sub{x}-{modulename}/scripts/
+
+quit -sim
+if {[file exists work]} { vdel -lib work -all }
+vlib work
+file mkdir log
+
+# The fileset is workspace-root-relative; this script is run from sim/sub{x}-{modulename}/scripts/.
+# WORKSPACE_ROOT points two levels up to reach the workspace root.
+set WORKSPACE_ROOT [file normalize "../.."]
+set FILESET_HANDLE [open "fileset.f" r]
+set VLOG_FILES {}
+set VHDL_FILES {}
+while {[gets $FILESET_HANDLE line] >= 0} {
+    set line [string trim $line]
+    if {$line eq "" || [string match "#*" $line]} { continue }
+    set source_path [file join $WORKSPACE_ROOT $line]
+    if {[regexp -nocase {\.vhd(l)?$} $source_path]} {
+        lappend VHDL_FILES $source_path
+    } else {
+        lappend VLOG_FILES $source_path
+    }
+}
+close $FILESET_HANDLE
+
+if {[llength $VLOG_FILES] > 0} {
+    vlog -l log/vlog.log "+incdir+$WORKSPACE_ROOT" {*}$VLOG_FILES
+}
+if {[llength $VHDL_FILES] > 0} {
+    vcom -l log/vcom.log {*}$VHDL_FILES
+}
+
+vlog -l log/tb.log tb/tb_<TOP_MODULE>_l1.v
+vsim -t ns -voptargs=+acc work.tb_<TOP_MODULE>_l1
+run -all
+quit -f
