@@ -82,11 +82,11 @@ workflow_steps:
   - "每个阶段必须先完成再进下一阶段，不能跳步"
 
 decision_points:
-  - "Phase 1 必须先确认扫描深度模式（快速/报告/完整），默认报告模式"
-  - "是否进入修改阶段：基于风险严重度与修改收益评估（Phase 3 末尾）；仅在完整模式下生效"
+  - "Phase 1 必须先确认扫描深度模式（quick/audit/refactor），默认 audit 模式（只读）"
+  - "是否进入修改阶段：基于风险严重度与修改收益评估（Phase 3 末尾）；仅在 refactor 模式下生效（M0-M2 仅冻结定义，M3 交付执行）"
   - "是否拆分扫描：模块 >5000 行 → 建议分模块或只扫关键路径"
   - "语言混合：Verilog + SystemVerilog 按文件类型分别处理，优先 Verilog-2001"
-  - "无 testbench：仍可扫描，但 Phase 5 回归验证降级为人工确认"
+  - "无 testbench：仍可进入 audit 模式（只读扫描 + findings.json）；但 refactor 模式被阻断（无回归入口不得宣称重构验证完成）"
 
 failure_modes:
   - mode: "路径假设错误"

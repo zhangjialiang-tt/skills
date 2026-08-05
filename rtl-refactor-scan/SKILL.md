@@ -59,11 +59,11 @@ triggers:
 
 | 模式 | 关键词 | 流程范围 |
 |------|--------|----------|
-| 快速模式 | "快速看下"、"有没有低级错误" | Phase 1 + Phase 2 简化（仅 A 类） |
-| 报告模式（默认）| "扫描"、"评审"、"评估" | Phase 1 → Phase 3 |
-| 完整模式 | "重构 + 回归"、"帮我改" | Phase 1 → Phase 6 |
+| quick（快速） | "快速看下"、"有没有低级错误" | Phase 1 + Phase 2 简化（仅 critical/high findings） |
+| audit（审计，默认） | "扫描"、"评审"、"评估" | Phase 1 → Phase 3（只读，输出 findings.json + 报告） |
+| refactor（重构） | "重构 + 回归"、"帮我改" | Phase 1 → Phase 6（需基于 audit findings + 批准计划，M3 交付执行） |
 
-**默认按报告模式启动**，Phase 1 末尾向用户确认是否升级到完整模式。
+**默认按 audit 模式启动**（只读），Phase 1 末尾向用户确认是否升级到 refactor 模式。
 
 ### 1.2 确认扫描范围
 
