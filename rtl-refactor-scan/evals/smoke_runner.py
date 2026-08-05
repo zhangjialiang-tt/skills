@@ -1,71 +1,57 @@
 #!/usr/bin/env python3
-"""rtl-refactor-scan: deterministic smoke-runner for output-eval.
-
-Local release-gate smoke evidence WITHOUT external model credentials.
-
-Per yao-meta-skill output-eval-method, this proves the command-runner
-contract (format machine-checkable, timing captured, grading path works,
-failure handled). It must NOT be described as provider-backed model evidence.
-
-The runner receives a JSON request on stdin and returns JSON with:
-  - output            : the scan_check.py verdict for the fixture report
-  - execution_kind    : "command"
-  - provider / model  : omitted (no model involved)
-
-Usage:
-    echo '{"report":"evals/fixtures/sample_audit_report.md"}' | python evals/smoke_runner.py
-"""
+"""rtl-refactor-scan v2.0 smoke runner：Finding 全链路确定性证据。
+collect_context → rtl_audit → validate_findings → render_report。
+仍非 provider-backed 模型实证；证明的是确定性脚本能从 RTL 产出合法 findings。"""
 import json
-import os
-import subprocess
 import sys
+import tempfile
+from pathlib import Path
 
-SKILL_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CHECKER = os.path.join(SKILL_ROOT, "scripts", "scan_check.py")
+SCRIPTS = Path(__file__).resolve().parent.parent / "scripts"
+sys.path.insert(0, str(SCRIPTS))
+
+from collect_context import collect_context
+from rtl_audit import audit_files
+from render_report import render_report
+import validate_findings
+
+
+def run(verilog_files):
+    ctx = collect_context(verilog_files)
+    findings_data = audit_files(verilog_files, ctx)
+
+    # 写临时 findings.json 并校验
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False, encoding="utf-8") as f:
+        json.dump(findings_data, f, ensure_ascii=False)
+        tmp = f.name
+    validation = validate_findings.validate_findings(tmp)
+
+    report_md = render_report(findings_data)
+
+    return {
+        "ok": validation["passed"] and len(findings_data["findings"]) >= 1,
+        "finding_count": len(findings_data["findings"]),
+        "validation_passed": validation["passed"],
+        "validation_errors": validation["errors"],
+        "report_md": report_md,
+        "execution_kind": "deterministic_pipeline",
+    }
 
 
 def main():
-    raw = sys.stdin.read().strip()
-    try:
-        req = json.loads(raw) if raw else {}
-    except json.JSONDecodeError:
-        req = {}
-
-    report = req.get("report") or os.path.join(
-        SKILL_ROOT, "evals", "fixtures", "sample_audit_report.md"
-    )
-    if not os.path.isabs(report):
-        report = os.path.join(SKILL_ROOT, report)
-
-    if not os.path.exists(report):
-        return _emit({"error": f"fixture not found: {report}"}, ok=False)
-    if not os.path.exists(CHECKER):
-        return _emit({"error": f"checker not found: {CHECKER}"}, ok=False)
-
-    proc = subprocess.run(
-        [sys.executable, CHECKER, report, "--json"],
-        capture_output=True, text=True, cwd=SKILL_ROOT,
-    )
-    if proc.returncode != 0:
-        return _emit({"error": proc.stderr.strip() or "checker failed"}, ok=False)
-
-    try:
-        verdict = json.loads(proc.stdout)
-    except json.JSONDecodeError:
-        return _emit({"error": "invalid checker output"}, ok=False)
-
-    return _emit({
-        "output": verdict,
-        "execution_kind": "command",
-        "checked_report": report,
-    }, ok=verdict.get("passed", False))
-
-
-def _emit(payload, ok):
-    payload["ok"] = ok
-    print(json.dumps(payload, ensure_ascii=False, indent=2))
-    # 0 = ran successfully; the agent/eval decides pass/fail from `ok`.
-    return 0
+    args = sys.argv[1:]
+    as_json = "--json" in args
+    files = [f for f in args if f != "--json"]
+    if not files:
+        print("usage: smoke_runner.py <file.v> [...] [--json]", file=sys.stderr)
+        return 2
+    result = run(files)
+    if as_json:
+        print(json.dumps(result, ensure_ascii=False, indent=2))
+    else:
+        verdict = "PASS" if result["ok"] else "FAIL"
+        print(f"[{verdict}] findings={result['finding_count']} validation={result['validation_passed']}")
+    return 0 if result["ok"] else 1
 
 
 if __name__ == "__main__":
