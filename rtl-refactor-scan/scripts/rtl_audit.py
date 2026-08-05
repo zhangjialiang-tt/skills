@@ -166,19 +166,25 @@ def _has_synchronizer(block_text, signal):
 
 
 def detect_variable_part_select(text, file_path):
-    """SYN-VARIABLE-PART-SELECT-001: data[idx*W +: W] 模式。"""
+    """SYN-VARIABLE-PART-SELECT-001: data[idx*W +: W] 模式。
+    检测 +: 或 -: part-select 中 base 表达式含变量（非纯数字字面量）。
+    按行扫描以正确处理嵌套括号如 din_data[1:0]*32 +: 32。"""
     findings = []
-    # 匹配 variable part-select: name[expr +: width] 或 name[expr -: width]，其中 expr 含变量
-    pattern = re.compile(r"(\w+)\s*\[(\s*\w+[^:\]]*\s*\+\s*:\s*\w+\s*)\]")
-    for m in pattern.finditer(text):
-        line = text[:m.start()].count("\n") + 1
-        findings.append(_make_finding(
-            "SYN-VARIABLE-PART-SELECT-001", "synthesis",
-            "variable part-select 导致 EDA debug 不稳定",
-            file_path, line, line,
-            "medium", "probable", "plan_required", "requires_approval",
-            f"L{line}: {m.group(0)}"
-        ))
+    for lineno, line in enumerate(text.split("\n"), 1):
+        # 去注释
+        code = re.sub(r"//.*$", "", line)
+        # 查找 +: 或 -: 模式
+        for m in re.finditer(r"(\w+)\s*\[([^=]*?)\s*([+-]):\s*(\w+)\s*\]", code):
+            base_expr = m.group(2)
+            # base 含字母说明是变量表达式
+            if re.search(r"[a-zA-Z_]", base_expr):
+                findings.append(_make_finding(
+                    "SYN-VARIABLE-PART-SELECT-001", "synthesis",
+                    "variable part-select 导致 EDA debug 不稳定",
+                    file_path, lineno, lineno,
+                    "medium", "probable", "plan_required", "requires_approval",
+                    f"L{lineno}: {m.group(0).strip()}"
+                ))
     return findings
 
 
@@ -303,3 +309,35 @@ def detect_unsupported_construct(text, file_path):
                 f"L{line}: {m.group(0).strip()}"
             ))
     return findings
+
+
+def audit_files(verilog_files, context):
+    """编排所有 deterministic 检测器，返回 findings.json 结构。"""
+    all_findings = []
+    for vf in verilog_files:
+        text = open(vf, encoding="utf-8", errors="replace").read()
+        all_findings += detect_mixed_blocking(text, vf)
+        all_findings += detect_cdc_direct(text, vf, context)
+        all_findings += detect_variable_part_select(text, vf)
+        all_findings += detect_latch(text, vf)
+        all_findings += detect_missing_reset(text, vf)
+        all_findings += detect_multi_driver(text, vf)
+        all_findings += detect_unsupported_construct(text, vf)
+
+    # 赋 finding_id（按 category 分配序号）
+    counters = {}
+    for f in all_findings:
+        cat = f["category"].upper().replace("-", "_")
+        counters[cat] = counters.get(cat, 0) + 1
+        f["finding_id"] = f"RTL-{cat}-{counters[cat]:03d}"
+
+    return {"findings": all_findings, "context": context}
+
+
+if __name__ == "__main__":
+    import json
+    from collect_context import collect_context
+    files = sys.argv[1:]
+    ctx = collect_context(files)
+    result = audit_files(files, ctx)
+    print(json.dumps(result, ensure_ascii=False, indent=2))
