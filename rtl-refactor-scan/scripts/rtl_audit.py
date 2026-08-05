@@ -241,25 +241,29 @@ def detect_missing_reset(text, file_path):
 
 
 def detect_multi_driver(text, file_path):
-    """SYN-MULTI-DRIVER-001: 同一 reg 被多个 always 块赋值。"""
+    """SYN-MULTI-DRIVER-001: 同一 reg 被【不同】always 块赋值。
+    同一 always 块内的多次赋值（如 if/else 分支）不算多驱动。"""
     findings = []
-    drivers = {}  # signal -> list of line
-    # 用通用 always 提取（匹配所有 clock/comb 块）
-    for block_text, block_start, _ in _extract_all_always_blocks(text):
+    # sig -> set of block indices that drive it
+    sig_blocks = {}  # signal -> [(block_idx, line)]
+    blocks = _extract_all_always_blocks(text)
+    for block_idx, (block_text, block_start, _) in enumerate(blocks):
         for am in re.finditer(r"(\w+)\s*<=?\s*", block_text):
             sig = am.group(1)
-            # 跳过关键字和常见非赋值左值
             if sig in ("if", "else", "begin", "end", "for", "while", "case", "endcase"):
                 continue
             line = block_start + block_text[:am.start()].count("\n")
-            drivers.setdefault(sig, []).append(line)
-    for sig, lines in drivers.items():
-        if len(lines) > 1:
+            sig_blocks.setdefault(sig, []).append((block_idx, line))
+    for sig, locations in sig_blocks.items():
+        # 只在驱动来自不同 always 块时报告
+        distinct_blocks = set(bidx for bidx, _ in locations)
+        if len(distinct_blocks) > 1:
+            lines = [ln for _, ln in locations]
             findings.append(_make_finding(
                 "SYN-MULTI-DRIVER-001", "synthesis", f"多 always 块驱动同一变量 {sig}",
                 file_path, lines[0], lines[-1],
                 "critical", "confirmed", "plan_required", "requires_approval",
-                f"{sig} driven at lines {lines}"
+                f"{sig} driven in {len(distinct_blocks)} always blocks at lines {lines}"
             ))
     return findings
 
