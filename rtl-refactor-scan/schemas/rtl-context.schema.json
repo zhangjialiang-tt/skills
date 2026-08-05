@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "schemas/rtl-context.schema.json",
+  "title": "RTL Context",
+  "description": "记录待审计模块的工程上下文（提案 §10.2）",
+  "type": "object",
+  "properties": {
+    "top_module": {"type": "string"},
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "path": {"type": "string"},
+          "language": {"type": "string", "enum": ["verilog-2001", "systemverilog"]}
+        },
+        "required": ["path"]
+      }
+    },
+    "clocks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {"name": {"type": "string"}, "domain": {"type": "string"}},
+        "required": ["name"]
+      }
+    },
+    "resets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {"name": {"type": "string"}, "type": {"type": "string"}},
+        "required": ["name"]
+      }
+    },
+    "ports": {"type": "array"},
+    "parameters": {"type": "array"},
+    "testbench": {"type": ["string", "null"]},
+    "regression_command": {"type": ["string", "null"]},
+    "tool_availability": {"type": "object"},
+    "user_confirmed_facts": {"type": "array", "items": {"type": "string"}}
+  },
+  "required": ["top_module", "files", "clocks", "resets"]
+}
