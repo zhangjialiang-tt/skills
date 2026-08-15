@@ -1,0 +1,66 @@
+# ZCode Idle Task — Interface Definition
+# Defines the skill's input/output contract for routing and automation.
+
+skill_name: zcode-idle-task
+version: 2.0
+mode: scaffold
+
+# ── Inputs ──────────────────────────────────────────────
+inputs:
+  - name: task_request
+    type: natural_language
+    required: true
+    description: >
+      用户用自然语言描述的闲时任务需求，包含目标、范围、交付物期望和权限偏好。
+  - name: workspace_context
+    type: filesystem
+    required: true
+    description: >
+      当前 workspace 的项目路径、AGENTS.md、README、Git 状态等。
+      Skill 自行读取，不需要用户显式提供。
+  - name: user_overrides
+    type: structured
+    required: false
+    description: >
+      用户可在对话中指定的覆盖项：permission、model、reasoning、deliverable_format。
+
+# ── Outputs ─────────────────────────────────────────────
+outputs:
+  - name: task_contract
+    type: yaml
+    description: >
+      结构化任务合同，包含 title、workspace、objective、scope、deliverables、
+      constraints、acceptance、stop_conditions、execution。
+    validated_by: scripts/validate_idle_task.py
+  - name: task_prompt
+    type: text
+    description: >
+      可直接复制粘贴到 ZCode "自动化 → 新建闲时任务" 界面的任务指令文本块。
+  - name: preview_summary
+    type: text
+    description: >
+      供用户确认的摘要：任务标题、项目、权限、范围、交付物、风险提示。
+
+# ── Confirmation Gates ──────────────────────────────────
+confirmation_gates:
+  - trigger: permission == "modify_files"
+    required_action: "用户明确确认允许修改项目文件，并列出允许修改的文件集合"
+  - trigger: permission == "modify_and_commit"
+    required_action: "用户明确确认允许提交 Git，并限定提交范围和提交信息格式"
+  - trigger: "高风险或不可逆操作"
+    required_action: "用户在预览中单独确认"
+
+# ── Exclusions ──────────────────────────────────────────
+exclusions:
+  - "即时分析请求（非闲时任务）"
+  - "Codex create_thread 或普通子 Agent 任务"
+  - "操作 ZCode UI（本 Skill 只生成指令文本）"
+  - "FPGA 下载、外部上传、不可逆硬件操作"
+
+# ── Default Policy ──────────────────────────────────────
+defaults:
+  permission: read_only
+  modify_files: false
+  git_commit: false
+  git_push: false
+  deliverable: markdown_report
