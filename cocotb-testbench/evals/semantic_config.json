@@ -1,0 +1,16 @@
+{
+  "positive_concepts": {
+    "cocotb_flow": {"weight": 1.0, "phrases": ["cocotb"]},
+    "pytest_tb": {"weight": 0.6, "phrases": ["pytest", "python testbench", "测试框架", "仿真框架", "验证框架"]},
+    "golden_compare": {"weight": 0.6, "phrases": ["golden", "对拍", "参考模型", "位精确"]},
+    "rtl_build": {"weight": 0.5, "phrases": ["verilog", "vhdl", "systemverilog", "rtl", "testbench", "仿真测试", "icarus", "questa"]},
+    "sim_gate": {"weight": 0.5, "phrases": ["smoke", "functional", "junit"]}
+  },
+  "negative_concepts": {
+    "native_tb": {"weight": 0.5, "exclusive": true, "phrases": ["原生", "sim.do", "subx", "波形脚本", "sim do"]},
+    "knowledge_qa": {"weight": 0.4, "exclusive": true, "phrases": ["是什么", "区别", "怎么用", "如何理解"]},
+    "run_existing": {"weight": 0.35, "phrases": ["跑一下", "已有的", "现有的", "重跑"]},
+    "rtl_review": {"weight": 0.4, "exclusive": true, "phrases": ["评审", "可综合性", "cdc 检查", "重构"]}
+  },
+  "fallback_positive_concepts": ["cocotb_flow"]
+}

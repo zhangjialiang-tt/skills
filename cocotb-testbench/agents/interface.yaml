@@ -1,0 +1,51 @@
+# Agent Interface — cocotb-testbench
+# 详细契约见 SKILL.md 与 references/workflow.md；本文件只列接口骨架
+
+name: cocotb-testbench
+version: "1.0"
+
+interface:
+  display_name: "Cocotb Testbench 生成器"
+  short_description: "为 RTL top 生成 cocotb 2.x runner+pytest 跨平台仿真框架；golden 优先，无 golden 只做行为刻画。"
+  default_prompt: "为 <rtl_file_or_module> 搭 cocotb 测试框架并跑通 smoke；有 golden model 再接 functional 对拍。"
+
+  inputs:
+    - {name: top, type: string, required: true, description: "RTL 文件路径或模块名；歧义列候选不选"}
+    - {name: level, type: enum, values: [smoke, functional], required: false, description: "默认 smoke"}
+    - {name: simulator, type: string, required: false, description: "默认取 probe_env 可用项"}
+    - {name: golden_model, type: string, required: false, description: '"py_module.function"'}
+    - {name: parameters, type: object, required: false, description: "参数覆盖"}
+    - {name: existing_sim_policy, type: enum, values: [reuse, update, create_new], required: false, description: "默认 reuse"}
+
+  outputs:
+    - {name: simulation_directory, type: path, description: "sim/<top>/"}
+    - {name: gate_reached, type: enum, values: [fileset_resolved, smoke_pass, functional_golden_pass, functional_characterization_pass, failed], description: "措辞上限"}
+    - {name: verification_basis, type: object, description: "golden 路径或 RTL-only characterization"}
+    - {name: case_results, type: array, description: "逐用例，取自 sim_build/*.result.xml"}
+    - {name: classification_assumptions, type: array, description: "时钟/复位/位宽假设"}
+
+  behavior:
+    - "先 probe_env；缺依赖报告并等确认"
+    - "模块名只信 build_fileset top.name"
+    - "golden 优先；否则 characterization 降级结论"
+    - "修配置不修模板"
+
+  error_handling:
+    - {condition: "cocotb 缺失或 1.x", action: "报告升级命令，等确认"}
+    - {condition: "build 失败", action: "按 troubleshooting 修 design.json"}
+    - {condition: "端口分类错", action: "修 ports.json 重生成并记录"}
+    - {condition: "无 golden 要求验证功能", action: "声明行为刻画上限"}
+
+compatibility:
+  canonical_format: "skill-md-v1"
+  adapter_targets: ["omp", "claude-code", "codex"]
+  activation: {mode: "description"}
+  execution: {context: "inline", shell: "bash"}
+  trust:
+    source_tier: "local"
+    remote_inline_execution: "forbid"
+    remote_metadata_policy: "reject"
+  degradation:
+    omp: "none"
+    claude-code: "same contract via Bash tool"
+    codex: "same contract via shell"

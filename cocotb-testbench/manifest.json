@@ -1,0 +1,49 @@
+{
+  "name": "cocotb-testbench",
+  "version": "1.0.0",
+  "owner": "zhangjl",
+  "updated_at": "2026-09-11",
+  "status": "active",
+  "maturity_tier": "production",
+  "lifecycle_stage": "first-routeable-baseline",
+  "context_budget_tier": "production",
+  "review_cadence": "per-cocotb-major-release",
+  "skill_archetype": "production",
+  "target_platforms": ["windows", "linux"],
+  "mode": "production",
+  "description": "为 Verilog/SV/VHDL RTL 生成 cocotb 2.x runner+pytest 跨平台仿真测试框架；golden 优先对拍，无 golden 只做行为刻画。ModelSim 原生 TB 走 build-testbench。",
+  "triggers": [
+    "用 cocotb / Python testbench 验证 RTL 模块",
+    "把 golden model / 参考实现接进仿真做位精确对拍",
+    "生成 pytest 可运行的 smoke + functional 测试框架",
+    "不依赖 make/Tcl 的跨平台 RTL 仿真流程",
+    "cocotb runner / tb_runner / design.json 相关排障"
+  ],
+  "exclusions": [
+    "ModelSim 原生 Verilog TB、subx 目录契约、sim.do 波形（build-testbench）",
+    "运行已有 cocotb 测试（直接执行，无需框架生成）",
+    "RTL 可综合性评审与重构（rtl-refactor-scan）",
+    "纯 cocotb 用法知识问答",
+    "修改 DUT 算法"
+  ],
+  "factory_components": [
+    "scripts/probe_env.py",
+    "scripts/workspace_root.py",
+    "scripts/build_fileset.py",
+    "scripts/tb_extract_ports.py",
+    "scripts/gen_cocotb_skeleton.py",
+    "references/cocotb-runner-api.md",
+    "references/verification-policy.md",
+    "references/troubleshooting.md",
+    "references/workflow.md",
+    "evals/evals.json",
+    "evals/route_cases.json",
+    "evals/semantic_config.json",
+    "reports/output-risk-profile.md"
+  ],
+  "next_iterations": [
+    "tb_extract_ports.py 增加 VHDL entity 端口解析，去掉手写 ports.json 步骤",
+    "functional 报告自动合并 cocotb result.xml 与 characterization 标注生成证据等级表",
+    "与 build-testbench 抽取共享依赖扫描核心为 library skill，消除复制分叉"
+  ]
+}

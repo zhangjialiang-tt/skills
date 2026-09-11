@@ -1,0 +1,23 @@
+{
+  "skill_name": "cocotb-testbench",
+  "recommended_threshold": 0.34,
+  "should_trigger": [
+    {"text": "用 cocotb 给 corr_match.v 搭一套 Python 测试框架", "family": "core"},
+    {"text": "把 caf_float_ref.py 接进 cocotb 做 1000 帧位精确对拍", "family": "golden"},
+    {"text": "为 proj_zero_mean.v 生成 smoke + functional 的 pytest 测试并让 Icarus 跑通", "family": "core"},
+    {"text": "给 VHDL top 的 deinterleave 实体搭 cocotb 验证框架", "family": "vhdl"},
+    {"text": "刚生成的 design.json timescale 配置让 pytest smoke 挂了，帮我排障", "family": "debug"}
+  ],
+  "should_not_trigger": [
+    {"text": "跑一下 sub4 里已有的 cocotb 单元测试", "family": "run-existing"},
+    {"text": "评审这段 RTL 的可综合性和 CDC 问题", "family": "review"},
+    {"text": "用 SystemVerilog assertion 给 FIFO 写 SVA 属性检查", "family": "sva"},
+    {"text": "cocotb 是什么，和 UVM 有什么区别？", "family": "knowledge"},
+    {"text": "帮我写个 Python 脚本统计仿真 log 行数", "family": "unrelated"}
+  ],
+  "near_neighbor": [
+    {"text": "给这个模块建 ModelSim 原生 Verilog testbench，要 sim.do 波形脚本", "family": "build-testbench"},
+    {"text": "更新 build-testbench 的 fileset 脚本", "family": "build-testbench"},
+    {"text": "为 ir_compress_top 生成 L1 smoke 的 tb 和 Makefile（ModelSim）", "family": "build-testbench"}
+  ]
+}
