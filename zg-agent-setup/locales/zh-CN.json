@@ -1,0 +1,4 @@
+{
+  "displayName": "zg 工程级接入",
+  "brief": "为当前工程生成 .zgignore、建 zg 索引、写入指定 agent 的工程级 MCP 并验收"
+}
