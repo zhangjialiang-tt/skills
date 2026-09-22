@@ -304,6 +304,7 @@ _PATH_DEPRIORITIZE_KEYWORDS = (
     "/sim/",
     "/test/",
     "/backup/",
+    "/.worktrees/",
 )
 
 
@@ -323,7 +324,13 @@ def _filter_matches_by_path_priority(matches: list[dict]) -> list[dict]:
     if max_score <= 1:
         return matches
     filtered = [m for m in matches if path_score(m) == max_score]
-    return filtered if filtered else matches
+    if not filtered:
+        return matches
+    # 同分平局时优先最短相对路径：规范 IP 布局 ip/<name>/<name>.v 优于
+    # 其 devkit/Testbench 变体（位于更深子目录）
+    min_len = min(len(m.get("path", "")) for m in filtered)
+    shortest = [m for m in filtered if len(m.get("path", "")) == min_len]
+    return shortest if shortest else filtered
 
 
 def _language_group_suffixes(language: str) -> tuple[str, ...]:

@@ -1,6 +1,6 @@
 {
   "name": "cocotb-testbench",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "owner": "zhangjl",
   "updated_at": "2026-09-11",
   "status": "active",
@@ -11,13 +11,14 @@
   "skill_archetype": "production",
   "target_platforms": ["windows", "linux"],
   "mode": "production",
-  "description": "为 Verilog/SV/VHDL RTL 生成 cocotb 2.x runner+pytest 跨平台仿真测试框架；golden 优先对拍，无 golden 只做行为刻画。ModelSim 原生 TB 走 build-testbench。",
+  "description": "为 Verilog/SV/VHDL RTL 生成 cocotb 2.x runner+pytest 跨平台仿真测试框架；golden 优先对拍，无 golden 只做行为刻画；覆盖 Windows + ModelSim/Questa license/PATH、调度采样和版本证据边界。ModelSim 原生 TB 走 build-testbench。",
   "triggers": [
     "用 cocotb / Python testbench 验证 RTL 模块",
     "把 golden model / 参考实现接进仿真做位精确对拍",
     "生成 pytest 可运行的 smoke + functional 测试框架",
     "不依赖 make/Tcl 的跨平台 RTL 仿真流程",
-    "cocotb runner / tb_runner / design.json 相关排障"
+    "cocotb runner / tb_runner / design.json 相关排障",
+    "Windows + ModelSim/Questa license checkout、cocotb 2.x 采样或参数缓存排障"
   ],
   "exclusions": [
     "ModelSim 原生 Verilog TB、subx 目录契约、sim.do 波形（build-testbench）",

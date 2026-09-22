@@ -60,6 +60,12 @@
       "prompt": "cocotb 是什么，和 UVM 有什么区别？",
       "should_trigger": false,
       "reason": "纯知识问答，不执行框架生成"
+    },
+    {
+      "id": 11,
+      "prompt": "我把 cocotb 升到 2.1 后，Windows 上用 ModelSim 跑 smoke，vsim 能找到但 license checkout 失败，而且输出像偏一拍；请按 runner+pytest 路线排查，不要改 DUT 或 golden。",
+      "should_trigger": true,
+      "reason": "覆盖 Windows/ModelSim license、cocotb 2.x 调度采样与证据边界排障"
     }
   ]
 }

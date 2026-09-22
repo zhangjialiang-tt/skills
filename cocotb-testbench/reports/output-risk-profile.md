@@ -11,9 +11,12 @@
 | golden 被弱化凑 PASS | 对拍失败后放宽容差/改期望 | verification-policy 第 4/5 条 + failure policy |
 | 覆盖用户已有文件 | sim/<top> 已存在 | 生成器硬拒绝 + existing_sim_policy 输入 |
 | 报告淹没在过程日志 | pytest+仿真双层输出混杂 | Output contract 固定字段，逐用例以 result.xml 为准 |
+| simulator 证据被错误迁移 | Icarus PASS 被写成 ModelSim/Questa PASS，或只看到 `vsim` 就忽略 license | 报告绑定 simulator+version；Windows license/PATH 预检；目标 simulator 先跑最小 smoke |
+| cocotb 2.x 标量采样误用 | `Logic` 没有 `.integer`，或 RisingEdge 后读取旧 registered value | 生成器使用 `.is_resolvable`；时序采样要求 `ReadOnly`；troubleshooting 记录类型区别 |
 
 ## 不防御项（v1 有意边界）
 
 - VHDL 端口自动解析（手写 ports.json，next-iteration）
 - cocotb `_pytest` 插件路线（官方警告 breaking，故意不采用）
 - Verilator smoke 语义（2-state，probe 结果仅作 functional 备用）
+- 商业 simulator 的具体 license server 配置与厂商 IP 运行时约束（只做环境预检，不硬编码凭据）

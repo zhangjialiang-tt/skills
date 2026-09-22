@@ -39,16 +39,35 @@ pytest 控制函数（非 async）调用 runner；cocotb 协程测试放同目�
   **在生成目录内跑 pytest**，`tb_runner`/`test_*` 模块即可被仿真进程 import。
 - `WAVES=1` / `GUI=1` 环境变量覆盖代码里的 waves/gui 参数；无 GUI 仿真器用
   Surfer/GTKWave 打开波形（`COCOTB_WAVEFORM_VIEWER` 指定）。
+- runner 继承启动 pytest 的环境。Windows + ModelSim/Questa 时，应在同一 PowerShell
+  预先设置 `PATH` 与 license 变量（如 `LM_LICENSE_FILE`/`MGLS_LICENSE_FILE`），再运行：
+
+  ```powershell
+  $env:PATH = "<modelsim>\win64;" + $env:PATH
+  $env:LM_LICENSE_FILE = "<license-file-or-server>"
+  $env:SIM = "modelsim"
+  pytest -m smoke
+  ```
+
+  不要把 license 内容写进 `design.json` 或报告；`vsim` 可见仍不等于 license 可用。
 - build 失败时 runner 抛 `RuntimeError`，test 失败抛 `SystemExit`；逐用例结果看
-  `sim_build/<test_module>.result.xml`，不是 pytest 单行摘要。
+  `sim_build/<test_module>.result.xml`，不是 pytest 单行摘要。报告必须写实际 simulator
+  与版本；不同 simulator 的 PASS 只能作为各自证据。
 
 ## cocotb 2.x 测试端惯用法（生成模板所用）
 
 - `from cocotb.clock import Clock; Clock(dut.clk, 10, unit="ns").start(start_high=False)`
   （1.x 需 `await start(clock)`，2.x 直接 `.start()`；本 skill 要求 cocotb>=2.0）
-- 信号读写一律 `dut.<sig>.value`；X/Z 检测用 `.value.integer` 捕获 `ValueError`
+- 时序输出在 `await RisingEdge(...)` 后先 `await ReadOnly()` 再采样；否则 registered
+  output 可能读到旧值，表现为整体偏一拍。
+- 信号读写一律 `dut.<sig>.value`；X/Z 检测优先用 `.value.is_resolvable`（标量 `Logic`
+  没有 `.integer`）；多 bit 数值再读 `.integer`，有符号 LogicArray 用 `.to_signed()`，
+  不要重新引入旧 `BinaryValue`/`.signed_integer`。
+- 长测试创建的 clock/monitor task 在结束时用 `.cancel()`；不要使用已删除/过时的
+  `task.kill()`。
 - `@cocotb.test()`；仿真内日志用标准 `logging.getLogger("cocotb.test")`
-- 1-bit 随机 `random.randint(0,1)`，多 bit `random.getrandbits(w)`
+- 1-bit 随机 `random.randint(0,1)`，多 bit `random.getrandbits(w)`；边界向量尽量合并到
+  同一 simulator 会话，降低商业 simulator 启动与 license checkout 的固定开销。
 
 ## 不采用：`cocotb_tools._pytest` 插件
 

@@ -23,7 +23,7 @@ Templates are grounded in cocotb 2.x stable APIs:
   - `from cocotb_tools.runner import get_runner`
   - `Clock(...).start(start_high=False)` (2.x clock start)
   - `dut.<sig>.value = ...` assignment form
-  - `.integer` raises ValueError on unresolved X/Z (used for resolve checks)
+  - `.is_resolvable` detects unresolved X/Z; `.integer` is only for resolved multi-bit values
 """
 from __future__ import annotations
 
@@ -132,7 +132,7 @@ import random
 import cocotb
 import pytest
 from cocotb.clock import Clock
-from cocotb.triggers import RisingEdge, Timer
+from cocotb.triggers import ReadOnly, RisingEdge, Timer
 
 import tb_runner as tb
 
@@ -157,12 +157,9 @@ $reset_apply_body
 
 
 def _assert_resolved(dut, name):
-    try:
-        dut.__getattr__(name).value.integer
-    except ValueError:
-        raise AssertionError(
-            f"dut.{name} contains unresolved X/Z: {dut.__getattr__(name).value!s}"
-        )
+    value = dut.__getattr__(name).value
+    if not value.is_resolvable:
+        raise AssertionError(f"dut.{name} contains unresolved X/Z: {value!s}")
 
 
 @cocotb.test()
@@ -193,6 +190,7 @@ $clock_start_lines
             )
             dut.__getattr__(p["name"]).value = v
 $clk_wait1
+    await ReadOnly()
     for p in OUTPUTS:
         _assert_resolved(dut, p["name"])
 ''')
@@ -254,6 +252,7 @@ async def test_${top}_golden_equivalence(dut):
     # TODO: stream real stimulus vectors (data/ dir or file); per sample/frame:
     #   1. drive inputs           dut.<sig>.value = ...
     #   2. await settling         await RisingEdge(dut.<clk>) * latency
+    #      then await ReadOnly() before sampling registered outputs
     #   3. compare bit-accurate   assert dut.<out>.value.integer == golden(...)
     # Keep comparisons exact; do NOT loosen asserts to obtain a PASS.
 
@@ -472,7 +471,7 @@ def main(argv: list[str] | None = None) -> int:
         clk_waits5=wait_lines(5, clk, "    "),
         clk_wait1=wait_lines(1, clk, "        "),
         resolve_check_lines=(
-            "    for p in OUTPUTS:\n        _assert_resolved(dut, p[\"name\"])"
+            "    await ReadOnly()\n    for p in OUTPUTS:\n        _assert_resolved(dut, p[\"name\"])"
             if reset or not clk
             else "    # no reset detected: outputs may legitimately hold X at boot; settle test covers resolve checks"
         ),

@@ -6,7 +6,8 @@
     {"text": "把 caf_float_ref.py 接进 cocotb 做 1000 帧位精确对拍", "family": "golden"},
     {"text": "为 proj_zero_mean.v 生成 smoke + functional 的 pytest 测试并让 Icarus 跑通", "family": "core"},
     {"text": "给 VHDL top 的 deinterleave 实体搭 cocotb 验证框架", "family": "vhdl"},
-    {"text": "刚生成的 design.json timescale 配置让 pytest smoke 挂了，帮我排障", "family": "debug"}
+    {"text": "刚生成的 design.json timescale 配置让 pytest smoke 挂了，帮我排障", "family": "debug"},
+    {"text": "Windows 上 cocotb 2.1 + ModelSim 的 smoke 过不了，vsim 找得到但 license checkout 失败，还怀疑 RisingEdge 采样偏一拍", "family": "modelsim-windows-debug"}
   ],
   "should_not_trigger": [
     {"text": "跑一下 sub4 里已有的 cocotb 单元测试", "family": "run-existing"},

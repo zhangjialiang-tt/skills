@@ -1,6 +1,6 @@
 ---
 name: cocotb-testbench
-description: 为 Verilog/SystemVerilog/VHDL RTL 生成基于 cocotb 2.x（runner + pytest）的跨平台 Python 仿真测试框架。cocotb、Python testbench、pytest 验证 RTL、golden model 位精确对拍、免 make/Tcl 流程等请求时使用。扫描依赖闭包生成 sim/<top>/ 的 smoke/functional 测试组，pytest 运行产出 JUnit 报告；有用户参考模型优先对拍，无模型时 agent 分析 RTL 生成 characterization 测试并如实降级结论。ModelSim 原生 Verilog TB、subx 目录契约、sim.do 波形走 build-testbench，不用本 skill。
+description: 为 Verilog/SystemVerilog/VHDL RTL 生成基于 cocotb 2.x（runner + pytest）的跨平台 Python 仿真测试框架。cocotb、Python testbench、pytest 验证 RTL、golden model 位精确对拍、免 make/Tcl 流程、Windows + ModelSim/Questa 排障等请求时使用。扫描依赖闭包生成 sim/<top>/ 的 smoke/functional 测试组，pytest 运行产出 JUnit 报告；有用户参考模型优先对拍，无模型时 agent 分析 RTL 生成 characterization 测试并如实降级结论。ModelSim 原生 Verilog TB、subx 目录契约、sim.do 波形走 build-testbench，不用本 skill。
 ---
 
 # Cocotb Testbench — cocotb 仿真框架生成器
@@ -15,6 +15,8 @@ description: 为 Verilog/SystemVerilog/VHDL RTL 生成基于 cocotb 2.x（runner
 3. functional 前必过 smoke 门禁；smoke PASS ≠ 功能正确
 4. golden 对拍是唯一「功能验证」依据；无 golden 一律 `characterization` 降级结论
 5. 修错只改 `design.json`/`ports.json`；生成器拒绝覆盖，冲突备份/改名
+6. 结果必须绑定实际 simulator + version；Icarus PASS 不得替代 ModelSim/Questa 证据
+7. 对时序输出在 `RisingEdge` 后先 `ReadOnly` 再采样；golden 必须对齐 signedness、截断规则、位宽和 RAM/协议 latency
 
 ## Workflow（完整命令与失败策略见 `references/workflow.md`）
 
@@ -22,7 +24,7 @@ description: 为 Verilog/SystemVerilog/VHDL RTL 生成基于 cocotb 2.x（runner
 `tb_extract_ports.py --json` → `gen_cocotb_skeleton.py` →
 `cd sim/<top> && pytest -m smoke` → `pytest -m functional`。
 
-生成后必做：对照 RTL 复核时钟/复位极性/symbolic width，记入报告 `classification_assumptions`。VHDL top 手写 ports.json（schema 见 workflow.md）。
+生成后必做：对照 RTL 复核时钟/复位极性/symbolic width、注册输出采样点、signed 运算与接口 latency，记入报告 `classification_assumptions`。VHDL top 手写 ports.json（schema 见 workflow.md）。Windows + ModelSim/Questa 还要先做 license/PATH 预检，并用同一 simulator 重跑 smoke；不能用 Icarus 结果代替。
 
 ## Stage gates
 
@@ -38,5 +40,5 @@ description: 为 Verilog/SystemVerilog/VHDL RTL 生成基于 cocotb 2.x（runner
 - 路由回归用例：`evals/evals.json`
 - runner/pytest API 事实基线与版本矩阵：`references/cocotb-runner-api.md`
 - 证据分级与 golden 契约：`references/verification-policy.md`
-- 实测踩坑与跨平台排障：`references/troubleshooting.md`
+- 实测踩坑与跨平台排障：`references/troubleshooting.md`（含 Windows + ModelSim、cocotb 2.x、采样时序与缓存失效）
 - 已知输出风险与 v1 边界：`reports/output-risk-profile.md`

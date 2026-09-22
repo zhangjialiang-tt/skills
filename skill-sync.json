@@ -1,0 +1,58 @@
+﻿{
+  "version": 1,
+  "agents": [
+    {
+      "name": "omp",
+      "skillsDir": "C:\\100-Working\\102-Working-Prj\\zc29a\\02\\.omp\\skills",
+      "enabled": true
+    },
+    {
+      "name": "zcode",
+      "skillsDir": "C:\\100-Working\\102-Working-Prj\\zc29a\\02\\.zcode\\skills",
+      "enabled": true
+    },
+    {
+      "name": "pi",
+      "skillsDir": "C:\\100-Working\\102-Working-Prj\\zc29a\\02\\.pi\\skills",
+      "enabled": true
+    }
+  ],
+  "skills": [
+    {
+      "name": "ai-plat-bridge",
+      "enabled": true
+    },
+    {
+      "name": "build-testbench",
+      "enabled": true
+    },
+    {
+      "name": "doc-steward",
+      "enabled": true
+    },
+    {
+      "name": "goal-generator",
+      "enabled": true
+    },
+    {
+      "name": "requirement-alignment",
+      "enabled": true
+    },
+    {
+      "name": "rtl-refactor-scan",
+      "enabled": true
+    },
+    {
+      "name": "smart-commit",
+      "enabled": true
+    },
+    {
+      "name": "zcode-idle-task",
+      "enabled": true
+    },
+    {
+      "name": "omp-session-analyzer",
+      "enabled": true
+    }
+  ]
+}

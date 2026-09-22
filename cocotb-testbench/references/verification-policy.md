@@ -25,13 +25,18 @@
 3. 形态约定：golden 函数应为纯函数式 `expected = golden(input_sample)`，
    TB 负责时序（驱动、等待 latency、采样），golden 不负责。
 4. 对拍纪律：位精确比较；浮点模型须显式声明容差与来源（量化文档），
-   禁止为凑 PASS 现场调宽容差。
+   禁止为凑 PASS 现场调宽容差。比较前还要对齐 DUT 的时序采样点（`ReadOnly`）、
+   pipeline/RAM/valid-ready latency、signed/unsigned 扩展、负数除法截断、overflow 与
+   最终 truncation；这些差异常表现为“整体偏一拍”或“固定 LSB 偏差”，不应直接改 golden。
 5. golden 自身错误：需要独立证据（规格、另一实现交叉验证）才能改 golden，
    与 Test Independence 原则一致。
 
 ## characterization 纪律
 
 - docstring 首词 `characterization:`；报告中单列，不与 golden 结果混排。
+- 只有 simulator 与版本实际执行过的结果才能作为该 simulator 的证据；Icarus、ModelSim、
+  Questa 之间不得互相代签。商业 simulator 的 license/PATH 失败属于 E0/环境阻塞，不是 DUT
+  功能 PASS。
 - 期望值旁注明来源行号/信号行为（「RTL 第 N 行计数逻辑」），便于后续升级为 E3。
 - 无 golden 且用户要求「验证功能正确」→ 声明上限为 E2，给出接入 E3 的最小路径
   （需要用户提供什么）。
