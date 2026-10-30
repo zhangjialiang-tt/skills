@@ -53,6 +53,9 @@ python scripts/gen_cocotb_skeleton.py --fileset-json ... --ports-json ... --out 
 registered output 的 `ReadOnly` 采样点、运算截断/舍入、RAM/ready-valid latency。
 模板只使用 cocotb 2.x API：`Clock(..., unit="ns")`、`LogicArray`/`to_signed()`、
 `task.cancel()`；不要重新引入 1.x 的 `units=`、`BinaryValue` 或 `task.kill()`。
+若套件要加 TB 包装层（分层拓扑、自带激励源），**时钟由 SV `always` 生成**、Python 只
+`RisingEdge` 等待（SKILL.md 性能原则 1）；生成的单元级用例保持在 setup 里复位共享状态
+（性能原则 2）。
 
 ## Step 4 — smoke
 

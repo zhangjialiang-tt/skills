@@ -17,6 +17,24 @@ description: 为 Verilog/SystemVerilog/VHDL RTL 生成基于 cocotb 2.x（runner
 5. 修错只改 `design.json`/`ports.json`；生成器拒绝覆盖，冲突备份/改名
 6. 结果必须绑定实际 simulator + version；Icarus PASS 不得替代 ModelSim/Questa 证据
 7. 对时序输出在 `RisingEdge` 后先 `ReadOnly` 再采样；golden 必须对齐 signedness、截断规则、位宽和 RAM/协议 latency
+8. 提速改动必须有同命令墙钟 A/B（`results.xml` 的 `time` + `sim_time_ratio`）；未做过 A/B 的优化不得写成默认
+
+## 性能原则（2026-10-28 实测：pw-gige `cocotb-gige_video_ip` 30+ min → 2.2 min）
+
+1. **时钟在 SV 生成，Python 只等待**：套件有 TB 包装层时，`always #<半周期> clk = ~clk;`
+   放 SV，Python 只 `await RisingEdge`。Python `Clock` 每个半周期唤醒一次（本机标定
+   ≈20 µs/次），100 MHz 时钟跑 32.5 ms 仿真就是 650 万次唤醒。实测：vbw 用例
+   980.5→78.0 s（12.6×）、scps 181.9→28.0 s（6.5×）、整套 30+ min→129.9 s。
+   单元级套件（DUT 直接作顶层、无 SV 包装）没有这个选项，改走第 3 条。
+2. **跨用例共享的 TB 状态在 setup 里归零**：捕获数组/计数器、使能开关、配置快照、
+   parser 游标。`test_filter` 命中的所有用例在**同一仿真会话**内顺序跑，DUT/TB 初值
+   只给第一个用例。实测：6 条一起跑时 scps/vbw 因 `word_cnt` 未清零、`tpg_en` 残留而
+   假失败（单独跑全绿）。
+3. **判据不要等「真实时间」**：按目标帧率/周期反算消隐，会在仿真里真的等那么久。
+   实测：120 Hz 一档每帧插 8.33 ms 空场，占该用例 26.3 ms 仿真时间的 63%。
+   判据优先用事件计数（帧数、包数、握手次数）。
+4. **提速前后用同一命令各跑一次并登记**（含 simulator 版本、`time`、`sim_time_ratio`）。
+   「感觉快了」不算证据。
 
 ## Workflow（完整命令与失败策略见 `references/workflow.md`）
 

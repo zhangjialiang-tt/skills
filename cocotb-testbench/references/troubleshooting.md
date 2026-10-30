@@ -57,6 +57,20 @@ pytest 的同一 shell 检查 `LM_LICENSE_FILE`、`MGLS_LICENSE_FILE` 或 licens
 overflow 和最终 truncation。不要用 `>>` 代替需要向零截断的 signed 除法，也不要为了 PASS
 改 golden 或放宽断言；先用一个负数 directed case 固定语义。
 
+**长工况墙钟远大于仿真时间（例：32.5 ms 仿真跑 980 s）**
+先看 ratio：`results.xml` / 末尾 TEST 表的 `sim_time_ratio` 只有几十 µs/s 时，瓶颈通常
+不是 RTL。首要嫌疑是 Python `Clock`——每半周期一次唤醒（本机 ≈20 µs/次），100 MHz 时钟
+跑 32.5 ms 即 650 万次。修法：有 TB 包装层就把时钟挪进 SV `always`，Python 只
+`RisingEdge` 等待；实测 vbw 980.5→78.0 s（12.6×）、套件 30+ min→129.9 s。无包装层的
+单元级套件没有这个选项，改为事件/边界等待，减少逐沿轮询次数。
+
+**单独跑绿、同一 `test_filter` 全跑红**
+cocotb 把命中的用例放在同一仿真会话里顺序执行，仿真实例初值只给第一个用例。检查 TB
+内跨用例共享状态：捕获数组与 `word_cnt`、图源使能（如 `tpg_en`）、配置快照、parser 游标。
+在每个用例入口统一清零/复位（放 bring_up / setup），不要依赖初值。判据特征：失败用例的
+SIM TIME 明显膨胀。实测：gige_video_ip 6 条一起跑时 scps/vbw 因 `word_cnt` 未清零与
+`tpg_en` 残留假失败。
+
 ## 环境
 
 **Windows**
