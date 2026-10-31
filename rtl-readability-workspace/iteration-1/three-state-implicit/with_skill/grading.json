@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [属于缺失 就是缺陷]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [属于缺失 就是缺陷]"
+    },
+    {
+      "text": "output_contains{any:[implicit 不 补注释 契约注释]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[implicit 不 补注释 契约注释])"
+    },
+    {
+      "text": "output_contains{any:[L0 注释]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[L0 注释])"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1
+  }
+}

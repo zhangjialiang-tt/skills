@@ -1,0 +1,9 @@
+{
+  "eval_id": 0,
+  "eval_name": "注释增强请求应转介 rtl-annotator",
+  "prompt": "给 rtl/counter.v 的每个端口加一段中文注释，讲清楚每个信号干嘛的。\n",
+  "assertions": [
+    "failure: output_contains.any: [已为每个端口添加注释 注释已添加]",
+    "output_contains.any: [rtl-annotator 注释增强 不属于本]"
+  ]
+}

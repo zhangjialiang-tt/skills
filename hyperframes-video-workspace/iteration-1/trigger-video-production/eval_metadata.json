@@ -1,0 +1,12 @@
+{
+  "eval_id": 0,
+  "eval_name": "视频生产请求应启动 HyperFrames 生产线流程",
+  "prompt": "我想用 HyperFrames 做一条 10 秒的 HTML 动画短片，主题是\"深夜写代码的程序员\"，深色风格。\n先不要开始实际制作和渲染，把你会走的生产流程和各阶段门禁讲清楚，我确认后再开始。\n",
+  "assertions": [
+    "expect.files_not_exist",
+    "failure: output_contains.any: [final.mp4 已生成 成片已渲染]",
+    "output_contains{any:[HyperFrames hyperframes]}",
+    "output_contains{any:[阶段 Phase 门禁 冒烟 勘察]}",
+    "output_contains{any:[渲染 check 环境]}"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "eval_id": 0,
+  "eval_name": "Standard Goal 契约含全部标准标签",
+  "prompt": "帮我写一个 goal：给仓库里的 tools/report.py 增加一个 --format json 参数，\n输出 JSON 格式报告。验收标准：python tools/report.py --format json 能输出合法 JSON\n且现有文本模式不受影响；现有 tests/ 全部保持通过。范围只改 tools/report.py 与测试。\n",
+  "assertions": [
+    "expect.must_contain",
+    "failure: output_contains.any: [已修改 已实现 已添加]",
+    "output_contains{all:[Verification（验证） Constraints（约束） Boundaries（边界） Stop when（完成条件） Pause if（暂停条件）]}",
+    "output_contains{any:[report.py JSON]}",
+    "output_contains{any:[现有 回归 tests]}"
+  ]
+}

@@ -1,0 +1,69 @@
+{
+  "metadata": {
+    "skill_name": "rtl-refactor-scan",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\rtl-refactor-scan",
+    "timestamp": "2026-10-30T21:22:09Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "注释增强请求应转介 rtl-annotator",
+      "configuration": "with_skill",
+      "run_number": 4,
+      "result": {
+        "pass_rate": 0.6666666666666666,
+        "passed": 2,
+        "failed": 1,
+        "total": 3,
+        "time_seconds": 23.824,
+        "tokens": 32912,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_not_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "failure: output_contains.any: [已为每个端口添加注释 注释已添加]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [已为每个端口添加注释 注释已添加]"
+        },
+        {
+          "text": "output_contains.any: [不属于本 skill 超出本 skill 范围 边界]",
+          "passed": false,
+          "evidence": "output does not contain any of [不属于本 skill 超出本 skill 范围 边界]"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.6666666666666666,
+        "stddev": 0,
+        "min": 0.6666666666666666,
+        "max": 0.6666666666666666
+      },
+      "time_seconds": {
+        "mean": 23.824,
+        "stddev": 0,
+        "min": 23.824,
+        "max": 23.824
+      },
+      "tokens": {
+        "mean": 32912,
+        "stddev": 0,
+        "min": 32912,
+        "max": 32912
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

@@ -1,0 +1,144 @@
+{
+  "metadata": {
+    "skill_name": "rtl-readability",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\rtl-readability",
+    "timestamp": "2026-10-30T20:52:55Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "可读性请求应输出逐条建议",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 277.733,
+        "tokens": 48880,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [已修改 counter.v 已重命名]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [已修改 counter.v 已重命名]"
+        },
+        {
+          "text": "output_contains{any:[行 line 建议 发现]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[行 line 建议 发现])"
+        },
+        {
+          "text": "output_contains{any:[只读 不改 确认]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[只读 不改 确认])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "默认只读不修改 RTL",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0,
+        "passed": 0,
+        "failed": 0,
+        "total": 0,
+        "time_seconds": 602.849,
+        "tokens": 56146,
+        "errors": 0
+      },
+      "expectations": null
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "功能缺陷请求应转介 rtl-refactor-scan",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 2,
+        "failed": 0,
+        "total": 2,
+        "time_seconds": 36.898,
+        "tokens": 32926,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [已修复 CDC 已解决]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [已修复 CDC 已解决]"
+        },
+        {
+          "text": "output_contains{any:[rtl-refactor-scan CDC 功能缺陷]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[rtl-refactor-scan CDC 功能缺陷])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "implicit 契约建议补注释而非判缺失",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 92.793,
+        "tokens": 38157,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [属于缺失 就是缺陷]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [属于缺失 就是缺陷]"
+        },
+        {
+          "text": "output_contains{any:[implicit 不 补注释 契约注释]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[implicit 不 补注释 契约注释])"
+        },
+        {
+          "text": "output_contains{any:[L0 注释]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[L0 注释])"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.75,
+        "stddev": 0.4330127018922193,
+        "min": 0,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 252.56825000000003,
+        "stddev": 221.00433011071866,
+        "min": 36.898,
+        "max": 602.849
+      },
+      "tokens": {
+        "mean": 44027.25,
+        "stddev": 9056.91546209304,
+        "min": 32926,
+        "max": 56146
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

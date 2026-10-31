@@ -1,0 +1,10 @@
+{
+  "eval_id": 0,
+  "eval_name": "显式 Goal 请求应输出 /goal 契约",
+  "prompt": "不要执行，只生成执行目标：帮我给一个 Python 脚本加 argparse 命令行参数支持，\n支持 --input 和 --output 两个参数，写一个 goal。\n",
+  "assertions": [
+    "expect.must_contain",
+    "failure: output_contains.any: [已添加 argparse 已修改脚本 脚本已创建]",
+    "output_contains{all:[/goal Verification Constraints Boundaries Stop]}"
+  ]
+}

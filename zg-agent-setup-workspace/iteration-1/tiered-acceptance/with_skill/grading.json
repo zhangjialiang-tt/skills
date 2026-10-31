@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [不需要验收]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [不需要验收]"
+    },
+    {
+      "text": "output_contains{any:[验收 分级]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[验收 分级])"
+    },
+    {
+      "text": "output_contains{any:[检索 搜索 index 索引]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[检索 搜索 index 索引])"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1
+  }
+}

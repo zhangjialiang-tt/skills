@@ -1,0 +1,8 @@
+{
+  "eval_id": 0,
+  "eval_name": "L1 smoke 仿真框架生成（目录契约校验）",
+  "prompt": "为 rtl/counter.v 搭建 L1 smoke 仿真框架。本机没有 ModelSim 环境，不要尝试运行仿真，\n只把框架文件生成出来（目录、Makefile、fileset、ports、L1 testbench），生成后报告框架状态。\n",
+  "assertions": [
+    "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\build-testbench\\evals\\fixtures\\scripts\\check_l1_framework.cmd"
+  ]
+}

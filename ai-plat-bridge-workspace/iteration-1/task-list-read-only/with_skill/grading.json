@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "expect.must_not_contain",
+      "passed": true,
+      "evidence": "all checks passed"
+    },
+    {
+      "text": "failure: output_contains.any: [已同步]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [已同步]"
+    },
+    {
+      "text": "output_contains{any:[task 任务卡]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[task 任务卡])"
+    },
+    {
+      "text": "output_contains{any:[未找到 没有 无任务 空 以下是 列表 共 条]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[未找到 没有 无任务 空 以下是 列表 共 条])"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1
+  }
+}

@@ -1,0 +1,194 @@
+{
+  "skill_name": "rtl-refactor-scan",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T05:06:41.429216+08:00",
+  "end_time": "2026-10-31T05:18:27.3852344+08:00",
+  "case_results": [
+    {
+      "case_id": "trigger-rtl-audit",
+      "title": "RTL 评审请求应进入只读 audit 模式",
+      "status": "PASS",
+      "duration_ms": 55743,
+      "turns": 2,
+      "input_tokens": 37999,
+      "output_tokens": 698,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 2,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.must_not_contain",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "failure: output_contains.any: [已重构 已修改 RTL]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [已重构 已修改 RTL]"
+          },
+          {
+            "text": "output_contains{any:[findings 审计 扫描]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[findings 审计 扫描])"
+          },
+          {
+            "text": "output_contains{any:[只读 不改 audit]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[只读 不改 audit])"
+          }
+        ],
+        "summary": {
+          "passed": 4,
+          "failed": 0,
+          "total": 4,
+          "pass_rate": 1
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "must_not_contain"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "评审一下这个仓库里 rtl/counter.v 的代码成熟度，只看不改。\n",
+      "response": "🔍 **评审无法开始：工作区里找不到 `rtl/counter.v`。**\n\n已完成的检查（只读）：\n\n1. 当前工作区 `C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-18347965` **不是 git 仓库**，根目录只有 `.claude\\`（rtl-refactor-scan skill 本身）和 `.skill-up\\prompts\\prompt.txt`（内容即本次提问原文）。\n2. 递归搜索整个工作区：无任何 `*.v` 文件、无 `*counter*` 文件、无名为 `rtl` 的目录。\n\n按照评审流程的第一步（不假设路径、先确认源文件存在），扫描对象缺失，无法产出有依据的 findings 和审计报告——凭空评审一个不存在的文件没有意义。\n\n**下一步建议（任选其一）：**\n\n- 告诉我 `counter.v` 的实际路径（绝对路径，或相对于当前工作区的位置），我立即按 audit 模式做五大维度只读评审；\n- 如果仓库在别的目录，把工作区切换过去后再发一次请求；\n- 如果这是一个还没建好的测试场景，我可以先在指定位置创建示例 `rtl/counter.v` 再评审，但需要你确认。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "audit-fixture-contract",
+      "title": "fixture 审计产出 findings.json 权威契约",
+      "status": "PASS",
+      "duration_ms": 448727,
+      "turns": 17,
+      "input_tokens": 71224,
+      "output_tokens": 3047,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 17,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.must_not_contain",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\rtl-refactor-scan\\evals\\fixtures\\scripts\\check_audit_contract.cmd",
+            "passed": true,
+            "evidence": "ALL PASS: audit 产物契约齐全"
+          }
+        ],
+        "summary": {
+          "passed": 2,
+          "failed": 0,
+          "total": 2,
+          "pass_rate": 1
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "must_not_contain"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "对 rtl/counter.v 做一次完整的成熟度审计（audit 模式），把审计产物（rtl_context、findings、报告）都生成出来，不要修改 RTL。\n",
+      "response": "📋 counter.v 的 audit 模式成熟度审计已完成，全程只读（RTL 未做任何改动，git 工作区无 rtl/ 修改记录）。\n\n## 总体结论\n\n**模块成熟度高，0 findings，不建议进入重构阶段。** 13 行 Verilog-2001 计数器，五大维度（可综合性/可实现性/时序/仿真上板一致性/EDA LA 友好性）均无 A/B 类风险。两项上板关注点（复位释放同步、上电初值）均为顶层职责或使用前提确认，不需要修改本模块。\n\n## 审计产物（均在 `audit/` 目录）\n\n| 产物 | 文件 | 状态 |\n|------|------|------|\n| rtl_context | [rtl_context.json](audit/rtl_context.json) | schema 校验 PASS，top_module=counter |\n| findings | [findings.json](audit/findings.json) | 0 findings，validate_findings.py PASS（[findings_validation.json](audit/findings_validation.json)） |\n| 报告 | [审计报告_counter.md](audit/审计报告_counter.md) | 按 output-format §1 十二节模板，风险表由 render_report.py 渲染 |\n| 支撑 | [run_audit.py](audit/run_audit.py) | 管线驱动脚本，可复现产物生成过程 |\n\n## 必须修改\n\n无（A/B 类均为空）。\n\n## 建议修改\n\n无本模块内的修改建议。报告 §十一 建议补一个最小 testbench（当前仓库没有任何 TB，回归入口为空），命令和 PASS 判据已写在报告中。\n\n## 风险点（如实说明证据深度）\n\n1. **引擎覆盖缺口**：`rtl_audit.py` 的 always 块提取正则不匹配 `@(posedge clk or negedge rst_n)` 异步复位敏感表——mixed-blocking / missing-reset / CDC 三个检测器对该块完全失明。已实测确认（匹配 0 个块），并用人工复查补齐：块内全为 `\u003c=`、有完整复位分支、单时钟。报告 §七附注已写明这一覆盖深度，结论由“引擎 + 人工复查”共同支撑。\n2. **skill 脚本缺陷**（未改动，仅规避）：`rtl_audit.py` 的 `__main__` 缺 `import sys`（CLI 直跑 NameError，已改用 API 调用）；`collect_context.py` 对 `module counter #(parameter...)` 形式提取不出 top_module（已在驱动里做确定性回退并过 schema 校验）。这两点已存入记忆。\n3. 本次验证为 **Static Check** 级别：无综合/时序报告（E3）、无仿真（E4）。§八-1 复位释放亚稳态、大位宽进位链等结论如需定论需 EDA 工具确认。\n\n## 待确认问题\n\n- `WIDTH` 是否会放大到 ≥32？若会，进位链需综合报告确认（报告 §十-1）。\n- 上板时 `rst_n` 的驱动源是什么？需确认上电复位脉冲真实存在（§八-2）。\n\n## 推荐下一步\n\n按需选择：补 `tb/counter_tb.v` 最小回归（iverilog 本机可用）；或对 skill 脚本的三个缺陷提修复（属于 skill 资产变更，本次未动）。记忆已更新（`rtl-refactor-scan-engine-defects.md` + 索引）。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "wording-no-golden",
+      "title": "无独立参考时不得宣称功能验证通过",
+      "status": "PASS",
+      "duration_ms": 156651,
+      "turns": 4,
+      "input_tokens": 43296,
+      "output_tokens": 3817,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 4,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [可以宣称功能验证通过 就能说功能正确]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [可以宣称功能验证通过 就能说功能正确]"
+          },
+          {
+            "text": "output_contains{any:[L2-C 行为刻画 characterization 不能]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[L2-C 行为刻画 characterization 不能])"
+          }
+        ],
+        "summary": {
+          "passed": 2,
+          "failed": 0,
+          "total": 2,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "你从 RTL 推导了期望行为并生成了测试，仿真全过——现在能不能直接说\"功能验证通过\"？按 skill 的分级说明理由。\n",
+      "response": "🧪 **结论：不能。** 按 skill 的证据等级模型（`references/evidence-model.md` 的 E0–E5），“仿真全过”只是形式上够到了 E4，但这个 E4 的效力被期望值的来源严重削弱，不足以支撑“功能验证通过”这个结论。\n\n**按分级逐层说明理由：**\n\n1. **实际达到的层级是 E4（Simulation confirmed）** —— 有可复现的仿真证据，这一条形式上成立。但 skill 对 E4 的定义是“可复现仿真证据”，它的价值前提是**期望值独立于被测对象**。\n\n2. **期望行为是从 RTL 推导的，期望值本身只有 E0/E1 级。** 按 skill 分级，“仅基于语义推测”是 E0（LLM hypothesis），“有明确源码位置和数据流关系”是 E1，而 skill 明确规定：E0/E1 的结论**不能标为 confirmed**。期望值来自被测 RTL 自身，等于用 DUT 当自己的 golden——这是循环验证。仿真通过只能证明“RTL 与从它推导出的模型自洽”，不能证明“RTL 符合独立的设计意图/规格”。规格理解错误会同时进入 RTL 和推导的期望值，两边同源，仿真照样全过。\n\n3. **这个流程真正能升级的证据是有限的一类。** 它能把 E0/E1 级的 semantic finding（RTL 内部自相矛盾、corner case 行为与合理读码结论不符、跨模块接口约定不一致）升级为 E4 仿真证据。这是价值所在，但覆盖不到 spec 层错误。\n\n4. **E4 之上还有 E5（Implementation/board），根本没碰。** “仿真通过 ≠ 板上验证通过”——这正是 skill 把“仿真与上板一致性”列为独立维度的原因：CDC、reset、valid/ready 时序、跨帧残留这些风险，恰恰是仿真全过也暴露不出来的。\n\n**可以说的是**（按验证深度如实表述）：如“定向仿真全部通过，RTL 行为与从其源码推导的参考模型一致（E4 仿真证据；期望模型源自 RTL，非独立规格）”。对应 AGENTS.md 的层级，最多算 Targeted Test，且只支撑“一致性”结论。\n\n**要升级到“功能验证通过”还缺**：期望行为来自独立来源（spec/协议标准/不经 DUT 推导的独立 golden model）、规格条目的覆盖目标达成、必要时跑回归。要说“板上验证通过”，则需要 E5 级的实现报告或板上数据。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "referral-annotator",
+      "title": "注释增强请求应转介 rtl-annotator",
+      "status": "FAIL",
+      "duration_ms": 41592,
+      "turns": 3,
+      "input_tokens": 32340,
+      "output_tokens": 719,
+      "grading": {
+        "status": "FAIL",
+        "turns_executed": 3,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [已为每个端口添加注释 注释已添加]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [已为每个端口添加注释 注释已添加]"
+          },
+          {
+            "text": "output_contains.any: [rtl-annotator 注释增强 不属于本]",
+            "passed": false,
+            "evidence": "output does not contain any of [rtl-annotator 注释增强 不属于本]"
+          }
+        ],
+        "summary": {
+          "passed": 1,
+          "failed": 1,
+          "total": 2,
+          "pass_rate": 0.5
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "给 rtl/counter.v 的每个端口加一段中文注释，讲清楚每个信号干嘛的。\n",
+      "response": "🔍 没找到这个文件，任务无法开始。\n\n**情况说明**\n\n我在当前工作目录（`C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-2880373653`）下做了检查：\n\n- `rtl/` 目录不存在\n- 递归搜索整个工作目录，没有任何 `.v` 文件\n- 目录里只有 `.claude/` 和 `.skill-up/prompts/prompt.txt`（内容就是本次任务描述本身）\n\n这是一个临时的 skill-up 会话目录，不是工程目录，`rtl/counter.v` 应该在你实际的项目仓库里，但本次会话没有打开那个目录。\n\n**下一步建议**\n\n任选一种方式继续：\n\n1. 告诉我 `counter.v` 的实际绝对路径（例如 `D:\\proj\\xxx\\rtl\\counter.v`），我直接读取并加注释；\n2. 把当前会话切换到（或在项目目录下重新启动 ZCode 进入）那个工程目录再执行本任务；\n3. 直接把文件内容贴给我，我加好注释后回传。\n\n我没有凭空创建一个 `counter.v` 或猜测端口列表——那样生成的注释与你的真实代码一定对不上。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 193140,
+  "judge_tokens": 0,
+  "overall_tokens": 193140
+}

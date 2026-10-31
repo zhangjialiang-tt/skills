@@ -1,0 +1,11 @@
+{
+  "eval_id": 0,
+  "eval_name": "宽泛\"查工作台\"请求应先澄清",
+  "prompt": "帮我查一下工作台。\n",
+  "assertions": [
+    "expect.must_not_contain",
+    "failure: output_contains.any: [已同步]",
+    "output_contains{any:[澄清 请明确 哪张 哪个 具体]}",
+    "output_contains.any: [task knowledge log project]"
+  ]
+}

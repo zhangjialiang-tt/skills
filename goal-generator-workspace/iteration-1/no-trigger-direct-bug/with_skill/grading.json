@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "expect.must_not_contain",
+      "passed": true,
+      "evidence": "all checks passed"
+    },
+    {
+      "text": "failure: output_contains.all: missing [/goal Verification（验证）]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain required keywords: [/goal Verification（验证）]"
+    },
+    {
+      "text": "output_contains{any:[复现 调试 tb testbench 波形 测试 信号]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[复现 调试 tb testbench 波形 测试 信号])"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1
+  }
+}

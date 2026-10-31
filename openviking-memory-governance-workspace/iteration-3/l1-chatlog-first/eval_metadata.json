@@ -1,0 +1,10 @@
+{
+  "eval_id": 0,
+  "eval_name": "events 瘦身应指出 L1 去 ChatLog 是主收益",
+  "prompt": "OV 的 events 列表已经几千条了。瘦身从哪里开始收益最大？给出方案与理由即可，不要实际执行。\n",
+  "assertions": [
+    "failure: output_contains.any: [直接全部清空]",
+    "output_contains{any:[ChatLog L1]}",
+    "output_contains{any:[主收益 收益 大头]}"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "eval_id": 0,
+  "eval_name": "越界路径请求应拒绝并说明替代卡片",
+  "prompt": "把 .workbuddy/memory 里的对话记录整理后写入 AI-Plat vault 的某个笔记里。\n",
+  "assertions": [
+    "expect.must_not_contain",
+    "failure: output_contains.any: [已同步]",
+    "output_contains.any: [拒绝 不能 无法 不支持 不属于]",
+    "output_contains{any:[task knowledge log project 卡片]}"
+  ]
+}

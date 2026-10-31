@@ -1,0 +1,138 @@
+{
+  "skill_name": "openviking-memory-governance",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T03:19:37.7637756+08:00",
+  "end_time": "2026-10-31T03:35:14.5233664+08:00",
+  "case_results": [
+    {
+      "case_id": "trigger-governance-request",
+      "title": "治理请求应启动七步流程且体检基线先行",
+      "status": "ERROR",
+      "duration_ms": 303134,
+      "turns": 17,
+      "input_tokens": 67874,
+      "output_tokens": 1402,
+      "error": "agent execution failed: claude-code run failed: context deadline exceeded (case timeout 300s via cases.defaults.timeout_seconds)",
+      "grading": null,
+      "configuration": "with_skill",
+      "prompt": "我的 OpenViking 记忆库感觉只增不减，帮我做一轮治理瘦身。\n",
+      "response": "格式可解析。聚合 adds 分布，同时拉取 updates/deletes/skipped 三个字段：",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "l1-chatlog-first",
+      "title": "events 瘦身应指出 L1 去 ChatLog 是主收益",
+      "status": "PASS",
+      "duration_ms": 292219,
+      "turns": 4,
+      "input_tokens": 65070,
+      "output_tokens": 3972,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 4,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [直接全部清空]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [直接全部清空]"
+          },
+          {
+            "text": "output_contains{any:[ChatLog L1]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[ChatLog L1])"
+          },
+          {
+            "text": "output_contains{any:[主收益 收益 大头]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[主收益 收益 大头])"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "total": 3,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "OV 的 events 列表已经几千条了，瘦身应该从哪里开始、收益最大？\n",
+      "response": "好消息是：这个实例的主收益其实上一轮已经拿走了，剩下的是“并”而不是“删”。结论和依据如下。\n\n## 总体结论\n\n按收益从大到小排：\n\n1. **Peer 存量合并才是当前大头**。你 60+ 个 peer 里同一项目散落多个变体：`pw-gige` 有 3 个（`github.com-zhangjialiang-tt-pw-gige`、`-mnt-data-plat-...-lib-pw-gige`、`C--100-Working-105-...-pw-gige`），`zc29a` 系列约 10 个（`zc29a-01/02/03/base-1280-1024/poweron-cold-hot/support-100hz/tj180` + `zc29a` + `C--100-Working-102-...-zc29a-02`）。两个后果：① 源码核实的跨 peer 召回降权对 events 施加 0.1 penalty——事件散在变体 peer 里直接拖累召回质量，这是几千条 events 影响实际体验的主渠道；② 治理手册的 L2 去重限“同 peer”，peer 不并，重复对就找不到。合并走 `ov mv`，向量改键迁移、零重新 embedding。\n\n2. **L1 尾巴只有 30 张，小而确定，建议先做掉**。grep 全量实证：user 层 8 张 + peer 层 22 张事件卡仍带 ChatLog，全部日期 ≤10-25（runner 是 10-26 跑的），且清一色是“标题同时含空格和斜杠”的高危形态（如 `CHG-003 D-1/D-4 实施与全量验证.md`、`M2 3.1/3.2 提交落盘.md`）——正是手册预警会被 collision-skip 跳过的那批。\n\n3. **L2 高置信去重先标定再投入**。10-26 的 W44 周报显示“重复组 0”，说明现有巡检判据没抓到重复（或确实少）。几千条里能删多少，先抽样才知道，不要按理论上限预期。\n\n4. **L3 状态链合并是零头**。实测删除率仅 5–10%，且历轮评审结论、用户裁定确认类事件是合并禁区——你库里这类卡不少，同名成链不等于冗余。\n\n## 不建议投入的方向\n\n- **写入侧不用再动**：events 模板 10-26 已收紧并实测生效（新卡 632 字节、转写命中 0，改造前 93% 带转写），周巡检 cron 在岗。水龙头已关，存量清完不会以老速度涨回来。\n- **sessions 别碰**：786 个 session 不影响 search 成本（transcript 不进向量索引），冷存只是省磁盘，和 events 瘦身是两件事。\n\n## 数字口径说明\n\n- “几千条”应含 peer 层；W44 周报口径 user 层 events 1,021 张、中位 3.3KB、\u003e16KB 29 张。peer 层事件总数我没统计（只读探查未做全量计数）。\n- 30 张残留数来自行首 `# … ChatLog:` 判据，比周巡检的“含 `**user**`”判据窄，实际残留可能略多。\n\n## 下一步选项（点哪个我做哪个，动手前双备份、按批次批准）\n\n- **A**：30 张残留清单落盘 + 按写回规程试点 1–2 张（下划线临时 URI + `ov mv` + 磁盘复核）\n- **B**：出 peer 变体合并映射表供你拍板，批准后按 scope 从小到大分批 `ov mv`\n- **C**：L2 重复抽样标定，给出真实可删率再决定要不要做",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "l3-merge-forbidden",
+      "title": "评审结论/用户裁定类事件不得合并删减",
+      "status": "PASS",
+      "duration_ms": 36517,
+      "turns": 2,
+      "input_tokens": 35544,
+      "output_tokens": 1183,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 2,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [可以合并删除]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [可以合并删除]"
+          },
+          {
+            "text": "output_contains{any:[L3 禁区 不能 不建议 不要合并]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[L3 禁区 不能 不建议 不要合并])"
+          },
+          {
+            "text": "output_contains{any:[评审结论 用户裁定]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[评审结论 用户裁定])"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "total": 3,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "events 里有不少\"用户裁定类\"和\"评审结论类\"的记录，太占地方了，能跟其他 events 合并压缩掉吗？\n",
+      "response": "🎯 **不建议，这两类是明确的合并禁区。** 治理手册第六步（存量 events 瘦身）里写得很直接：\n\n\u003e 历轮评审结论和用户裁定确认类事件是独立资产，列为 L3 禁区，同名成链不等于冗余是这一步的第一判断。\n\n**为什么不能并：**\n\n- L3 状态链合并只处理一种情况：同一工作项的 started/blocked/completed 这类链，**有终态且覆盖中间态**时，才把中间态写成“过程节点”一节并入终态事件；未完结的链不动。\n- 评审结论和用户裁定不属于“被终态覆盖的中间态”——它们是独立的决策资产，后续回顾、追溯“当时为什么这么定”全靠它们。同名成链只是标题相似，不是冗余。\n- 就算放开做，L3 实测删除率只有约 **5–10%**，收益本来就很薄，不值得为它破禁区。\n\n**真正占地方的大头在 L1 去 ChatLog**，这才是确定性瘦身：\n\n- 每条 events 只保留 Summary 段 + 原 MEMORY_FIELDS 块，整段删掉 ChatLog，逐字校验 Summary 不变。\n- 聊天原文仍留在 sessions 原料层，追溯不受影响；摘要和向量按干净文本重建。\n- 技能自带运行器 `scripts/l1_runner.py`（已在 OpenViking v0.5.2 跑完一轮全量；换实例改文件头部 `BASE`/`WORK` 两个路径）。注意批量前把标题同时含空格和斜杠的事件单独分出来，那是写回失败和孪生文件的高发形态。\n\n**建议下一步：** 先对 events 做一轮画像（总数、ChatLog 占比、正文总字符），看 L1 能省多少，再决定是否动手。如果你确实认为某几条裁定/评审类事件内容重复，那是“内容碰撞人工合并”的范畴——点名到具体文件、双备份、逐字保留原文，单独走批准流程，不混进批量。\n\n要做画像或 L1 批量的话说一声，我按“只读巡检 → 你点名批准 → 双备份 → 试点 → 批量”的顺序来。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "sessions-tiered-retention",
+      "title": "sessions 处置应按分级保留",
+      "status": "ERROR",
+      "duration_ms": 303127,
+      "turns": 12,
+      "input_tokens": 50704,
+      "output_tokens": 1392,
+      "error": "agent execution failed: claude-code run failed: context deadline exceeded (case timeout 300s via cases.defaults.timeout_seconds)",
+      "grading": null,
+      "configuration": "with_skill",
+      "prompt": "OV 的 sessions 目录很大，这些历史会话怎么处理？\n",
+      "response": "数字对不上（5533 目录 vs 763 文件），直接在大清单里抽查已知 session 的条目核对：",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 227141,
+  "judge_tokens": 0,
+  "overall_tokens": 227141
+}

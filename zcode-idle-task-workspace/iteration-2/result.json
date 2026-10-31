@@ -1,0 +1,62 @@
+{
+  "skill_name": "zcode-idle-task",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T04:13:38.0252691+08:00",
+  "end_time": "2026-10-31T04:14:03.8105671+08:00",
+  "case_results": [
+    {
+      "case_id": "immediate-analysis-not-trigger",
+      "title": "立即分析请求不应生成交付合同",
+      "status": "PASS",
+      "duration_ms": 25307,
+      "turns": 3,
+      "input_tokens": 32145,
+      "output_tokens": 455,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 3,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [任务合同如下 已生成任务合同 闲时任务指令如下 夜间执行计划如下]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [任务合同如下 已生成任务合同 闲时任务指令如下 夜间执行计划如下]"
+          },
+          {
+            "text": "output_contains{any:[目录 结构 分析]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[目录 结构 分析])"
+          }
+        ],
+        "summary": {
+          "passed": 2,
+          "failed": 0,
+          "total": 2,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "现在立即帮我分析一下这个仓库的目录结构，直接告诉我结果。\n",
+      "response": "🌀 分析完成。这不是一个 git 仓库，而是一个 skill 开发/测试工作区，结构如下：\n\n```text\nC:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-1753893818\n├── .claude\\\n│   └── skills\\\n│       └── zcode-idle-task\\          # 一个名为 zcode-idle-task 的 agent skill 包\n│           ├── SKILL.md              # skill 主定义文件\n│           ├── agents\\\n│           │   └── interface.yaml    # agent 接口定义\n│           ├── references\\\n│           │   ├── prompt-templates.md   # prompt 模板参考\n│           │   └── task-contract.md      # 任务合同参考\n│           └── scripts\\\n│               └── validate_idle_task.py # 校验脚本\n└── .skill-up\\\n    └── prompts\\\n        └── prompt.txt                # skill-up 工具的 prompt 输入文件\n```\n\n**结论**：这个目录只包含一个 skill 包 `zcode-idle-task`（用于生成 ZCode 闲时任务指令），外加 `.skill-up\\prompts\\prompt.txt` 这一个驱动文件。没有源代码、测试或构建配置，属于典型的 skill 编辑/升级临时工作区。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 32600,
+  "judge_tokens": 0,
+  "overall_tokens": 32600
+}

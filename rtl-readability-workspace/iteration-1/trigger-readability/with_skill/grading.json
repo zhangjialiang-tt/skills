@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [已修改 counter.v 已重命名]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [已修改 counter.v 已重命名]"
+    },
+    {
+      "text": "output_contains{any:[行 line 建议 发现]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[行 line 建议 发现])"
+    },
+    {
+      "text": "output_contains{any:[只读 不改 确认]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[只读 不改 确认])"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1
+  }
+}

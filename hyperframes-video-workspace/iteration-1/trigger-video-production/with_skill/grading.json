@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "expect.files_not_exist",
+      "passed": true,
+      "evidence": "all checks passed"
+    },
+    {
+      "text": "failure: output_contains.any: [final.mp4 已生成 成片已渲染]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [final.mp4 已生成 成片已渲染]"
+    },
+    {
+      "text": "output_contains{any:[HyperFrames hyperframes]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[HyperFrames hyperframes])"
+    },
+    {
+      "text": "output_contains{any:[阶段 Phase 门禁 冒烟 勘察]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[阶段 Phase 门禁 冒烟 勘察])"
+    },
+    {
+      "text": "output_contains{any:[渲染 check 环境]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[渲染 check 环境])"
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 0,
+    "total": 5,
+    "pass_rate": 1
+  }
+}

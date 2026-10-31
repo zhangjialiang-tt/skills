@@ -1,0 +1,20 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [已自动创建任务 已提交到 ZCode]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [已自动创建任务 已提交到 ZCode]"
+    },
+    {
+      "text": "output_contains{any:[确认 确认后 自行提交 ZCode 界面]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[确认 确认后 自行提交 ZCode 界面])"
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 0,
+    "total": 2,
+    "pass_rate": 1
+  }
+}

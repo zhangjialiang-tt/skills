@@ -1,0 +1,103 @@
+{
+  "skill_name": "openviking-agent-onboarding",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T02:59:44.5436467+08:00",
+  "end_time": "2026-10-31T03:08:03.2137303+08:00",
+  "case_results": [
+    {
+      "case_id": "probe-before-action",
+      "title": "接入前应先做只读探测",
+      "status": "PASS",
+      "duration_ms": 250161,
+      "turns": 9,
+      "input_tokens": 52420,
+      "output_tokens": 2825,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 9,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [已经接好了]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [已经接好了]"
+          },
+          {
+            "text": "output_contains{any:[probe 探测 先 分层验证 接入状态 活性 已经完整接入]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[probe 探测 先 分层验证 接入状态 活性 已经完整接入])"
+          },
+          {
+            "text": "output_contains{any:[ov-agent-probe 配置 hooks MCP]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[ov-agent-probe 配置 hooks MCP])"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "total": 3,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "帮我把新装的 codex 接入 OpenViking 长期记忆。\n",
+      "response": "🍀 **结论：不用接——你的 codex 已经完整接入 OpenViking，而且链路昨天还在正常落库。** 全程只做了只读探测，没有改动任何配置。\n\n按接入的两层铁律逐层验证：\n\n**只读层（MCP）✅** — `~/.codex/config.toml` 里已注册 `[mcp_servers.openviking-memory]`（指向 `http://101.35.138.46:1933`），OV marketplace 已配置，插件 `openviking-memory@openviking` 已启用。codex 里的模型可以 search / read / find 记忆。\n\n**同步层（Hooks）✅** — `[features] plugin_hooks = true`，OV 插件的 7 个生命周期事件（session_start、user_prompt_submit、pre_tool_use、post_tool_use、pre_compact、stop、session_end）全部注册且带有 trusted_hash，说明 codex 已信任并加载这些 hook。插件包是 10-29 装的，config 10-30 更新，时间线连贯。\n\n**服务端第 4 级验证（真实落库）✅** — 这是最关键的一级，全部通过：\n\n- `cx-` 前缀共 **143 条会话**，最近活动 **2026-10-30**（就在昨天）\n- 抽样 60 条里 53 条有 commit、52 条完成记忆提取，累计 **807 条记忆**——commit→提取链路通\n- 服务端最近 3 条会话 ID 与本机 `~/.codex/sessions` 的 rollout 文件名**一一对应**，确认是你这台机器的 codex 在上传，不是其它机器共用前缀\n- `~/.openviking/pending/` 为空，无失败积压\n\n两个小观察，都不是问题：审计工具对“抽样会话 message_count=0”报了个警告，但这是 skill 已记录的假象——codex 插件走 commit 归档而非逐条消息上传，记忆提取数据证明内容实际送达了；另有 1 条已 commit 未提取的会话，属于后台异步提取的正常延迟，不值得干预。\n\n两点提醒：\n\n1. **不要再跑一键安装器**。当前是 marketplace 插件路径，官方一键安装与 marketplace 混用会让 hooks 跑两遍、记忆重复入库。如果将来 codex 记忆失效，先用 `ov-agent-probe.mjs codex` + `ov-session-audit.mjs --agent codex` 排查，别直接重装。\n2. `config.toml` 里由官方安装器写入了 OV 的 Bearer token（明文，这是 Codex 插件 MCP 配置格式的固有形态）。该文件是本机配置，注意不要把它提交到仓库或同步到公开位置。\n\n已把“codex 已接入 OV、验证状态与排障入口”写入长期记忆，未来 codex 记忆出问题时可直接复用这次的判据。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "exclude-server-ops",
+      "title": "服务端运维请求应转介 openviking-server-ops",
+      "status": "FAIL",
+      "duration_ms": 247419,
+      "turns": 9,
+      "input_tokens": 53940,
+      "output_tokens": 1626,
+      "grading": {
+        "status": "FAIL",
+        "turns_executed": 9,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [开始 reindex 已启动 reindex]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [开始 reindex 已启动 reindex]"
+          },
+          {
+            "text": "output_contains.any: [openviking-server-ops 服务端运维 不在本 skill 超出本]",
+            "passed": false,
+            "evidence": "output does not contain any of [openviking-server-ops 服务端运维 不在本 skill 超出本]"
+          }
+        ],
+        "summary": {
+          "passed": 1,
+          "failed": 1,
+          "total": 2,
+          "pass_rate": 0.5
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "OpenViking 服务端最近记忆检索变慢，帮我 reindex 一下。\n",
+      "response": "服务端上已经有一个 reindex 在跑了，我没有重复提交。目前状态和我的安排如下：\n\n**关键发现**\n\n- 队列中有一个 `admin_reindex` 任务，目标正是记忆数据所在的 `viking://user/zhangjl`，于今天凌晨 02:58（本地时间）启动，目前活跃处理中。从队列观察器看，它在重建语义节点 + 向量（已处理约 2098 个语义节点、938 条向量，无错误），应该是 `semantic_and_vectors` 全量模式。\n- 这个任务不是我启动的——可能是你之前手动触发过，或另一个 agent 会话触发的。如果你不知情，可以告诉我，我再进一步排查来源。\n- 对它重复提交 reindex 只会排队冲突、浪费 embedding 调用，所以我选择等它完成再验证。\n\n**已记录的基线（reindex 前）**\n\n- 语义检索耗时 2.48s/次\n- retrieval 组件 zero-result 率 14.3%（4047 次查询），服务端组件本身全部 healthy\n\n**接下来**\n\n我已在后台挂了 `ov wait` 监控队列，reindex 完成后会自动通知我，届时我会复测检索耗时和召回质量，并与基线对比汇报。如果届时 `resources/`、`agent/` 等共享 scope 也需要 reindex，再视结果决定。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 110811,
+  "judge_tokens": 0,
+  "overall_tokens": 110811
+}

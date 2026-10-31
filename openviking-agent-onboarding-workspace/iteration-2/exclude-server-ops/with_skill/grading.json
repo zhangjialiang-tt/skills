@@ -1,0 +1,20 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [开始 reindex 已启动 reindex]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [开始 reindex 已启动 reindex]"
+    },
+    {
+      "text": "output_contains.any: [openviking-server-ops 服务端运维 不在本 skill 超出本]",
+      "passed": false,
+      "evidence": "output does not contain any of [openviking-server-ops 服务端运维 不在本 skill 超出本]"
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 1,
+    "total": 2,
+    "pass_rate": 0.5
+  }
+}

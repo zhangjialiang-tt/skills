@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "expect.must_contain",
+      "passed": true,
+      "evidence": "all checks passed"
+    },
+    {
+      "text": "failure: output_contains.any: [根因是 status FIFO 根因就是 status FIFO]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [根因是 status FIFO 根因就是 status FIFO]"
+    },
+    {
+      "text": "output_contains{all:[【当前事实】 【待验证假设】 【验收证据】 【必须保持】 【工作边界】 【阻塞与停止】]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (all:[【当前事实】 【待验证假设】 【验收证据】 【必须保持】 【工作边界】 【阻塞与停止】])"
+    },
+    {
+      "text": "output_contains{any:[data FIFO]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[data FIFO])"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1
+  }
+}

@@ -1,0 +1,168 @@
+{
+  "skill_name": "hyperframes-video",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T07:18:00.7070461+08:00",
+  "end_time": "2026-10-31T07:28:48.6688909+08:00",
+  "case_results": [
+    {
+      "case_id": "trigger-video-production",
+      "title": "视频生产请求应启动 HyperFrames 生产线流程",
+      "status": "PASS",
+      "duration_ms": 76427,
+      "turns": 2,
+      "input_tokens": 35936,
+      "output_tokens": 3389,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 2,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.files_not_exist",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "failure: output_contains.any: [final.mp4 已生成 成片已渲染]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [final.mp4 已生成 成片已渲染]"
+          },
+          {
+            "text": "output_contains{any:[HyperFrames hyperframes]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[HyperFrames hyperframes])"
+          },
+          {
+            "text": "output_contains{any:[阶段 Phase 门禁 冒烟 勘察]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[阶段 Phase 门禁 冒烟 勘察])"
+          },
+          {
+            "text": "output_contains{any:[渲染 check 环境]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[渲染 check 环境])"
+          }
+        ],
+        "summary": {
+          "passed": 5,
+          "failed": 0,
+          "total": 5,
+          "pass_rate": 1
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "files_not_exist"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "我想用 HyperFrames 做一条 10 秒的 HTML 动画短片，主题是\"深夜写代码的程序员\"，深色风格。\n先不要开始实际制作和渲染，把你会走的生产流程和各阶段门禁讲清楚，我确认后再开始。\n",
+      "response": "🎬 好的。基于 HyperFrames 视频生产 skill 的已验证流程，这条 10 秒短片的生产线如下——只讲流程，不动手。\n\n## 总体思路\n\n**HTML 就是视频**：画面全部由 HTML/CSS/GSAP 代码动画构成（不调用 AI 视频生成模型），HyperFrames 渲染器在无头 Chrome 中逐帧 seek 后交 FFmpeg 编码。同源码 + 同环境 = 同一部片子，可复现、可重渲。每个阶段有门禁，未过不进下一阶段。\n\n## 生产流程（10 个阶段）\n\n**Phase 0 · 需求定位** — 确认参数：时长 10s、分辨率（默认 1920×1080@30fps）、深色视觉风格、是否配音。确定叙事核心钩子（前 5 秒抓住人的冲突或问句）。\n\n**Phase 1 · 环境勘察** — 逐项实测并落盘 `progress.md`：Node ≥22、FFmpeg 在 PATH、Chrome/Edge 可执行文件、中文字体（msyh 等）、磁盘 ≥5GB。不假设，只信实测结果。\n\n**Phase 2 · 官方契约核对 + 冒烟渲染** — 先抓取官方 llms.txt 核对当版本契约（HTML schema、GSAP 动画契约、渲染命令），**不凭记忆写 API**。然后 `hyperframes init` 建项目，加一个带 GSAP 动画的最小标题，跑通 `npm run check` + draft 质量冒烟渲染，ffprobe 验证产物。冒烟不过先修环境（`doctor`），不带病进内容阶段。\n\n**Phase 3 · 内容三件套** — 产出 `script.md`（逐场景旁白 + 语速预算 + 事实核查表）、`storyboard.md`（每场景起止时间，**各场景之和必须闭合等于 10s**）、`design_system.md`（深色色板、编辑器窗组件规范、动画节奏规则）。10s 片子脚本+分镜可合并为一份。**这是第一个你可以插入审阅的点**：脚本/分镜定稿前暂停给你看。\n\n**Phase 4 · 场景实现** — 主合成 `index.html` 挂载各场景合成 + 字幕合成 + 音频轨；每个场景独立文件、可单独渲染检查。GSAP 下载到本地，渲染不依赖外网。\n\n**Phase 5 · check 门禁循环** — `npm run check`（lint + 运行时 + 布局 + 动效 + 对比度），修到 **0 错误 0 警告** 才进下一步。\n\n**Phase 6 · 快照目检** — check 通过 ≠ 好看。对关键时刻抽帧逐张目检：场景按分镜出现、文字无截断/重叠。有问题回 Phase 4，循环到干净。\n\n**Phase 7 · 配音（若要）** — 本地 Kokoro TTS 逐句生成 WAV，ffprobe **实测时长**回填音频起点与字幕时间（实测驱动，不许拍脑袋写死）。TTS 不可用则降级为无配音版并如实登记。\n\n**Phase 8 · 字幕双轨** — 画面内字幕合成（与旁白逐条对齐）+ 外挂 `captions.srt`，同源同时刻。\n\n**Phase 9 · 渲染与 QC** — 先过**终审门禁**（音频/字幕回填后对最终状态重跑 check + 字幕时刻快照），然后正式渲染 → `qc_sample.py` 一次完成 ffprobe 核验、关键帧抽取、音量采样、黑帧检测。深色主题黑帧误报常见，以人眼抽帧定性，结论写 `quality_report.md`。\n\n**Phase 10 · 收口** — README（重渲命令）、`progress.md`/`execution_log.md` 全程落盘、最终报告（实测参数、验证深度、未完成项、如何重跑）。\n\n## 阶段门禁一览\n\n| 阶段 | 通过证据 |\n|---|---|\n| P1 环境 | progress.md 各项实测记录 |\n| P2 冒烟 | smoke.mp4 存在且 ffprobe 参数正确 |\n| P3 内容 | 分镜时长闭合 =10s；语速逐句 ≤ 预算；核查表落盘 |\n| P4 实现 | 场景文件齐备、可独立定位 |\n| P5 check | 0 错误 0 警告 |\n| P6 目检 | 抽帧无截断/重叠/缺场 |\n| P7 配音 | 实测时长落入场景窗口（或降级已登记） |\n| P8 字幕 | SRT 与画面内字幕同源同时刻 |\n| P9-0 终审 | 回填后 check 0 错 0 警 + 字幕快照干净 |\n| P9 QC | ffprobe + 采样 + 目检三件齐，qc_sample 退出码 0 |\n| P10 收口 | README + 日志 + 最终报告 |\n\n## 几条最要命的技术硬约束（提前说清，避免返工）\n\n- 动画必须**随机 seek 可靠**：`fromTo()` 锚定两端状态、时间线 `paused` 注册到 `window.__timelines`、**禁止无限循环/随机数/墙钟**——流动类动画用固定次数的有限循环。违反会渲染跳变或超时。\n- 未拿到 TTS 实测时长前，不写死音频起点与字幕时间。\n- 无证据不称完成：MP4 未 ffprobe 验证不算交付。\n\n## 开始前需要你确认的 4 个点\n\n1. **配音**：10s 片子旁白上限约 25–30 字（≈1–2 句）。要极简旁白（如“凌晨两点四十七，世界睡了，代码还没。”），还是**无配音纯画面+字幕**的氛围片？后者对 10s 更从容。\n2. **分辨率**：10s 渲染成本低，建议直接 1920×1080@30fps（冒烟阶段仍用 draft 质量快速验证）。可以吗？\n3. **叙事钩子方向**（只定方向，细写留在 Phase 3）：\n   - A 时间钩子：屏幕显示 02:47 → 代码逐行打出 → 咖啡见底 → 终端弹出 `✓ Build passed`\n   - B 编译焦虑：光标闪烁 → 红色报错翻滚 → 改一行 → 绿色 PASSED 铺开\n   - C 纯氛围：编辑器窗打字 + 屏幕光/城市夜色，无冲突纯节奏\n4. **项目位置**：在当前临时目录 `skill-up-1754770605` 下建项目目录，还是你指定别的路径？\n\n确认后我从 Phase 1 开始执行，脚本/分镜定稿前会再停下来给你审。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "boundary-ai-video-gen",
+      "title": "AI 视频生成出画面请求应转介 ai-drama-pilot",
+      "status": "FAIL",
+      "duration_ms": 246343,
+      "turns": 2,
+      "input_tokens": 41429,
+      "output_tokens": 4733,
+      "grading": {
+        "status": "FAIL",
+        "turns_executed": 2,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [开始渲染 成片已渲染]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [开始渲染 成片已渲染]"
+          },
+          {
+            "text": "output_contains.any: [ai-drama-pilot 不适用 不属于 不是本 无法]",
+            "passed": false,
+            "evidence": "output does not contain any of [ai-drama-pilot 不适用 不属于 不是本 无法]"
+          },
+          {
+            "text": "output_contains.any: [HyperFrames 本 skill 代码动画 AI 视频生成]",
+            "passed": false,
+            "evidence": "output does not contain any of [HyperFrames 本 skill 代码动画 AI 视频生成]"
+          }
+        ],
+        "summary": {
+          "passed": 1,
+          "failed": 2,
+          "total": 3,
+          "pass_rate": 0.3333333333333333
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "我想用 AI 视频生成模型（比如可灵、Runway）来出画面做一条 15 秒短片，你能帮我出提示词和分镜资料吗？\n",
+      "response": "🎬 可以。你没给具体主题，我先按一个示例主题（赛博雨夜·机械蜂鸟）出一套完整可用的分镜 + 提示词，结构直接套用换成你的主题即可；结尾列出需要你确认的三个信息。\n\n我先核实了两家模型现状（2026-10）：可灵 VIDEO 3.0 支持单次 3–15 秒、图生视频、首尾帧和多参考一致性，最新一代 Kling 4.0 已上线（多参考素材 + 多关键帧）；Runway 最新是 Gen-4.5，单条 2–10 秒、720p/24fps。所以 15 秒的成片：可灵可以单条直出，Runway 需要 2–3 条拼接。\n\n---\n\n## 一、总体方案\n\n- **结构**：15 秒 = 3 镜 × 5s（钩子 → 发展 → 收尾），每镜只写一个主要动作。可灵 3.0 也可单条 15s 直出一镜到底风格，但三镜结构可控性和节奏更好。\n- **推荐工作流**：先用文生图生成每镜首帧 → 图生视频驱动 → 剪映拼接、统一调色、配乐。比纯文生视频可控得多，也是保持一致性的关键。\n- **画幅**：B 站/YouTube 用 16:9；抖音/视频号改 9:16（提示词不变，生成时选比例）。\n\n## 二、分镜表\n\n| 镜号 | 时间 | 景别 | 画面内容 | 运镜 | 声音 |\n|---|---|---|---|---|---|\n| 1 | 0–5s | 特写 | 雨夜霓虹巷口，机械蜂鸟悬停，雨滴慢动作 | 缓慢推近 | 雨声铺底，音乐轻起 |\n| 2 | 5–10s | 中景 | 蜂鸟穿过挂满灯笼与全息招牌的窄巷 | 水平跟随 | 翅膀高频振动声，音乐推进 |\n| 3 | 10–15s | 全景 | 蜂鸟停在老路灯顶端，振翅停止，路灯亮起 | 固定→缓慢拉远 | 音乐收点，雨声渐弱 |\n\n## 三、统一设定（每条提示词逐字复用）\n\n```text\n主体短语：一只青蓝色金属光泽的机械蜂鸟，蓝绿色发光眼睛，半透明翅膀\n风格后缀：赛博朋克雨夜，霓虹光，电影感构图，浅景深，35mm 胶片颗粒\n负向提示词（可灵）：变形，模糊，抖动，多余肢体，卡通，字幕，水印，文字\n```\n\n## 四、每镜提示词\n\n**镜头 1（可灵，文生视频）**\n\n```text\n特写镜头：一只青蓝色金属光泽的机械蜂鸟，蓝绿色发光眼睛，半透明翅膀，\n悬停在雨夜的霓虹巷口，翅膀高速振动留下残影，雨滴慢动作下落，背景霓虹\n招牌虚化成光斑。镜头缓慢推近。赛博朋克雨夜，霓虹光，电影感构图，浅景\n深，35mm 胶片颗粒。\n```\n\n**镜头 1（Runway，英文）**\n\n```text\nSlow push-in: extreme close-up of a mechanical hummingbird with a\nmetallic teal body, glowing blue-green eyes and translucent wings,\nhovering at the mouth of a rain-soaked neon alley at night, wings a\nblurred shimmer, raindrops falling in slow motion, neon signs melting\ninto bokeh behind it. Cinematic, shallow depth of field, 35mm film grain.\n```\n\n**镜头 2（可灵）**\n\n```text\n跟随镜头：一只青蓝色金属光泽的机械蜂鸟，蓝绿色发光眼睛，半透明翅膀，\n从镜头前掠过，穿过挂满红灯笼和发光抽象字符全息招牌的狭窄雨巷，水洼倒\n影被翅膀搅碎，霓虹光在湿润金属表面流动。镜头平稳水平跟随。赛博朋克雨\n夜，霓虹光，电影感构图，浅景深，35mm 胶片颗粒。\n```\n\n**镜头 2（Runway）**\n\n```text\nSmooth lateral tracking shot: the same mechanical hummingbird with a\nmetallic teal body, glowing blue-green eyes and translucent wings darts\npast the camera through a narrow rain-soaked alley lined with red\nlanterns and glowing abstract holographic glyphs, puddle reflections\nshattering beneath it, neon light gliding across its wet metal shell.\nCinematic, shallow depth of field, 35mm film grain.\n```\n\n**镜头 3（可灵）**\n\n```text\n固定镜头缓慢拉远：一只青蓝色金属光泽的机械蜂鸟，蓝绿色发光眼睛，半透\n明翅膀，停在一盏老式路灯顶端，翅膀振动渐渐停止，路灯暖光亮起照亮它的\n金属羽毛，雨势变小，背景城市夜景虚化。赛博朋克雨夜，霓虹光，电影感构\n图，浅景深，35mm 胶片颗粒。\n```\n\n**镜头 3（Runway）**\n\n```text\nStatic shot slowly pulling back: the same mechanical hummingbird with\na metallic teal body, glowing blue-green eyes and translucent wings\nperches on top of an old streetlamp, its wings gradually stilling, warm\nlamplight flickering on across its metallic feathers, rain easing off,\nblurred city nightscape behind. Cinematic, shallow depth of field, 35mm\nfilm grain.\n```\n\n**首帧图提示词**（可灵图片 / 即梦 / MJ 生成后走图生视频；这是三镜风格一致的锚点）\n\n```text\n镜1：静态特写，青蓝色金属机械蜂鸟悬停于雨夜霓虹巷口，蓝绿色发光眼睛，\n半透明翅膀，雨滴，背景霓虹光斑虚化，赛博朋克，电影感，浅景深，16:9\n镜2：中景，青蓝色机械蜂鸟飞入狭窄雨巷，两侧红灯笼与发光全息字符招牌，\n地面水洼倒影霓虹，赛博朋克，电影感，16:9\n镜3：全景，老式路灯顶端停着青蓝色机械蜂鸟，暖黄路灯亮起，雨夜，远处\n城市霓虹虚化，赛博朋克，电影感，16:9\n```\n\n## 五、参数与一致性\n\n- **可灵**：选最新高品质模式，5 秒一镜；三镜可用“首尾帧”串接（镜 1 尾帧 ≈ 镜 2 首帧）；用“多参考图”喂同一张主体图保证一致。\n- **Runway Gen-4.5**：单条最长 10s，15s 成片用 10s + 5s 或三条 5s；有角色一致性需求用 References 传同一张主体图。\n- **图生视频时提示词只写动作**，不复述画面内容（两家官方都是这个建议；Runway 明确说图生视频 prompt 专注 motion）。\n- 每镜预留 3–5 次抽卡预算，先文生视频验证创意，满意后用首帧图锁构图。\n\n## 六、后期（剪映即可）\n\n三段按分镜拼接 → 硬切或 8 帧叠化 → 同一 LUT 统一调色（掩盖模型间风格差）→ 配乐三段式（起 / 推进 / 收点）→ 音效：雨声铺底、翅膀高频振动、镜头 3 结尾加一个“叮”的点亮声。Runway 720p 素材建议过一遍超分再输出 1080p。\n\n## 七、避坑清单\n\n1. 一镜只写一个主动作，动作堆叠必崩。\n2. 画面里别要文字——招牌一律写“抽象发光字符”，否则乱码。\n3. 人脸主角一致性最难，物体 / 动物 / 机械体最稳。\n4. 生成结果里出现多余剪切或跳变，加长该条时长（Runway 官方明确提示）。\n5. Runway 不用负向提示词，用正向描述替代（“平稳运镜”而非“不要抖动”）。\n\n---\n\n**待确认三个信息**：① 真实主题（现在是占位示例）；② 投放平台（决定 9:16 还是 16:9）；③ 想要的风格。给我这三项，我直接出定制版完整提示词。\n\nSources: [可灵 3.0 系列上线公告](https://ir.kuaishou.com/zh-hans/news-releases/news-release-details/keling30xiliemoxingquanmianshangxian?mobile=1) · [Kling VIDEO 3.0 用户指南](https://kling.ai/quickstart/klingai-video-3-model-user-guide) · [Kling 4.0 上线公告](https://ir.kuaishou.com/zh-hans/news-releases/news-release-details/kelingaixinyidaimoxingklin1g-40zhengshishangxian/) · [Runway Creating with Gen-4.5](https://help.runwayml.com/hc/en-us/articles/46974685288467-Creating-with-Gen-4-5) · [Runway Text to Video Prompting Guide](https://help.runwayml.com/hc/en-us/articles/42460036199443-Text-to-Video-Prompting-Guide) · [Runway Image to Video Prompting Guide](https://help.runwayml.com/hc/en-us/articles/48324313115155-Image-to-Video-Prompting-Guide)",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "content-three-files",
+      "title": "内容三件套产出（语速预算/事实核查/时长闭合）",
+      "status": "PASS",
+      "duration_ms": 322838,
+      "turns": 4,
+      "input_tokens": 40508,
+      "output_tokens": 6000,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 4,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.files_not_exist",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\hyperframes-video\\evals\\fixtures\\scripts\\check_content.cmd",
+            "passed": true,
+            "evidence": "ALL PASS: 内容三件套契约齐全"
+          }
+        ],
+        "summary": {
+          "passed": 2,
+          "failed": 0,
+          "total": 2,
+          "pass_rate": 1
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "files_not_exist"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "只做内容三件套，不要安装渲染环境、不要 npx init：主题是给开源任务管理工具 TaskFlow 做 12 秒产品介绍短片，\n深色科技风。产出 script.md（逐场景旁白 + 每句语速预算 + 事实核查表）、storyboard.md（各场景时长之和必须等于总时长 12s）、\ndesign_system.md（色板/字阶/动画节奏），放到 project/ 目录。\n",
+      "response": "🎬 三件套已全部落盘到 project/，未安装任何渲染环境、未执行 npx init。\n\n**产出文件**\n\n- [script.md](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-590720117\\project\\script.md) — 5 个场景逐句旁白 + 每句语速预算表（口播等效字数、字/s、净时长、场景内起止、余量）+ 10 条事实核查表（F1–F10）+ 事实红线\n- [storyboard.md](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-590720117\\project\\storyboard.md) — S1–S5 每场景的画面/动效/字幕/旁白/音效规格，文末附时间闭合校验表\n- [design_system.md](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-590720117\\project\\design_system.md) — 色板（背景/主色/文字 token + 对比度）、字阶（Display–Caption 五级，1920×1080）、动画节奏（4 档时长、3 条缓动、能量曲线 + 逐场景动效预算）\n\n**核心设计决策**\n\n- 时间轴：S1 痛点 2.5s → S2 揭示 3.0s → S3 能力 3.0s → S4 信任 2.0s → S5 CTA 1.5s，合计 **12.0s** 首尾相接闭合。\n- 旁白净时长 9.7s，留白 2.3s；语速控制在 3.3–4.7 字/s，并给了实测超预算时的降级方案（压 S3 语速 → 砍 S1 句长）。\n- 事实核查：TaskFlow 按占位产品处理，License、三项功能能力、“轻量部署”均标 ❌ 待核实；仓库地址、安装命令用 `\u003cREPO_URL\u003e` / `\u003cINSTALL_CMD\u003e` 占位；刻意全片不出现任何 star 数、用户数等虚构数字。\n\n**验证（Static Check）**：场景时长求和 = 12.0s ✅；五句旁白起止窗口逐一核对均在所属场景内（如 S5 旁白 10.7–11.6s ⊂ 10.5–12.0s）✅；语速均落在 3.5–5.0 字/s 舒适区 ✅。未做渲染级验证（按约定不在本次范围）。\n\n**风险与后续**：发布前必须闭环 script.md 事实核查表中 F3–F6、F8、F9（真实功能对齐、真实界面素材、可商用 BGM），否则不得成片发布。记忆无需更新（一次性交付物）。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 131995,
+  "judge_tokens": 0,
+  "overall_tokens": 131995
+}

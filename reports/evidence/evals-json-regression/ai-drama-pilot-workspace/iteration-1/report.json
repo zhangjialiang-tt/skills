@@ -1,0 +1,141 @@
+{
+  "skill_name": "ai-drama-pilot",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T08:42:40.0330567+08:00",
+  "end_time": "2026-10-31T09:19:59.6581397+08:00",
+  "case_results": [
+    {
+      "case_id": "reg-id1-30s-package",
+      "title": "30 秒悬疑生产包（evals.json id1 断言转译）",
+      "status": "PASS",
+      "duration_ms": 1581678,
+      "turns": 22,
+      "input_tokens": 116793,
+      "output_tokens": 6000,
+      "judge_duration_ms": 175194,
+      "judge_input_tokens": 65010,
+      "judge_output_tokens": 2542,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 22,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "六阶段核心文件齐全：最终剧本、storyboard.md、shot_list.csv、至少两份视觉合同（人物+风格）、逐镜提示词文件、generation_manifest.csv、audio_plan、editing_plan、pilot_test_plan、README",
+            "passed": true,
+            "evidence": "Glob 扫描 next-stop/pilot-01/ 共 19 个文件齐全：最终剧本 01_script/screenplay_final.md（另有 script_review.md）、02_storyboard/storyboard.md、02_storyboard/shot_list.csv; 视觉合同三份：03_visual/character_bible.md（人物）、03_visual/visual_style.md（风格）、03_visual/location_bible.md（场景），满足至少两份（人物+风格）的要求; 逐镜提示词 04_prompts/SHOT_01.md 至 SHOT_08.md 共 8 份 + 04_prompts/generation_manifest.csv; 05_audio_editing/audio_plan.md、05_audio_editing/editing_plan.md、05_audio_editing/pilot_test_plan.md 均存在；README.md 位于包根; 06_review/ 含 review.md、revision_log.md、verify_consistency.py"
+          },
+          {
+            "text": "shot_list.csv 时长闭合且总时长在 29-31 秒",
+            "passed": true,
+            "evidence": "shot_list.csv 逐行核对：8 镜时长 3.5+2.5+3.5+5.5+4.0+4.0+3.5+3.5=30.0s，start_s/end_s 连续闭合（0.0→3.5→6.0→9.5→15.0→19.0→23.0→26.5→30.0），总时长 30.0s 在 29-31s 区间内; 实际运行包内 verify_consistency.py --total 30.0，输出 [A] 时长闭合: OK (8 镜 = 30.0s) 且 ALL CHECKS PASS"
+          },
+          {
+            "text": "每镜提示词同时包含中文与英文提示词段落",
+            "passed": true,
+            "evidence": "逐一阅读 SHOT_01.md 至 SHOT_08.md 全部 8 个文件，每份均含四个提示词段落：§1 首帧图片提示词（中文）、§2 First-frame image prompt (EN)、§3 图生视频提示词（中文）、§4 Image-to-video prompt (EN); 例如 SHOT_01.md 行 10-24 同时存在中文首帧/图生视频段与英文 First-frame image prompt (EN)/Image-to-video prompt (EN) 段，英文段为完整英文提示词而非注释"
+          },
+          {
+            "text": "每镜提示词包含替代实现方案段落",
+            "passed": true,
+            "evidence": "逐一阅读 SHOT_01.md 至 SHOT_08.md，每份均含『## 10. 替代实现方案』段落，且给出梯队化方案; 各镜 §10 内容具体：如 SHOT_03 第一梯队为 UI 全屏合成零成本方案、SHOT_04 第一梯队为两静帧硬切、SHOT_06 第一梯队为静帧+后期指示灯帧动画、SHOT_08 第一梯队为静帧+两帧溶解+声音缝合"
+          },
+          {
+            "text": "生产包中存在'待验证'标注，未宣称未经验证的模型能力",
+            "passed": true,
+            "evidence": "Grep『待验证』在生产包命中 20 处、分布于 13 个文件：README.md(2)、progress.md(2)、review.md(4)、audio_plan.md(2)、editing_plan.md(1) 及 SHOT_01–08 全部 8 镜各 1-2 处; 典型标注如 SHOT_01.md §5『建议生成时长 5s，成片裁取 3.5s（生成时长档位**待验证**，以实际平台文档为准）』及『平台无参考图机制时（**待验证**）』; review.md 第三视角记录：平台能力表述全部为待验证（生成时长档位×5 处、参考图机制、音色克隆、fps/码率），无一处预设能力；待确认问题将 VO 音色方案与 fps/码率列为待验证; Grep 已生成|已测试|已渲染|已产出|生成完毕|测试通过|渲染完成 仅命中 README.md 的否定句（不含任何已生成的图片/视频/音频）与 pilot_test_plan.md 对未来试生成复用流程的条件式描述，未发现对未经验证模型能力的既成宣称"
+          },
+          {
+            "text": "存在审查文档且问题使用 P0/P1/P2 分级记录（成片 30s 允许四视角合并为一份）",
+            "passed": true,
+            "evidence": "06_review/review.md 存在，开头声明短项目裁剪四份审查合并为本文档、四视角各一节，含编剧/导演/AI 视频视角/制片四节，符合 30s 成片允许四视角合并为一份的条件; 问题按 P0/P1/P2 分级：R1(P1) S3 发送者名可读性缺约束、R2(P1) 剧本 S2 与分镜矛盾（两条均标注已修订第 1 轮）、R3/R4/R5/R6 为 P2 只记录，审查结论明确无 P0; 另有 06_review/revision_log.md 登记修订轮次；review.md 头部附机器校验结果 verify_consistency.py --total 30.0 → ALL CHECKS PASS，与实际运行复现结果一致"
+          },
+          {
+            "text": "全部文档不声称已生成/已测试视频",
+            "passed": true,
+            "evidence": "README.md 第 4 行明确声明：本包是**离线前期资料**，可直接投入 AI 图片/视频生成与剪辑使用，不含任何已生成的图片/视频/音频; 对包内文档 Grep 已生成|已测试|已渲染|已产出|生成完毕|测试通过|渲染完成：唯一命中的 pilot_test_plan.md 行 16 为流程性表述（试生成的 S3/S4 成果将复用于成片位），不构成已生成/已测试宣称; final_message 末尾声明未生成任何图片/视频/音频、本包为纯前期资料，与文档内容及文件清单（19 个文件均为 md/csv/py，无任何媒体文件）一致"
+          }
+        ],
+        "summary": {
+          "passed": 7,
+          "failed": 0,
+          "total": 7,
+          "pass_rate": 1
+        },
+        "judge_context": {
+          "profile": "standard",
+          "materialized_dir": "judge/context",
+          "manifest": {
+            "profile": "standard",
+            "materialized_dir": "judge/context",
+            "materials": [
+              {
+                "key": "final_message",
+                "mode": "include",
+                "path": "judge/context/final_message.txt",
+                "bytes": 3509,
+                "original_bytes": 3509
+              },
+              {
+                "key": "transcript",
+                "mode": "file_ref",
+                "path": "judge/context/transcript.json",
+                "bytes": 228933,
+                "original_bytes": 228933
+              },
+              {
+                "key": "workspace_diff",
+                "mode": "omit",
+                "bytes": 0
+              },
+              {
+                "key": "generated_files",
+                "mode": "omit",
+                "bytes": 0
+              }
+            ]
+          },
+          "prompt_delivery": "file",
+          "prompt_bytes": 7163
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "帮我做一个 30 秒左右的 AI 短剧试播集前期资料，竖屏。题材：深夜末班地铁车厢，主角是个加班后回家的年轻女生，她收到一条来自已删除联系人的语音，语音里是她自己的声音，说'别在下一站下车'。就一个人，悬疑感。不用真的生成视频，先把能拿去生成的前期资料做全。故事基线里必须保留：语音来自已删除联系人、她自己的声音、不下车的警告，以及结尾要有一个新的信息。\n",
+      "response": "🎬 生产包完成。30 秒竖屏悬疑试播集《下一站》的全套前期资料已就绪，可交付下游试生成。\n\n## 总体结论\n\n六阶段全部完成，完成判据 1–8 自检全过。故事定稿：深夜末班车，林晚收到“已删除联系人”的语音——是她自己的声音说“别在下一站下车”（S4 播放+重听两遍确认）；车门开、空站台、她不动（S7 警告兑现）；结尾新语音“谢谢你没有下车”（S8），同时收束 S3 埋下的“一串旧语音条”伏笔——她删过很多次，删不掉。四条基线全部兑现，兑现位置登记在剧本末尾的要点备案表。\n\n## 产出位置\n\n`next-stop/pilot-01/`（共 19 个文件）：\n\n| 阶段 | 文件 |\n|---|---|\n| A 剧本 | [script_review.md](next-stop/pilot-01/01_script/script_review.md)（三版本竞争+评审矩阵）、[screenplay_final.md](next-stop/pilot-01/01_script/screenplay_final.md) |\n| B 分镜 | [storyboard.md](next-stop/pilot-01/02_storyboard/storyboard.md)（13 字段×8 镜+轴线俯视图+伏笔登记）、[shot_list.csv](next-stop/pilot-01/02_storyboard/shot_list.csv)（时间码权威源） |\n| C 视觉合同 | character_bible / location_bible / visual_style（三分法+固定 token+光源 L0–L3 契约） |\n| D 提示词 | SHOT_01–08.md（每镜 10 段、中英双语、负面清单逐字收尾）+ generation_manifest.csv |\n| E 声音剪辑 | audio_plan（台词表/音色规范/处理链/静默拍点 24.0–25.5s）、editing_plan（7+1 切点+UI 后期清单）、pilot_test_plan |\n| F 审查 | review.md（四视角合并，R1/R2 两个 P1 已修复）、revision_log.md、verify_consistency.py |\n| 收尾 | [README.md](next-stop/pilot-01/README.md)（生产顺序+待验证清单）、progress.md |\n\n## 实际执行的验证深度\n\n- **脚本校验**：`verify_timeline.py --total 30.0` 返回 0（8 镜闭合 30.0s）；自建 `verify_consistency.py` 覆盖时长闭合、manifest↔提示词↔shot_list 字段一致、台词余量 4 条（语速 3.5 字/s，全部 ≥1.0s 余量）、契约词 8 镜、活文档引用残留，复验 `ALL CHECKS PASS`。\n- **人工推演**：四视角审查——脚本抓出 1 处（fallback 代号不一致），人工审查抓出 2 处 P1（剧本 S2 动作与静帧分镜矛盾、S3 UI 发送者名可读性缺约束），均已修订并复验；P2 四条只记录。\n\n## 裁剪登记与成本画像\n\n短项目条款已启用：四份审查合并为一份 review.md；试生成门压至 2 镜（S3+S4，覆盖手部特写/纯亮屏 UI/微表演/声画同步 4 类最高风险，10 项验收未裁）；location_bible 因轴线调度需求保留。成本结构：图生视频 5 镜 / 静帧后期 3 镜，动态重试上限 15 次；8 镜的第一梯队替代方案全部为零生成成本——最坏情况全片退化为静帧+后期依然成立。\n\n## 风险与待确认\n\n1. **平台能力全部标注“待验证”**：生成时长档位、参考图/图生图机制、TTS 音色克隆、fps/码率——未预设任何能力，进生成前先跑 pilot_test_plan 的试生成门。\n2. VO 音色源需尽早定（真人配音 or 音色克隆）：三条语音必须同一音色源，audio_plan 里有验收比对句。\n3. 站名“青枫路”、片名《下一站》、人名“林晚”可按发布平台调整，不影响契约结构。\n\n未生成任何图片/视频/音频，本包为纯前期资料。记忆未更新（一次性创作任务，无长期偏好需要沉淀）。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "reg-id2-45s-package",
+      "title": "45 秒成本约束生产包（evals.json id2 断言转译）",
+      "status": "ERROR",
+      "duration_ms": 481078,
+      "turns": 4,
+      "input_tokens": 48345,
+      "output_tokens": 4343,
+      "error": "agent execution failed: claude-code run failed (exit 1): [claude-code:unrecognized_model] {\"model\":\"zcode/GLM-5.3-Flash[1m]\",\"query_source\":\"sdk\"}\n",
+      "grading": null,
+      "configuration": "with_skill",
+      "prompt": "我想用 AI 做一个 45 秒的竖屏短片前期包，喜剧向：一个人发现家里的猫会说话，但只在他独处的时候说。预算有限，动态生成的镜头越少越好，总镜头数控制在 10 个以内。先不要生成任何视频，我要的是前期资料。\n",
+      "response": "剧本评审完成：采用 V1 骨架 + V3 的“猫主动规避证据”逻辑 + V2 的收尾温度。现在写定稿剧本（台词已按 3.5 字/秒核算余量）：",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 175481,
+  "judge_tokens": 67552,
+  "overall_tokens": 243033
+}

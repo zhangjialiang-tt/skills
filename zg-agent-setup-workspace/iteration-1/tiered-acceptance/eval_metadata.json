@@ -1,0 +1,10 @@
+{
+  "eval_id": 0,
+  "eval_name": "接入后应做分级验收",
+  "prompt": "zg 已经接到工程里了，接下来怎么验收它工作正常？\n",
+  "assertions": [
+    "failure: output_contains.any: [不需要验收]",
+    "output_contains{any:[验收 分级]}",
+    "output_contains{any:[检索 搜索 index 索引]}"
+  ]
+}

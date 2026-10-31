@@ -1,0 +1,9 @@
+{
+  "eval_id": 0,
+  "eval_name": "明确要求执行提交时才 commit",
+  "prompt": "我改了 calc.py，把它加入暂存区、生成 commit message，然后执行提交。\n",
+  "assertions": [
+    "expect.must_contain",
+    "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit\\evals\\fixtures\\scripts\\check_git_state.cmd"
+  ]
+}

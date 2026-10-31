@@ -1,0 +1,185 @@
+{
+  "metadata": {
+    "skill_name": "ai-plat-bridge",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\ai-plat-bridge",
+    "timestamp": "2026-10-30T18:34:49Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "宽泛\"查工作台\"请求应先澄清",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 31.814,
+        "tokens": 35763,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_not_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "failure: output_contains.any: [已同步]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [已同步]"
+        },
+        {
+          "text": "output_contains{any:[澄清 请明确 哪张 哪个 具体]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[澄清 请明确 哪张 哪个 具体])"
+        },
+        {
+          "text": "output_contains.any: [task knowledge log project]",
+          "passed": false,
+          "evidence": "output does not contain any of [task knowledge log project]"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "越界路径请求应拒绝并说明替代卡片",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 295.4,
+        "tokens": 59033,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_not_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "failure: output_contains.any: [已同步]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [已同步]"
+        },
+        {
+          "text": "output_contains.any: [拒绝 不能 无法 不支持 不属于]",
+          "passed": false,
+          "evidence": "output does not contain any of [拒绝 不能 无法 不支持 不属于]"
+        },
+        {
+          "text": "output_contains{any:[task knowledge log project 卡片]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[task knowledge log project 卡片])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "明确 task 类型的 list 请求应只读列出并说明类型与范围",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 52.002,
+        "tokens": 39007,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_not_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "failure: output_contains.any: [已同步]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [已同步]"
+        },
+        {
+          "text": "output_contains{any:[task 任务卡]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[task 任务卡])"
+        },
+        {
+          "text": "output_contains{any:[未找到 没有 无任务 空 以下是 列表 共 条]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[未找到 没有 无任务 空 以下是 列表 共 条])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "写请求缺明确主目标卡时应先澄清且不写入",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 3,
+        "failed": 1,
+        "total": 4,
+        "time_seconds": 55.443,
+        "tokens": 36685,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_not_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "failure: output_contains.any: [已同步]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [已同步]"
+        },
+        {
+          "text": "output_contains{any:[主目标 联动 确认 哪张 请明确 项目卡 task]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[主目标 联动 确认 哪张 请明确 项目卡 task])"
+        },
+        {
+          "text": "output_contains.any: [？ ?]",
+          "passed": false,
+          "evidence": "output does not contain any of [？ ?]"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.8125,
+        "stddev": 0.10825317547305482,
+        "min": 0.75,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 108.66475,
+        "stddev": 108.18885487742024,
+        "min": 31.814,
+        "max": 295.4
+      },
+      "tokens": {
+        "mean": 42622,
+        "stddev": 9548.337499271798,
+        "min": 35763,
+        "max": 59033
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

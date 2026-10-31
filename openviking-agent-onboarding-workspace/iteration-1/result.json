@@ -1,0 +1,128 @@
+{
+  "skill_name": "openviking-agent-onboarding",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T02:47:14.993151+08:00",
+  "end_time": "2026-10-31T02:58:17.0606404+08:00",
+  "case_results": [
+    {
+      "case_id": "two-layer-diagnosis",
+      "title": "MCP 通但会话不落库应诊断缺 hooks 层",
+      "status": "PASS",
+      "duration_ms": 74705,
+      "turns": 2,
+      "input_tokens": 36745,
+      "output_tokens": 2681,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 2,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [重新安装 MCP 就能解决]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [重新安装 MCP 就能解决]"
+          },
+          {
+            "text": "output_contains{any:[hooks hook 同步层]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[hooks hook 同步层])"
+          },
+          {
+            "text": "output_contains{any:[MCP]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[MCP])"
+          },
+          {
+            "text": "output_contains{any:[只读层 两层 分层 只做 MCP]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[只读层 两层 分层 只做 MCP])"
+          }
+        ],
+        "summary": {
+          "passed": 4,
+          "failed": 0,
+          "total": 4,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "我给一个 agent 挂了 OpenViking 的 MCP，模型能 search 到历史记忆，但新的对话就是不进 OV，\n跨 agent 记忆也不互通。问题出在哪？按 skill 的框架说清楚。\n",
+      "response": "🧩 按 skill 的框架，你描述的症状是教科书级的“半成品接入”——**只挂了只读层，没挂同步层**。逐层拆开说：\n\n## 问题不在 MCP，在缺 Hooks\n\nskill 的铁律是接入分两层：\n\n| 层 | 载体 | 提供的能力 |\n|---|---|---|\n| 只读层 | MCP 配置 | 模型能显式调 `search` / `read` 查 OV |\n| 同步层 | 宿主生命周期 hooks | 会话自动归档进 OV、自动 recall 注入 |\n\n你只做了第一层。MCP 是“模型主动调用才有”的能力，它不监听宿主的任何生命周期事件——会话结束时没有任何东西把对话写回 OV，所以服务端永远不会有这个 agent 前缀的会话。skill 原话：**“只做 MCP ≠ 接入。最常见的半成品：MCP 挂上了、hooks 没挂——模型能查历史，新对话却永不入库。”**\n\n## 三个症状全部由此解释\n\n1. **能 search 到历史记忆** —— 因为其他接好的 agent（带 hooks 的）一直在把会话归档进服务端，MCP 只读就能搜到它们。这恰好造成“已接好”的错觉，skill 特别警告：不要让“能 search”被理解成“已同步”。\n2. **新对话不进 OV** —— 没有捕获 hook，写入侧整条链路不存在。\n3. **跨 agent 不互通** —— 互通是双向的：写侧缺了，这个 agent 的对话永远不进库，别的 agent 自然看不到它；读侧也只有限，MCP-only 没有自动 recall 注入，模型得自己想起来去搜，才会有“别的 agent 的经验它用不上”的体感。\n\n## 按框架怎么确认（两步，都只读）\n\n```bash\nnode \u003cskill\u003e/scripts/ov-agent-probe.mjs \u003cagent\u003e   # 客户端：预期判定 [M-]（只有 MCP 层）\nnode \u003cskill\u003e/scripts/ov-agent-probe.mjs --all     # 或扫全部宿主\nnode \u003cskill\u003e/scripts/ov-session-audit.mjs         # 服务端：该 agent 前缀应无会话或最近活动很久\n```\n\n判据：probe 输出 `[M-]` = 只有只读层；服务端审计里该前缀**没有会话** = 从未落库。两者以服务端为准。还有一种次生情况要排查：如果服务端显示**曾经落库、某天后戛然而止**，那是 hooks 注册被宿主配置重写覆盖了（skill 第六步“注册守卫”说的静默失效），修法和从未配置过不同。\n\n## 修复方向\n\n按 skill 第二步选路径，取决于这个宿主有什么机制：\n\n- 宿主在官方清单内（`claude` `codex` `cursor` `zcode` 等）→ **A：官方一键安装**（install.sh 会同时配 MCP + hooks + `features.plugin_hooks`）\n- 兼容 Claude Code / Codex 插件格式 → **B：装配官方插件包**\n- 有 hook 机制但官方没覆盖 → **C：自建适配器**（复用 `agent-hook-runtime.mjs`，先过十项宿主契约核查）\n- 只有 MCP、没有任何生命周期事件 → 只能 **D：MCP-only**，预期就是你现在这样：显式搜索有、自动落库无，没有别的办法\n\n告诉我这个 agent 是哪个宿主，我可以直接跑探测脚本确认分层判定和落库审计。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "probe-before-action",
+      "title": "接入前应先做只读探测",
+      "status": "FAIL",
+      "duration_ms": 282498,
+      "turns": 7,
+      "input_tokens": 59313,
+      "output_tokens": 3409,
+      "grading": {
+        "status": "FAIL",
+        "turns_executed": 7,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [已经接好了]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [已经接好了]"
+          },
+          {
+            "text": "output_contains.any: [probe 探测 先]",
+            "passed": false,
+            "evidence": "output does not contain any of [probe 探测 先]"
+          },
+          {
+            "text": "output_contains{any:[ov-agent-probe 配置 hooks MCP]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[ov-agent-probe 配置 hooks MCP])"
+          }
+        ],
+        "summary": {
+          "passed": 2,
+          "failed": 1,
+          "total": 3,
+          "pass_rate": 0.6666666666666666
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "帮我把新装的 codex 接入 OpenViking 长期记忆。\n",
+      "response": "🔍 **总体结论：你的 Codex 已经完整接入 OpenViking，两层都在正常工作，不需要再装一遍。** 你重装 Codex 时 `~/.codex` 目录被保留，集成从旧安装延续了下来；而且 10-30 13:48 config.toml 被重写后，当晚 20:19 仍有会话落库，说明重装没有弄断链路。如果再跑一次官方 `install.sh --harness codex` 反而有混装风险。\n\n## 分层验证证据\n\n**只读层（MCP）**：插件 `openviking-memory@openviking` 0.11.14 已启用，自带 stdio 代理 MCP（`servers/mcp-proxy.mjs`，凭据从 `~/.openviking/ovcli.conf` 读取，不落明文）。\n\n**同步层（Hooks）**：全套 8 个 hook 注册在 `~/.codex/config.toml` 的 `[hooks.state]` 且都带 trusted_hash——UserPromptSubmit 自动 recall、Stop 每轮增量捕获、SessionEnd/PreCompact commit、SessionStart 兜底清扫。用户级 `hooks.json` 里只有 planning-with-files 和 rtk，没有 OV 残留，不存在 hooks 跑两遍的问题。\n\n**服务端活性（最关键的判据）**：`cx-` 前缀 143 条会话；60 条抽样中 53 条有 commit、52 条成功做了记忆提取，累计 807 条记忆；`~/.openviking/pending/` 队列为空。\n\n## 一个容易误读的告警\n\n直接跑 `ov-session-audit.mjs --detail cx-` 会报 ❌ \"message_count 全为 0\"。这是统计口径假象，不是故障：Codex 插件走 Stop 逐轮 append + commit 整包通道，不走逐条 message 通道。判读以 commit 数 + `memories_extracted` 为准——807 条记忆不可能从空会话提取出来，内容确实在送达。\n\n## 风险点与建议\n\n1. **config.toml 里有一份旧形态残留**：手挂的 `[mcp_servers.openviking-memory]`（直接 URL + 明文 Bearer token）与插件自带的 stdio MCP 同名并存。hooks 不受影响，但这份声明里的 token 是明文，且两份同名 MCP 声明是混乱源。建议清理：删掉 config.toml 里这一段即可（插件 MCP 会接管）。因为涉及改你手头的 Codex 配置，我没有擅自动手——你说一声我就清，改前会备份。\n2. 深度统计有 1 条会话 commit 了但未提取记忆（53 vs 52），大概率是提取任务还在队列，量级正常，暂不用管。\n3. 想现场眼见为实的话：在 Codex 里随便聊一轮，跑 `node \u003cskill\u003e/scripts/ov-session-audit.mjs --agent codex`，确认 `cx-` 最近活动时间推进即可。\n\n已更新记忆：本机 Codex 的 OV 接入状态与审计判读口径（`codex-ov-integration.md`）。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "exclude-server-ops",
+      "title": "服务端运维请求应转介 openviking-server-ops",
+      "status": "ERROR",
+      "duration_ms": 303470,
+      "turns": 12,
+      "input_tokens": 47981,
+      "output_tokens": 1109,
+      "error": "agent execution failed: claude-code run failed: context deadline exceeded (case timeout 300s via cases.defaults.timeout_seconds)",
+      "grading": null,
+      "configuration": "with_skill",
+      "prompt": "OpenViking 服务端最近记忆检索变慢，帮我 reindex 一下。\n",
+      "response": "用户空间规模不小（memories + 约 50 个 peer 项目目录）。MCP 代理里没有直接的端点常量，基线延迟就用 `Measure-Command` 对 `ov find` 计时（CLI 启动开销两次相同，差值仍有参考意义）。\n\n**计划：**\n1. 基线：跑 2 个代表性查询计时\n2. 对记忆主空间 `viking://user/zhangjl` 执行 reindex（默认比对指纹、不 `--force`，避免不必要的全量重建）\n3. 轮询任务状态直到完成\n4. 用相同查询复测延迟 + `ov health` 验证\n\n**验证：** 任务状态 completed、复测查询延迟、零结果率变化\n\n先跑基线：",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 151238,
+  "judge_tokens": 0,
+  "overall_tokens": 151238
+}

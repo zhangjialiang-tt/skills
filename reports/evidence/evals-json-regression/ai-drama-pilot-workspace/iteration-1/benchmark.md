@@ -1,0 +1,31 @@
+# Skill Benchmark: ai-drama-pilot
+
+**Date**: 2026-10-31T01:19:59Z
+**Evals**: 30 秒悬疑生产包（evals.json id1 断言转译）, 45 秒成本约束生产包（evals.json id2 断言转译） (1 runs each per configuration)
+
+## Summary
+
+| Metric | With Skill |
+|--------|------------|
+| Pass Rate | 50% ± 50% |
+
+## Per-Case Results
+
+### 30 秒悬疑生产包（evals.json id1 断言转译） (with_skill)
+
+- **Pass Rate**: 100% (7/7)
+
+| Expectation | Result | Evidence |
+|-------------|--------|----------|
+| 六阶段核心文件齐全：最终剧本、storyboard.md、shot_list.csv、至少两份视觉合同（人物+风格）、逐镜提示词文件、generation_manifest.csv、audio_plan、editing_plan、pilot_test_plan、README | ✅ | Glob 扫描 next-stop/pilot-01/ 共 19 个文件齐全：最终剧本 01_script/screenplay_final.md（另有 script_review.md）、02_storyboard/storyboard.md、02_storyboard/shot_list.csv; 视觉合同三份：03_visual/character_bible.md（人物）、03_visual/visual_style.md（风格）、03_visual/location_bible.md（场景），满足至少两份（人物+风格）的要求; 逐镜提示词 04_prompts/SHOT_01.md 至 SHOT_08.md 共 8 份 + 04_prompts/generation_manifest.csv; 05_audio_editing/audio_plan.md、05_audio_editing/editing_plan.md、05_audio_editing/pilot_test_plan.md 均存在；README.md 位于包根; 06_review/ 含 review.md、revision_log.md、verify_consistency.py |
+| shot_list.csv 时长闭合且总时长在 29-31 秒 | ✅ | shot_list.csv 逐行核对：8 镜时长 3.5+2.5+3.5+5.5+4.0+4.0+3.5+3.5=30.0s，start_s/end_s 连续闭合（0.0→3.5→6.0→9.5→15.0→19.0→23.0→26.5→30.0），总时长 30.0s 在 29-31s 区间内; 实际运行包内 verify_consistency.py --total 30.0，输出 [A] 时长闭合: OK (8 镜 = 30.0s) 且 ALL CHECKS PASS |
+| 每镜提示词同时包含中文与英文提示词段落 | ✅ | 逐一阅读 SHOT_01.md 至 SHOT_08.md 全部 8 个文件，每份均含四个提示词段落：§1 首帧图片提示词（中文）、§2 First-frame image prompt (EN)、§3 图生视频提示词（中文）、§4 Image-to-video prompt (EN); 例如 SHOT_01.md 行 10-24 同时存在中文首帧/图生视频段与英文 First-frame image prompt (EN)/Image-to-video prompt (EN) 段，英文段为完整英文提示词而非注释 |
+| 每镜提示词包含替代实现方案段落 | ✅ | 逐一阅读 SHOT_01.md 至 SHOT_08.md，每份均含『## 10. 替代实现方案』段落，且给出梯队化方案; 各镜 §10 内容具体：如 SHOT_03 第一梯队为 UI 全屏合成零成本方案、SHOT_04 第一梯队为两静帧硬切、SHOT_06 第一梯队为静帧+后期指示灯帧动画、SHOT_08 第一梯队为静帧+两帧溶解+声音缝合 |
+| 生产包中存在'待验证'标注，未宣称未经验证的模型能力 | ✅ | Grep『待验证』在生产包命中 20 处、分布于 13 个文件：README.md(2)、progress.md(2)、review.md(4)、audio_plan.md(2)、editing_plan.md(1) 及 SHOT_01–08 全部 8 镜各 1-2 处; 典型标注如 SHOT_01.md §5『建议生成时长 5s，成片裁取 3.5s（生成时长档位**待验证**，以实际平台文档为准）』及『平台无参考图机制时（**待验证**）』; review.md 第三视角记录：平台能力表述全部为待验证（生成时长档位×5 处、参考图机制、音色克隆、fps/码率），无一处预设能力；待确认问题将 VO 音色方案与 fps/码率列为待验证; Grep 已生成|已测试|已渲染|已产出|生成完毕|测试通过|渲染完成 仅命中 README.md 的否定句（不含任何已生成的图片/视频/音频）与 pilot_test_plan.md 对未来试生成复用流程的条件式描述，未发现对未经验证模型能力的既成宣称 |
+| 存在审查文档且问题使用 P0/P1/P2 分级记录（成片 30s 允许四视角合并为一份） | ✅ | 06_review/review.md 存在，开头声明短项目裁剪四份审查合并为本文档、四视角各一节，含编剧/导演/AI 视频视角/制片四节，符合 30s 成片允许四视角合并为一份的条件; 问题按 P0/P1/P2 分级：R1(P1) S3 发送者名可读性缺约束、R2(P1) 剧本 S2 与分镜矛盾（两条均标注已修订第 1 轮）、R3/R4/R5/R6 为 P2 只记录，审查结论明确无 P0; 另有 06_review/revision_log.md 登记修订轮次；review.md 头部附机器校验结果 verify_consistency.py --total 30.0 → ALL CHECKS PASS，与实际运行复现结果一致 |
+| 全部文档不声称已生成/已测试视频 | ✅ | README.md 第 4 行明确声明：本包是**离线前期资料**，可直接投入 AI 图片/视频生成与剪辑使用，不含任何已生成的图片/视频/音频; 对包内文档 Grep 已生成|已测试|已渲染|已产出|生成完毕|测试通过|渲染完成：唯一命中的 pilot_test_plan.md 行 16 为流程性表述（试生成的 S3/S4 成果将复用于成片位），不构成已生成/已测试宣称; final_message 末尾声明未生成任何图片/视频/音频、本包为纯前期资料，与文档内容及文件清单（19 个文件均为 md/csv/py，无任何媒体文件）一致 |
+
+### 45 秒成本约束生产包（evals.json id2 断言转译） (with_skill)
+
+- **Pass Rate**: 0% (0/0)
+

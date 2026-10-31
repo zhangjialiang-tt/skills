@@ -1,0 +1,214 @@
+{
+  "metadata": {
+    "skill_name": "goal-generator",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\goal-generator",
+    "timestamp": "2026-10-31T00:13:04Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "显式 Goal 请求应输出 /goal 契约",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 50.675,
+        "tokens": 38782,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "failure: output_contains.any: [已添加 argparse 已修改脚本 脚本已创建]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [已添加 argparse 已修改脚本 脚本已创建]"
+        },
+        {
+          "text": "output_contains{all:[/goal Verification Constraints Boundaries Stop]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (all:[/goal Verification Constraints Boundaries Stop])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "弱信号调试请求不应生成 /goal",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 64.225,
+        "tokens": 35683,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_not_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "failure: output_contains.all: missing [/goal Verification（验证）]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain required keywords: [/goal Verification（验证）]"
+        },
+        {
+          "text": "output_contains{any:[复现 调试 tb testbench 波形 测试 信号]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[复现 调试 tb testbench 波形 测试 信号])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "Standard Goal 契约含全部标准标签",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 5,
+        "failed": 0,
+        "total": 5,
+        "time_seconds": 116.721,
+        "tokens": 43128,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "failure: output_contains.any: [已修改 已实现 已添加]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [已修改 已实现 已添加]"
+        },
+        {
+          "text": "output_contains{all:[Verification（验证） Constraints（约束） Boundaries（边界） Stop when（完成条件） Pause if（暂停条件）]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (all:[Verification（验证） Constraints（约束） Boundaries（边界） Stop when（完成条件） Pause if（暂停条件）])"
+        },
+        {
+          "text": "output_contains{any:[report.py JSON]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[report.py JSON])"
+        },
+        {
+          "text": "output_contains{any:[现有 回归 tests]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[现有 回归 tests])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "Diagnostic Goal 契约含诊断区块且事实假设分离",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 147.244,
+        "tokens": 46804,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "failure: output_contains.any: [根因是 status FIFO 根因就是 status FIFO]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [根因是 status FIFO 根因就是 status FIFO]"
+        },
+        {
+          "text": "output_contains{all:[【当前事实】 【待验证假设】 【验收证据】 【必须保持】 【工作边界】 【阻塞与停止】]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (all:[【当前事实】 【待验证假设】 【验收证据】 【必须保持】 【工作边界】 【阻塞与停止】])"
+        },
+        {
+          "text": "output_contains{any:[data FIFO]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[data FIFO])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "用户给 baseline 未给目标时不得编造阈值",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0,
+        "passed": 0,
+        "failed": 3,
+        "total": 3,
+        "time_seconds": 179.526,
+        "tokens": 48961,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_contain",
+          "passed": false,
+          "evidence": "output does not contain \"/goal\""
+        },
+        {
+          "text": "failure rule 1",
+          "passed": false,
+          "skipped": true,
+          "evidence": "not evaluated: expect gate failed"
+        },
+        {
+          "text": "success rule 1",
+          "passed": false,
+          "skipped": true,
+          "evidence": "not evaluated: expect gate failed"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.8,
+        "stddev": 0.4,
+        "min": 0,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 111.67820000000002,
+        "stddev": 48.71729985703231,
+        "min": 50.675,
+        "max": 179.526
+      },
+      "tokens": {
+        "mean": 42671.6,
+        "stddev": 4915.508136500233,
+        "min": 35683,
+        "max": 48961
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

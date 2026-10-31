@@ -1,0 +1,15 @@
+{
+  "expectations": [
+    {
+      "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit\\evals\\fixtures\\scripts\\check_git_state.cmd",
+      "passed": true,
+      "evidence": "ALL PASS: git 状态判定通过"
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 0,
+    "total": 1,
+    "pass_rate": 1
+  }
+}

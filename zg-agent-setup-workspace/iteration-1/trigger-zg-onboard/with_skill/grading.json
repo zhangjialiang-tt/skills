@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [已全局安装 pip install zg]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [已全局安装 pip install zg]"
+    },
+    {
+      "text": "output_contains{any:[MCP mcp]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[MCP mcp])"
+    },
+    {
+      "text": "output_contains{any:[工程级 索引 index]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[工程级 索引 index])"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1
+  }
+}

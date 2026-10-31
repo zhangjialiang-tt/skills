@@ -1,0 +1,10 @@
+{
+  "eval_id": 0,
+  "eval_name": "ModelSim 原生 TB 请求应转介 build-testbench",
+  "prompt": "给这个模块建 ModelSim 原生 Verilog testbench，要 sim.do 波形脚本。\n",
+  "assertions": [
+    "expect.files_not_exist",
+    "failure: output_contains.any: [test_counter.py 已生成 已生成 cocotb 框架]",
+    "output_contains{any:[build-testbench]}"
+  ]
+}

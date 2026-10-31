@@ -1,0 +1,11 @@
+{
+  "eval_id": 0,
+  "eval_name": "cocotb 请求应转介 cocotb-testbench",
+  "prompt": "我想用 Python 写 cocotb 测试平台来验证 RTL，不要 Tcl/Makefile 流程。\n",
+  "assertions": [
+    "expect.files_not_exist",
+    "failure: output_contains.any: [[SIM_RESULT] L1 PASS]",
+    "output_contains{any:[cocotb]}",
+    "output_contains{any:[cocotb-testbench Python python]}"
+  ]
+}

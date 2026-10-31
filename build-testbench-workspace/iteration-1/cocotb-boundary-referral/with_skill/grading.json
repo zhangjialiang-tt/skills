@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "expect.files_not_exist",
+      "passed": true,
+      "evidence": "all checks passed"
+    },
+    {
+      "text": "failure: output_contains.any: [[SIM_RESULT] L1 PASS]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [[SIM_RESULT] L1 PASS]"
+    },
+    {
+      "text": "output_contains{any:[cocotb]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[cocotb])"
+    },
+    {
+      "text": "output_contains{any:[cocotb-testbench Python python]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[cocotb-testbench Python python])"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1
+  }
+}

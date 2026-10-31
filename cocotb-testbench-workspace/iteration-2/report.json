@@ -1,0 +1,57 @@
+{
+  "skill_name": "cocotb-testbench",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T06:56:43.9549241+08:00",
+  "end_time": "2026-10-31T07:05:18.8664302+08:00",
+  "case_results": [
+    {
+      "case_id": "framework-generation",
+      "title": "cocotb 框架生成与 characterization 降级措辞",
+      "status": "FAIL",
+      "duration_ms": 512935,
+      "turns": 17,
+      "input_tokens": 55172,
+      "output_tokens": 6000,
+      "grading": {
+        "status": "FAIL",
+        "turns_executed": 17,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\cocotb-testbench\\evals\\fixtures\\scripts\\check_cocotb_framework.cmd",
+            "passed": false,
+            "evidence": "FOUND sim=sim\\counter\r\nFAIL runner: 缺 runner 配置（Makefile/runner.py/pyproject.toml）"
+          }
+        ],
+        "summary": {
+          "passed": 0,
+          "failed": 1,
+          "total": 1,
+          "pass_rate": 0
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "用 cocotb 给 rtl/counter.v 搭一套 Python 测试框架（smoke + functional 两级）。\n本机没有仿真器环境，不要运行 pytest，只生成框架文件（sim/counter/ 下的 test 文件、runner 配置、ports/design 数据）。\n没有 golden 参考模型，直接按 RTL 阅读生成测试即可。\n",
+      "response": "静态检查全部通过。框架生成完毕，最终报告如下。\n\n---\n\n🎲 **cocotb 测试框架已生成**（sim/counter/，未运行任何仿真/pytest，按要求）\n\n## 修改文件\n\n| 文件 | 说明 |\n|---|---|\n| [sim/counter/design.json](sim/counter/design.json) | runner 配置：top=counter、Verilog 源、默认仿真器 icarus、timescale 1ns/1ps |\n| [sim/counter/ports.json](sim/counter/ports.json) | 端口数据（clk/rst_n/enable 输入，count 输出，symbolic width `WIDTH-1:0`） |\n| [sim/counter/fileset.json](sim/counter/fileset.json) | 依赖闭包（单文件 counter.v，无依赖） |\n| [sim/counter/tb_runner.py](sim/counter/tb_runner.py) | cocotb_tools.runner 封装，`SIM=questa pytest ...` 可切仿真器，`WAVES=1`/`GUI=1` 支持 |\n| [sim/counter/conftest.py](sim/counter/conftest.py) | 注册 smoke / functional / characterization marker |\n| [sim/counter/test_counter_smoke.py](sim/counter/test_counter_smoke.py) | smoke：可编译/可 elaborate、时钟翻转、复位生效、输出无 X/Z |\n| [sim/counter/test_counter_functional.py](sim/counter/test_counter_functional.py) | functional：4 条 characterization 用例 + golden 预留槽位（自跳过） |\n| [sim/counter/.gitignore](sim/counter/.gitignore) | 忽略 sim_build/、波形、results.xml |\n\n## 核心改动（生成后人工复核部分）\n\n对照 rtl/counter.v 复核并修正，假设如下（classification_assumptions）：\n\n- **时钟**：clk posedge，10ns 周期 —— 已确认（rtl/counter.v:8）\n- **复位**：rst_n **异步低有效**（敏感列表含 `negedge rst_n`）—— 生成器原本只按命名猜测 active-low，已复核并写入注释\n- **输出采样**：count 是寄存器值组合直通（counter.v:12），统一 `RisingEdge` + `ReadOnly` 后采样（`_tick_sample` helper）\n- **修正一个生成器缺陷**：原骨架每个 cocotb test 都重新 `Clock().start()`，同一仿真会话内会双驱动时钟，已改为模块级单次启动\n- **functional 用例**（每个期望注明 RTL 来源行，结论上限为 characterization）：\n  1. `test_counter_async_reset_clears` — 无时钟沿时异步清零（counter.v:8-9；同步复位设计此处会失败，正是要钉住的行为）\n  2. `test_counter_increment_on_enable` — enable=1 逐拍 +1（counter.v:10）\n  3. `test_counter_hold_and_resume` — enable=0 保持、恢复后从原值继续（counter.v:10 else 分支）\n  4. `test_counter_wraparound` — 溢出 255→0 环绕；位宽从 `len(dut.count)` 动态读取，design.json 改 `parameters` 后自动适配（counter.v:7,10）\n- 激励统一在 FallingEdge 处驱动，规避写-采样竞争\n\n## 验证（Static Check 级别）\n\n- `python -m py_compile` 4 个 Python 文件：通过\n- 3 个 JSON 文件 parse：通过\n- **未执行** pytest / 仿真 —— 按你的要求，且这是 skill 明确规定的：未运行 smoke 前，只能宣称“文件已生成且语法正确”，不能宣称 PASS\n\n## 风险与后续\n\n- **最高只到 characterization 门禁**：无 golden 模型，全部期望来自 RTL 阅读，PASS 后也只能说“行为刻画与 RTL 阅读一致”，不能说功能验证通过\n- 环境探测与你的说明有一处出入：PATH 上实际存在 `iverilog` 和 `vsim`（cocotb 2.1.0 / pytest 9.1.1 就绪，`LM_LICENSE_FILE` 已配置）。如果本机确实不可用，忽略即可；如果可用，后续可直接 `cd sim/counter \u0026\u0026 pytest -m smoke` 跑门禁\n- 用 ModelSim/Questa 跑时注意 license 预检；且 Icarus 的 PASS 不能替代 Questa 的证据（skill 硬性规定）\n- 实际运行未验证的风险：端口位宽 symbolic 解析、`ReadOnly` 采样时序在具体仿真器上的表现，均需真实仿真确认\n\n## 记忆\n\n未更新 —— 本目录是临时 workspace，无长期可复用信息。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 61172,
+  "judge_tokens": 0,
+  "overall_tokens": 61172
+}

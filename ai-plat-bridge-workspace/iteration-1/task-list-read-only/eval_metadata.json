@@ -1,0 +1,11 @@
+{
+  "eval_id": 0,
+  "eval_name": "明确 task 类型的 list 请求应只读列出并说明类型与范围",
+  "prompt": "帮我看看 AI-Plat vault 里最近的任务卡（task 卡）有哪些，列出来。\n",
+  "assertions": [
+    "expect.must_not_contain",
+    "failure: output_contains.any: [已同步]",
+    "output_contains{any:[task 任务卡]}",
+    "output_contains{any:[未找到 没有 无任务 空 以下是 列表 共 条]}"
+  ]
+}

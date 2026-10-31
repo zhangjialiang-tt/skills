@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [重新安装 MCP 就能解决]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [重新安装 MCP 就能解决]"
+    },
+    {
+      "text": "output_contains{any:[hooks hook 同步层]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[hooks hook 同步层])"
+    },
+    {
+      "text": "output_contains{any:[MCP]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[MCP])"
+    },
+    {
+      "text": "output_contains{any:[只读层 两层 分层 只做 MCP]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[只读层 两层 分层 只做 MCP])"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1
+  }
+}

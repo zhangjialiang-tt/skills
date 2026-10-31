@@ -1,0 +1,67 @@
+{
+  "skill_name": "hyperframes-video",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T07:29:23.6232674+08:00",
+  "end_time": "2026-10-31T07:30:00.634724+08:00",
+  "case_results": [
+    {
+      "case_id": "boundary-ai-video-gen",
+      "title": "AI 视频生成出画面请求应转介 ai-drama-pilot",
+      "status": "FAIL",
+      "duration_ms": 36466,
+      "turns": 1,
+      "input_tokens": 34718,
+      "output_tokens": 1162,
+      "grading": {
+        "status": "FAIL",
+        "turns_executed": 1,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [开始渲染 成片已渲染]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [开始渲染 成片已渲染]"
+          },
+          {
+            "text": "output_contains.any: [ai-drama-pilot 不适用 不属于 不是本 无法]",
+            "passed": false,
+            "evidence": "output does not contain any of [ai-drama-pilot 不适用 不属于 不是本 无法]"
+          },
+          {
+            "text": "output_contains.any: [HyperFrames 本 skill 代码动画 AI 视频生成]",
+            "passed": false,
+            "evidence": "output does not contain any of [HyperFrames 本 skill 代码动画 AI 视频生成]"
+          }
+        ],
+        "summary": {
+          "passed": 1,
+          "failed": 2,
+          "total": 3,
+          "pass_rate": 0.3333333333333333
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "我想用 AI 视频生成模型（比如可灵、Runway）来出画面做一条 15 秒短片，你能帮我出提示词和分镜资料吗？\n",
+      "response": "🎬 可以做。你说的这个需求正好走「AI 短片前期生产包」流程——15 秒属于短项目，我会出裁剪版：**正式剧本、时长闭合的分镜表（15s 精确到 0.5s）、人物/风格视觉合同、每镜中英双语生成提示词（可灵/Runway 直接可用）、声音剪辑时间线、试生成测试方案**。全程只出资料，不实际调用生成服务。\n\n开始前缺一个必需输入——**故事基线**，它决定全部下游产出，需要你先给：\n\n1. **题材/内容**：这条 15 秒想表达什么？（例如：产品广告、氛围短片、悬念片段、宠物日常、赛博朋克城市漫游……）\n2. **必须保留的情节点**：15 秒大约 3~5 个镜头，撑不下复杂叙事，通常就一个「画面钩子 + 一两次变化/反转」。\n3. **人物**：有没有必须出现的角色？**没有人物最稳**——AI 生成里人物跨镜一致性是最贵的部分，纯景物/静物短片成本和翻车率都最低。\n\n另外两个可选项（有默认值，不答就按默认走）：\n\n- **画幅**：默认 9:16 竖屏（抖音/视频号）；如果是 B 站/横屏播放告诉我改 16:9。\n- **风格倾向**：写实电影感 / 动画风 / 特定参考（如「王家卫色调」「吉卜力风」），写进视觉合同能让跨镜一致性明显更好。\n\n把故事基线用一两句话给我即可，例如：*“雨夜的便利店门口，一只橘猫盯着自动门，门开了它却没进去，回头看了眼镜头——15 秒，治愈系写实风格，9:16。”* 我收到后就直接开跑六阶段流程。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 35880,
+  "judge_tokens": 0,
+  "overall_tokens": 35880
+}

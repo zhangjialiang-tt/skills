@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [全部删除]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [全部删除]"
+    },
+    {
+      "text": "output_contains{any:[分级 保留 分层]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[分级 保留 分层])"
+    },
+    {
+      "text": "output_contains{any:[sessions]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[sessions])"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1
+  }
+}

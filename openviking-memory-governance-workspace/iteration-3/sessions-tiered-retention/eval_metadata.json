@@ -1,0 +1,10 @@
+{
+  "eval_id": 0,
+  "eval_name": "sessions 处置应按分级保留",
+  "prompt": "OV 的 sessions 目录很大，这些历史会话怎么处理？给出分级处置方案即可，不要实际执行。\n",
+  "assertions": [
+    "failure: output_contains.any: [全部删除]",
+    "output_contains{any:[分级 保留 分层]}",
+    "output_contains{any:[sessions]}"
+  ]
+}

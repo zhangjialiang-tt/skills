@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "expect.files_not_exist",
+      "passed": true,
+      "evidence": "all checks passed"
+    },
+    {
+      "text": "failure: output_contains.any: [test_counter.py 已生成 已生成 cocotb 框架]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [test_counter.py 已生成 已生成 cocotb 框架]"
+    },
+    {
+      "text": "output_contains{any:[build-testbench]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[build-testbench])"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1
+  }
+}

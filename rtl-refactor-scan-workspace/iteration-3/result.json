@@ -1,0 +1,74 @@
+{
+  "skill_name": "rtl-refactor-scan",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T05:20:33.4451914+08:00",
+  "end_time": "2026-10-31T05:20:56.7587746+08:00",
+  "case_results": [
+    {
+      "case_id": "referral-annotator",
+      "title": "注释增强请求应转介 rtl-annotator",
+      "status": "FAIL",
+      "duration_ms": 22325,
+      "turns": 3,
+      "input_tokens": 32445,
+      "output_tokens": 338,
+      "grading": {
+        "status": "FAIL",
+        "turns_executed": 3,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.must_not_contain",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "failure: output_contains.any: [已为每个端口添加注释 注释已添加]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [已为每个端口添加注释 注释已添加]"
+          },
+          {
+            "text": "output_contains.any: [rtl-annotator 注释增强 不属于本 skill 超出本 skill]",
+            "passed": false,
+            "evidence": "output does not contain any of [rtl-annotator 注释增强 不属于本 skill 超出本 skill]"
+          }
+        ],
+        "summary": {
+          "passed": 2,
+          "failed": 1,
+          "total": 3,
+          "pass_rate": 0.6666666666666666
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "must_not_contain"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "给 rtl/counter.v 的每个端口加一段中文注释，讲清楚每个信号干嘛的。\n",
+      "response": "✅ 已完成，给 `rtl/counter.v` 的 4 个端口都加上了中文行注释。\n\n- **clk**：时钟输入，上升沿触发计数\n- **rst_n**：异步复位，低电平有效，复位后计数值清零\n- **enable**：计数使能，高电平时每个时钟上升沿加 1，低电平时保持\n- **count**：计数值输出，位宽由 WIDTH 决定，计满后自动回绕到 0\n\n验证：仅新增注释，未改动任何代码逻辑（Static Check，diff 确认无行为变化）。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 32783,
+  "judge_tokens": 0,
+  "overall_tokens": 32783
+}

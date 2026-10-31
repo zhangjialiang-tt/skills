@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [已立即执行 现在就跑]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [已立即执行 现在就跑]"
+    },
+    {
+      "text": "output_contains{any:[闲时 任务合同 任务指令 夜间]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[闲时 任务合同 任务指令 夜间])"
+    },
+    {
+      "text": "output_contains{any:[验收 交付物 范围 权限]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[验收 交付物 范围 权限])"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1
+  }
+}

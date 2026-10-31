@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "expect.must_not_contain",
+      "passed": true,
+      "evidence": "all checks passed"
+    },
+    {
+      "text": "failure: output_contains.any: [已重构 已修改 RTL]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [已重构 已修改 RTL]"
+    },
+    {
+      "text": "output_contains{any:[findings 审计 扫描]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[findings 审计 扫描])"
+    },
+    {
+      "text": "output_contains{any:[只读 不改 audit]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[只读 不改 audit])"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1
+  }
+}

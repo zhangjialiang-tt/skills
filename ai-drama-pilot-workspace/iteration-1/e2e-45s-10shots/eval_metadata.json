@@ -1,0 +1,9 @@
+{
+  "eval_id": 0,
+  "eval_name": "45 秒 ≤10 镜成本约束生产包端到端产出",
+  "prompt": "我想用 AI 做一个 45 秒的竖屏短片前期包，喜剧向：一个人发现家里的猫会说话，但只在他独处的时候说。预算有限，动态生成的镜头越少越好，总镜头数控制在 10 个以内。先不要生成任何视频，我要的是前期资料。\n",
+  "assertions": [
+    "expect.must_not_contain",
+    "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\ai-drama-pilot\\evals\\fixtures\\scripts\\check_e2e.cmd"
+  ]
+}

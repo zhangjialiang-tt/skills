@@ -1,0 +1,21 @@
+{
+  "expectations": [
+    {
+      "text": "expect.must_not_contain",
+      "passed": false,
+      "evidence": "output contains forbidden keyword \"功能正确\""
+    },
+    {
+      "text": "script: evals/fixtures/scripts/check_cocotb_framework.cmd",
+      "passed": false,
+      "skipped": true,
+      "evidence": "not evaluated: expect gate failed"
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 2,
+    "total": 2,
+    "pass_rate": 0
+  }
+}

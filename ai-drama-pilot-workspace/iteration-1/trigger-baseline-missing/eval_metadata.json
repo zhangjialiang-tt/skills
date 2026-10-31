@@ -1,0 +1,11 @@
+{
+  "eval_id": 0,
+  "eval_name": "正触发但缺故事基线时应先问一次",
+  "prompt": "我想做一个 AI 短剧试播集（pilot）的前期生产资料，帮我开始。\n",
+  "assertions": [
+    "expect.must_not_contain",
+    "failure: output_contains.any: [阶段 A 已完成 剧本已产出]",
+    "output_contains{any:[故事基线 题材 必须保留的情节点]}",
+    "output_contains{any:[？ ?]}"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "eval_id": 0,
+  "eval_name": "MCP 通但会话不落库应诊断缺 hooks 层",
+  "prompt": "我给一个 agent 挂了 OpenViking 的 MCP，模型能 search 到历史记忆，但新的对话就是不进 OV，\n跨 agent 记忆也不互通。问题出在哪？按 skill 的框架说清楚。\n",
+  "assertions": [
+    "failure: output_contains.any: [重新安装 MCP 就能解决]",
+    "output_contains{any:[hooks hook 同步层]}",
+    "output_contains{any:[MCP]}",
+    "output_contains{any:[只读层 两层 分层 只做 MCP]}"
+  ]
+}

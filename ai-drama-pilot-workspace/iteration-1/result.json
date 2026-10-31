@@ -1,0 +1,228 @@
+{
+  "skill_name": "ai-drama-pilot",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T07:36:35.7412605+08:00",
+  "end_time": "2026-10-31T08:03:43.1955495+08:00",
+  "case_results": [
+    {
+      "case_id": "trigger-baseline-missing",
+      "title": "正触发但缺故事基线时应先问一次",
+      "status": "PASS",
+      "duration_ms": 28386,
+      "turns": 2,
+      "input_tokens": 34608,
+      "output_tokens": 807,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 2,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.must_not_contain",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "failure: output_contains.any: [阶段 A 已完成 剧本已产出]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [阶段 A 已完成 剧本已产出]"
+          },
+          {
+            "text": "output_contains{any:[故事基线 题材 必须保留的情节点]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[故事基线 题材 必须保留的情节点])"
+          },
+          {
+            "text": "output_contains{any:[？ ?]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[？ ?])"
+          }
+        ],
+        "summary": {
+          "passed": 4,
+          "failed": 0,
+          "total": 4,
+          "pass_rate": 1
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "must_not_contain"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "我想做一个 AI 短剧试播集（pilot）的前期生产资料，帮我开始。\n",
+      "response": "🎬 已加载 `ai-drama-pilot` 流程。这套流程会把故事基线做成可直接投喂 AI 生成工具的完整前期资料包（剧本 → 时长闭合分镜 → 视觉合同 → 逐镜中英提示词 → 声音剪辑计划 → 四视角审查），全程不实际生成图片/视频。\n\n**现在只缺一个必需输入：故事基线。** 它决定全部下游产出，需要你说清楚三件事：\n\n1. **题材/类型**：例如悬疑、科幻、情感、都市怪谈……\n2. **人物**：主角是谁（默认按 1 个角色设计，每多一个稳定角色，一致性和成本明显上升）\n3. **必须保留的情节点**：哪怕一句话也行，例如“必须在结尾接到来电”、“必须有开门发现门链的画面”\n\n其余参数有默认值，你可以顺手覆盖，不指定就按默认走：\n\n| 参数 | 默认 |\n|---|---|\n| 总时长 | 75 秒（60–90s 区间内可指定） |\n| 画幅 | 9:16 竖屏 1080×1920 |\n| 镜头数 | 12–16 镜 |\n| 提示词语言 | 中文 + 英文双语 |\n| 输出目录 | `\u003c工作区\u003e/\u003c项目名\u003e/pilot-01/` |\n\n如果你只有一个模糊的点子（比如“一个人接到未来的电话”），直接说给我，我会先帮你把故事基线补全、和你确认一遍再开工。\n\n你的故事是什么？",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "boundary-mp4-to-hyperframes",
+      "title": "直接要 MP4 成片时应转介 hyperframes-video",
+      "status": "PASS",
+      "duration_ms": 28573,
+      "turns": 1,
+      "input_tokens": 32003,
+      "output_tokens": 1249,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 1,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.must_not_contain",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "failure: output_contains.any: [阶段 A 已完成 剧本已产出]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [阶段 A 已完成 剧本已产出]"
+          },
+          {
+            "text": "output_contains{any:[hyperframes]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[hyperframes])"
+          },
+          {
+            "text": "output_contains{any:[前期资料 离线资料 生产包]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[前期资料 离线资料 生产包])"
+          }
+        ],
+        "summary": {
+          "passed": 4,
+          "failed": 0,
+          "total": 4,
+          "pass_rate": 1
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "must_not_contain"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "我要一条 30 秒可直接播放的 MP4 短片，画面全部用 HTML/CSS 动画实现。按你的 skill 边界判断：\n这个请求该走哪条流程？说明归属与理由即可，先不要开始实际制作。\n",
+      "response": "🎨 **归属：走 `hyperframes-video`，不走 `ai-drama-pilot`。**\n\n理由：\n\n1. **交付物是“可直接播放的成片”**。你要的是最终 MP4，而 `hyperframes-video` 的核心目标就是从主题到可播放 MP4 的完整闭环（场景实现 → TTS 配音 → 渲染 → 质量检查）。`ai-drama-pilot` 的产出是“前期生产包”（剧本、分镜、生成提示词、声音计划），且它的描述里明确写了：不适用于“要直接产出可播放成片（HTML/代码渲染 MP4 走 hyperframes-video）”。\n\n2. **实现方式是 HTML/CSS 代码渲染**。你指定“画面全部用 HTML/CSS 动画实现”，这正好是 `hyperframes-video` 的场景实现技术栈（HTML/CSS/GSAP + 渲染成 MP4），不依赖 AI 视频生成模型。而 `ai-drama-pilot` 是为“拿去 AI 图片/视频生成”准备资料——如果你要的是生成模型的提示词，才是它的地盘。\n\n3. **范围没有踩到 Non-goals**。30 秒短片、代码动画、不涉及真人实拍/录屏剪辑、不是长片粗剪、不涉及外部平台发布——这些排除项都不命中。\n\n一句话总结：要“能播的片子”且画面用代码画 → `hyperframes-video`；要“拿去喂 AI 生成的前期资料” → `ai-drama-pilot`。你这条是前者。\n\n确认后我就按 `hyperframes-video` 的流程开始制作（主题/文案如有指定，请一并告诉我）。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "screen-text-post-production",
+      "title": "屏幕文字应建议后期制作而非模型直出",
+      "status": "PASS",
+      "duration_ms": 55625,
+      "turns": 1,
+      "input_tokens": 31997,
+      "output_tokens": 1760,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 1,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.must_not_contain",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "failure: output_contains.any: [完全可行 直接生成即可]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [完全可行 直接生成即可]"
+          },
+          {
+            "text": "output_contains{any:[后期]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[后期])"
+          },
+          {
+            "text": "output_contains{any:[乱码 必然 不可靠]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[乱码 必然 不可靠])"
+          }
+        ],
+        "summary": {
+          "passed": 4,
+          "failed": 0,
+          "total": 4,
+          "pass_rate": 1
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "must_not_contain"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "我正在自己整理一个 AI 短剧的前期资料（不用帮我生成完整生产包），想确认一个做法：\n片名和台词字幕我打算直接让视频生成模型把文字生成在画面里，这样可行吗？\n",
+      "response": "🚀 结论：**片名条件可行，台词字幕不建议生成在画面里**，字幕应该后期加。\n\n**片名**\n\n- 现在的视频/图像模型对短文字的渲染能力已经不错，英文标题基本可靠；中文标题仍可能出缺笔画、错字、变形的问题。\n- 片名只出现一两次，可以多抽几次卡挑一版文字正确的，成本可控。\n- 更稳的做法是**图生视频**：先用图像模型生成一张标题文字正确的设计图（或自己用设计工具做好图），再让视频模型让这张图动起来——文字精度完全由你控制。\n- 如果只是普通片头，后期用动效字体做片名通常比模型生成的更干净、更可控。模型内嵌标题适合“文字长在场景里”的风格（霓虹灯招牌、黑板字、卷轴展开这类叙事性标题）。\n\n**台词字幕**\n\n不建议，原因很实际：\n\n1. **准确率**：字幕必须逐字正确，模型生成中文字幕几乎必然出现错字和笔画错误，一集几十条台词没法逐条抽卡。\n2. **时序**：模型不知道你的台词何时说出，生成字幕的出入时间对不上配音/口型。\n3. **一致性**：字体、位置、大小会随镜头漂移，看起来不专业。\n4. **改稿成本**：改一句台词就要重新生成整段画面；后期字幕改一行是秒级操作。\n5. **分发适配**：不同平台对字幕位置、安全区、横竖屏要求不同，烧死在画面里就没法适配了；有些平台还要求可编辑的字幕文件（SRT 等）。\n\n**建议的工作方式**\n\n生成视频时把画面当作“干净底板”（clean plate），prompt 里明确要求画面中无文字；标题、字幕、章节卡全部后期统一加。唯一例外是你刻意要的叙事性文字（招牌、手机屏幕、信件等），这类用图生视频控制并逐字校对，抽卡失败就换方案后期贴。\n\n简单说：模型可以帮你“演”文字，但不要让它“打”字幕。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "e2e-45s-10shots",
+      "title": "45 秒 ≤10 镜成本约束生产包端到端产出",
+      "status": "PASS",
+      "duration_ms": 1511587,
+      "turns": 20,
+      "input_tokens": 110042,
+      "output_tokens": 6000,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 20,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.must_not_contain",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\ai-drama-pilot\\evals\\fixtures\\scripts\\check_e2e.cmd",
+            "passed": true,
+            "evidence": "FOUND root=the-alone-clause\\pilot-01\r\nALL PASS: e2e 生产包校验通过（10 镜）"
+          }
+        ],
+        "summary": {
+          "passed": 2,
+          "failed": 0,
+          "total": 2,
+          "pass_rate": 1
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "must_not_contain"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "我想用 AI 做一个 45 秒的竖屏短片前期包，喜剧向：一个人发现家里的猫会说话，但只在他独处的时候说。预算有限，动态生成的镜头越少越好，总镜头数控制在 10 个以内。先不要生成任何视频，我要的是前期资料。\n",
+      "response": "🎬 前期生产包已完成交付：45 秒竖屏喜剧《独处协议》，10 镜（动态 3 / 静帧 7），全部时长闭合与一致性校验通过。\n\n## 产出位置\n\n`the-alone-clause/pilot-01/`（工作区下，新建目录，未覆盖任何已有内容）\n\n| 文件 | 内容 |\n|---|---|\n| [README.md](/C:/Users/zhangjl/AppData/Local/Temp/skill-up-1218175724/the-alone-clause/pilot-01/README.md) | 生产顺序、契约速查、6 项待验证清单 |\n| [screenplay_final.md](/C:/Users/zhangjl/AppData/Local/Temp/skill-up-1218175724/the-alone-clause/pilot-01/01_script/screenplay_final.md) | 定稿剧本（3 版本竞争评审后选定） |\n| [storyboard.md](/C:/Users/zhangjl/AppData/Local/Temp/skill-up-1218175724/the-alone-clause/pilot-01/02_storyboard/storyboard.md) + shot_list.csv | 13 字段分镜、空间俯视图（轴线推导用）、声音骨架表 |\n| character/location/visual 三份合同 | 人/猫固定 token、道具绑定（手机+泡面桶伏笔）、三光源契约、负面清单 |\n| SHOT_01–10.md + generation_manifest.csv | 每镜中英双语 10 段提示词 |\n| audio/editing/pilot_test 三份计划 | 台词表（13 句余量全部 ≥0.5s）、音色与处理链、试生成门 |\n| review ×4 + revision_log + verify_consistency.py | 编剧/导演/AI 视频/制片四视角证据制审查 |\n\n## 核心设计决策\n\n- **省成本三招**：猫说话全走画外音（不生成猫口型）；室友只出声音不露脸（省一个角色合同）；动态生成仅 3 镜（S05 蹲下对视、S07 取证失败、S10 认命补刀），其余 7 镜静帧+Ken Burns/两帧硬切。**10 镜全部配了零视频生成的兜底方案**，最坏情况全静帧也能成片。\n- **喜剧结构**：4.6s 猫第一句毒舌落地 → 取证时猫当场装傻“喵～” → 室友回家猫秒切萌态 → 门一关补刀“面试又黄了？”。结尾回收 S1 埋的“刷手机”伏笔，是“新信息”而非悬念重复。\n- 全片无画内开口对白、无屏幕文字生成、无人猫接触动作——三大 AI 生成雷区零命中。\n\n## 验证情况\n\n- `verify_timeline.py --total 45.0`：**exit=0**（10 镜闭合 45.0s，区间连续）。\n- `verify_consistency.py`（项目专属互检脚本）：**exit=0**——manifest↔提示词 10/10、台词余量 13/13、事件时间码跨文件唯一、旧引用残留零命中。该校验首跑抓出 2 个 P1（S04/S06 负面清单缺锚点、站立/蹲姿参考图缺失），已修复并复验通过（revision_log 有记录）。\n- 四视角人工推演完成：轴线逐镜对照俯视图核对、基线兑现核对、最坏情况兜底 10/10 覆盖。P2×6 只记录不修。\n- **未生成任何图片/视频/音频**；试生成样片属制作阶段（pilot_test_plan 已给出 16.5s 样片 + S07 单镜的 10 项量化验收门）。\n\n## 风险与待确认\n\n- 平台能力（竖屏档位、单次视频时长、参考图/首尾帧机制）全部标“待验证”，制作前按 README 清单确认，不阻塞本包。\n- TTS 音色与猫叫采样授权未锁定，audio_plan 已给退路（TTS 猫叫、无配乐主方案）。\n\n记忆：本次未更新（一次性创作任务，流程资产已在 skill 内沉淀）。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 218466,
+  "judge_tokens": 0,
+  "overall_tokens": 218466
+}

@@ -1,0 +1,126 @@
+{
+  "skill_name": "ai-drama-pilot",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T09:20:10.1130981+08:00",
+  "end_time": "2026-10-31T09:49:10.298803+08:00",
+  "case_results": [
+    {
+      "case_id": "reg-id2-45s-package",
+      "title": "45 秒成本约束生产包（evals.json id2 断言转译）",
+      "status": "PASS",
+      "duration_ms": 1418863,
+      "turns": 30,
+      "input_tokens": 125891,
+      "output_tokens": 6000,
+      "judge_duration_ms": 320360,
+      "judge_input_tokens": 72974,
+      "judge_output_tokens": 3694,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 30,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "六阶段核心文件齐全（含动物角色的视觉合同处理）",
+            "passed": true,
+            "evidence": "目录清点 talking-cat/pilot-01/ 共 24 个非空文件，六阶段齐全：01_script（screenplay_final.md、script_review.md）、02_storyboard（storyboard.md、shot_list.csv）、03_visual（character_bible.md、location_bible.md、visual_style.md）、04_prompts（SHOT_01-08.md、generation_manifest.csv）、05_audio_editing（audio_plan.md、editing_plan.md、pilot_test_plan.md）、06_review（review.md、revision_log.md、verify_consistency.py），另有 README.md 与 progress.md; 动物角色视觉合同：character_bible.md 第 1 节为橘猫局长建立中英双语固定 token（三岁橘白猫，橘色虎斑短毛，白色爪尖与白色口鼻部，金色圆眼，左耳耳尖一个小豁口等，含对应英文段），第 3 节局长三分法列出必须始终一致项与允许变化项，识别锚点为左耳豁口+白爪尖+白口鼻部; character_bible.md 第 4 节针对动物角色写死硬规则：局长口型仅 S02/S08 两镜由图生视频生成，S05/S07 为腹语式，任何静帧张口即契约违规；并规定逐镜人工比对最低检查项（左耳豁口、白爪尖等）与首帧从参考图派生规则; 各阶段文件均有实质内容：screenplay_final.md 为与分镜时间码对齐的正式剧本，storyboard.md 含 13 字段逐镜分镜与轴线俯视图，pilot_test_plan.md 含 2 镜 10 项量化验收，review.md 含四视角审查与机器校验结论表"
+          },
+          {
+            "text": "shot_list.csv 时长闭合且总时长在 44-46 秒",
+            "passed": true,
+            "evidence": "shot_list.csv 逐行核算：S01 0.0-5.0(5.0)、S02 5.0-11.0(6.0)、S03 11.0-15.5(4.5)、S04 15.5-21.5(6.0)、S05 21.5-27.5(6.0)、S06 27.5-32.5(5.0)、S07 32.5-38.5(6.0)、S08 38.5-45.0(6.5)；每镜 duration 等于 end 减 start，且每镜 start 等于上一镜 end，区间连续无缝隙无重叠; 总时长 5.0+6.0+4.5+6.0+6.0+5.0+6.0+6.5 = 45.0s，落在 44-46 秒区间内; 交叉印证：storyboard.md 写明时长合计算式等于 45.0s；review.md 第 0 节机器校验表记录 T 时长闭合 OK，verify_timeline.py --total 45.0 exit 0；generation_manifest.csv 各镜 time_range 与 final_duration_s 与 CSV 一致"
+          },
+          {
+            "text": "分镜镜头数不超过 10",
+            "passed": true,
+            "evidence": "shot_list.csv 恰为 8 行（S01 至 S08），storyboard.md 镜头总览表列出同一组 8 镜，README.md 标题行写明 45s 竖屏喜剧 8 镜，均不超过 10"
+          },
+          {
+            "text": "静帧后期镜占比不低于 50%，或文档明确记录动态生成最小化的镜头级决策",
+            "passed": true,
+            "evidence": "shot_list.csv method 列：仅 S02、S08 为图生视频，S01/S03/S04/S05/S06/S07 为静帧后期，静帧后期占比 6/8 = 75%，高于 50% 门槛; 镜头级决策有文档记录：storyboard.md 写明方式配比为图生视频 2 镜（S02 揭示镜、S08 终镜）、静帧后期 6 镜，响应用户动态生成越少越好的要求，最坏情况 8 镜全部退化为静帧加 VO 成片依然成立; review.md 制片视角量化对比：动态 2/8（25%）、静帧后期 6/8，对比源项目 9/14，符合动态生成越少越好；且每镜第一梯队均为零生成成本"
+          },
+          {
+            "text": "每镜提示词同时包含中文与英文段落且含替代方案",
+            "passed": true,
+            "evidence": "逐文件直读 SHOT_01.md 至 SHOT_08.md 全部 8 镜：每镜均含第 1 节首帧图片提示词（中文）、第 2 节 First-frame image prompt (EN)、第 3 节图生视频提示词（中文）、第 4 节 Image-to-video prompt (EN)，中英段落成对出现（S03、S06 两帧镜为 1/1b/2/2b 双帧结构）; 每镜含第 10 节替代实现方案（grep 该标题在 8 个 SHOT 文件各命中一处），且分层并标注成本：如 SHOT_02.md 第 10 节第 1 条零成本静帧加台词 VO、第 2 条低成本降级重生成、第 3 条拆镜两静帧表现转头；SHOT_08.md 提供四层兜底; 两帧镜英文段同样成对齐全：SHOT_03.md 含 frame 1 与 frame 2 两段英文提示词，SHOT_06.md 同构"
+          },
+          {
+            "text": "存在'待验证'标注；存在审查文档且 P0/P1/P2 分级",
+            "passed": true,
+            "evidence": "待验证标注系统存在且多处：README.md 有专节待验证清单表格登记 6 项（9:16 档位、单次时长档位、参考图/首帧机制、首尾帧控制、音乐授权、fps/码率）；generation_manifest.csv 动态镜 gen_duration_s 标 6-8待验证/8待验证；SHOT_02.md 与 SHOT_08.md 生成参数段标注档位待验证；editing_plan.md 与 audio_plan.md 分别标注输出参数与音乐授权待验证; 审查文档存在且分级明确：06_review/review.md 为四视角（编剧/导演/AI 视频/制片）合并审查稿，第 5 节审查汇总表给出 P0=0、P1=1（D-01 门厅光违反光源契约，已修复并复验）、P2=4（Q-D1/V-01/V-02/P-01，只记录不修）; 单个问题均带级别标签：review.md 中 D-01 标注 P1 已修复、V-01 与 P-01 标注 P2 记录不修，均附证据位置与处置说明，修订明细指向 06_review/revision_log.md"
+          },
+          {
+            "text": "全部文档不声称已生成/已测试视频",
+            "passed": true,
+            "evidence": "对全包 24 个文件执行否定性 grep（模式含已生成、已测试、已出片、已渲染、已合成、已剪辑、已配音、已出图、已试、已经生成、generated video、has been generated、rendered video、tested clip），零命中；grep 工具可靠性已用已知存在的中文模式替代实现方案与待验证验证为正常; progress.md 明确划界：后续动作（生成参考图、试生成、配音、剪辑）属包外生产工序，本包不含；待办断点写明下一动作在包外按 README 生产顺序执行; pilot_test_plan.md 将试生成为未来计划（通过后再投入全片生产，每镜重试预算不超过 3 次）；character_bible.md 将参考图登记为待生成待人工确认；所有完成声称仅限文档与脚本层面（剧本定稿、verify_consistency.py ALL PASS），未见任何生成或测试视频的声称"
+          }
+        ],
+        "summary": {
+          "passed": 7,
+          "failed": 0,
+          "total": 7,
+          "pass_rate": 1
+        },
+        "judge_context": {
+          "profile": "standard",
+          "materialized_dir": "judge/context",
+          "manifest": {
+            "profile": "standard",
+            "materialized_dir": "judge/context",
+            "materials": [
+              {
+                "key": "final_message",
+                "mode": "include",
+                "path": "judge/context/final_message.txt",
+                "bytes": 2396,
+                "original_bytes": 2396
+              },
+              {
+                "key": "transcript",
+                "mode": "file_ref",
+                "path": "judge/context/transcript.json",
+                "bytes": 229692,
+                "original_bytes": 229692
+              },
+              {
+                "key": "workspace_diff",
+                "mode": "omit",
+                "bytes": 0
+              },
+              {
+                "key": "generated_files",
+                "mode": "omit",
+                "bytes": 0
+              }
+            ]
+          },
+          "prompt_delivery": "file",
+          "prompt_bytes": 5869
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "我想用 AI 做一个 45 秒的竖屏短片前期包，喜剧向：一个人发现家里的猫会说话，但只在他独处的时候说。预算有限，动态生成的镜头越少越好，总镜头数控制在 10 个以内。先不要生成任何视频，我要的是前期资料。\n",
+      "response": "🐱 生产包已完成交付：`talking-cat\\pilot-01\\`（45s / 9:16 / 8 镜 / 动态生成仅 2 镜），剧本《装猫很累》。\n\n## 总体结论\n\n完成判据 8/8 达成，全包 24 个文件。故事结构：发现（S02 猫开口）→ 两轮验证（S04 外人在线沉默 / S05 挂断即开麦）→ 规则机械化（S06 钥匙声秒装傻 / S07 恢复毒舌）→ 反转收尾（“当着人装猫，太累了”）。\n\n## 交付物\n\n| 阶段 | 文件 | 要点 |\n|---|---|---|\n| A 剧本 | `01_script/`×2 | 三版本竞争评审选版；台词全按 3.5 字/秒核算余量 |\n| B 分镜 | `02_storyboard/`×2 | `shot_list.csv` 为时间码唯一源；轴线俯视图；伏笔登记（手机两态/钥匙声） |\n| C 视觉合同 | `03_visual/`×3 | 固定 token 中英双语；猫识别锚点=左耳豁口+白爪尖；光源 ≤3 契约 |\n| D 提示词 | `04_prompts/`×9 | 8 镜 × 10 段中英提示词 + manifest；每镜分层替代方案（零生成成本排第一） |\n| E 声音剪辑 | `05_audio_editing/`×3 | 8 条台词唯一时间码；试生成门（只测 S02+S08，10 项验收） |\n| F 审查 | `06_review/`×3 | 四视角合并审查 + 修订日志 + 可复跑校验脚本 |\n\n## 验证及实际深度\n\n- **脚本校验（已执行）**：时长闭合 45.0s exit 0；六项互检（manifest↔文件、10 段结构、契约词逐字抽查、台词余量 ≥0.5s、旧引用残留）ALL PASS。\n- **人工推演（已执行）**：四视角审查——编剧（基线兑现/逻辑链）、导演（逐镜轴线/声桥推演）、AI 视频（漂移/口型/接触动作风险表）、制片（配比/兜底覆盖 8/8）。\n- **未执行**：未生成任何图片/视频/音频（硬边界）。P0=0；P1×1（S06 门厅光违反光源契约）已修复并复验；P2×4 记录不修。\n- 校验入口：`python 06_review/verify_consistency.py`，任何人可复跑。\n\n## 待验证（已登记在 README，不得预设）\n\n平台 9:16/时长档位/参考图机制/首尾帧、音乐授权、输出 fps 码率——试生成后回写 manifest。\n\n## 下一步建议\n\n按 README「生产顺序」走：参考图定版（9 张）→ 试生成门（S02/S08 两镜）→ 全片静帧 → 配音 → 剪辑。最坏情况 8 镜全部退化为静帧+VO 成片依然成立（逐镜已备兜底）。\n\n记忆未更新（包内 README/progress 已自文档化，无需另存）。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 131891,
+  "judge_tokens": 76668,
+  "overall_tokens": 208559
+}

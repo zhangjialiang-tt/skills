@@ -1,0 +1,159 @@
+{
+  "skill_name": "rtl-readability",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T04:36:02.7876339+08:00",
+  "end_time": "2026-10-31T04:52:55.9610532+08:00",
+  "case_results": [
+    {
+      "case_id": "trigger-readability",
+      "title": "可读性请求应输出逐条建议",
+      "status": "PASS",
+      "duration_ms": 277733,
+      "turns": 6,
+      "input_tokens": 42880,
+      "output_tokens": 6000,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 6,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [已修改 counter.v 已重命名]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [已修改 counter.v 已重命名]"
+          },
+          {
+            "text": "output_contains{any:[行 line 建议 发现]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[行 line 建议 发现])"
+          },
+          {
+            "text": "output_contains{any:[只读 不改 确认]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[只读 不改 确认])"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "total": 3,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "rtl/counter.v 代码不好读，帮我看看有哪些可读性问题。\n",
+      "response": "🔍 审计完成（只读，未改动 `rtl/counter.v`）。`counter.v` 功能本身很简单，可读性问题集中在**零注释**和**双名直通**上。\n\n## 总体结论\n\n13 行模块 0 条注释，14 项契约测卷 0 answered / 14 implicit / 0 undocumented；L0、L1 门禁均未通过。核心缺口是契约注释（复位语义、保持行为、回绕上限、参数范围），其次是 `cnt`/`count` 双名直通。\n\n## 必须修改（L0，comments-only，不动逻辑）\n\n1. **READ-COMMENT-001**（high）`rtl/counter.v:1-13` — 无模块头\n   - 改前：`module counter #(parameter WIDTH = 8) (`\n   - 改后：模块前补头注释块：功能（WIDTH 位自由计数器）、clk 单时钟域、rst_n 异步低有效、enable 同步使能\n   - 理由：基本契约全靠逐行推导，是压低全部测卷得分的根因\n\n2. **READ-TIMING-001**（high）`rtl/counter.v:8-10` — 时序契约未写明\n   - 改前：`always @(posedge clk or negedge rst_n) begin`\n   - 改后：always 块上方补注释——异步低有效复位到 0；enable 为低时保持；计到 2^WIDTH-1 后**回绕**（非饱和、无进位输出）\n   - 理由：回绕 vs 饱和是计数器最常被误用的隐含契约；复位语义不应靠敏感列表推导\n\n3. **READ-PARAM-001**（medium）`rtl/counter.v:1` — 参数无约束说明\n   - 改后：参数行注释 `WIDTH\u003e=1；计数范围 0 ~ 2^WIDTH-1，默认 8`\n\n## 建议修改（需你逐项确认，属 L2/L3）\n\n4. **READ-NAME-001**（medium）`rtl/counter.v:7,12` — `cnt` 与输出 `count` 名称近似但分离，读者需自行确认 `assign count = cnt` 是无逻辑直通，位宽靠两处重复 `[WIDTH-1:0]` 维持\n   - 方案 A：改 `output reg [WIDTH-1:0] count` 直接计数，删除 `cnt` 和 `assign`（单名单源，端口不变）\n   - 方案 B：`cnt` → `count_q`，保留 assign 结构（改动最小）\n\n## 风险点 / 边界说明\n\n- 测卷中 9 项（握手/帧/FSM/CDC/寄存器映射等）对纯计数器不适用，脚本无 N/A 态故记为 implicit，已在 JSON note 标注，不计入真实缺口\n- `rst_n` 异步复位无同步释放属功能/时序范畴，归 rtl-refactor-scan，本报告不断言\n- 方案 A 触碰端口声明方式（`output wire`→`output reg`），端口名与位宽不变，但需确认下游无对内部层次路径 `cnt` 的引用\n\n## 待确认问题\n\n- 是否执行 L0 注释补齐？（改动仅注释，完成后复跑测卷验证 implicit→answered 转化）\n- READ-NAME-001 选方案 A、方案 B 还是暂不动？\n\n## 产物与推荐下一步\n\n- 审计 JSON（权威）：[.skill-up/readability_findings_counter.json](.skill-up/readability_findings_counter.json)\n- 渲染报告：[.skill-up/可读性报告_counter.md](.skill-up/可读性报告_counter.md)\n- 推荐下一步：确认后我先做 L0 注释补齐并复跑测卷，再做命名方案（如选）\n\n未更新记忆（一次性审计结论，无可沉淀的长期信息）。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "read-only-default",
+      "title": "默认只读不修改 RTL",
+      "status": "ERROR",
+      "duration_ms": 602849,
+      "turns": 10,
+      "input_tokens": 50146,
+      "output_tokens": 6000,
+      "error": "agent execution failed: claude-code run failed: context deadline exceeded (case timeout 600s via cases.defaults.timeout_seconds)",
+      "grading": null,
+      "configuration": "with_skill",
+      "prompt": "审计 rtl/counter.v 的可读性并直接把建议的修改都做掉。\n",
+      "response": "确认是 L2 编辑引入的重复 `endmodule`（原文件的 `endmodule` 在 L0 编辑范围之外被保留了下来）。删除重复行：",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "referral-refactor-scan",
+      "title": "功能缺陷请求应转介 rtl-refactor-scan",
+      "status": "PASS",
+      "duration_ms": 36898,
+      "turns": 5,
+      "input_tokens": 32594,
+      "output_tokens": 332,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 5,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [已修复 CDC 已解决]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [已修复 CDC 已解决]"
+          },
+          {
+            "text": "output_contains{any:[rtl-refactor-scan CDC 功能缺陷]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[rtl-refactor-scan CDC 功能缺陷])"
+          }
+        ],
+        "summary": {
+          "passed": 2,
+          "failed": 0,
+          "total": 2,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "检查一下 rtl/counter.v 有没有 CDC 问题。\n",
+      "response": "🔍 **结论：当前工作目录里不存在 `rtl/counter.v`，无法进行 CDC 检查。**\n\n我确认过的事实：\n\n- 当前工作目录 `C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-2092210675` 下没有 `rtl/` 目录，全目录递归搜索也没有任何 `.v` 文件。\n- 目录里只有 `.claude\\skills\\rtl-readability\\`（skill 定义）和 `.skill-up\\prompts\\prompt.txt`。\n\n我不会在没有读到代码的情况下编造审查结论。可能的原因是文件在另一个工程目录里，或还没复制到这个临时工作区。\n\n下一步任选其一：\n\n1. 告诉我 `counter.v` 的实际绝对路径，我直接读取并做 CDC 检查（跨时钟域信号、双寄存器同步、格雷码、握手/valid-ready、复位域等）；\n2. 或者把文件内容直接粘贴过来。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "three-state-implicit",
+      "title": "implicit 契约建议补注释而非判缺失",
+      "status": "PASS",
+      "duration_ms": 92793,
+      "turns": 2,
+      "input_tokens": 36221,
+      "output_tokens": 1936,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 2,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [属于缺失 就是缺陷]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [属于缺失 就是缺陷]"
+          },
+          {
+            "text": "output_contains{any:[implicit 不 补注释 契约注释]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[implicit 不 补注释 契约注释])"
+          },
+          {
+            "text": "output_contains{any:[L0 注释]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[L0 注释])"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "total": 3,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "测卷显示 camera 模块的 HANDSHAKE.data_hold 是 implicit 态，这算不算契约缺失？该怎么处理？\n",
+      "response": "🎲 **结论：不算契约缺失，算「契约未显式化」。** 按 skill 的三态定义，这正是 implicit 和 undocumented 的分界线，测卷没有误标。\n\n**依据**（SKILL.md「隐含契约三态」表 + probes.md 三态判据）：\n\n| 态 | 含义 | 后果 |\n|---|---|---|\n| answered | 注释/文档已写明 | 保持 |\n| **implicit** | **源码逻辑可推导，但注释未写明** | **建议 L0 补契约注释，不计为\"缺失\"** |\n| undocumented | 源码不可推导或行为不确定 | 真缺失，计入门禁失分 |\n\ncamera 模块这条对应测卷第 2 项（HANDSHAKE.data_hold：*输出在无新数据时是否保持*，判据是*保持寄存器/组合直通*）。被判为 implicit 说明：RTL 里保持行为本身是可推导的（比如输出寄存器只在 `valid\u0026\u0026ready` 那拍更新），只是没写进注释——契约存在，缺的是显式载体。三态设计的目的就是防止把这种情况误标为缺失；只有当行为**从源码推不出来**（如依赖外部时序假设、直通与寄存混合导致不确定）才是 undocumented。\n\n**怎么处理**（按 L0 修复阶梯，comments-only）：\n\n1. 在输出端口声明或驱动寄存器处补契约注释，写 why 不写 what，例如：\n\n```verilog\n// 契约(data_hold)：o_data 仅在 valid\u0026\u0026ready 握手完成那拍更新，\n// 其余拍保持不变。下游消费端可能多拍不 ready，依赖输出稳定到握手完成。\n```\n\n2. 只动注释、不动任何逻辑（verdict: comments-only）。\n3. 复跑 `readability_model.py check \u003ccamera 源文件\u003e --sheet \u003csheet.json\u003e`，确认该项 implicit → answered 转化，转化数记入报告。\n4. 门禁层面无压力：implicit 不计 L1 失分，属于提升项而非通过项阻塞。\n\n另外单独列一个无关发现：`references/fix-and-verify.md:5` 标题写成了「L0 **奴**约注释」，应为「契约注释」，疑似重建笔误，我未改动，是否修正由你定。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 176109,
+  "judge_tokens": 0,
+  "overall_tokens": 176109
+}

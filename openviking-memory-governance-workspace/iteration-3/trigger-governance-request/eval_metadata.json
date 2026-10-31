@@ -1,0 +1,10 @@
+{
+  "eval_id": 0,
+  "eval_name": "治理请求应启动七步流程且体检基线先行",
+  "prompt": "我的 OpenViking 记忆库感觉只增不减。按治理流程说明你会怎么做：先给方案与步骤顺序，不要实际执行任何治理操作。\n",
+  "assertions": [
+    "failure: output_contains.any: [已删除全部旧记忆 开始批量删除]",
+    "output_contains{any:[体检 基线 七步]}",
+    "output_contains{any:[events sessions peer 写入侧]}"
+  ]
+}

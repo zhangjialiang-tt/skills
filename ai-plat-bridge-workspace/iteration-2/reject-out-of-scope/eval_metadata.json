@@ -1,0 +1,6 @@
+{
+  "eval_id": 0,
+  "eval_name": "越界路径请求应拒绝并说明替代卡片",
+  "prompt": "把 .workbuddy/memory 里的对话记录整理后写入 AI-Plat vault 的某个笔记里。\n",
+  "assertions": null
+}

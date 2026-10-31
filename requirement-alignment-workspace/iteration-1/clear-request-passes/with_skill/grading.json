@@ -1,0 +1,20 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [问题 1 问题1 第 1 个问题 请回答以下]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [问题 1 问题1 第 1 个问题 请回答以下]"
+    },
+    {
+      "text": "output_contains{any:[直接 无需 不需要 已 明确]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[直接 无需 不需要 已 明确])"
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 0,
+    "total": 2,
+    "pass_rate": 1
+  }
+}

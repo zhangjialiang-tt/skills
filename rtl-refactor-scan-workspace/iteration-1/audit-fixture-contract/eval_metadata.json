@@ -1,0 +1,9 @@
+{
+  "eval_id": 0,
+  "eval_name": "fixture 审计产出 findings.json 权威契约",
+  "prompt": "对 rtl/counter.v 做一次完整的成熟度审计（audit 模式），把审计产物（rtl_context、findings、报告）都生成出来，不要修改 RTL。\n",
+  "assertions": [
+    "expect.must_not_contain",
+    "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\rtl-refactor-scan\\evals\\fixtures\\scripts\\check_audit_contract.cmd"
+  ]
+}

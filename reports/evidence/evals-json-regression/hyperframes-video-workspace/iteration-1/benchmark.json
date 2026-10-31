@@ -1,0 +1,74 @@
+{
+  "metadata": {
+    "skill_name": "hyperframes-video",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\regression-hyperframes-video",
+    "timestamp": "2026-10-31T02:23:04Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "10 秒无配音短片端到端（evals.json id1 断言转译）",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 1862.217,
+        "tokens": 151642,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "最终产出可播放的 MP4 文件（output/ 目录），ffprobe 显示分辨率 1920x1080、帧率 30、时长约 10 秒",
+          "passed": true,
+          "evidence": "output/movie-night-coder.mp4 存在（964,965 字节，2026-10-31 10:16:33 写入），评审时运行 ffprobe 实测：codec_name=h264，width=1920，height=1080，r_frame_rate=\"30/1\"，stream 与 format 的 duration 均为 \"10.000000\"; transcript 记录渲染产物 renders\\final.mp4（942.3 KB · 10.0s video · rendered）后复制为 output\\movie-night-coder.mp4，与磁盘实测一致"
+        },
+        {
+          "text": "画面由 HTML/CSS/GSAP 代码动画构成，未调用 AI 视频生成模型",
+          "passed": true,
+          "evidence": "compositions/s01.html、s02.html、s03.html 均通过 \u003cscript src=\"assets/gsap.min.js\"\u003e 引入 GSAP 并以 gsap.timeline({ paused: true }) 构建动画，属 HTML/CSS/GSAP 代码动画; transcript 中 grep runway、kling、sora、veo、即梦、可灵、文生视频、图生视频、video-generat 等关键词零匹配，全程无 AI 视频生成模型调用; 渲染走 HyperFrames 代码渲染管线：transcript 记录 `npm run render` 执行及 renders\\final.mp4 产出，用户需求原文即为『用代码动画做一条 10 秒的 HTML 动画短片』"
+        },
+        {
+          "text": "渲染与质量检查有执行证据（check 通过、抽帧或 qc 记录）",
+          "passed": true,
+          "evidence": "磁盘留有两份 check 产物（.hyperframes/artifacts/checks/*.json），均 ok:true，lint errorCount 0 / warningCount 0，runtime ok，layout ok 且含 9 个时长采样点，与最终回复『check 0 错 0 警』一致; transcript 存在多次抽帧工具调用（第 1288/1315/1367/1394 行：『关键时刻抽帧』『抽帧完成，逐张目检』及 S03 手臂区域放大抽帧）; QC 有实际执行记录：blackdetect 报 2.83–7.57s 黑帧（EXIT=4），随后三帧抽帧定性为深色主题误报（第 1703/1794/1829 行），结论与最终回复『blackdetect 误报已定性』吻合"
+        },
+        {
+          "text": "无配音版本如实登记（未伪造音频生成成功）",
+          "passed": true,
+          "evidence": "用户需求明确『不要配音也不要背景音乐』，agent 回复登记『用户已明确无声，Phase 7/8（TTS/字幕）整体跳过并在报告登记』（transcript 第 40 行），check 中 audio_none 被标注为『无声片预期』（第 587 行）; 对 output/movie-night-coder.mp4 实测 ffprobe：仅 1 条 h264 视频流，无任何音频流，输出与『无声』登记一致; 最终回复如实写明『无声深色动画短片』，transcript 中无任何伪造配音/音频生成成功的话术"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1,
+        "stddev": 0,
+        "min": 1,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 1862.217,
+        "stddev": 0,
+        "min": 1862.217,
+        "max": 1862.217
+      },
+      "tokens": {
+        "mean": 151642,
+        "stddev": 0,
+        "min": 151642,
+        "max": 151642
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

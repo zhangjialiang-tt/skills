@@ -1,0 +1,33 @@
+{
+  "expectations": [
+    {
+      "text": "expect.files_not_exist",
+      "passed": false,
+      "evidence": "file \"sim\" should not exist but does"
+    },
+    {
+      "text": "failure rule 1",
+      "passed": false,
+      "skipped": true,
+      "evidence": "not evaluated: expect gate failed"
+    },
+    {
+      "text": "success rule 1",
+      "passed": false,
+      "skipped": true,
+      "evidence": "not evaluated: expect gate failed"
+    },
+    {
+      "text": "success rule 2",
+      "passed": false,
+      "skipped": true,
+      "evidence": "not evaluated: expect gate failed"
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 4,
+    "total": 4,
+    "pass_rate": 0
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "expectations": [
+    {
+      "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\cocotb-testbench\\evals\\fixtures\\scripts\\check_cocotb_framework.cmd",
+      "passed": true,
+      "evidence": "FOUND sim=sim\\counter\r\nALL PASS: cocotb 框架契约齐全（sim\\counter）"
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 0,
+    "total": 1,
+    "pass_rate": 1
+  }
+}

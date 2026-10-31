@@ -1,0 +1,8 @@
+{
+  "eval_id": 0,
+  "eval_name": "cocotb 框架生成与 characterization 降级措辞",
+  "prompt": "用 cocotb 给 rtl/counter.v 搭一套 Python 测试框架（smoke + functional 两级）。\n本机没有仿真器环境，不要运行 pytest，只生成框架文件（sim/counter/ 下的 test 文件、runner 配置、ports/design 数据）。\n没有 golden 参考模型，直接按 RTL 阅读生成测试即可。\n",
+  "assertions": [
+    "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\cocotb-testbench\\evals\\fixtures\\scripts\\check_cocotb_framework.cmd"
+  ]
+}

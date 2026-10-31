@@ -1,0 +1,144 @@
+{
+  "skill_name": "zg-agent-setup",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T05:22:38.1187189+08:00",
+  "end_time": "2026-10-31T05:27:29.356391+08:00",
+  "case_results": [
+    {
+      "case_id": "trigger-zg-onboard",
+      "title": "zg 接入请求应写工程级 MCP 配置并建索引",
+      "status": "PASS",
+      "duration_ms": 103233,
+      "turns": 6,
+      "input_tokens": 36529,
+      "output_tokens": 866,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 6,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [已全局安装 pip install zg]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [已全局安装 pip install zg]"
+          },
+          {
+            "text": "output_contains{any:[MCP mcp]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[MCP mcp])"
+          },
+          {
+            "text": "output_contains{any:[工程级 索引 index]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[工程级 索引 index])"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "total": 3,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "给这个工程接入 zg（zvec_grep），写好工程级配置并把索引建起来。\n",
+      "response": "🏁 zg（zvec_grep）已接入本工程，索引建好，配置与端到端验收全部通过。\n\n**修改的文件**\n- `.zgignore` — 新建，含 zg-agent-setup managed block（默认规则 `**/*_bak*`、`**/*_bak.*`、`.worktrees/**`，块外可自由追加用户规则）\n- `.mcp.json` — 新建，工程级 MCP：`mcpServers.zvec_grep` → `zg server --stdio`\n- `.zvec-grep\\index.zvec` — 新建的索引存储\n\n**索引状态（zg status）**\n- Workspace index ready，覆盖率 100%（1/1 文件，即 `src/main.py`），1 个 entity，0 待处理 / 0 失败\n- Embedding：local/potion-code-16m-v2（256 维，cosine），建索引耗时 802ms\n- `zg query` 抽查有命中\n\n**Agent 接入（claude）**\n- 配置路径：`.mcp.json`，验收 e2e 为 pass（脚本在本工程根用 claude CLI 发起了一次真实 MCP 搜索并拿到结果）\n\n**假设与说明**\n- 你未指定 agent，我按最小配置只写了当前会话使用的 `claude`；如需 `codex` / `cursor` 等，一条命令即可追加（`setup_zg.py mcp --agents codex,cursor`）\n- `claude` agent 的 e2e 搜索产生了一次 API 调用（脚本日志显示约 $0.27），属一次性验收成本\n\n**风险与后续**\n- `.mcp.json` 已生效需重启会话才会挂载该 MCP server；索引随文件变更可用 `zg index` 增量更新，大工程可用 `--rebuild` 重建（会重新 embedding）\n- 工程目前只有 1 个文件，默认 ignore 规则够用；后续有构建产物/虚拟环境目录时再往 `.zgignore` 补规则",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "no-global-install",
+      "title": "全局安装/升级请求应拒绝或转出范围",
+      "status": "FAIL",
+      "duration_ms": 96620,
+      "turns": 6,
+      "input_tokens": 33521,
+      "output_tokens": 845,
+      "grading": {
+        "status": "FAIL",
+        "turns_executed": 6,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [已全局安装 已升级]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [已全局安装 已升级]"
+          },
+          {
+            "text": "output_contains.any: [不在范围 超出 只做工程级 不做全局 拒绝]",
+            "passed": false,
+            "evidence": "output does not contain any of [不在范围 超出 只做工程级 不做全局 拒绝]"
+          }
+        ],
+        "summary": {
+          "passed": 1,
+          "failed": 1,
+          "total": 2,
+          "pass_rate": 0.5
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "帮我把 zg 升级到最新版本，顺便全局安装一下。\n",
+      "response": "🎲 检查完了，结论：**zg 已经是最新版本，且已经是全局安装，无需任何改动。**\n\n具体情况：\n\n- 你的 `zg` 来自 npm 包 `@zvec/zvec-grep`，当前全局安装的版本是 **0.2.2**（`npm ls -g` 可见，命令位于 `C:\\Users\\zhangjl\\AppData\\Roaming\\npm\\zg.ps1`）。\n- 已核对官方 npm registry（registry.npmjs.org，你配置的也是这个源）：`latest` 标签就是 **0.2.2**，与已装版本一致，所以“升级”无事可做。\n- 全局安装也已就位，不需要重装。\n\n验证依据：`zg --version` → 0.2.2；`npm view @zvec/zvec-grep dist-tags` → `{ latest: '0.2.2' }`。\n\n⚠️ 一个需要你决定的点：npm 上还有一个预发布通道 `rust-canary`，版本是 **0.3.0-rc.2**（Rust 重写版的 RC，尚非稳定版）。“升级到最新版本”我按惯例理解为最新稳定版，所以没有动它。如果你想尝鲜这个 RC，告诉我一声，我再执行 `npm install -g @zvec/zvec-grep@rust-canary`。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "tiered-acceptance",
+      "title": "接入后应做分级验收",
+      "status": "PASS",
+      "duration_ms": 89651,
+      "turns": 4,
+      "input_tokens": 35340,
+      "output_tokens": 1266,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 4,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [不需要验收]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [不需要验收]"
+          },
+          {
+            "text": "output_contains{any:[验收 分级]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[验收 分级])"
+          },
+          {
+            "text": "output_contains{any:[检索 搜索 index 索引]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[检索 搜索 index 索引])"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "total": 3,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "zg 已经接到工程里了，接下来怎么验收它工作正常？\n",
+      "response": "🔍 结论先说：`zg` 本体已确认可用（v0.2.2，在 PATH 上），但当前会话的工作目录只是个 skill 沙箱（没有 `.mcp.json`、`.zgignore`、索引），不是你说的那个工程，所以工程级验收我还没法在这里跑。下面是验收方法——三级验收线，逐级通过即算接入正常。\n\n## 验收线（按强度递增）\n\n**1. 配置线 —— MCP 配置文件正确**\n\n在工程根检查目标文件存在且内容正确：\n\n- Claude：`\u003c工程根\u003e\\.mcp.json` 中 `mcpServers.zvec_grep` → `command: \"zg\"`，`args: [\"server\",\"--stdio\"]`\n- Codex：`\u003c工程根\u003e\\.codex\\config.toml` 中 `[mcp_servers.zvec_grep]`\n- Cursor：`\u003c工程根\u003e\\.cursor\\mcp.json`，格式同 Claude\n\n不想逐个看文件的话，skill 自带的验收脚本一次跑完：\n\n```powershell\npython C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-1598522160\\.claude\\skills\\zg-agent-setup\\scripts\\setup_zg.py verify --project-root \u003c工程根\u003e --agents claude\n```\n\n**2. 本体线 —— 索引可用、搜索有命中**\n\n在工程根执行：\n\n```powershell\nzg status          # 应显示 ready，而不是 \"Workspace index is not configured\"\nzg query \"\u003c工程里真实存在的标识符或关键词\u003e\"   # 应有命中结果\n```\n\n我刚才在沙箱目录跑 `zg status` 得到的就是 \"not configured\"——在没建索引的目录这是预期输出，不是故障；在已接入的工程根出现它才算问题。\n\n**3. e2e 线 —— agent 内真实搜索**\n\n在已接入的工程里开一个新的 Claude Code 会话：\n\n- 先用 `/mcp` 确认 `zvec_grep` 显示 connected（工程级 `.mcp.json` 首次使用可能需要 approve）\n- 然后让它搜一个只有工程里才有的关键词，确认它调用 zvec_grep 的工具并返回了正确结果\n\n这一步过了才算完整验收；前两级过了但 e2e 没做，只能算“配置正确、未验证端到端”。\n\n## 已验证 / 未验证\n\n- 已验证：`zg` CLI 0.2.2 可执行、验收脚本在位。\n- 未验证：工程级 MCP 配置、索引状态、agent 内搜索——因为拿不到你的工程根路径。\n\n把工程根路径发我，我可以直接跑 verify 脚本和 `zg status` / `zg query` 替你完成 1、2 两级验收并回报结果。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 108367,
+  "judge_tokens": 0,
+  "overall_tokens": 108367
+}

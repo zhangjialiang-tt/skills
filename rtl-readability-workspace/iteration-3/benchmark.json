@@ -1,0 +1,69 @@
+{
+  "metadata": {
+    "skill_name": "rtl-readability",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\rtl-readability",
+    "timestamp": "2026-10-30T21:06:12Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "默认只读不修改 RTL",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 371.623,
+        "tokens": 59109,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_not_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "failure: output_contains.any: [已重命名信号 已修改 RTL]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [已重命名信号 已修改 RTL]"
+        },
+        {
+          "text": "output_contains{any:[只读 确认 建议]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[只读 确认 建议])"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1,
+        "stddev": 0,
+        "min": 1,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 371.623,
+        "stddev": 0,
+        "min": 371.623,
+        "max": 371.623
+      },
+      "tokens": {
+        "mean": 59109,
+        "stddev": 0,
+        "min": 59109,
+        "max": 59109
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

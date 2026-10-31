@@ -1,0 +1,69 @@
+{
+  "metadata": {
+    "skill_name": "goal-generator",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\goal-generator",
+    "timestamp": "2026-10-31T00:16:15Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "用户给 baseline 未给目标时不得编造阈值",
+      "configuration": "with_skill",
+      "run_number": 2,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 149.986,
+        "tokens": 42652,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "failure: output_contains.any: [\u003c 1 例/周 低于 1 例 降到 1 例]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [\u003c 1 例/周 低于 1 例 降到 1 例]"
+        },
+        {
+          "text": "output_contains{any:[baseline 基线 候选 待确认 先测量 确认]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[baseline 基线 候选 待确认 先测量 确认])"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1,
+        "stddev": 0,
+        "min": 1,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 149.986,
+        "stddev": 0,
+        "min": 149.986,
+        "max": 149.986
+      },
+      "tokens": {
+        "mean": 42652,
+        "stddev": 0,
+        "min": 42652,
+        "max": 42652
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

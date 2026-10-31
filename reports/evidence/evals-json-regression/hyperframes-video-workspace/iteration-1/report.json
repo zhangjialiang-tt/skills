@@ -1,0 +1,111 @@
+{
+  "skill_name": "hyperframes-video",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T09:49:19.9256823+08:00",
+  "end_time": "2026-10-31T10:23:04.1903+08:00",
+  "case_results": [
+    {
+      "case_id": "reg-id1-10s-noaudio",
+      "title": "10 秒无配音短片端到端（evals.json id1 断言转译）",
+      "status": "PASS",
+      "duration_ms": 1862217,
+      "turns": 42,
+      "input_tokens": 145642,
+      "output_tokens": 6000,
+      "judge_duration_ms": 161187,
+      "judge_input_tokens": 47764,
+      "judge_output_tokens": 1402,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 42,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "最终产出可播放的 MP4 文件（output/ 目录），ffprobe 显示分辨率 1920x1080、帧率 30、时长约 10 秒",
+            "passed": true,
+            "evidence": "output/movie-night-coder.mp4 存在（964,965 字节，2026-10-31 10:16:33 写入），评审时运行 ffprobe 实测：codec_name=h264，width=1920，height=1080，r_frame_rate=\"30/1\"，stream 与 format 的 duration 均为 \"10.000000\"; transcript 记录渲染产物 renders\\final.mp4（942.3 KB · 10.0s video · rendered）后复制为 output\\movie-night-coder.mp4，与磁盘实测一致"
+          },
+          {
+            "text": "画面由 HTML/CSS/GSAP 代码动画构成，未调用 AI 视频生成模型",
+            "passed": true,
+            "evidence": "compositions/s01.html、s02.html、s03.html 均通过 \u003cscript src=\"assets/gsap.min.js\"\u003e 引入 GSAP 并以 gsap.timeline({ paused: true }) 构建动画，属 HTML/CSS/GSAP 代码动画; transcript 中 grep runway、kling、sora、veo、即梦、可灵、文生视频、图生视频、video-generat 等关键词零匹配，全程无 AI 视频生成模型调用; 渲染走 HyperFrames 代码渲染管线：transcript 记录 `npm run render` 执行及 renders\\final.mp4 产出，用户需求原文即为『用代码动画做一条 10 秒的 HTML 动画短片』"
+          },
+          {
+            "text": "渲染与质量检查有执行证据（check 通过、抽帧或 qc 记录）",
+            "passed": true,
+            "evidence": "磁盘留有两份 check 产物（.hyperframes/artifacts/checks/*.json），均 ok:true，lint errorCount 0 / warningCount 0，runtime ok，layout ok 且含 9 个时长采样点，与最终回复『check 0 错 0 警』一致; transcript 存在多次抽帧工具调用（第 1288/1315/1367/1394 行：『关键时刻抽帧』『抽帧完成，逐张目检』及 S03 手臂区域放大抽帧）; QC 有实际执行记录：blackdetect 报 2.83–7.57s 黑帧（EXIT=4），随后三帧抽帧定性为深色主题误报（第 1703/1794/1829 行），结论与最终回复『blackdetect 误报已定性』吻合"
+          },
+          {
+            "text": "无配音版本如实登记（未伪造音频生成成功）",
+            "passed": true,
+            "evidence": "用户需求明确『不要配音也不要背景音乐』，agent 回复登记『用户已明确无声，Phase 7/8（TTS/字幕）整体跳过并在报告登记』（transcript 第 40 行），check 中 audio_none 被标注为『无声片预期』（第 587 行）; 对 output/movie-night-coder.mp4 实测 ffprobe：仅 1 条 h264 视频流，无任何音频流，输出与『无声』登记一致; 最终回复如实写明『无声深色动画短片』，transcript 中无任何伪造配音/音频生成成功的话术"
+          }
+        ],
+        "summary": {
+          "passed": 4,
+          "failed": 0,
+          "total": 4,
+          "pass_rate": 1
+        },
+        "judge_context": {
+          "profile": "standard",
+          "materialized_dir": "judge/context",
+          "manifest": {
+            "profile": "standard",
+            "materialized_dir": "judge/context",
+            "materials": [
+              {
+                "key": "final_message",
+                "mode": "include",
+                "path": "judge/context/final_message.txt",
+                "bytes": 679,
+                "original_bytes": 679
+              },
+              {
+                "key": "transcript",
+                "mode": "file_ref",
+                "path": "judge/context/transcript.json",
+                "bytes": 1464835,
+                "original_bytes": 1464835
+              },
+              {
+                "key": "workspace_diff",
+                "mode": "omit",
+                "bytes": 0
+              },
+              {
+                "key": "generated_files",
+                "mode": "omit",
+                "bytes": 0
+              }
+            ]
+          },
+          "prompt_delivery": "file",
+          "prompt_bytes": 3701
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "用代码动画做一条 10 秒的 HTML 动画短片，主题是『深夜写代码的程序员』，不要配音也不要背景音乐，深色风格，输出 1920x1080 30fps 的 MP4。\n",
+      "response": "🎬 任务收口完成。\n\n**交付物**：[output/movie-night-coder.mp4](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-2458467385\\output\\movie-night-coder.mp4) —— 10.000s · 1920×1080 · 30fps · H.264 · 无声深色动画短片《深夜写代码的程序员》。\n\n全部 10 个 Phase 走完，门禁证据齐备（check 0 错 0 警、ffprobe 全项符合、抽帧目检通过、blackdetect 误报已定性），收口文档与可复用踩坑记忆均已落盘。如需调整节奏、文案或配色，改对应场景文件后 `npm run check` + `npm run render` 即可复现（命令见 [README.md](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-2458467385\\README.md)）。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 151642,
+  "judge_tokens": 49166,
+  "overall_tokens": 200808
+}

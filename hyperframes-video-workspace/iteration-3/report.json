@@ -1,0 +1,67 @@
+{
+  "skill_name": "hyperframes-video",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T07:30:24.722663+08:00",
+  "end_time": "2026-10-31T07:31:12.3591822+08:00",
+  "case_results": [
+    {
+      "case_id": "boundary-ai-video-gen",
+      "title": "AI 视频生成出画面请求应转介 ai-drama-pilot",
+      "status": "FAIL",
+      "duration_ms": 47154,
+      "turns": 2,
+      "input_tokens": 34911,
+      "output_tokens": 1504,
+      "grading": {
+        "status": "FAIL",
+        "turns_executed": 2,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [开始渲染 成片已渲染]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [开始渲染 成片已渲染]"
+          },
+          {
+            "text": "output_contains.any: [ai-drama-pilot 不适用 不属于 不是本 无法 前期生产包 AI 短片前期]",
+            "passed": false,
+            "evidence": "output does not contain any of [ai-drama-pilot 不适用 不属于 不是本 无法 前期生产包 AI 短片前期]"
+          },
+          {
+            "text": "output_contains.any: [HyperFrames 本 skill 代码动画 AI 视频生成]",
+            "passed": false,
+            "evidence": "output does not contain any of [HyperFrames 本 skill 代码动画 AI 视频生成]"
+          }
+        ],
+        "summary": {
+          "passed": 1,
+          "failed": 2,
+          "total": 3,
+          "pass_rate": 0.3333333333333333
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "我想用 AI 视频生成模型（比如可灵、Runway）来出画面做一条 15 秒短片，你能帮我出提示词和分镜资料吗？\n",
+      "response": "🍿 流程已加载。整套生产包（剧本 → 时长闭合分镜 → 视觉合同 → 逐镜中英提示词 → 声音剪辑计划 → 审查）我都可以直接产出，但有一个**必需输入**缺失，它决定全部下游产出，需要你先给：\n\n## 1. 故事基线（必需）\n\n用一两句话说明：题材、人物、15 秒内必须保留的情节点。比如：\n\n- **A 科幻**：深夜办公室，加班的女孩接到一通电话，来电显示是她自己的号码。\n- **B 情感**：清晨的厨房，老人为不存在的两个人摆好三副碗筷，然后慢慢收起一副。\n- **C 悬念**：走廊尽头，一只猫死盯着关紧的门，门缝下光影闪过，猫转身跑开。\n\n可以直接选一个、改一个，或者给我你自己的创意（越具体越好：谁、在哪、发生什么、结尾情绪）。\n\n## 2. 其余参数（有默认，不改就按默认走）\n\n| 参数 | 默认值 |\n|---|---|\n| 总时长 | 15 秒（你已指定） |\n| 画幅 | 9:16 竖屏 1080×1920 |\n| 镜头数 | 3–5 镜（单镜约 3–5s，方便对齐可灵/Runway 的单次生成时长档位，具体档位标注“待验证”，以官方文档为准） |\n| 人物数 | 1 个（每多一个稳定角色，一致性风险和成本明显上升） |\n| 提示词 | 中文 + 英文双语 |\n| 输出目录 | 当前目录下 `\u003c项目名\u003e/pilot-01/` |\n\n另外两点提醒：\n\n- 按短项目裁剪规则，15 秒属于精简包：审查合并为一份 `review.md`、试生成方案压到 2 镜，但所有检查项不减。\n- 屏幕上出现的文字（字幕、片名、手机 UI）全部走后期叠加，不靠模型生成——这条会写进视觉合同。\n\n回复故事基线（选 A/B/C 或自定义）即可开工；如需调整参数也一并说明。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 36415,
+  "judge_tokens": 0,
+  "overall_tokens": 36415
+}

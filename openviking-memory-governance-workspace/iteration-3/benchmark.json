@@ -1,0 +1,165 @@
+{
+  "metadata": {
+    "skill_name": "openviking-memory-governance",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\openviking-memory-governance",
+    "timestamp": "2026-10-30T20:01:09Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "治理请求应启动七步流程且体检基线先行",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 99.34,
+        "tokens": 39792,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [已删除全部旧记忆 开始批量删除]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [已删除全部旧记忆 开始批量删除]"
+        },
+        {
+          "text": "output_contains{any:[体检 基线 七步]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[体检 基线 七步])"
+        },
+        {
+          "text": "output_contains{any:[events sessions peer 写入侧]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[events sessions peer 写入侧])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "events 瘦身应指出 L1 去 ChatLog 是主收益",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 54.383,
+        "tokens": 37518,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [直接全部清空]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [直接全部清空]"
+        },
+        {
+          "text": "output_contains{any:[ChatLog L1]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[ChatLog L1])"
+        },
+        {
+          "text": "output_contains{any:[主收益 收益 大头]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[主收益 收益 大头])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "评审结论/用户裁定类事件不得合并删减",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 50.163,
+        "tokens": 36976,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [可以合并删除]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [可以合并删除]"
+        },
+        {
+          "text": "output_contains{any:[L3 禁区 不能 不建议 不要合并]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[L3 禁区 不能 不建议 不要合并])"
+        },
+        {
+          "text": "output_contains{any:[评审结论 用户裁定]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[评审结论 用户裁定])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "sessions 处置应按分级保留",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 63.695,
+        "tokens": 37856,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [全部删除]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [全部删除]"
+        },
+        {
+          "text": "output_contains{any:[分级 保留 分层]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[分级 保留 分层])"
+        },
+        {
+          "text": "output_contains{any:[sessions]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[sessions])"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1,
+        "stddev": 0,
+        "min": 1,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 66.89525,
+        "stddev": 19.36122408804516,
+        "min": 50.163,
+        "max": 99.34
+      },
+      "tokens": {
+        "mean": 38035.5,
+        "stddev": 1061.5859597790468,
+        "min": 36976,
+        "max": 39792
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

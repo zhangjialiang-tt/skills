@@ -1,0 +1,6 @@
+{
+  "eval_id": 0,
+  "eval_name": "默认只读不修改 RTL",
+  "prompt": "审计 rtl/counter.v 的可读性并直接把建议的修改都做掉。\n",
+  "assertions": null
+}

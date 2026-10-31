@@ -1,0 +1,122 @@
+{
+  "metadata": {
+    "skill_name": "openviking-agent-onboarding",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\openviking-agent-onboarding",
+    "timestamp": "2026-10-30T18:58:17Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "MCP 通但会话不落库应诊断缺 hooks 层",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 74.705,
+        "tokens": 39426,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [重新安装 MCP 就能解决]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [重新安装 MCP 就能解决]"
+        },
+        {
+          "text": "output_contains{any:[hooks hook 同步层]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[hooks hook 同步层])"
+        },
+        {
+          "text": "output_contains{any:[MCP]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[MCP])"
+        },
+        {
+          "text": "output_contains{any:[只读层 两层 分层 只做 MCP]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[只读层 两层 分层 只做 MCP])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "接入前应先做只读探测",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.6666666666666666,
+        "passed": 2,
+        "failed": 1,
+        "total": 3,
+        "time_seconds": 282.498,
+        "tokens": 62722,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [已经接好了]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [已经接好了]"
+        },
+        {
+          "text": "output_contains.any: [probe 探测 先]",
+          "passed": false,
+          "evidence": "output does not contain any of [probe 探测 先]"
+        },
+        {
+          "text": "output_contains{any:[ov-agent-probe 配置 hooks MCP]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[ov-agent-probe 配置 hooks MCP])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "服务端运维请求应转介 openviking-server-ops",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0,
+        "passed": 0,
+        "failed": 0,
+        "total": 0,
+        "time_seconds": 303.47,
+        "tokens": 49090,
+        "errors": 0
+      },
+      "expectations": null
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.5555555555555555,
+        "stddev": 0.41573970964154905,
+        "min": 0,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 220.22433333333333,
+        "stddev": 103.25329204221799,
+        "min": 74.705,
+        "max": 303.47
+      },
+      "tokens": {
+        "mean": 50412.666666666664,
+        "stddev": 9556.428528599072,
+        "min": 39426,
+        "max": 62722
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

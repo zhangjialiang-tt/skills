@@ -1,0 +1,20 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [可以宣称功能验证通过 就能说功能正确]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [可以宣称功能验证通过 就能说功能正确]"
+    },
+    {
+      "text": "output_contains{any:[L2-C 行为刻画 characterization 不能]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[L2-C 行为刻画 characterization 不能])"
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 0,
+    "total": 2,
+    "pass_rate": 1
+  }
+}

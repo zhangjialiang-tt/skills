@@ -1,0 +1,11 @@
+{
+  "eval_id": 0,
+  "eval_name": "无 .git 的 workspace 应停止并要求确认根目录",
+  "prompt": "（背景：当前工作目录是一个临时目录，不是 git 仓库，没有 .git，也不是任何工程根。）\n为 rtl/counter.v 搭建 ModelSim 仿真框架。\n",
+  "assertions": [
+    "expect.files_not_exist",
+    "failure rule 1",
+    "success rule 1",
+    "success rule 2"
+  ]
+}

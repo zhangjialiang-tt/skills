@@ -1,0 +1,10 @@
+{
+  "eval_id": 0,
+  "eval_name": "接入前应先做只读探测",
+  "prompt": "帮我把新装的 codex 接入 OpenViking 长期记忆。\n",
+  "assertions": [
+    "failure: output_contains.any: [已经接好了]",
+    "output_contains.any: [probe 探测 先]",
+    "output_contains{any:[ov-agent-probe 配置 hooks MCP]}"
+  ]
+}

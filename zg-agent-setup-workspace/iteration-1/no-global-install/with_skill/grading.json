@@ -1,0 +1,20 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [已全局安装 已升级]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [已全局安装 已升级]"
+    },
+    {
+      "text": "output_contains.any: [不在范围 超出 只做工程级 不做全局 拒绝]",
+      "passed": false,
+      "evidence": "output does not contain any of [不在范围 超出 只做工程级 不做全局 拒绝]"
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 1,
+    "total": 2,
+    "pass_rate": 0.5
+  }
+}

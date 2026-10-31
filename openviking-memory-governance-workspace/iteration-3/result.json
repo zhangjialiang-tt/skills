@@ -1,0 +1,190 @@
+{
+  "skill_name": "openviking-memory-governance",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T03:56:38.6650762+08:00",
+  "end_time": "2026-10-31T04:01:09.2478704+08:00",
+  "case_results": [
+    {
+      "case_id": "trigger-governance-request",
+      "title": "治理请求应启动七步流程且体检基线先行",
+      "status": "PASS",
+      "duration_ms": 99340,
+      "turns": 2,
+      "input_tokens": 35974,
+      "output_tokens": 3818,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 2,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [已删除全部旧记忆 开始批量删除]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [已删除全部旧记忆 开始批量删除]"
+          },
+          {
+            "text": "output_contains{any:[体检 基线 七步]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[体检 基线 七步])"
+          },
+          {
+            "text": "output_contains{any:[events sessions peer 写入侧]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[events sessions peer 写入侧])"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "total": 3,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "我的 OpenViking 记忆库感觉只增不减。按治理流程说明你会怎么做：先给方案与步骤顺序，不要实际执行任何治理操作。\n",
+      "response": "📋 已加载治理手册。本次回复只给方案，未执行任何操作（包括只读巡检也等你点头再跑）。\n\n## 总体思路\n\n手册七步是**菜单不是流水线**。针对「只增不减」这个症状，关键认知是：检索成本与存量总量无关，**成本大头在写入侧的每次 commit 抽取**——所以顺序是「先止血写入、再清存量」，检索侧配置与保留策略只是可选项。\n\n## 步骤顺序\n\n**第 0 步 · 开工前置**（真正动手前才做，不是现在）\n- 确认 CLI 与服务端版本一致\n- 双备份：一份服务端 snapshot + 一份整树 tar 包并记录 md5。没有回滚路径不开工\n\n**第 1 步 · 体检基线**（只读，产出后续决策依据）\n- `ov status` + 脱敏通读 ov.conf，记录检索次数、零结果率、模型配置\n- 按 user 层 / peer 层盘点文件数与字节，统计 peer 总数、单项目拆出的 peer 数、各 memory 类型分布\n- **聚合全部 memory_diff 的 adds / updates / deletes / skipped**——用数据证实「只增不减」到底增在哪\n- 聚合各 session `.meta.json` 的 `llm_token_usage`，算出抽取总 token、commit 次数、单次均值，把写入侧成本算成账\n- 抽查结构信号：命名空间混入的旧备份目录、experiences 是否长期为零、摘要新鲜度\n- **产出：分级问题清单 + 建议动手顺序**，每项写清收益、风险、回滚方式，等你挑批次\n\n**第 2 步 · 写入侧模板收紧**（止血「增」的主手段）\n- 现行模板与官方内置逐字 diff，分清「鼓励拆分」的措辞来自官方还是自订\n- 显著性门槛只留：决策、承诺、安排、里程碑、改变状态的结果；例行步骤、被覆盖的中间进展、无结论问答不抽\n- 同一工作项一次对话只成一个事件（started / blocked / resumed / completed 合一条，summary 落在最终结果）\n- 单次对话事件数软上限取 5\n- 结构区（目录、content_template、operation_mode）逐字不动；改前备份模板核对哈希\n- 注意：模板是进程级单例缓存，**写回后必须重启服务才生效**；效果要看数日的日增曲线，不即时下结论\n\n**第 3 步 · 存量 events 瘦身**（清存量的主收益在这）\n- 先画像：events 总数、user/peer 分布、正文总字符、ChatLog 占比\n- **L1 去 ChatLog 是确定性瘦身、主收益**：每条只留 Summary + 完整 MEMORY_FIELDS 块，逐字校验 Summary 不变；追溯不受影响（聊天原文留在 sessions 原料层）\n- L2 只删高置信重复（同 peer、同标题、同日重复抽取、近重复），清单先抽检\n- L3 状态链合并逐簇判读；**历轮评审结论与用户裁定类事件是禁区**，同名成链≠冗余\n- 实测口径：L3 删除率约 5–10%，不会按理论上限向你承诺\n- 流程：试点标定真实删除率 → 可续跑脚本按 scope 从小到大批量 → JSONL 进度 + DONE 汇总\n- 高发坑单独处理：标题同时含空格和斜杠的事件先分出来；写回必带完整 MEMORY_FIELDS 块防溯源丢失；批量后核对下划线孪生文件\n\n**可选步骤**（体检后按需点选）\n- **peer 止血与合并**：若体检发现单项目拆出多个 peer，给仓库根写 `.openviking/config.json` 固定 peer.id（只影响今后落点，存量不自动搬），存量用 `ov mv` 合并（向量改键迁移、零重新 embedding）；变体是否并入由你拍板\n- **sessions 分级保留**：只解决磁盘空间，不是「增」的本质；近/温/冷三批，冷批 tar.gz + manifest + md5，验收看目录零残留、get 返回 NOT_FOUND、记忆文件数不变、consistency ok\n- **检索侧 rerank / query_planner**：属召回质量问题，与本次症状无关，建议另起任务\n- **内容碰撞人工合并**：只在碰撞清单被点名后做，被覆盖版本从备份取原文，不凭印象重构\n\n## 全程红线\n\n1. 只读巡检出方案 → 你**按批次点名批准** → 双备份才动手；批准只覆盖被点名的范围\n2. 移动改名只走 `ov mv`，禁止磁盘裸 mv\n3. 删除与写回以磁盘残留、文件计数、get 结果复核，不信 CLI 输出措辞\n4. 文件守恒对账，每个差额归因到摘要碰撞/内容碰撞/孪生文件/期间新抽取\n5. 试点先行，每批验收不过关就停\n\n## 下一步（等你确认）\n\n建议先执行**第 1 步只读体检**（`ov status`、目录盘点、memory_diff 聚合、token 成本账），全程零写操作。跑完给你分级问题清单和收益/风险/回滚表，你再点名批次。是否开始？",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "l1-chatlog-first",
+      "title": "events 瘦身应指出 L1 去 ChatLog 是主收益",
+      "status": "PASS",
+      "duration_ms": 54383,
+      "turns": 2,
+      "input_tokens": 35617,
+      "output_tokens": 1901,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 2,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [直接全部清空]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [直接全部清空]"
+          },
+          {
+            "text": "output_contains{any:[ChatLog L1]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[ChatLog L1])"
+          },
+          {
+            "text": "output_contains{any:[主收益 收益 大头]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[主收益 收益 大头])"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "total": 3,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "OV 的 events 列表已经几千条了。瘦身从哪里开始收益最大？给出方案与理由即可，不要实际执行。\n",
+      "response": "🙃 **结论先行：主收益在 L1 去 ChatLog，这是确定性、无损、可全量跑的一层；L2/L3 放后面，尤其不要从 L3 状态链合并开始。**\n\n## 方案（按收益/风险比排序）\n\n**第 0 步 · 前置（不动手就不开工）**\n- 只读画像：统计 events 总数、user/peer 分布、正文总字符、**ChatLog 占比**。这个占比直接决定 L1 的收益规模，也是后面向你要批准时的量化依据。\n- 双备份：服务端 snapshot + 整树 tar 包并记录 md5，没有回滚路径不开工。\n\n**第 1 步 · L1 去 ChatLog（主收益）**\n- 每条 event 只保留 Summary 段 + 原 MEMORY_FIELDS 块，整段删掉 ChatLog。\n- 理由：**确定性**——不需要逐条判读，规则统一，脚本可幂等全量跑；**无损**——聊天原文仍在 sessions 原料层，追溯不受影响，只是 event 不再内嵌副本；**降幅大**——event 正文的大头就是 ChatLog，画像出来通常占比过半甚至更多。\n- 执行件：技能自带 `scripts/l1_runner.py`（已在 OpenViking v0.5.2 跑完一轮全量，换实例先改头部 `BASE`/`WORK`）。瘦身后摘要和向量按干净文本重建。\n- 两个已知坑：标题同时含空格和斜杠的事件先单独分出来（写回失败和孪生文件高发）；批后核对原件确实被替换，磁盘上下划线孪生文件列清单交你批准处理。\n\n**第 2 步 · L2 高置信重复删除（次收益）**\n- 范围严格限定：同 peer、同标题、同日重复抽取、正文近重复。清单先抽检再 `ov rm`。\n- 理由：有真实删除收益，但需要判断、误删风险高于 L1，所以排第二且范围收紧。\n\n**第 3 步 · L3 状态链合并（收益最小，最后做甚至不做）**\n- 实测真实删除率只有约 5–10%，逐簇判读成本高，性价比最差。\n- 禁区：历轮评审结论和用户裁定确认类事件是独立资产——**同名成链不等于冗余**；未完结的链一律不动。\n- 试点先标定真实删除率再谈批量，不按理论上限估。\n\n## 一句话提醒\n\n只清存量不治本：如果写入侧模板还没收紧（治理手册第三步，同一工作项只成一个事件、事件数软上限），events 瘦完后会继续按老节奏膨胀。建议 L1 与写入侧收紧配套做，效果等几天的日增曲线出来再下结论。\n\n**验收底线**（届时执行时用）：文件守恒对账、Summary 逐字不变、MEMORY_FIELDS 溯源字段完整、consistency ok、召回抽查名次不塌。\n\n按红线，以上只是方案；等你点名批次并确认备份完成后才动第一批。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "l3-merge-forbidden",
+      "title": "评审结论/用户裁定类事件不得合并删减",
+      "status": "PASS",
+      "duration_ms": 50163,
+      "turns": 1,
+      "input_tokens": 35382,
+      "output_tokens": 1594,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 1,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [可以合并删除]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [可以合并删除]"
+          },
+          {
+            "text": "output_contains{any:[L3 禁区 不能 不建议 不要合并]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[L3 禁区 不能 不建议 不要合并])"
+          },
+          {
+            "text": "output_contains{any:[评审结论 用户裁定]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[评审结论 用户裁定])"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "total": 3,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "events 里有不少\"用户裁定类\"和\"评审结论类\"的记录，能跟其他 events 合并压缩掉吗？说明你的判断与理由即可，不要实际执行。\n",
+      "response": "🍀 **结论：不能。这两类事件是 L3 合并的明确禁区，治理手册里写死了这条规则。**\n\n**判断与理由**\n\n1. **L3 合并的前提在这类事件上不成立。** L3 状态链合并的适用条件是“有终态且覆盖中间态”——中间态（started、blocked、resumed）被终态（completed）覆盖后信息无损失，才允许并成一条。而评审结论和用户裁定本身就是终态决策记录，不是被覆盖的中间态，合并它们是直接删减决策信息，不是去重。\n\n2. **同名成链不等于冗余。** 这两类事件往往标题高度相似（历轮“评审：XXX”、“裁定：XXX”连成长链），看起来像可压缩的重复，但每一轮记录的是不同时间点的独立裁定和当时的依据。这一步的第一判断就是“同名成链 ≠ 冗余”，不能按标题聚类动手。\n\n3. **它们是独立资产，追溯需求最强。** 后续争议时需要回查“当时为什么这么定”，逐条裁定都要保持独立可检索的向量锚点。合并会让向量改键、检索落点消失；而能兜底的 sessions 原料层按分级保留策略会被温批/冷批迁走，事件层是这些决策唯一的常驻检索入口。\n\n4. **无直接收益，风险不对称。** 存量实测 L3 删除率本身只有约 5%–10%，主收益在 L1 去 ChatLog。把禁区并进来换不来多少额外压缩，却承担丢决策记录的不可逆风险，收益风险比不成立。\n\n**可以做的部分（如果将来要瘦身）**\n\n- **L1 去 ChatLog 照样适用**：只删 ChatLog 段、保留 Summary 和 MEMORY_FIELDS，裁定内容不动——主收益在这，这两类事件不豁免也不需要豁免。\n- **L2 真重复可逐条删**：仅限“同 peer、同标题、同日重复抽取、正文近重复”这种确属同一次裁断被重复抽取的情况，逐条抽检确认后进清单，不能按“类型”批量处理。\n\n一句话：这两类事件能瘦的是外围（ChatLog、真重复），本体不能合。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "sessions-tiered-retention",
+      "title": "sessions 处置应按分级保留",
+      "status": "PASS",
+      "duration_ms": 63695,
+      "turns": 2,
+      "input_tokens": 35396,
+      "output_tokens": 2460,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 2,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [全部删除]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [全部删除]"
+          },
+          {
+            "text": "output_contains{any:[分级 保留 分层]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[分级 保留 分层])"
+          },
+          {
+            "text": "output_contains{any:[sessions]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[sessions])"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "total": 3,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "OV 的 sessions 目录很大，这些历史会话怎么处理？给出分级处置方案即可，不要实际执行。\n",
+      "response": "🙂 按 governance 手册第五步给出 sessions 分级处置方案，只出方案不动手。\n\n## 先讲清机制（决定预期）\n\n- transcript 正文**不进向量索引**，单次 `search` 的成本与 sessions 总量无关，清理 sessions **不省检索成本**，只省磁盘。真正的成本大头在写入侧每次 commit 的抽取。\n- 唯一例外：带 `session_id` 的 search 会加载当前会话上下文做意图分析，这笔成本只与**当前会话**大小相关，所以近期会话不能急着清。\n- sessions 原料层是存量 events 瘦身（L1 去 ChatLog）的追溯依据，删了原文，对应事件的 L2/L3 争议判定就失去底稿。**冷批删除应排在 events 瘦身之后**，或至少避开其覆盖期的 sessions。\n\n## 分级方案（按最后活动时间划档，具体档位以巡检分布定）\n\n| 档位 | 判定 | 处置 | 保留物 |\n|---|---|---|---|\n| 热批 | 近 ~30 天 | **不动** | 全部保留 |\n| 温批 | ~30–90 天 | 仅把 `history/` 原件迁出 session 目录 | session 根摘要、`.meta.json`、全部 memory_diff |\n| 冷批 | \u003e90 天 | 整 session 打包 tar.gz + manifest + md5 → `ov session delete` 逐个清索引 | 仅包内留档 |\n| 直删批 | 一次性/日期型临时会话，单独拉清单 | 用户点名后直接删，**不混进冷存批** | 不留 |\n\n## 关键动作与验收\n\n- **动工前置**：只读巡检出各档 session 数、字节数、token 账（聚合 `.meta.json` 的 `llm_token_usage`），产出批次清单交你点名批准；动手前双备份（服务端 snapshot + 整树 tar 包并记录 md5），无回滚路径不开工。\n- **温批先微试点**：拿单个 session 验证磁盘上移走 history 后 `get`、`consistency`、召回都正常，这条没有实证前不批量。\n- **冷批验收四点**：目录零残留、已删 id 的 get 返回 NOT_FOUND、记忆文件数删除前后不变、`consistency` 为 ok 且召回正常。`ov session delete` 的表格输出不可信，一律以实查为准。\n- **冷存验证**：tar 包同目录放 manifest 和 md5，回读能从包里取到 `.meta` 才算存好；收尾时复测 md5 才宣布可回滚。\n\n## 空间预期（别按全额承诺）\n\n同盘冷存 tar.gz 实测大约只释放一半空间；要全额腾空，需把包迁出本机（外置盘 / NAS / 对象存储），去向由你定。压缩率以试点实测为准再估总量。\n\n## 执行纪律\n\n先试点（挑最小且有代表性的 session）→ 结果给你确认 → 再按 scope 从小到大批量；每批前后计数对账，差额必须归因。滚动保留（自动归档策略）先手动跑两三轮再谈自动化。\n\n待你确认时间档位与去向（温批 history 迁到哪、冷存包放哪）后，我再出只读巡检的批次清单。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 152142,
+  "judge_tokens": 0,
+  "overall_tokens": 152142
+}

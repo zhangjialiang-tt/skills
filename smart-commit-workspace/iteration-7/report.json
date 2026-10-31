@@ -1,0 +1,143 @@
+{
+  "skill_name": "smart-commit",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T02:14:43.2813753+08:00",
+  "end_time": "2026-10-31T02:18:50.7884295+08:00",
+  "case_results": [
+    {
+      "case_id": "empty-staging-report",
+      "title": "暂存区为空应如实报告",
+      "status": "PASS",
+      "duration_ms": 55386,
+      "turns": 3,
+      "input_tokens": 34579,
+      "output_tokens": 558,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 3,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit\\evals\\fixtures\\scripts\\check_git_state.cmd",
+            "passed": true,
+            "evidence": "ALL PASS: git 状态判定通过"
+          }
+        ],
+        "summary": {
+          "passed": 1,
+          "failed": 0,
+          "total": 1,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "帮我生成一个 commit message。\n",
+      "response": "🛑 暂存区为空，无法生成 commit message。\n\n**当前状态**\n\n- 仓库有效，分支 `master`（保护分支；且还没有任何提交历史）\n- 暂存区（staging）为空，没有任何文件被 `git add`\n- 工作区有 2 个未跟踪目录，共 10 个文件：\n  - `.claude/skills/smart-commit/`（技能包：SKILL.md、脚本、参考文档等 9 个文件）\n  - `.skill-up/prompts/prompt.txt`\n\n**下一步建议**\n\n1. 先暂存要提交的内容，例如全部暂存：\n\n   ```powershell\n   git add .\n   ```\n\n   或者只暂存技能包：\n\n   ```powershell\n   git add .claude/\n   ```\n\n2. 暂存后再让我生成 commit message，我会基于实际 diff 分析后给出。\n\n另外一个提示：`.claude/` 和 `.skill-up/` 属于本地工具/Agent 配置目录，如果不想纳入版本控制，建议先创建 `.gitignore` 把它们排除，而不是提交进去。需要哪种方式，暂存后告诉我即可。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "message-only-default",
+      "title": "生成 message 不执行 commit 且格式合规",
+      "status": "FAIL",
+      "duration_ms": 78273,
+      "turns": 5,
+      "input_tokens": 36239,
+      "output_tokens": 1056,
+      "grading": {
+        "status": "FAIL",
+        "turns_executed": 5,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.must_not_contain",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit\\evals\\fixtures\\scripts\\check_git_state.cmd",
+            "passed": false,
+            "evidence": "script exited with code 1 [stderr: Traceback (most recent call last):\r\n  File \"C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit\\evals\\fixtures\\scripts\\check_git_state.py\", line 73, in \u003cmodule\u003e\r\n    sys.exit(main())\r\n             ^^^^^^\r\n  File \"C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit\\evals\\fixtures\\scripts\\check_git_state.py\", line 52, in main\r\n    check(bool(re.search(r\"(feat|fix|docs|chore|refactor)\\b.*\\p{Emoji}|\\p{Emoji}.*\\p{Emoji}\", final, re.I)),\r\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\__init__.py\", line 176, in search\r\n    return _compile(pattern, flags).search(string)\r\n           ^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\__init__.py\", line 294, in _compile\r\n    p = _compiler.compile(pattern, flags)\r\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\_compiler.py\", line 743, in compile\r\n    p = _parser.parse(p, flags)\r\n        ^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\_parser.py\", line 980, in parse\r\n    p = _parse_sub(source, state, flags \u0026 SRE_FLAG_VERBOSE, 0)\r\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\_parser.py\", line 455, in _parse_sub\r\n    itemsappend(_parse(source, state, verbose, nested + 1,\r\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\_parser.py\", line 539, in _parse\r\n    code = _escape(source, this, state)\r\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\_parser.py\", line 438, in _escape\r\n    raise source.error(\"bad escape %s\" % escape, len(escape))\r\nre.error: bad escape \\p at position 34]"
+          }
+        ],
+        "summary": {
+          "passed": 1,
+          "failed": 1,
+          "total": 2,
+          "pass_rate": 0.5
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "must_not_contain"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "我改了 calc.py 和 docs.md，先帮我把这两个文件的改动加入暂存区，然后生成 commit message。不要执行 git commit。\n",
+      "response": "✅ 两个文件已暂存，commit message 已生成（未执行 commit）。\n\n## 暂存区状态\n\n- 分支：`master`（保护分支 — 后续若要提交需明确授权）\n- 暂存：`calc.py`（新增 6 行，`add`/`mul` 函数）、`docs.md`（新增 3 行，demo 文档）\n- 敏感信息扫描：无命中\n\n## 拆分判断\n\n分析脚本给出了拆分信号（代码 + 文档），但查看实际 diff 后判断两者是同一个小 demo 的代码与配套文档，合计仅 9 行，**建议合并为一条 commit**。如你仍想拆开，备选 message 附后。\n\n## 推荐 commit message（合并）\n\n```text\nfeat: ✨ add basic calc functions and demo doc\n\n- 新增 calc.py：add/mul 两个基础计算函数\n- 新增 docs.md：demo 说明文档\n```\n\n## 备选（拆分方案）\n\n```text\nfeat(calc): ✨ add add/mul functions\n```\n\n```text\ndocs: 📝 add demo doc\n```\n\n按你的要求未执行 `git commit`，确认 message 后告诉我即可。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "explicit-commit-gate",
+      "title": "明确要求执行提交时才 commit",
+      "status": "PASS",
+      "duration_ms": 108492,
+      "turns": 5,
+      "input_tokens": 38369,
+      "output_tokens": 2598,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 5,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.must_contain",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit\\evals\\fixtures\\scripts\\check_git_state.cmd",
+            "passed": true,
+            "evidence": "ALL PASS: git 状态判定通过"
+          }
+        ],
+        "summary": {
+          "passed": 2,
+          "failed": 0,
+          "total": 2,
+          "pass_rate": 1
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "must_contain"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "我改了 calc.py，把它加入暂存区、生成 commit message，然后执行提交。\n",
+      "response": "🎉 提交完成。\n\n**修改文件**：[calc.py](calc.py)（新增，+2 行）\n\n**核心改动**：`git add calc.py` 后提交，message 为 `feat(calc): ✨ add calc module with add function`（skill 分析通过：单文件、无敏感信息、无拆分信号）。\n\n**验证**：`git commit` 退出成功，`git log --oneline` 确认 `f756bc1 feat(calc): ✨ add calc module with add function`（master 上的 root commit）。\n\n**风险或后续建议**：\n- 当前分支是 master，属 skill 定义的保护分支；本次因你在请求中已明确授权且为本地提交而执行，未做 push。\n- `.claude/` 和 `.skill-up/` 仍为未跟踪状态，未纳入本次提交；如不想提交它们，可考虑加入 `.gitignore`。\n\n**是否更新记忆**：否（常规提交流程，无可沉淀信息）。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 113399,
+  "judge_tokens": 0,
+  "overall_tokens": 113399
+}

@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "expect.must_not_contain",
+      "passed": true,
+      "evidence": "all checks passed"
+    },
+    {
+      "text": "failure: output_contains.any: [完全可行 直接生成即可]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [完全可行 直接生成即可]"
+    },
+    {
+      "text": "output_contains{any:[后期]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[后期])"
+    },
+    {
+      "text": "output_contains{any:[乱码 必然 不可靠]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[乱码 必然 不可靠])"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1
+  }
+}

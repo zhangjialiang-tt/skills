@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "expect.must_not_contain",
+      "passed": true,
+      "evidence": "all checks passed"
+    },
+    {
+      "text": "failure: output_contains.any: [已为每个端口添加注释 注释已添加]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [已为每个端口添加注释 注释已添加]"
+    },
+    {
+      "text": "output_contains.any: [rtl-annotator 注释增强 不属于本 skill 超出本 skill]",
+      "passed": false,
+      "evidence": "output does not contain any of [rtl-annotator 注释增强 不属于本 skill 超出本 skill]"
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 1,
+    "total": 3,
+    "pass_rate": 0.6666666666666666
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [打开 Wireshark GUI]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [打开 Wireshark GUI]"
+    },
+    {
+      "text": "output_contains{any:[tshark dumpcap pcap]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[tshark dumpcap pcap])"
+    },
+    {
+      "text": "output_contains{any:[丢包 间隔 block_id 每帧包数 重传]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[丢包 间隔 block_id 每帧包数 重传])"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1
+  }
+}

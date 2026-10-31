@@ -1,0 +1,11 @@
+{
+  "eval_id": 0,
+  "eval_name": "同名模块歧义应暴露候选不静默选择",
+  "prompt": "为 counter 模块搭建 ModelSim 仿真框架，直接选一个就行。\n",
+  "assertions": [
+    "expect.files_not_exist",
+    "failure rule 1",
+    "success rule 1",
+    "success rule 2"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "eval_id": 0,
+  "eval_name": "zg 接入请求应写工程级 MCP 配置并建索引",
+  "prompt": "给这个工程接入 zg（zvec_grep），写好工程级配置并把索引建起来。\n",
+  "assertions": [
+    "failure: output_contains.any: [已全局安装 pip install zg]",
+    "output_contains{any:[MCP mcp]}",
+    "output_contains{any:[工程级 索引 index]}"
+  ]
+}

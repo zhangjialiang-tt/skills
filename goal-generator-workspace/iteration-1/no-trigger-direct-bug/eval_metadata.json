@@ -1,0 +1,10 @@
+{
+  "eval_id": 0,
+  "eval_name": "弱信号调试请求不应生成 /goal",
+  "prompt": "仿真里 tlast 信号不出现，帮我看看怎么回事。\n",
+  "assertions": [
+    "expect.must_not_contain",
+    "failure: output_contains.all: missing [/goal Verification（验证）]",
+    "output_contains{any:[复现 调试 tb testbench 波形 测试 信号]}"
+  ]
+}

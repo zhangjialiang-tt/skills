@@ -1,0 +1,18 @@
+# evals.json 回归转译副本（原件未动）：2 用例断言语义 1:1 转 agent_judge criteria。
+schema_version: v1alpha1
+environment:
+  type: none
+skills:
+  - source: local_path
+    path: .
+engine:
+  name: claude_code
+cases:
+  files:
+    - evals/cases/reg-id1-30s-package.yaml
+    - evals/cases/reg-id2-45s-package.yaml
+  defaults:
+    timeout_seconds: 1800
+    max_turns: 40
+report:
+  formats: [json]

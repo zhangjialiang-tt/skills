@@ -1,0 +1,20 @@
+{
+  "expectations": [
+    {
+      "text": "expect.must_not_contain",
+      "passed": true,
+      "evidence": "all checks passed"
+    },
+    {
+      "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit\\evals\\fixtures\\scripts\\check_git_state.cmd",
+      "passed": false,
+      "evidence": "script exited with code 1 [stderr: Traceback (most recent call last):\r\n  File \"C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit\\evals\\fixtures\\scripts\\check_git_state.py\", line 73, in \u003cmodule\u003e\r\n    sys.exit(main())\r\n             ^^^^^^\r\n  File \"C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit\\evals\\fixtures\\scripts\\check_git_state.py\", line 52, in main\r\n    check(bool(re.search(r\"(feat|fix|docs|chore|refactor)\\b.*\\p{Emoji}|\\p{Emoji}.*\\p{Emoji}\", final, re.I)),\r\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\__init__.py\", line 176, in search\r\n    return _compile(pattern, flags).search(string)\r\n           ^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\__init__.py\", line 294, in _compile\r\n    p = _compiler.compile(pattern, flags)\r\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\_compiler.py\", line 743, in compile\r\n    p = _parser.parse(p, flags)\r\n        ^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\_parser.py\", line 980, in parse\r\n    p = _parse_sub(source, state, flags \u0026 SRE_FLAG_VERBOSE, 0)\r\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\_parser.py\", line 455, in _parse_sub\r\n    itemsappend(_parse(source, state, verbose, nested + 1,\r\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\_parser.py\", line 539, in _parse\r\n    code = _escape(source, this, state)\r\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\_parser.py\", line 438, in _escape\r\n    raise source.error(\"bad escape %s\" % escape, len(escape))\r\nre.error: bad escape \\p at position 34]"
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 1,
+    "total": 2,
+    "pass_rate": 0.5
+  }
+}

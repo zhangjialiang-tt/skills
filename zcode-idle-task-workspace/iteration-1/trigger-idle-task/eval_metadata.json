@@ -1,0 +1,10 @@
+{
+  "eval_id": 0,
+  "eval_name": "闲时任务请求应生成任务合同",
+  "prompt": "让 ZCode 夜间执行：把本仓库所有 Python 脚本跑一遍语法检查，产出问题清单。\n",
+  "assertions": [
+    "failure: output_contains.any: [已立即执行 现在就跑]",
+    "output_contains{any:[闲时 任务合同 任务指令 夜间]}",
+    "output_contains{any:[验收 交付物 范围 权限]}"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "expectations": [
+    {
+      "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\build-testbench\\evals\\fixtures\\scripts\\check_l1_framework.cmd",
+      "passed": true,
+      "evidence": "FOUND sim=sim\\sub1-counter\r\nALL PASS: L1 框架目录契约齐全（sim\\sub1-counter）"
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 0,
+    "total": 1,
+    "pass_rate": 1
+  }
+}

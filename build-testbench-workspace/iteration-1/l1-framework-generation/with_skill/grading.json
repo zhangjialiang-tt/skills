@@ -1,0 +1,21 @@
+{
+  "expectations": [
+    {
+      "text": "expect.must_not_contain",
+      "passed": false,
+      "evidence": "output contains forbidden keyword \"[SIM_RESULT] L1 PASS\""
+    },
+    {
+      "text": "script: evals/fixtures/scripts/check_l1_framework.cmd",
+      "passed": false,
+      "skipped": true,
+      "evidence": "not evaluated: expect gate failed"
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 2,
+    "total": 2,
+    "pass_rate": 0
+  }
+}

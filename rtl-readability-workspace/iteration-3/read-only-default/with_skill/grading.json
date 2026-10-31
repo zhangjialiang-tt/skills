@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "expect.must_not_contain",
+      "passed": true,
+      "evidence": "all checks passed"
+    },
+    {
+      "text": "failure: output_contains.any: [已重命名信号 已修改 RTL]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [已重命名信号 已修改 RTL]"
+    },
+    {
+      "text": "output_contains{any:[只读 确认 建议]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[只读 确认 建议])"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1
+  }
+}

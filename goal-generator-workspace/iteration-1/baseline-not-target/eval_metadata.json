@@ -1,0 +1,10 @@
+{
+  "eval_id": 0,
+  "eval_name": "用户给 baseline 未给目标时不得编造阈值",
+  "prompt": "不要执行，只生成执行目标。我们的支付服务目前重复扣款每周 3-5 例，\n帮我写一个 goal 处理这个问题。\n",
+  "assertions": [
+    "expect.must_contain",
+    "failure rule 1",
+    "success rule 1"
+  ]
+}

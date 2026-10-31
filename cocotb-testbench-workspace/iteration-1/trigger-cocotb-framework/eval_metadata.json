@@ -1,0 +1,11 @@
+{
+  "eval_id": 0,
+  "eval_name": "cocotb 框架请求应启动框架生成流程",
+  "prompt": "用 cocotb 给 corr_match.v 搭一套 Python 测试框架。\n",
+  "assertions": [
+    "expect.files_not_exist",
+    "failure: output_contains.any: [无法 不能帮 做不到]",
+    "output_contains{any:[cocotb pytest 测试框架]}",
+    "output_contains{any:[corr_match RTL rtl 文件 路径 哪]}"
+  ]
+}

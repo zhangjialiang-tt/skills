@@ -1,0 +1,11 @@
+{
+  "eval_id": 0,
+  "eval_name": "歧义请求应产出需求对齐摘要",
+  "prompt": "帮我优化一下这个仓库的代码。\n",
+  "assertions": [
+    "failure: output_contains.any: [已完成优化 修改完成]",
+    "output_contains{any:[优化 目标 范围]}",
+    "output_contains{any:[？ ?]}",
+    "output_contains{any:[澄清 确认 先]}"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "eval_id": 0,
+  "eval_name": "生成 message 不执行 commit 且格式合规",
+  "prompt": "我改了 calc.py 和 docs.md，先帮我把这两个文件的改动加入暂存区，然后生成 commit message。不要执行 git commit。\n",
+  "assertions": [
+    "expect.must_not_contain",
+    "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit\\evals\\fixtures\\scripts\\check_git_state.cmd"
+  ]
+}

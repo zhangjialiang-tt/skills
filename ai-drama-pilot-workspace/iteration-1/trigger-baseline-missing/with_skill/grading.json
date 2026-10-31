@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "expect.must_not_contain",
+      "passed": true,
+      "evidence": "all checks passed"
+    },
+    {
+      "text": "failure: output_contains.any: [阶段 A 已完成 剧本已产出]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [阶段 A 已完成 剧本已产出]"
+    },
+    {
+      "text": "output_contains{any:[故事基线 题材 必须保留的情节点]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[故事基线 题材 必须保留的情节点])"
+    },
+    {
+      "text": "output_contains{any:[？ ?]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[？ ?])"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1
+  }
+}

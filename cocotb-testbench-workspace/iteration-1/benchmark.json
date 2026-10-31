@@ -1,0 +1,134 @@
+{
+  "metadata": {
+    "skill_name": "cocotb-testbench",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\cocotb-testbench",
+    "timestamp": "2026-10-30T22:55:58Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "cocotb 框架请求应启动框架生成流程",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 530.992,
+        "tokens": 47846,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.files_not_exist",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "failure: output_contains.any: [无法 不能帮 做不到]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [无法 不能帮 做不到]"
+        },
+        {
+          "text": "output_contains{any:[cocotb pytest 测试框架]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[cocotb pytest 测试框架])"
+        },
+        {
+          "text": "output_contains{any:[corr_match RTL rtl 文件 路径 哪]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[corr_match RTL rtl 文件 路径 哪])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "ModelSim 原生 TB 请求应转介 build-testbench",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 439.968,
+        "tokens": 57703,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.files_not_exist",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "failure: output_contains.any: [test_counter.py 已生成 已生成 cocotb 框架]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [test_counter.py 已生成 已生成 cocotb 框架]"
+        },
+        {
+          "text": "output_contains{any:[build-testbench]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[build-testbench])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "cocotb 框架生成与 characterization 降级措辞",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0,
+        "passed": 0,
+        "failed": 2,
+        "total": 2,
+        "time_seconds": 413.698,
+        "tokens": 81832,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_not_contain",
+          "passed": false,
+          "evidence": "output contains forbidden keyword \"功能正确\""
+        },
+        {
+          "text": "script: evals/fixtures/scripts/check_cocotb_framework.cmd",
+          "passed": false,
+          "skipped": true,
+          "evidence": "not evaluated: expect gate failed"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.6666666666666666,
+        "stddev": 0.4714045207910317,
+        "min": 0,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 461.55266666666665,
+        "stddev": 50.25862436990844,
+        "min": 413.698,
+        "max": 530.992
+      },
+      "tokens": {
+        "mean": 62460.333333333336,
+        "stddev": 14276.699299519092,
+        "min": 47846,
+        "max": 81832
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

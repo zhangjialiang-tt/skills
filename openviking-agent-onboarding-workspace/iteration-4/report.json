@@ -1,0 +1,62 @@
+{
+  "skill_name": "openviking-agent-onboarding",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T03:19:59.2814726+08:00",
+  "end_time": "2026-10-31T03:20:28.8380409+08:00",
+  "case_results": [
+    {
+      "case_id": "exclude-server-ops",
+      "title": "服务端运维请求应转介 openviking-server-ops",
+      "status": "PASS",
+      "duration_ms": 29070,
+      "turns": 1,
+      "input_tokens": 31831,
+      "output_tokens": 1192,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 1,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [开始 reindex 已启动 reindex]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [开始 reindex 已启动 reindex]"
+          },
+          {
+            "text": "output_contains{any:[openviking-server-ops 服务端运维 不在本 skill 超出本]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[openviking-server-ops 服务端运维 不在本 skill 超出本])"
+          }
+        ],
+        "summary": {
+          "passed": 2,
+          "failed": 0,
+          "total": 2,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "OpenViking 服务端最近记忆检索变慢，我想 reindex 一下。按你的 skill 边界判断：这类请求该由谁处理？\n只需要说明归属与理由，不要实际执行任何服务端操作。\n",
+      "response": "🎯 **归属：`openviking-server-ops`**\n\n理由：\n\n1. **触发词直接命中**：该 skill 明确覆盖“重建索引”、“换 embedding 后检索变差”、“服务端健康与排障”。“检索变慢 → reindex”正是其核心场景，且它知道服务端（Docker 部署）真正生效的配置文件位置——判断 reindex 该怎么执行、要不要先备份、之后如何重启验证，都依赖这些服务端知识。\n\n2. **服务端 vs 客户端的边界**：\n   - `openviking-memory:ov-memory-doctor` 只管**本机侧**：插件安装、`ovcli.conf`/`ov.conf` 客户端配置、与服务端的连通性（401、recall 为空）。它能在客户端层面排除“是不是我这边的问题”，但没有服务端重建索引的能力。\n   - `openviking-memory:openviking-memory` 是记忆的**使用**（search/read/write），不做服务维护。\n   - `openviking-agent-onboarding` 管的是 Agent 接入，与此无关。\n\n3. **合理的前置分支**：如果还无法确定慢的根源在服务端还是客户端链路，可以先由 `ov-memory-doctor` 做本机侧只读排查（连通性、插件状态），确认瓶颈在服务端后仍交回 `openviking-server-ops` 执行 reindex。但按你描述“服务端检索变慢”这一前提，直接归 `openviking-server-ops`。\n\n按约定，本次只做归属判断，未执行任何服务端操作。待你确认后，实际执行时应由该 skill 按其流程处理（重建索引属有副作用的运维操作，执行前会先说明影响）。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 33023,
+  "judge_tokens": 0,
+  "overall_tokens": 33023
+}

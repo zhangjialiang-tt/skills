@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "skill_name": "cocotb-testbench",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\cocotb-testbench",
+    "timestamp": "2026-10-30T23:17:37Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "cocotb 框架生成与 characterization 降级措辞",
+      "configuration": "with_skill",
+      "run_number": 4,
+      "result": {
+        "pass_rate": 1,
+        "passed": 1,
+        "failed": 0,
+        "total": 1,
+        "time_seconds": 333.951,
+        "tokens": 54360,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\cocotb-testbench\\evals\\fixtures\\scripts\\check_cocotb_framework.cmd",
+          "passed": true,
+          "evidence": "FOUND sim=sim\\counter\r\nALL PASS: cocotb 框架契约齐全（sim\\counter）"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1,
+        "stddev": 0,
+        "min": 1,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 333.951,
+        "stddev": 0,
+        "min": 333.951,
+        "max": 333.951
+      },
+      "tokens": {
+        "mean": 54360,
+        "stddev": 0,
+        "min": 54360,
+        "max": 54360
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

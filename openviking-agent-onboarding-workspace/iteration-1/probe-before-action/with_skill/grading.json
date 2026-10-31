@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [已经接好了]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [已经接好了]"
+    },
+    {
+      "text": "output_contains.any: [probe 探测 先]",
+      "passed": false,
+      "evidence": "output does not contain any of [probe 探测 先]"
+    },
+    {
+      "text": "output_contains{any:[ov-agent-probe 配置 hooks MCP]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[ov-agent-probe 配置 hooks MCP])"
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 1,
+    "total": 3,
+    "pass_rate": 0.6666666666666666
+  }
+}

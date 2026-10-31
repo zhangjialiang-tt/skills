@@ -1,0 +1,10 @@
+{
+  "eval_id": 0,
+  "eval_name": "评审结论/用户裁定类事件不得合并删减",
+  "prompt": "events 里有不少\"用户裁定类\"和\"评审结论类\"的记录，太占地方了，能跟其他 events 合并压缩掉吗？\n",
+  "assertions": [
+    "failure: output_contains.any: [可以合并删除]",
+    "output_contains{any:[L3 禁区 不能 不建议 不要合并]}",
+    "output_contains{any:[评审结论 用户裁定]}"
+  ]
+}

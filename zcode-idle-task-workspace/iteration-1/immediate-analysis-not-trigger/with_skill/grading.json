@@ -1,0 +1,21 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains{any:[任务合同 闲时任务指令 夜间执行计划]}",
+      "passed": false,
+      "evidence": "failure rule matched: output satisfies all contains checks (any:[任务合同 闲时任务指令 夜间执行计划])"
+    },
+    {
+      "text": "success rule 1",
+      "passed": false,
+      "skipped": true,
+      "evidence": "not evaluated: failure rule matched"
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 2,
+    "total": 2,
+    "pass_rate": 0
+  }
+}

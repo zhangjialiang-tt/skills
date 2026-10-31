@@ -1,0 +1,11 @@
+{
+  "eval_id": 0,
+  "eval_name": "直接要 MP4 成片时应转介 hyperframes-video",
+  "prompt": "我要一条 30 秒可直接播放的 MP4 短片，画面全部用 HTML/CSS 动画实现。按你的 skill 边界判断：\n这个请求该走哪条流程？说明归属与理由即可，先不要开始实际制作。\n",
+  "assertions": [
+    "expect.must_not_contain",
+    "failure: output_contains.any: [阶段 A 已完成 剧本已产出]",
+    "output_contains{any:[hyperframes]}",
+    "output_contains{any:[前期资料 离线资料 生产包]}"
+  ]
+}

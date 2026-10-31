@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [直接全部清空]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [直接全部清空]"
+    },
+    {
+      "text": "output_contains{any:[ChatLog L1]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[ChatLog L1])"
+    },
+    {
+      "text": "output_contains{any:[主收益 收益 大头]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[主收益 收益 大头])"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1
+  }
+}

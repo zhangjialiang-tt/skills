@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [可以合并删除]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [可以合并删除]"
+    },
+    {
+      "text": "output_contains{any:[L3 禁区 不能 不建议 不要合并]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[L3 禁区 不能 不建议 不要合并])"
+    },
+    {
+      "text": "output_contains{any:[评审结论 用户裁定]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[评审结论 用户裁定])"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1
+  }
+}

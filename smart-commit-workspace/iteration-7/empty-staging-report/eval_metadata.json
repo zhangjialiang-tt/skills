@@ -1,0 +1,8 @@
+{
+  "eval_id": 0,
+  "eval_name": "暂存区为空应如实报告",
+  "prompt": "帮我生成一个 commit message。\n",
+  "assertions": [
+    "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit\\evals\\fixtures\\scripts\\check_git_state.cmd"
+  ]
+}

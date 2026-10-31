@@ -1,0 +1,11 @@
+{
+  "eval_id": 0,
+  "eval_name": "写请求缺明确主目标卡时应先澄清且不写入",
+  "prompt": "把\"完成第一版架构方案\"写进 AI-Plat vault。\n",
+  "assertions": [
+    "expect.must_not_contain",
+    "failure: output_contains.any: [已同步]",
+    "output_contains{any:[主目标 联动 确认 哪张 请明确 项目卡 task]}",
+    "output_contains{any:[确认 先 1. 2. 3.]}"
+  ]
+}

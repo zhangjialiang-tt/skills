@@ -1,0 +1,64 @@
+{
+  "metadata": {
+    "skill_name": "smart-commit",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit",
+    "timestamp": "2026-10-30T18:27:18Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "生成 message 不执行 commit 且格式合规",
+      "configuration": "with_skill",
+      "run_number": 8,
+      "result": {
+        "pass_rate": 1,
+        "passed": 2,
+        "failed": 0,
+        "total": 2,
+        "time_seconds": 73.754,
+        "tokens": 37901,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_not_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit\\evals\\fixtures\\scripts\\check_git_state.cmd",
+          "passed": true,
+          "evidence": "ALL PASS: git 状态判定通过"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1,
+        "stddev": 0,
+        "min": 1,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 73.754,
+        "stddev": 0,
+        "min": 73.754,
+        "max": 73.754
+      },
+      "tokens": {
+        "mean": 37901,
+        "stddev": 0,
+        "min": 37901,
+        "max": 37901
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

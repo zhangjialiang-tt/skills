@@ -1,0 +1,128 @@
+{
+  "metadata": {
+    "skill_name": "zg-agent-setup",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\zg-agent-setup",
+    "timestamp": "2026-10-30T21:27:29Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "zg 接入请求应写工程级 MCP 配置并建索引",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 103.233,
+        "tokens": 37395,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [已全局安装 pip install zg]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [已全局安装 pip install zg]"
+        },
+        {
+          "text": "output_contains{any:[MCP mcp]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[MCP mcp])"
+        },
+        {
+          "text": "output_contains{any:[工程级 索引 index]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[工程级 索引 index])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "全局安装/升级请求应拒绝或转出范围",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 1,
+        "failed": 1,
+        "total": 2,
+        "time_seconds": 96.62,
+        "tokens": 34366,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [已全局安装 已升级]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [已全局安装 已升级]"
+        },
+        {
+          "text": "output_contains.any: [不在范围 超出 只做工程级 不做全局 拒绝]",
+          "passed": false,
+          "evidence": "output does not contain any of [不在范围 超出 只做工程级 不做全局 拒绝]"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "接入后应做分级验收",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 89.651,
+        "tokens": 36606,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [不需要验收]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [不需要验收]"
+        },
+        {
+          "text": "output_contains{any:[验收 分级]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[验收 分级])"
+        },
+        {
+          "text": "output_contains{any:[检索 搜索 index 索引]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[检索 搜索 index 索引])"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.8333333333333334,
+        "stddev": 0.23570226039551584,
+        "min": 0.5,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 96.50133333333333,
+        "stddev": 5.5454631506805265,
+        "min": 89.651,
+        "max": 103.233
+      },
+      "tokens": {
+        "mean": 36122.333333333336,
+        "stddev": 1283.0069714888104,
+        "min": 34366,
+        "max": 37395
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "metadata": {
+    "skill_name": "zcode-idle-task",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\zcode-idle-task",
+    "timestamp": "2026-10-30T20:14:03Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "立即分析请求不应生成交付合同",
+      "configuration": "with_skill",
+      "run_number": 2,
+      "result": {
+        "pass_rate": 1,
+        "passed": 2,
+        "failed": 0,
+        "total": 2,
+        "time_seconds": 25.307,
+        "tokens": 32600,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [任务合同如下 已生成任务合同 闲时任务指令如下 夜间执行计划如下]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [任务合同如下 已生成任务合同 闲时任务指令如下 夜间执行计划如下]"
+        },
+        {
+          "text": "output_contains{any:[目录 结构 分析]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[目录 结构 分析])"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1,
+        "stddev": 0,
+        "min": 1,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 25.307,
+        "stddev": 0,
+        "min": 25.307,
+        "max": 25.307
+      },
+      "tokens": {
+        "mean": 32600,
+        "stddev": 0,
+        "min": 32600,
+        "max": 32600
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

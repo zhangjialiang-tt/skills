@@ -1,0 +1,6 @@
+{
+  "eval_id": 0,
+  "eval_name": "服务端运维请求应转介 openviking-server-ops",
+  "prompt": "OpenViking 服务端最近记忆检索变慢，帮我 reindex 一下。\n",
+  "assertions": null
+}

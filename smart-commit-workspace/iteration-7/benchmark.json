@@ -1,0 +1,113 @@
+{
+  "metadata": {
+    "skill_name": "smart-commit",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit",
+    "timestamp": "2026-10-30T18:18:50Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "暂存区为空应如实报告",
+      "configuration": "with_skill",
+      "run_number": 7,
+      "result": {
+        "pass_rate": 1,
+        "passed": 1,
+        "failed": 0,
+        "total": 1,
+        "time_seconds": 55.386,
+        "tokens": 35137,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit\\evals\\fixtures\\scripts\\check_git_state.cmd",
+          "passed": true,
+          "evidence": "ALL PASS: git 状态判定通过"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "生成 message 不执行 commit 且格式合规",
+      "configuration": "with_skill",
+      "run_number": 7,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 1,
+        "failed": 1,
+        "total": 2,
+        "time_seconds": 78.273,
+        "tokens": 37295,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_not_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit\\evals\\fixtures\\scripts\\check_git_state.cmd",
+          "passed": false,
+          "evidence": "script exited with code 1 [stderr: Traceback (most recent call last):\r\n  File \"C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit\\evals\\fixtures\\scripts\\check_git_state.py\", line 73, in \u003cmodule\u003e\r\n    sys.exit(main())\r\n             ^^^^^^\r\n  File \"C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit\\evals\\fixtures\\scripts\\check_git_state.py\", line 52, in main\r\n    check(bool(re.search(r\"(feat|fix|docs|chore|refactor)\\b.*\\p{Emoji}|\\p{Emoji}.*\\p{Emoji}\", final, re.I)),\r\n               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\__init__.py\", line 176, in search\r\n    return _compile(pattern, flags).search(string)\r\n           ^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\__init__.py\", line 294, in _compile\r\n    p = _compiler.compile(pattern, flags)\r\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\_compiler.py\", line 743, in compile\r\n    p = _parser.parse(p, flags)\r\n        ^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\_parser.py\", line 980, in parse\r\n    p = _parse_sub(source, state, flags \u0026 SRE_FLAG_VERBOSE, 0)\r\n        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\_parser.py\", line 455, in _parse_sub\r\n    itemsappend(_parse(source, state, verbose, nested + 1,\r\n                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\_parser.py\", line 539, in _parse\r\n    code = _escape(source, this, state)\r\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\r\n  File \"C:\\Software\\Python\\Python311\\Lib\\re\\_parser.py\", line 438, in _escape\r\n    raise source.error(\"bad escape %s\" % escape, len(escape))\r\nre.error: bad escape \\p at position 34]"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "明确要求执行提交时才 commit",
+      "configuration": "with_skill",
+      "run_number": 7,
+      "result": {
+        "pass_rate": 1,
+        "passed": 2,
+        "failed": 0,
+        "total": 2,
+        "time_seconds": 108.492,
+        "tokens": 40967,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit\\evals\\fixtures\\scripts\\check_git_state.cmd",
+          "passed": true,
+          "evidence": "ALL PASS: git 状态判定通过"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.8333333333333334,
+        "stddev": 0.23570226039551584,
+        "min": 0.5,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 80.717,
+        "stddev": 21.74920168649875,
+        "min": 55.386,
+        "max": 108.492
+      },
+      "tokens": {
+        "mean": 37799.666666666664,
+        "stddev": 2406.6908586041723,
+        "min": 35137,
+        "max": 40967
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

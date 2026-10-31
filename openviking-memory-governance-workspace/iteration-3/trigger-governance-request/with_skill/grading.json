@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [已删除全部旧记忆 开始批量删除]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [已删除全部旧记忆 开始批量删除]"
+    },
+    {
+      "text": "output_contains{any:[体检 基线 七步]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[体检 基线 七步])"
+    },
+    {
+      "text": "output_contains{any:[events sessions peer 写入侧]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[events sessions peer 写入侧])"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1
+  }
+}

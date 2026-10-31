@@ -1,0 +1,238 @@
+{
+  "skill_name": "ai-plat-bridge",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T02:27:32.5098316+08:00",
+  "end_time": "2026-10-31T02:34:49.0271125+08:00",
+  "case_results": [
+    {
+      "case_id": "clarify-workbench-query",
+      "title": "宽泛\"查工作台\"请求应先澄清",
+      "status": "FAIL",
+      "duration_ms": 31814,
+      "turns": 3,
+      "input_tokens": 35357,
+      "output_tokens": 406,
+      "grading": {
+        "status": "FAIL",
+        "turns_executed": 3,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.must_not_contain",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "failure: output_contains.any: [已同步]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [已同步]"
+          },
+          {
+            "text": "output_contains{any:[澄清 请明确 哪张 哪个 具体]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[澄清 请明确 哪张 哪个 具体])"
+          },
+          {
+            "text": "output_contains.any: [task knowledge log project]",
+            "passed": false,
+            "evidence": "output does not contain any of [task knowledge log project]"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 1,
+          "total": 4,
+          "pass_rate": 0.75
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "must_not_contain"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "帮我查一下工作台。\n",
+      "response": "emoji：🗂️\n\n按照 AI-Plat 卡片约定，“查工作台”这类宽泛请求没有指定卡片类型时，我不能直接访问 vault，需要先确认你想查哪一类。\n\n路由判定：\n\n```text\noperation_mode: clarify\ncard_type: null\naction: null\n```\n\n请告诉我具体想查什么，例如：\n\n- **任务卡**：查活跃任务（`20-Tasks/active/`）、搜索某张任务卡、看已完成任务\n- **项目卡**：查某个项目状态（`30-Projects/`）\n- **日志卡**：查今日日志（`10-Daily/2026-10-31.md`）或某天的日志\n- **知识卡**：查知识库条目（`70-Knowledge/`）\n\n回复任一种即可，例如“查活跃任务”或“查 XX 项目的状态”，我就按对应类型读取。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "reject-out-of-scope",
+      "title": "越界路径请求应拒绝并说明替代卡片",
+      "status": "FAIL",
+      "duration_ms": 295400,
+      "turns": 6,
+      "input_tokens": 54657,
+      "output_tokens": 4376,
+      "grading": {
+        "status": "FAIL",
+        "turns_executed": 6,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.must_not_contain",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "failure: output_contains.any: [已同步]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [已同步]"
+          },
+          {
+            "text": "output_contains.any: [拒绝 不能 无法 不支持 不属于]",
+            "passed": false,
+            "evidence": "output does not contain any of [拒绝 不能 无法 不支持 不属于]"
+          },
+          {
+            "text": "output_contains{any:[task knowledge log project 卡片]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[task knowledge log project 卡片])"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 1,
+          "total": 4,
+          "pass_rate": 0.75
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "must_not_contain"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "把 .workbuddy/memory 里的对话记录整理后写入 AI-Plat vault 的某个笔记里。\n",
+      "response": "📝 源文件已全部读取、整理分析完成；按 `ai-plat-bridge` 约定，卡片类型未明确前不访问 vault，所以先向你确认落点。\n\n## `.workbuddy/memory` 里实际有什么\n\n| 文件 | 内容 | 性质 |\n|---|---|---|\n| `2026-08-06.md` | InkOS `~/.inkos/.env` 从 DeepSeek 切换到 Kimi(Moonshot) 的选型记录与风险说明 | 单日工作日志 |\n| `5b0cf5ab…_memory.md` | WorkBuddy 用户记忆画像 **v130**（2026-10-26）：工作背景 / 个人背景 / 当前关注 / 近期动态，末尾附一份内容重复的 RAW_JSON 块 | 聚合画像快照，不是逐条对话流水 |\n| `…_memory.md.bak` | 同一画像的 **v129** 旧快照（2026-10-04），已被 v130 覆盖，仅多出少量后来删掉的段落 | 旧备份 |\n\n关键点：这不是逐条聊天记录，而是一份覆盖约 10 个项目（FPGA memctrl、caf_ctrl、Cooler、NovelOS、OpenViking、WorkBuddy…）的聚合画像。它和 vault 四类卡片（log/task/project/knowledge）没有一一对应关系，\"某个笔记”怎么落需要你定。\n\n## 可选方案（主推 + 备选）\n\n**方案 A（主推）— 按卡片语义拆分迁移**\n1. `2026-08-06.md` → 日志卡 `10-Daily/2026-08-06.md`（不存在则创建）。\n2. 画像里的项目事实 → 先列出 `30-Projects/` 现有项目卡，只更新**已存在**的对应卡；无对应卡则跳过并报告，不自动创建。\n3. 可复用工作流偏好（最小变更增量、commit 风格等）→ 仅更新已存在的知识卡，不新建猜测性卡片。\n理由：完全符合四类卡片约定，后续 skill 检索能正确路由；缺点是改动面大、画像会被拆散。\n\n**方案 B（备选）— 单张知识卡归档快照（最贴近“某个笔记\"字面）**\n- 新建 `70-Knowledge/workbuddy-memory-profile.md`，收录 v130 整理版（去掉 RAW_JSON 重复块、去掉已过时表述），frontmatter 标注来源版本与日期；`2026-08-06.md` 仍追加到当日日志卡。\n- 联动：按约定，创建知识卡会自动向 `10-Daily/2026-10-31.md` 追加一条动作摘要。\n- 理由：一次写入保留全貌、可回溯；缺点是画像类内容与知识卡“可复用方法”定位不完全吻合。\n\n**方案 C — 只迁移日志**\n- `2026-08-06.md` 进 vault，画像不迁移（它是 WorkBuddy 维护的活文档，拷进 vault 容易过时产生双源冲突）。\n\n## 敏感信息提示（写入前需你确认）\n\n- 画像含个人基础设施信息：Tailscale IP、LAN IP、公网服务器 IP、SSH 主机条目。vault 走 Syncthing 同步，需确认**保留还是脱敏**。\n- `.bak`（v129）含**财务往来明细**（账户+累计金额），这部分无论如何**不会写入 vault**；若要纳入 .bak 独有内容（如专利撰写事项），我会剔除该段。\n- `2026-08-06.md` 中 API key 在源文件里已正确脱敏，整理时继续保持不复述。\n\n## 待你确认\n\n1. 选方案 A / B / C（默认推荐 B，改动最小且能一次完成“整理归档”）；\n2. IP / 主机信息：保留原值还是脱敏为 `100.x.x.x` 这类占位；\n3. `.bak` 旧快照是否纳入整理范围（默认不纳入）。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "task-list-read-only",
+      "title": "明确 task 类型的 list 请求应只读列出并说明类型与范围",
+      "status": "PASS",
+      "duration_ms": 52002,
+      "turns": 5,
+      "input_tokens": 38296,
+      "output_tokens": 711,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 5,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.must_not_contain",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "failure: output_contains.any: [已同步]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [已同步]"
+          },
+          {
+            "text": "output_contains{any:[task 任务卡]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[task 任务卡])"
+          },
+          {
+            "text": "output_contains{any:[未找到 没有 无任务 空 以下是 列表 共 条]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[未找到 没有 无任务 空 以下是 列表 共 条])"
+          }
+        ],
+        "summary": {
+          "passed": 4,
+          "failed": 0,
+          "total": 4,
+          "pass_rate": 1
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "must_not_contain"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "帮我看看 AI-Plat vault 里最近的任务卡（task 卡）有哪些，列出来。\n",
+      "response": "📋 **card_type: task · action: list · 只读查询，无写入/联动**\n\nAI-Plat vault 的任务卡共 14 张：`20-Tasks/active/` 10 张，`20-Tasks/done/` 4 张，按日期从新到旧排列如下。\n\n**活跃任务卡（active/）**\n\n| 日期 | 文件 | 标题 |\n|---|---|---|\n| 07-30 | `2026-07-30-inkos-token-plan-integration.md` | inkos 接入阿里云 Token Plan 个人版 |\n| 07-29 | `2026-07-29-novelos-creative-domain-v1-milestone.md` | NovelOS Creative Domain v1.0 创意层推进 |\n| 07-24 | `2026-07-24-bram-resource-optimization.md` | 优化 Ti60-WB BRAM 资源占用并建立资源预算 |\n| 07-23 | `2026-07-23-compression-param-line.md` | 压缩算法添加参数行功能 |\n| 07-22 | `2026-07-22-requirement-alignment-production-upgrade.md` | requirement-alignment Production 级升级 |\n| 07-22 | `2026-07-22-cpp-tftp-align-python.md` | C++ 上位机 TFTP 对齐 Python 实现 |\n| 07-20 | `2026-07-20-gear-switch-diagnose.md` | 切档指令丢失与切档慢问题定位 |\n| 07-18 | `2026-07-18-jixin-timing-measure.md` | 机芯 DVP 时序测量模块 |\n| 07-17 | `2026-07-17-guogai-algorithm-debug.md` | 锅盖算法模块调试 |\n| 07-17 | `2026-07-17-guogai-1280x1024-pnr-resource-failure.md` | 解决锅盖模块在 1280×1024 分辨率下的 FPGA 编译失败 |\n\n**已完成归档（done/）**\n\n| 日期 | 文件 | 标题 |\n|---|---|---|\n| 07-29 | `2026-07-29-novelos-goal-skill-driven-loop.md` | NovelOS 首条真实 Skill 驱动生产闭环 |\n| 07-26 | `2026-07-26-novelos-v0.9-upgrade.md` | NovelOS v0.9 五阶段升级 |\n| 07-21 | `2026-07-21-unified-upgrade.md` | 统一升级功能：ASIC + 机芯FPGA + 网络板FPGA |\n| 07-15 | `2026-07-15-asic-upgrade-debug.md` | ASIC 程序升级功能调试 |\n\n最新的任务是 07-30 的「inkos 接入阿里云 Token Plan 个人版」。需要看某张卡的详细内容的话，告诉我文件名即可。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "write-needs-authorization",
+      "title": "写请求缺明确主目标卡时应先澄清且不写入",
+      "status": "FAIL",
+      "duration_ms": 55443,
+      "turns": 2,
+      "input_tokens": 35373,
+      "output_tokens": 1312,
+      "grading": {
+        "status": "FAIL",
+        "turns_executed": 2,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.must_not_contain",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "failure: output_contains.any: [已同步]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [已同步]"
+          },
+          {
+            "text": "output_contains{any:[主目标 联动 确认 哪张 请明确 项目卡 task]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[主目标 联动 确认 哪张 请明确 项目卡 task])"
+          },
+          {
+            "text": "output_contains.any: [？ ?]",
+            "passed": false,
+            "evidence": "output does not contain any of [？ ?]"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 1,
+          "total": 4,
+          "pass_rate": 0.75
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "must_not_contain"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "把\"完成第一版架构方案\"写进 AI-Plat vault。\n",
+      "response": "🔍 该请求已明确要求写入，但**未明确卡片类型**。按 skill 约定，此时不访问 vault，先向你确认。\n\n```text\noperation_mode: clarify\ncard_type: null\naction: null\n```\n\n“完成第一版架构方案”可以落在三类不同的卡片上，写入位置和联动完全不同：\n\n1. **任务卡**（`20-Tasks/active/`）——当作一条待办任务创建新卡，联动追加当日日志；若明确关联某项目再联动项目卡。\n2. **日志卡**（`10-Daily/2026-10-31.md`）——追加到今天“做了什么”下面（当日日志不存在则先创建）。\n3. **项目卡**（`30-Projects/\u003c某项目\u003e.md`）——作为某个项目的下一步或目标更新，需要你指明是哪个项目。\n\n请告诉我属于哪一种：\n\n- 如果是**新建任务**，回复“建任务卡”即可（可附上负责人/截止日期等信息，没有就用模板默认）；\n- 如果是**记日志**，回复“记日志”；\n- 如果是**更新项目**，请给出项目名或项目卡文件名。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 170488,
+  "judge_tokens": 0,
+  "overall_tokens": 170488
+}

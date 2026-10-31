@@ -1,0 +1,75 @@
+{
+  "metadata": {
+    "skill_name": "build-testbench",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\build-testbench",
+    "timestamp": "2026-10-30T22:22:50Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "无 .git 的 workspace 应停止并要求确认根目录",
+      "configuration": "with_skill",
+      "run_number": 2,
+      "result": {
+        "pass_rate": 0,
+        "passed": 0,
+        "failed": 0,
+        "total": 0,
+        "time_seconds": 903.583,
+        "tokens": 79060,
+        "errors": 0
+      },
+      "expectations": null
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "L1 smoke 仿真框架生成（目录契约校验）",
+      "configuration": "with_skill",
+      "run_number": 2,
+      "result": {
+        "pass_rate": 1,
+        "passed": 1,
+        "failed": 0,
+        "total": 1,
+        "time_seconds": 131.349,
+        "tokens": 47342,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\build-testbench\\evals\\fixtures\\scripts\\check_l1_framework.cmd",
+          "passed": true,
+          "evidence": "FOUND sim=sim\\sub1-counter\r\nALL PASS: L1 框架目录契约齐全（sim\\sub1-counter）"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.5,
+        "stddev": 0.5,
+        "min": 0,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 517.466,
+        "stddev": 386.117,
+        "min": 131.349,
+        "max": 903.583
+      },
+      "tokens": {
+        "mean": 63201,
+        "stddev": 15859,
+        "min": 47342,
+        "max": 79060
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

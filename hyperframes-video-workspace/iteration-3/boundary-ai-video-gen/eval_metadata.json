@@ -1,0 +1,10 @@
+{
+  "eval_id": 0,
+  "eval_name": "AI 视频生成出画面请求应转介 ai-drama-pilot",
+  "prompt": "我想用 AI 视频生成模型（比如可灵、Runway）来出画面做一条 15 秒短片，你能帮我出提示词和分镜资料吗？\n",
+  "assertions": [
+    "failure: output_contains.any: [开始渲染 成片已渲染]",
+    "output_contains.any: [ai-drama-pilot 不适用 不属于 不是本 无法 前期生产包 AI 短片前期]",
+    "output_contains.any: [HyperFrames 本 skill 代码动画 AI 视频生成]"
+  ]
+}

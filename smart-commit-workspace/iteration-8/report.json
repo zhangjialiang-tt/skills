@@ -1,0 +1,69 @@
+{
+  "skill_name": "smart-commit",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T02:26:02.9442685+08:00",
+  "end_time": "2026-10-31T02:27:18.4510312+08:00",
+  "case_results": [
+    {
+      "case_id": "message-only-default",
+      "title": "生成 message 不执行 commit 且格式合规",
+      "status": "PASS",
+      "duration_ms": 73754,
+      "turns": 5,
+      "input_tokens": 36267,
+      "output_tokens": 1634,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 5,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.must_not_contain",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\smart-commit\\evals\\fixtures\\scripts\\check_git_state.cmd",
+            "passed": true,
+            "evidence": "ALL PASS: git 状态判定通过"
+          }
+        ],
+        "summary": {
+          "passed": 2,
+          "failed": 0,
+          "total": 2,
+          "pass_rate": 1
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "must_not_contain"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "我改了 calc.py 和 docs.md，先帮我把这两个文件的改动加入暂存区，然后生成 commit message。不要执行 git commit。\n",
+      "response": "✅ 两个文件已加入暂存区，commit message 已生成（按你的要求**未执行 git commit**）。\n\n## 暂存状态\n\n- 分支：`master`（保护分支 —— 本次只生成 message，无提交动作）\n- 暂存文件：`A calc.py`（+6 行，新增 `add` / `mul` 函数）、`A docs.md`（+3 行，demo 说明）\n- 敏感信息扫描：无命中\n- 未暂存（不在本次提交内）：`.claude/`、`.skill-up/`\n\n## 拆分判断\n\n分析脚本因「代码 + 文档」组合给出了拆分信号，但看实际 diff：`docs.md` 只有 3 行 demo 占位内容，不构成「文档大改」，且两个文件都是新仓库的初始文件、语义内聚（搭建 demo 雏形）。**推荐合为一条提交**；拆分方案也一并列出供你选择。\n\n## 推荐：单条 commit message\n\n```text\nfeat: ✨ add basic calc functions and demo docs\n\n- 新增 calc.py：实现 add/mul 两个基础算术函数\n- 新增 docs.md：项目示例说明文档\n```\n\n## 备选：拆分为 2 条（按代码 → 文档顺序）\n\n```text\nfeat(calc): ✨ add basic arithmetic helpers\n```\n\n```text\ndocs(readme): 📝 add demo doc\n```\n\n确认 message 后如需提交，告诉我「执行提交」即可（当前在 master 保护分支，届时请一并确认）。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 37901,
+  "judge_tokens": 0,
+  "overall_tokens": 37901
+}

@@ -1,0 +1,11 @@
+{
+  "eval_id": 0,
+  "eval_name": "屏幕文字应建议后期制作而非模型直出",
+  "prompt": "我正在自己整理一个 AI 短剧的前期资料（不用帮我生成完整生产包），想确认一个做法：\n片名和台词字幕我打算直接让视频生成模型把文字生成在画面里，这样可行吗？\n",
+  "assertions": [
+    "expect.must_not_contain",
+    "failure: output_contains.any: [完全可行 直接生成即可]",
+    "output_contains{any:[后期]}",
+    "output_contains{any:[乱码 必然 不可靠]}"
+  ]
+}

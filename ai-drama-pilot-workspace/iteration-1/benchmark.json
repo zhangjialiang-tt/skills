@@ -1,0 +1,175 @@
+{
+  "metadata": {
+    "skill_name": "ai-drama-pilot",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\ai-drama-pilot",
+    "timestamp": "2026-10-31T00:03:43Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "正触发但缺故事基线时应先问一次",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 28.386,
+        "tokens": 35415,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_not_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "failure: output_contains.any: [阶段 A 已完成 剧本已产出]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [阶段 A 已完成 剧本已产出]"
+        },
+        {
+          "text": "output_contains{any:[故事基线 题材 必须保留的情节点]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[故事基线 题材 必须保留的情节点])"
+        },
+        {
+          "text": "output_contains{any:[？ ?]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[？ ?])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "直接要 MP4 成片时应转介 hyperframes-video",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 28.573,
+        "tokens": 33252,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_not_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "failure: output_contains.any: [阶段 A 已完成 剧本已产出]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [阶段 A 已完成 剧本已产出]"
+        },
+        {
+          "text": "output_contains{any:[hyperframes]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[hyperframes])"
+        },
+        {
+          "text": "output_contains{any:[前期资料 离线资料 生产包]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[前期资料 离线资料 生产包])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "屏幕文字应建议后期制作而非模型直出",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 55.625,
+        "tokens": 33757,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_not_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "failure: output_contains.any: [完全可行 直接生成即可]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [完全可行 直接生成即可]"
+        },
+        {
+          "text": "output_contains{any:[后期]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[后期])"
+        },
+        {
+          "text": "output_contains{any:[乱码 必然 不可靠]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[乱码 必然 不可靠])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "45 秒 ≤10 镜成本约束生产包端到端产出",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 2,
+        "failed": 0,
+        "total": 2,
+        "time_seconds": 1511.587,
+        "tokens": 116042,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_not_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\ai-drama-pilot\\evals\\fixtures\\scripts\\check_e2e.cmd",
+          "passed": true,
+          "evidence": "FOUND root=the-alone-clause\\pilot-01\r\nALL PASS: e2e 生产包校验通过（10 镜）"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1,
+        "stddev": 0,
+        "min": 1,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 406.04275,
+        "stddev": 638.3824718005559,
+        "min": 28.386,
+        "max": 1511.587
+      },
+      "tokens": {
+        "mean": 54616.5,
+        "stddev": 35473.05404458432,
+        "min": 33252,
+        "max": 116042
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

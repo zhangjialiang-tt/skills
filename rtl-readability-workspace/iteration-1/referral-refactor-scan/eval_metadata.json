@@ -1,0 +1,9 @@
+{
+  "eval_id": 0,
+  "eval_name": "功能缺陷请求应转介 rtl-refactor-scan",
+  "prompt": "检查一下 rtl/counter.v 有没有 CDC 问题。\n",
+  "assertions": [
+    "failure: output_contains.any: [已修复 CDC 已解决]",
+    "output_contains{any:[rtl-refactor-scan CDC 功能缺陷]}"
+  ]
+}

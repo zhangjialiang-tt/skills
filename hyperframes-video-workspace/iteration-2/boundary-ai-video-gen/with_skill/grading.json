@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [开始渲染 成片已渲染]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [开始渲染 成片已渲染]"
+    },
+    {
+      "text": "output_contains.any: [ai-drama-pilot 不适用 不属于 不是本 无法]",
+      "passed": false,
+      "evidence": "output does not contain any of [ai-drama-pilot 不适用 不属于 不是本 无法]"
+    },
+    {
+      "text": "output_contains.any: [HyperFrames 本 skill 代码动画 AI 视频生成]",
+      "passed": false,
+      "evidence": "output does not contain any of [HyperFrames 本 skill 代码动画 AI 视频生成]"
+    }
+  ],
+  "summary": {
+    "passed": 1,
+    "failed": 2,
+    "total": 3,
+    "pass_rate": 0.3333333333333333
+  }
+}

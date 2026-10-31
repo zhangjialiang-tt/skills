@@ -1,0 +1,20 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [已修复 CDC 已解决]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [已修复 CDC 已解决]"
+    },
+    {
+      "text": "output_contains{any:[rtl-refactor-scan CDC 功能缺陷]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[rtl-refactor-scan CDC 功能缺陷])"
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 0,
+    "total": 2,
+    "pass_rate": 1
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "expectations": [
+    {
+      "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\cocotb-testbench\\evals\\fixtures\\scripts\\check_cocotb_framework.cmd",
+      "passed": false,
+      "evidence": "FOUND sim=sim\\counter\r\nFAIL runner: 缺 runner 配置（Makefile/runner.py/pyproject.toml）"
+    }
+  ],
+  "summary": {
+    "passed": 0,
+    "failed": 1,
+    "total": 1,
+    "pass_rate": 0
+  }
+}

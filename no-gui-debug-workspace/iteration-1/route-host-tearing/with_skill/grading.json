@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [打开 Wireshark GUI 打开 Vivado Hardware Manager]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [打开 Wireshark GUI 打开 Vivado Hardware Manager]"
+    },
+    {
+      "text": "output_contains{any:[上位机 gige_cli capture_frames RAW]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[上位机 gige_cli capture_frames RAW])"
+    },
+    {
+      "text": "output_contains{any:[对拍 counter dump manifest]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[对拍 counter dump manifest])"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "metadata": {
+    "skill_name": "rtl-refactor-scan",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\rtl-refactor-scan",
+    "timestamp": "2026-10-30T21:18:27Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "RTL 评审请求应进入只读 audit 模式",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 55.743,
+        "tokens": 38697,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_not_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "failure: output_contains.any: [已重构 已修改 RTL]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [已重构 已修改 RTL]"
+        },
+        {
+          "text": "output_contains{any:[findings 审计 扫描]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[findings 审计 扫描])"
+        },
+        {
+          "text": "output_contains{any:[只读 不改 audit]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[只读 不改 audit])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "fixture 审计产出 findings.json 权威契约",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 2,
+        "failed": 0,
+        "total": 2,
+        "time_seconds": 448.727,
+        "tokens": 74271,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_not_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\rtl-refactor-scan\\evals\\fixtures\\scripts\\check_audit_contract.cmd",
+          "passed": true,
+          "evidence": "ALL PASS: audit 产物契约齐全"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "无独立参考时不得宣称功能验证通过",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 2,
+        "failed": 0,
+        "total": 2,
+        "time_seconds": 156.651,
+        "tokens": 47113,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [可以宣称功能验证通过 就能说功能正确]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [可以宣称功能验证通过 就能说功能正确]"
+        },
+        {
+          "text": "output_contains{any:[L2-C 行为刻画 characterization 不能]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[L2-C 行为刻画 characterization 不能])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "注释增强请求应转介 rtl-annotator",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.5,
+        "passed": 1,
+        "failed": 1,
+        "total": 2,
+        "time_seconds": 41.592,
+        "tokens": 33059,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [已为每个端口添加注释 注释已添加]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [已为每个端口添加注释 注释已添加]"
+        },
+        {
+          "text": "output_contains.any: [rtl-annotator 注释增强 不属于本]",
+          "passed": false,
+          "evidence": "output does not contain any of [rtl-annotator 注释增强 不属于本]"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.875,
+        "stddev": 0.21650635094610965,
+        "min": 0.5,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 175.67825,
+        "stddev": 163.7690773244067,
+        "min": 41.592,
+        "max": 448.727
+      },
+      "tokens": {
+        "mean": 48285,
+        "stddev": 15814.602429400495,
+        "min": 33059,
+        "max": 74271
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

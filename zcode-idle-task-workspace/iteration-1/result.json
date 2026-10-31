@@ -1,0 +1,140 @@
+{
+  "skill_name": "zcode-idle-task",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T04:06:53.1518888+08:00",
+  "end_time": "2026-10-31T04:12:22.0780446+08:00",
+  "case_results": [
+    {
+      "case_id": "trigger-idle-task",
+      "title": "闲时任务请求应生成任务合同",
+      "status": "PASS",
+      "duration_ms": 179967,
+      "turns": 7,
+      "input_tokens": 42608,
+      "output_tokens": 2646,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 7,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [已立即执行 现在就跑]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [已立即执行 现在就跑]"
+          },
+          {
+            "text": "output_contains{any:[闲时 任务合同 任务指令 夜间]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[闲时 任务合同 任务指令 夜间])"
+          },
+          {
+            "text": "output_contains{any:[验收 交付物 范围 权限]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[验收 交付物 范围 权限])"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "total": 3,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "让 ZCode 夜间执行：把本仓库所有 Python 脚本跑一遍语法检查，产出问题清单。\n",
+      "response": "📋 已生成 ZCode 夜间闲时任务的合同与完整指令，合同用 skill 自带的 `validate_idle_task.py` 校验 **PASS**。本任务为只读（read_only），无需修改文件或 Git 授权，你确认后直接复制粘贴即可。\n\n⚠️ **一个需要你确认的关键点**：当前 workspace（`C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-3609680517`）**不是 git 仓库**，且全目录只发现 **1 个 Python 脚本**（skill 自带的 `.claude\\skills\\zcode-idle-task\\scripts\\validate_idle_task.py`）。我按字面意思把“本仓库”理解为当前 workspace 生成任务；如果“本仓库”指的是其他项目目录，只需把指令里的 workspace 路径替换成真实项目路径，或告诉我路径，我重新生成。\n\n## 任务预览\n\n| 项目 | 内容 |\n| --- | --- |\n| 任务标题 | 本仓库 Python 脚本语法检查问题清单 |\n| workspace | `C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-3609680517` |\n| 权限 | `read_only`（不修改文件、不写报告文件、不碰 Git） |\n| 范围 | workspace 下递归所有 `*.py`（以执行时实际扫描为准） |\n| 交付物 | Markdown 问题清单（逐文件 PASS/FAIL 表 + 文件：行号 + 错误原文 + 修复建议），在任务回复中输出 |\n| 执行动作 | 运行 `python -m py_compile` 逐文件检查；无 Git 写操作 |\n| 模型/推理强度 | 保留 ZCode 默认（如需指定请在 ZCode 界面填写） |\n\n## 完整任务指令（复制到 ZCode 的“自动化 → 新建闲时任务”）\n\n```text\n你是项目的测试执行 Agent（ZCode 闲时任务）。请在以下 workspace 中对全部 Python 脚本执行语法检查并报告结果：\n\n项目/workspace：C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-3609680517\n\n测试范围：\n- workspace 目录下递归扫描到的全部 *.py 文件（当前已知 .claude\\skills\\zcode-idle-task\\scripts\\validate_idle_task.py，以实际扫描结果为准）\n\n请执行：\n1. 记录测试环境：python --version、操作系统、实际运行目录\n2. 递归扫描 workspace 下全部 *.py 文件，列出完整文件清单（含数量）\n3. 对每个文件执行 python -m py_compile \u003c文件\u003e，记录退出码和 stderr/stdout 原文\n4. 对 FAIL 的文件，基于解释器错误输出定位到 文件:行号，给出错误类型和修复建议（只分析，不修改）\n5. 汇总 PASS/FAIL 表和问题清单\n\n最终交付一份 Markdown 报告（直接在任务回复中输出，不写任何文件），至少包含：\n1. 测试环境（Python 版本、操作系统、运行目录）\n2. 扫描到的文件清单和逐条检查命令及完整输出摘要\n3. PASS/FAIL 汇总表\n4. 问题清单：每条含 文件路径:行号、错误类型、错误信息原文、修复建议\n5. 未运行的检查及原因\n6. 推荐下一步\n\n约束：\n- 只读任务：不修改、不删除、不重命名任何项目文件\n- 不在项目目录内创建任何临时文件或报告文件，结果只在任务回复中输出\n- 不执行 commit / push / reset 等 Git 写操作\n- 语法检查只使用 Python 标准库（python -m py_compile 或 ast.parse），不安装新依赖\n- 只报告语法检查结论，不做风格检查、不重构、不修复\n\n验收标准：\n- 每个扫描到的 .py 文件都有明确的逐文件结论（PASS 或 FAIL 及错误详情）\n- 问题清单每条都有 文件路径:行号 和 Python 解释器输出的错误原文\n- 报告包含实际执行过的命令及真实输出，可复核\n- 未验证项单独列出并说明原因\n\n停止条件：\n- workspace 内未找到任何 .py 文件时，报告扫描结果后停止\n- Python 解释器不可用时，报告环境问题后停止\n- 发现需要修改文件才能继续的情况时停止（超出只读权限）\n```\n\n**操作方式**：把上面的指令文本粘贴到 ZCode 的“自动化 → 新建闲时任务”界面，标题填 `本仓库 Python 脚本语法检查问题清单`，权限保持默认只读，模型/推理强度按你环境需要填写或留默认。\n\n**验证情况**：任务合同已通过 `validate_idle_task.py` 校验（PASS）；扫描结论（全目录仅 1 个 .py 文件、非 git 仓库）来自本次实际 Glob/目录枚举，非推测。\n\n**可选调整**：如果你希望夜跑任务把报告**写成文件**（如 `syntax-check-report.md`）而不是只在回复中输出，告诉我，我把权限改为 `modify_files` 并在合同里限定允许写入的文件集合后重新生成。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "immediate-analysis-not-trigger",
+      "title": "立即分析请求不应生成交付合同",
+      "status": "FAIL",
+      "duration_ms": 18077,
+      "turns": 2,
+      "input_tokens": 31956,
+      "output_tokens": 314,
+      "grading": {
+        "status": "FAIL",
+        "turns_executed": 2,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains{any:[任务合同 闲时任务指令 夜间执行计划]}",
+            "passed": false,
+            "evidence": "failure rule matched: output satisfies all contains checks (any:[任务合同 闲时任务指令 夜间执行计划])"
+          },
+          {
+            "text": "success rule 1",
+            "passed": false,
+            "skipped": true,
+            "evidence": "not evaluated: failure rule matched"
+          }
+        ],
+        "summary": {
+          "passed": 0,
+          "failed": 2,
+          "total": 2,
+          "pass_rate": 0
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "现在立即帮我分析一下这个仓库的目录结构，直接告诉我结果。\n",
+      "response": "📁 当前目录不是 git 仓库，是一个临时工作目录（Temp\\skill-up-3514602532），结构很简单，只有两个隐藏目录：\n\n```text\nskill-up-3514602532/\n├── .claude/\n│   └── skills/\n│       └── zcode-idle-task/          # ZCode 闲时任务 Skill\n│           ├── SKILL.md              # Skill 主定义\n│           ├── agents/\n│           │   └── interface.yaml    # Agent 接口配置\n│           ├── references/\n│           │   ├── prompt-templates.md   # 提示词模板\n│           │   └── task-contract.md      # 任务合同规范\n│           └── scripts/\n│               └── validate_idle_task.py # 闲时任务校验脚本\n└── .skill-up/\n    └── prompts/\n        └── prompt.txt                # Skill 制作来源提示词\n```\n\n**结论**：这是一个 skill 开发/打包用的临时目录，内容只有一个 `zcode-idle-task` skill（用于把自然语言需求转换为 ZCode 闲时任务指令），外加一个 `.skill-up/prompts/prompt.txt` 来源提示词。没有实际项目代码、构建脚本或测试。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "user-confirm-before-output",
+      "title": "任务指令输出前应经用户确认",
+      "status": "PASS",
+      "duration_ms": 129472,
+      "turns": 3,
+      "input_tokens": 38643,
+      "output_tokens": 2291,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 3,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [已自动创建任务 已提交到 ZCode]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [已自动创建任务 已提交到 ZCode]"
+          },
+          {
+            "text": "output_contains{any:[确认 确认后 自行提交 ZCode 界面]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[确认 确认后 自行提交 ZCode 界面])"
+          }
+        ],
+        "summary": {
+          "passed": 2,
+          "failed": 0,
+          "total": 2,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "我想要一个闲时任务：定期审查本仓库的文档一致性。怎么做？\n",
+      "response": "🔍 好消息是任务本身可以直接起草，但有一个关键信息缺失：**当前打开的目录是临时 skill 目录（`Temp\\skill-up-2764968936`），不是 git 仓库，里面没有你的项目**。闲时任务合同要求真实 workspace 路径，这个我不能猜，需要你提供。\n\n先给出任务合同草案，你补齐路径并确认后，我校验并输出最终可粘贴的指令。\n\n---\n\n## 任务合同草案（预览）\n\n```yaml\ntitle: 文档一致性只读审查（文档 vs 代码 + 跨文档矛盾）\nworkspace: \u003c待你提供真实仓库路径\u003e\nexecution:\n  permission: read_only   # 默认只读，只出报告\n  model / reasoning: 保留 ZCode 默认\n```\n\n- **主要范围**：仓库内全部文档（README、docs/、AGENTS.md 等以实际存在为准）+ 文档中引用的命令/参数/路径/接口 + 文档间链接与术语一致性。\n- **交付物**：一份 Markdown 一致性审查报告，问题按 P0/P1/P2 分级，每条带文件路径、行号和原文证据。\n- **是否修改文件**：否（read_only）。**是否运行测试**：否。**是否提交 Git**：否。\n- **定期执行**：重复周期在 ZCode「自动化 → 新建闲时任务」界面设置；指令本身设计为每次运行自包含，并要求报告头部记录当次审查基于的 git commit，便于多轮报告对比。\n\n## 任务指令草案\n\n```text\n你是项目的只读文档一致性审查 Agent。请在以下 workspace 中完成一次文档一致性审查：\n\n项目/workspace：\u003c真实仓库路径\u003e\n\n检查范围：\n- 仓库内全部 Markdown / 文档目录（含 README、docs/、AGENTS.md、CHANGELOG 等，以实际存在为准）\n- 文档中引用的命令、参数、路径、配置项、接口与当前代码/配置的一致性\n- 文档之间的交叉引用（相对链接、锚点、图片）与术语一致性\n\n请执行：\n1. 先盘点仓库结构和实际存在的文档清单，后续检查以实际清单为准\n2. 记录本次审查基于的 git commit（非 git 仓库则记录日期与文档清单摘要）\n3. 逐项检查：\n   a. 文档 vs 代码：文档描述的命令、参数、目录结构、依赖版本是否与当前代码一致\n   b. 文档 vs 文档：同一事实在不同文档中是否矛盾（术语、流程、版本、路径）\n   c. 断链：文档间相对链接、锚点、图片引用是否有效\n   d. 过期内容：明显指向已删除/已重命名文件或旧接口的段落\n4. 每个问题给出：文件路径和行号、问题类别、证据（文档原文 vs 实际情况）、建议修法\n5. 按 P0（误导使用/错误命令）/ P1（明显过期或矛盾）/ P2（轻微不一致）分级\n\n最终交付一份 Markdown 报告，至少包含：\n1. 总体结论\n2. 文档清单与审查覆盖说明\n3. 问题列表（分级 + 文件路径 + 行号 + 证据）\n4. 实际执行过的命令及真实结果\n5. 未验证项和原因\n6. 推荐下一步\n\n约束：\n- 只读：不修改、删除、重命名任何项目文件\n- 不 commit/push/reset\n- 区分事实、观察、推导风险和未验证项，只列出有当前文件证据的问题\n- 不安装依赖，不执行会改变项目状态的命令\n\n验收标准：\n- 覆盖范围内全部实际存在的文档，或明确列出未覆盖项及原因\n- 每个问题均有文件路径（尽量含行号）和原文证据\n- 报告头部记录当次审查的 git commit（或日期）\n- 无法执行的检查项明确标记为未验证\n\n停止条件：\n- workspace 不是目标项目，或文档极少无法形成有效审查时，停止并说明\n- 环境或权限导致无法读取文件时，停止并说明\n- 任何需要修改文件才能继续的情形：停止，不修改\n```\n\n---\n\n## 待确认\n\n1. **目标仓库的真实路径**是什么？（必需，替换上方 `\u003c真实仓库路径\u003e`）\n2. 权限默认 **read_only**（只报告、不改文档）——够用吗？如果你希望闲时任务顺带修复文档问题，需要升级为 `modify_files`（允许修改的文件集合和回滚边界我会单独列出，需你确认）。\n3. 有没有重点关注的目录（如 `docs/`），还是全仓库文档都查？\n\n你回复路径和确认后，我会跑一遍校验脚本并输出最终可直接粘贴到 ZCode「自动化 → 新建闲时任务」的指令文本。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 118458,
+  "judge_tokens": 0,
+  "overall_tokens": 118458
+}

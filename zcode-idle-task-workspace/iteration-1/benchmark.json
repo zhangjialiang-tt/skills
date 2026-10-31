@@ -1,0 +1,124 @@
+{
+  "metadata": {
+    "skill_name": "zcode-idle-task",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\zcode-idle-task",
+    "timestamp": "2026-10-30T20:12:22Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "闲时任务请求应生成任务合同",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 179.967,
+        "tokens": 45254,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [已立即执行 现在就跑]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [已立即执行 现在就跑]"
+        },
+        {
+          "text": "output_contains{any:[闲时 任务合同 任务指令 夜间]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[闲时 任务合同 任务指令 夜间])"
+        },
+        {
+          "text": "output_contains{any:[验收 交付物 范围 权限]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[验收 交付物 范围 权限])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "立即分析请求不应生成交付合同",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0,
+        "passed": 0,
+        "failed": 2,
+        "total": 2,
+        "time_seconds": 18.077,
+        "tokens": 32270,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains{any:[任务合同 闲时任务指令 夜间执行计划]}",
+          "passed": false,
+          "evidence": "failure rule matched: output satisfies all contains checks (any:[任务合同 闲时任务指令 夜间执行计划])"
+        },
+        {
+          "text": "success rule 1",
+          "passed": false,
+          "skipped": true,
+          "evidence": "not evaluated: failure rule matched"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "任务指令输出前应经用户确认",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 2,
+        "failed": 0,
+        "total": 2,
+        "time_seconds": 129.472,
+        "tokens": 40934,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [已自动创建任务 已提交到 ZCode]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [已自动创建任务 已提交到 ZCode]"
+        },
+        {
+          "text": "output_contains{any:[确认 确认后 自行提交 ZCode 界面]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[确认 确认后 自行提交 ZCode 界面])"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.6666666666666666,
+        "stddev": 0.4714045207910317,
+        "min": 0,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 109.17200000000001,
+        "stddev": 67.63214484745156,
+        "min": 18.077,
+        "max": 179.967
+      },
+      "tokens": {
+        "mean": 39486,
+        "stddev": 5398.67835678326,
+        "min": 32270,
+        "max": 45254
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

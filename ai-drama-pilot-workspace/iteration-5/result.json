@@ -1,0 +1,79 @@
+{
+  "skill_name": "ai-drama-pilot",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T04:30:10.6405683+08:00",
+  "end_time": "2026-10-31T04:30:36.0161374+08:00",
+  "case_results": [
+    {
+      "case_id": "boundary-mp4-to-hyperframes",
+      "title": "直接要 MP4 成片时应转介 hyperframes-video",
+      "status": "PASS",
+      "duration_ms": 24903,
+      "turns": 1,
+      "input_tokens": 32003,
+      "output_tokens": 1084,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 1,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.must_not_contain",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "failure: output_contains.any: [阶段 A 已完成 剧本已产出]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [阶段 A 已完成 剧本已产出]"
+          },
+          {
+            "text": "output_contains{any:[hyperframes]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[hyperframes])"
+          },
+          {
+            "text": "output_contains{any:[前期资料 离线资料 生产包]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[前期资料 离线资料 生产包])"
+          }
+        ],
+        "summary": {
+          "passed": 4,
+          "failed": 0,
+          "total": 4,
+          "pass_rate": 1
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "must_not_contain"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "我要一条 30 秒可直接播放的 MP4 短片，画面全部用 HTML/CSS 动画实现。按你的 skill 边界判断：\n这个请求该走哪条流程？说明归属与理由即可，先不要开始实际制作。\n",
+      "response": "🎬 **结论：走 `hyperframes-video` 流程。**\n\n归属与理由：\n\n- **交付物匹配**：你要的是“30 秒可直接播放的 MP4 成片”，这正是 hyperframes-video 的核心产出——从主题到可播放 MP4 的全流程（脚本分镜 → HTML/CSS/GSAP 场景 → TTS 配音 → 渲染 → 质检）。\n- **实现方式匹配**：“画面全部用 HTML/CSS 动画实现”正是该 skill 的技术栈（HTML/CSS/GSAP 场景实现 + 代码渲染出片），且属于其触发条件中“用 HTML 或代码做视频”、“不依赖 AI 视频生成模型、不需要真人出镜、可编程可复现”的典型场景。\n- **排除项核对**：\n  - 不走 `ai-drama-pilot`——它只产出离线前期生产包（剧本、分镜、提示词），不出成片；且其描述明确写着“要直接产出可播放成片（HTML/代码渲染 MP4）走 hyperframes-video\"。\n  - 不命中 hyperframes-video 的 Non-goals：不是 AI 视频生成模型出画面、不是真人实拍/录屏剪辑、30 秒不算长片粗剪、不涉及外部平台发布。\n\n等你确认后，下一步就是调用 `hyperframes-video` skill，从环境勘察和冒烟渲染验证开始。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 33087,
+  "judge_tokens": 0,
+  "overall_tokens": 33087
+}

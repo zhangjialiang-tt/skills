@@ -1,0 +1,9 @@
+{
+  "eval_id": 0,
+  "eval_name": "立即分析请求不应生成交付合同",
+  "prompt": "现在立即帮我分析一下这个仓库的目录结构，直接告诉我结果。\n",
+  "assertions": [
+    "failure: output_contains.any: [任务合同如下 已生成任务合同 闲时任务指令如下 夜间执行计划如下]",
+    "output_contains{any:[目录 结构 分析]}"
+  ]
+}

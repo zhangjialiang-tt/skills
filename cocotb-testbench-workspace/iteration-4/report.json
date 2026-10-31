@@ -1,0 +1,57 @@
+{
+  "skill_name": "cocotb-testbench",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T07:12:01.8419815+08:00",
+  "end_time": "2026-10-31T07:17:37.7244258+08:00",
+  "case_results": [
+    {
+      "case_id": "framework-generation",
+      "title": "cocotb 框架生成与 characterization 降级措辞",
+      "status": "PASS",
+      "duration_ms": 333951,
+      "turns": 12,
+      "input_tokens": 48360,
+      "output_tokens": 6000,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 12,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\cocotb-testbench\\evals\\fixtures\\scripts\\check_cocotb_framework.cmd",
+            "passed": true,
+            "evidence": "FOUND sim=sim\\counter\r\nALL PASS: cocotb 框架契约齐全（sim\\counter）"
+          }
+        ],
+        "summary": {
+          "passed": 1,
+          "failed": 0,
+          "total": 1,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "用 cocotb 给 rtl/counter.v 搭一套 Python 测试框架（smoke + functional 两级）。\n本机没有仿真器环境，不要运行 pytest，只生成框架文件（sim/counter/ 下的 test 文件、runner 配置、ports/design 数据）。\n没有 golden 参考模型，直接按 RTL 阅读生成测试即可。\n",
+      "response": "🧪 框架已生成完毕，全部在 [sim/counter/](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-2322354722\\sim\\counter\\) 下，未运行任何仿真。\n\n## 修改文件\n\n| 文件 | 内容 |\n|---|---|\n| [test_counter_smoke.py](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-2322354722\\sim\\counter\\test_counter_smoke.py) | smoke 两用例：时钟/复位序列 + X/Z 解析检查（生成器产出，复核无需改动） |\n| [test_counter_functional.py](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-2322354722\\sim\\counter\\test_counter_functional.py) | 4 条 characterization 用例（占位符已按 RTL 阅读填写，每条期望注明 RTL 行号） |\n| [tb_runner.py](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-2322354722\\sim\\counter\\tb_runner.py) / [conftest.py](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-2322354722\\sim\\counter\\conftest.py) | cocotb 2.x runner + pytest 桥接，`SIM`/`WAVES`/`GUI` 环境变量切换 |\n| [design.json](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-2322354722\\sim\\counter\\design.json) / [ports.json](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-2322354722\\sim\\counter\\ports.json) / [fileset.json](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-2322354722\\sim\\counter\\fileset.json) / [fileset.f](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-2322354722\\sim\\counter\\fileset.f) | 构建配置单一事实来源（可手改）、端口数据、依赖闭包 |\n\n## 核心改动（functional 用例设计）\n\n- **increment_on_enable**：enable=1 连续 16 周期逐拍比对 +1（`rtl/counter.v:10`）\n- **hold_when_disabled**：计数到非零后 enable=0，8 周期保持不变（无 else 分支，`rtl/counter.v:10`）\n- **async_reset**：周期中间拉低 rst_n，下个 ReadOnly 相立即读到 0；rst_n 低期间 enable=1 不计数；释放后从 0 开始（异步复位，`rtl/counter.v:8-9`）\n- **wraparound**：完整 256 周期验证 255→0 回绕，并断言 `count` 位宽 == WIDTH=8（`design.json parameters={}` → RTL 默认值）\n\n所有 `count` 采样遵守 `RisingEdge` → `ReadOnly` 后读取（registered output 纪律）。golden 对拍测试保留但自跳过（`GOLDEN_MODEL = None`）。\n\n## 验证\n\n- `python -m py_compile`（全部 4 个 py 文件）→ **Static Check 通过**\n- 未运行 pytest / 仿真（按你的要求）。结论上限：**行为刻画**，不得宣称功能正确\n\n## 需要指出的一点冲突\n\nprobe_env 实测发现本机 **并非没有仿真环境**：cocotb 2.1.0、pytest 9.1.1、Icarus（iverilog）、vsim 都在 PATH 上。可能是它们是新装的或你没意识到。已按你的指令不运行；如果之后想自验：\n\n```powershell\ncd sim/counter\npytest -m smoke        # 先过 smoke 门禁\npytest -m functional\n```\n\n## 风险 / 后续建议\n\n- 分类假设：`rst_n` 按名称启发式判定为低有效异步复位 —— 与 RTL 实际一致，已复核确认\n- 若用 vsim 跑，license 可用性未验证（`MGLS_LICENSE_FILE` 未配置，仅 `LM_LICENSE_FILE`）；`SIM=questa pytest -m smoke` 可切换，但 Icarus PASS 不能替代 Questa 证据\n- 未更新记忆（一次性任务，无可复用长期信息）",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 54360,
+  "judge_tokens": 0,
+  "overall_tokens": 54360
+}

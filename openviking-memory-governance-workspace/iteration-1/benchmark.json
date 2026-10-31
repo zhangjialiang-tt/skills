@@ -1,0 +1,133 @@
+{
+  "metadata": {
+    "skill_name": "openviking-memory-governance",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\openviking-memory-governance",
+    "timestamp": "2026-10-30T19:35:14Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "治理请求应启动七步流程且体检基线先行",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0,
+        "passed": 0,
+        "failed": 0,
+        "total": 0,
+        "time_seconds": 303.134,
+        "tokens": 69276,
+        "errors": 0
+      },
+      "expectations": null
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "events 瘦身应指出 L1 去 ChatLog 是主收益",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 292.219,
+        "tokens": 69042,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [直接全部清空]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [直接全部清空]"
+        },
+        {
+          "text": "output_contains{any:[ChatLog L1]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[ChatLog L1])"
+        },
+        {
+          "text": "output_contains{any:[主收益 收益 大头]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[主收益 收益 大头])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "评审结论/用户裁定类事件不得合并删减",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 36.517,
+        "tokens": 36727,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [可以合并删除]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [可以合并删除]"
+        },
+        {
+          "text": "output_contains{any:[L3 禁区 不能 不建议 不要合并]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[L3 禁区 不能 不建议 不要合并])"
+        },
+        {
+          "text": "output_contains{any:[评审结论 用户裁定]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[评审结论 用户裁定])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "sessions 处置应按分级保留",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0,
+        "passed": 0,
+        "failed": 0,
+        "total": 0,
+        "time_seconds": 303.127,
+        "tokens": 52096,
+        "errors": 0
+      },
+      "expectations": null
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.5,
+        "stddev": 0.5,
+        "min": 0,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 233.74925000000002,
+        "stddev": 113.95918988035805,
+        "min": 36.517,
+        "max": 303.134
+      },
+      "tokens": {
+        "mean": 56785.25,
+        "stddev": 13514.521955566908,
+        "min": 36727,
+        "max": 69276
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

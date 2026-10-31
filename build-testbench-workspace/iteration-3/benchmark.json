@@ -1,0 +1,77 @@
+{
+  "metadata": {
+    "skill_name": "build-testbench",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\build-testbench",
+    "timestamp": "2026-10-30T22:32:19Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "无 .git 的 workspace 应停止并要求确认根目录",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "result": {
+        "pass_rate": 0,
+        "passed": 0,
+        "failed": 4,
+        "total": 4,
+        "time_seconds": 505.786,
+        "tokens": 66201,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.files_not_exist",
+          "passed": false,
+          "evidence": "file \"sim\" should not exist but does"
+        },
+        {
+          "text": "failure rule 1",
+          "passed": false,
+          "skipped": true,
+          "evidence": "not evaluated: expect gate failed"
+        },
+        {
+          "text": "success rule 1",
+          "passed": false,
+          "skipped": true,
+          "evidence": "not evaluated: expect gate failed"
+        },
+        {
+          "text": "success rule 2",
+          "passed": false,
+          "skipped": true,
+          "evidence": "not evaluated: expect gate failed"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "time_seconds": {
+        "mean": 505.786,
+        "stddev": 0,
+        "min": 505.786,
+        "max": 505.786
+      },
+      "tokens": {
+        "mean": 66201,
+        "stddev": 0,
+        "min": 66201,
+        "max": 66201
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

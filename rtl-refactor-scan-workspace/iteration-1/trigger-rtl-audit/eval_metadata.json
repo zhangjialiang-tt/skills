@@ -1,0 +1,11 @@
+{
+  "eval_id": 0,
+  "eval_name": "RTL 评审请求应进入只读 audit 模式",
+  "prompt": "评审一下这个仓库里 rtl/counter.v 的代码成熟度，只看不改。\n",
+  "assertions": [
+    "expect.must_not_contain",
+    "failure: output_contains.any: [已重构 已修改 RTL]",
+    "output_contains{any:[findings 审计 扫描]}",
+    "output_contains{any:[只读 不改 audit]}"
+  ]
+}

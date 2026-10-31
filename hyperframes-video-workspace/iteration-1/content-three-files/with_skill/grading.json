@@ -1,0 +1,20 @@
+{
+  "expectations": [
+    {
+      "text": "expect.files_not_exist",
+      "passed": true,
+      "evidence": "all checks passed"
+    },
+    {
+      "text": "script: C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\hyperframes-video\\evals\\fixtures\\scripts\\check_content.cmd",
+      "passed": true,
+      "evidence": "ALL PASS: 内容三件套契约齐全"
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 0,
+    "total": 2,
+    "pass_rate": 1
+  }
+}

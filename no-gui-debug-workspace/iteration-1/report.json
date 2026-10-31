@@ -1,0 +1,243 @@
+{
+  "skill_name": "no-gui-debug",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T04:30:47.3732074+08:00",
+  "end_time": "2026-10-31T04:35:50.8097864+08:00",
+  "case_results": [
+    {
+      "case_id": "route-ila-handshake",
+      "title": "握手卡死症状应路由到 ILA 链",
+      "status": "PASS",
+      "duration_ms": 46866,
+      "turns": 2,
+      "input_tokens": 37567,
+      "output_tokens": 1362,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 2,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.must_not_contain",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "failure: output_contains.any: [打开 Vivado Hardware Manager GUI]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [打开 Vivado Hardware Manager GUI]"
+          },
+          {
+            "text": "output_contains{any:[ILA ila]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[ILA ila])"
+          },
+          {
+            "text": "output_contains{any:[波形 CSV 抓波 探针]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[波形 CSV 抓波 探针])"
+          }
+        ],
+        "summary": {
+          "passed": 4,
+          "failed": 0,
+          "total": 4,
+          "pass_rate": 1
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "must_not_contain"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "pw-gige 板上 AR 通道握手卡死了，valid 拉高 ready 一直不应答，寄存器读不回来。\n按无 GUI 调试流程，我应该用哪条证据链路？给一句话理由和第一条采集命令的样子即可，先别实际执行。\n",
+      "response": "🛠️ **选 ILA 链**。一句话理由：valid/ready 握手是片内拍级行为，上位机链和 tshark 链只能看到片外结果（寄存器读超时、网络上无包），只有 ILA 能抓到卡死瞬间片内握手/地址/状态机的逐拍波形——决策树里「内部握手卡死 + 寄存器读写异常」正对应 ILA 链，判据是 AR↔首 R 配对 dx=0、calib_done=1。\n\n第一条采集命令的样子（两步，前提是当前 bit 里得有 ILA）：\n\n```bash\n# 1) 若板上 bit 不含 ILA，先重编（DEBUG_ILA=1 才会例化 dbg_ila）\nTOP=gige_vision_ip_k7 NEED_MIG=1 DEBUG_ILA=1 cmd //c \\\n  \"C:\\Software\\Xilinx\\Vivado\\2021.1\\bin\\vivado.bat -mode batch -nojournal -nolog -notrace -source scripts/build.tcl\"\n\n# 2) 烧板后抓 AR 通道波形\ncmd //c \"C:\\Software\\Xilinx\\Vivado\\2021.1\\bin\\vivado.bat -mode batch -nojournal -nolog -notrace -source tools/catch_ar.tcl\"\n```\n\n三个前置注意点（执行前核对即可，先不动手）：\n\n- **触发条件**：持续卡死属“现象常驻”，无条件立即捕获即可先判活性（看 probe 4 里的 `mig_calib_done` 是否为 1、`mig_ui_rst` 是否悬着）；若需要盯住 AR 握手，用 `core_arvalid eq1'b1` 触发。仓库现成的 `catch_ar.tcl` 就是给 AR 通道用的。\n- **mtime 核对**：`build/*.bit` 必须晚于所有改动 RTL 的 mtime，否则抓的是旧逻辑，结论作废。\n- **分支位置**：`catch_ar.tcl` 等 ILA 链脚本在 feature/mig 分支（4d8fda3 起），需在 `.worktrees/mig` 下执行，不在主线工作区。\n\n未执行任何命令，以上仅为链路路由与命令形态。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "route-tshark-loss",
+      "title": "丢包与帧率异常症状应路由到 tshark 链",
+      "status": "PASS",
+      "duration_ms": 87743,
+      "turns": 2,
+      "input_tokens": 37240,
+      "output_tokens": 3487,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 2,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [打开 Wireshark GUI]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [打开 Wireshark GUI]"
+          },
+          {
+            "text": "output_contains{any:[tshark dumpcap pcap]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[tshark dumpcap pcap])"
+          },
+          {
+            "text": "output_contains{any:[丢包 间隔 block_id 每帧包数 重传]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[丢包 间隔 block_id 每帧包数 重传])"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "total": 3,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "相机帧率从 60fps 掉到 20fps，怀疑丢包或重传。按无 GUI 流程用哪条链路？先说路由结论和判据思路，不要真的开始抓包。\n",
+      "response": "🎯 **路由结论：首选 tshark 链，但第一步不是直接抓包看根因，而是先做“双端同窗分流”**（tshark-workflow §6：dumpcap 后台抓 + `gige_cli stream` 前台跑 30s，同一时间窗内双端测速），把“60→20”先钉到三段之一：设备发送侧 / 链路 / host 接收侧。分流结果出来之前不该谈根因，也不必先动上位机链或 ILA 链。\n\n## 判据思路\n\n**第一层：先证伪/证实“丢包重传”这个怀疑（host 侧证据）**\n\n- `gige_cli stream` 的统计位：ok/recov/drop、missing、receive_errors **全 0 + VERDICT PASS** ⇒ host 一个包都没缺、重传机制从未触发。这是“host 无辜”的完整证据，不需要再复核。\n- pcap 侧对应判据：每帧包数 = 114（1 Leader + 112 Payload + 1 Trailer，SCPS=1500 几何）、block_id +1 连续。少包/跳号才是丢包或帧被中止的证据；两者都健康则丢包假设出局。\n\n**第二层：同窗三分支定位损失段**\n\n| 结果组合 | 结论与下一步 |\n|---|---|\n| pcap Leader 速率 ≈ gige_cli fps（≈20），stream 统计全 0 | 20fps 就是发送侧真值，host 零丢帧 → 直接进第三层判“细流/空等” |\n| pcap ≈ 60fps、gige_cli 只有 20 且 dropped\u003e0 | host 侧丢（socket/组装/环形缓冲）→ 转上位机链看 manifest 缺号 |\n| pcap 本身就只有 20 | 发送侧回退 → 同样进第三层 |\n\n**第三层：发送侧回退后的第一分流判据（§3 后两行）**\n\n- **Leader→Trailer 时长**：≈114×线速包时（1500B@1GbE 全帧约 1.4ms）=“突发+空等”型，瓶颈在帧间调度（desc 交付/bank 翻转/带宽门）；被拉长到 ≈ 帧周期 =“连续细流”型，TX 被上游数据供给限速，每包间隔 ≈ 帧周期/113。\n- **Trailer→下一 Leader gap**：大 gap 正常（帧间翻转期）；≈0 背靠背说明瓶颈在帧内供给而非帧间调度。\n\n## 一个值得带着进实验的假设（推导，待数据验证）\n\n60→20 恰好是 **1/3 整数分频**，这个特征不像随机丢包——随机丢包+重传恢复通常表现为丢帧和抖动，而不是速率稳定降到精确的 1/3。更像是确定性的限速/门控（时钟切换、MIG 读供给带宽被砍、带宽门配错）。落在判据上：若第三层测出“细流”且每包间隔约为健康值的 3 倍（即供给带宽 ≈ 原 1/3），该假设即成立，随后升级 **ILA 链**拍供给通路拍级波形；若“空等”则查帧间调度路径。\n\n## 届时采集的注意点（不执行，先记着）\n\n- dumpcap 固定输出文件名（后台复合命令变量作用域坑）、全路径调用、先短抓定性（满速 60s ≈ 85MB，20fps 下更小）。\n- `gige_cli nic` 先枚举网卡，--nic 序号显式指定且插拔后会漂移；设备无 ICMP，ping 不通是预期。\n-GVSP host_port 是配流决定的，过滤别假设固定端口。\n- “发送侧健康 ≠ 无 bug”的教训（MIG 撕裂案）属于内容类症状；帧率类问题帧级判据全过 + host 清白后，结论“发送侧真值 20fps”即可采信，不必立刻进内容对拍。\n\n**待确认**：20fps 是在哪一端观测的（应用层还是 gige_cli 计数）？是稳定 20 还是波动？你们 60fps 配置下每帧包数是否仍是 114 几何（决定第三层反推带宽的系数）？",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "route-host-tearing",
+      "title": "成像撕裂症状应路由到上位机链",
+      "status": "PASS",
+      "duration_ms": 69399,
+      "turns": 3,
+      "input_tokens": 39846,
+      "output_tokens": 2001,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 3,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [打开 Wireshark GUI 打开 Vivado Hardware Manager]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [打开 Wireshark GUI 打开 Vivado Hardware Manager]"
+          },
+          {
+            "text": "output_contains{any:[上位机 gige_cli capture_frames RAW]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[上位机 gige_cli capture_frames RAW])"
+          },
+          {
+            "text": "output_contains{any:[对拍 counter dump manifest]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[对拍 counter dump manifest])"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "total": 3,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "图像出现垂直撕裂，怀疑是帧数据错位。按无 GUI 流程该用哪条链路取证？给出思路即可，不要实际执行。\n",
+      "response": "🌀 结论先说：决策树里「成像撕裂/错位」的首选链路是**上位机链**（内容级字节证据），但按 MIG 撕裂案例验证过的标准打法，实际是**三链路接力，tshark 定性先行**，上位机对拍定形状，再视结果决定是否升级 ILA。\n\n## 思路（定性 → 定形状 → 定位）\n\n**第一步：tshark 链定性，决定后面所有方向。** 先回答包级问题——发送帧率多少、每帧包数对不对、block_id 是否连续、有没有丢包/重传。如果发送结构健康（MIG 案例里是 387fps / 114 包 / block_id 连续），异常就在 payload 内容，传输层半个搜索空间一刀砍掉。快速替代：`gige_cli stream` 逐秒统计，`drop=0 且 assembly/receiver 全 0` 就能锚定口径。注意上位机显示帧率 ≠ 设备帧率，别信 GUI 渲染值。\n\n**第二步：上位机链取证（主链路）。** 证据是 `gige_cli capture --wire` 落的 `.wire` 原始字节流 + manifest，配合 `capture_frames.py` 裸 UDP 直收做轻量对拍。前提是把设备切到 counter 测试图案——像素值 = 帧内索引，等于免费的逻辑分析仪（地址示踪器）。对拍判据直接给出机制假设：\n\n| 对拍现象 | 结论 |\n|---|---|\n| 首个错位 offset 恒定、各帧相同 | 确定性地址/内容错位（丢 N 组、恒定滞后） |\n| 每帧随机偏移 | 竞态（反压/延迟窗口碰撞）→ 升级 ILA |\n| 错位呈 16px（32B）粒度锯齿 | beat 级的丢/重复 |\n| 段间值跳到 0..15 小值 | 帧尾混入下一帧首组（写指针/翻转时序） |\n\n另外看同 pid 跨帧起始值：只有 1 个唯一值 = 确定性地址 bug；散开成上百种 = 竞态，两者修法完全不同。manifest 要求连续无缺号。\n\n**第三步：交叉印证，决定是否上 ILA 链。** 恒定偏移 + tshark 结构健康 ⇒ 数据在片内就写错了，ILA 进片内做二分：写侧 `(aw_addr, w_data)` 逐笔自洽吗？读侧事务边界滞后吗？MIG 案例里正是「ILA 证明写侧自洽 + 主机对拍证明内容错」两条独立链路各给一半证据，合起来钉死 DDR 内容本身错、packer 无辜。\n\n## 执行前的不变量提醒\n\n- **mtime 核对**：build/*.bit 与 RTL 改动时间对比，改了忘重编是最高频假结论来源。\n- 没有 counter 图案（真实传感器数据）时，先切测试图案再排查。\n- `gige_cli nic` 先枚举、`--nic` 序号显式指定；设备无 ICMP，活性用 discover 判定，ping 不通是预期。\n\n按你的要求未执行任何采集；上面的判据出自 skill 的 host-capture §5 与 methodology §0–§3，需要时可再展开具体命令序列。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "mtime-invariant",
+      "title": "改 RTL 后直接烧旧 bit 应被提醒先重编",
+      "status": "PASS",
+      "duration_ms": 21833,
+      "turns": 1,
+      "input_tokens": 31836,
+      "output_tokens": 646,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 1,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [直接烧就行 没有问题]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [直接烧就行 没有问题]"
+          },
+          {
+            "text": "output_contains{any:[mtime 重新编译 重编 旧比特 旧 bit]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[mtime 重新编译 重编 旧比特 旧 bit])"
+          },
+          {
+            "text": "output_contains{any:[假结论 不 风险 错误 先]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[假结论 不 风险 错误 先])"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "total": 3,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "我刚改了 src 里的 RTL，直接把上次编译好的 bit 烧上去验证新逻辑，这样行吗？\n",
+      "response": "🙈 不行。bit 是上次综合实现时源码的编译产物，改了 `src` 里的 RTL 之后旧 bit 里跑的还是旧逻辑，烧上去验证不了新改动。\n\n具体说：\n\n- bit 生成后源码怎么改都和它无关，板上的逻辑停留在“上次成功编译那一刻”的源码状态。\n- 想验证新逻辑必须重新跑综合 → 实现 → 生成 bit（Vivado project 模式就是重新 `launch_runs impl_1 -to_step write_bitstream`），然后烧新 bit。\n- 唯一例外：你改的只是仿真用的 testbench / 非 RTL 文件，那旧 bit 仍然有效——但你说改的是 `src` 里的 RTL，属于要重新编译的情况。\n\n一个快速自检方法：对比 bit 文件的修改时间和 RTL 的修改时间，bit 早于源码改动就说明里面肯定没有新逻辑。\n\n另外提醒：即使烧了旧 bit 后板子行为“符合预期”，也不能作为新逻辑的验证证据——那是旧逻辑在跑。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "sim-green-board-red-methodology",
+      "title": "sim 全绿板上出错应给出多链路差异排查方案",
+      "status": "PASS",
+      "duration_ms": 75339,
+      "turns": 3,
+      "input_tokens": 36897,
+      "output_tokens": 3672,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 3,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [仿真过了就没问题 不用查了]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [仿真过了就没问题 不用查了]"
+          },
+          {
+            "text": "output_contains{any:[ILA 上位机 tshark]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[ILA 上位机 tshark])"
+          },
+          {
+            "text": "output_contains{any:[交叉 组合 多链路 证据链]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[交叉 组合 多链路 证据链])"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "total": 3,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "同一段 RTL 仿真全绿，但板上成像错位。按 no-gui-debug 的方法论怎么系统化排查？给排查框架即可，不要执行。\n",
+      "response": "🔍 按 no-gui-debug 的方法论，这类「sim 全绿、板上错」的问题走这条总路线：**定性 → 分层排除 → 定位 → 修复 → 三级验证**。框架如下（不执行，只给方法）：\n\n## 0. 前置校验（每轮实验的不变量，防假结论）\n\n1. **mtime 核对**：`build/*.bit` 的 mtime 是否晚于所有改过的 RTL——改了 RTL 忘重编，测的是旧硬件，是这类问题最高频的假根因来源。\n2. **板/JTAG 状态先行**：每轮记录 `program_jtag.tcl` 输出（成功恰 1 行 `OK : JTAG programmed ...`）；确认固件活性（bootrom 串口发 `h` 有菜单）——固件没跑 = MDIO 从不初始化 = GVCP 必然无应答。\n3. **实验串行**：Vivado 与 ModelSim 并行会撞 MIG IP 文件锁。\n4. **证据分级**：每条结论标注 事实 / 观察 / 推导 / 未验证，不允许混写。\n\n## 1. 症状定性（tshark 链，第一证据，决定后续所有方向）\n\n先用抓包回答四个问题：\n\n- 发送帧率多少？\n- 每帧包数对吗？\n- block_id 连续吗？\n- 异常在**包级**（丢包/乱序/重传）还是**内容级**（包结构完整但 payload 错）？\n\n判据：若帧率/包数/block_id 全部健康 → 发送结构没问题，**错位在 payload 内容**，一刀砍掉半个搜索空间。注意上位机显示帧率 ≠ 设备实际帧率（显示有渲染节流），帧率口径必须用抓包统计锚定，不能信显示值或口头报告。\n\n## 2. 刻画错位的「形状」（上位机链 + 地址示踪器）\n\ncounter 类测试图案的像素值 = 帧内索引，**任何读出的数据都在自报家门**（真实传感器数据没有可观测性时，先切测试图案再排查）。用 `capture_frames.py` 逐字节对拍，提取：\n\n- 每包 payload 起始值 → packer 实际读偏移；\n- 包内 +1 连续段长度分布 → 错位粒度（全是 16px 倍数 = beat 级错位）；\n- 同 pid 跨帧起始值：唯一一个值 = 确定性地址 bug；散开（几十上百种）= 竞态，两者修法完全不同；\n- 段间值跳到 0..15 = 帧尾混入下一帧首组（指针/翻转时序问题）。\n\n产出物是错位的形状：恒定还是随机、粒度多大、有无周期性——这是机制假设的直接输入。\n\n## 3. 片内二分定位（ILA 链）\n\n- 写侧/读侧分别检查：写侧 `(aw_addr, w_data)` 逐笔是否自洽、写地址是否 +beat 线性、AR↔首R 配对延迟 dx=0、`calib_done=1`、状态机是否卡死。\n- **交叉印证**才钉死根因：ILA 证明写侧自洽 + 主机对拍证明内容错位 ⇒ DDR 里的内容本身就错（写侧问题），packer 无辜。两条独立链路各给一半证据，单链路结论不下定论。\n\n## 4. 「sim 全绿、板上错」差异清单（逐项建锚搬进 TB）\n\n板上与 unit sim 的每一项行为差异都是 bug 藏身处，逐项排查：\n\n| 差异项 | sim 里缺什么 | 建锚方式 |\n|---|---|---|\n| 从端零反压 | 写 rready 反压 | TB 写从属 + 可编程 ready 调度 |\n| AR→首R 延迟 | ar_latency | 模型参数（受理后等 N 拍） |\n| burst 碎片化 | 页钳位/边界拆分 | 真实几何 + 4KiB 拆分 |\n| 真实 slave 返回行为 | rvalid 保持/分次呈现 | 假 MC tagged 数据 BFM（data=addr，每拍自证位置） |\n| 并发读写 | 同时流量的命令仲裁 | 并发写 BFM |\n| 启动窗口 | 复位释放后通路未就绪 | 前 N 拍全反压 + calib 门控 |\n\n原则：每次新发现的差异项都作为**常驻回归用例**加进 sim（不是一次性脚本）——下一个同类 bug 会在 sim 里直接红。\n\n## 5. BFM 自检（sim 复现之前，先确认 TB 自己没病）\n\n- BFM 里数它自己收到的事件数，与期望比对——BFM 没收到的事件不可能是 DUT 发的；\n- 双边沿/多触发循环 = 半速率采样 = 规律性漏采，症状酷似 DUT bug。\n\n## 6. 修复 + 三级验证闭环（缺一不可）\n\n1. **sim 复现红**：修复前用例必须红，否则它锚不住 bug；\n2. **修复后 sim 绿 + 既有回归绿**：防修 A 坏 B；\n3. **板上复测**：ILA 判据清零（如 AR↔R 配对 dx=0）+ 主机对拍 PASS；\n4. **报告**：落 `.planning/\u003c日期\u003e-\u003c主题\u003e-debug.md`（结论速览/症状/排除项/根因/修复/验证/遗留），证据文件（CSV/pcap/frames.bin）留 `tools/log/` 并在报告写路径。\n\n## 停机条件\n\n连续两轮实验无新证据即停：输出已知事实、已排除项、当前假设、推荐下一步，交回用户决策，不扩大修改范围。\n\n——\n\n框架要点浓缩成一句：**先用抓包定性「结构健康还是内容错」，再用 counter 图案读出错位的形状，然后用 ILA 二分写侧/读侧，最后把板上差异逐项搬进 sim 复现实锤**——定性做得越足，后面少走越多弯路。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 194554,
+  "judge_tokens": 0,
+  "overall_tokens": 194554
+}

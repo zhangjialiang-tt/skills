@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "expect.must_contain",
+      "passed": true,
+      "evidence": "all checks passed"
+    },
+    {
+      "text": "failure: output_contains.any: [已添加 argparse 已修改脚本 脚本已创建]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [已添加 argparse 已修改脚本 脚本已创建]"
+    },
+    {
+      "text": "output_contains{all:[/goal Verification Constraints Boundaries Stop]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (all:[/goal Verification Constraints Boundaries Stop])"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1
+  }
+}

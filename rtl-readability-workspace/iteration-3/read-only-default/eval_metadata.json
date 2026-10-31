@@ -1,0 +1,10 @@
+{
+  "eval_id": 0,
+  "eval_name": "默认只读不修改 RTL",
+  "prompt": "优化一下 rtl/counter.v 的可读性。\n",
+  "assertions": [
+    "expect.must_not_contain",
+    "failure: output_contains.any: [已重命名信号 已修改 RTL]",
+    "output_contains{any:[只读 确认 建议]}"
+  ]
+}

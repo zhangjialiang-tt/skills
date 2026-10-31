@@ -1,0 +1,69 @@
+{
+  "metadata": {
+    "skill_name": "hyperframes-video",
+    "skill_path": "C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\hyperframes-video",
+    "timestamp": "2026-10-30T23:31:12Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "AI 视频生成出画面请求应转介 ai-drama-pilot",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "result": {
+        "pass_rate": 0.3333333333333333,
+        "passed": 1,
+        "failed": 2,
+        "total": 3,
+        "time_seconds": 47.154,
+        "tokens": 36415,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [开始渲染 成片已渲染]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [开始渲染 成片已渲染]"
+        },
+        {
+          "text": "output_contains.any: [ai-drama-pilot 不适用 不属于 不是本 无法 前期生产包 AI 短片前期]",
+          "passed": false,
+          "evidence": "output does not contain any of [ai-drama-pilot 不适用 不属于 不是本 无法 前期生产包 AI 短片前期]"
+        },
+        {
+          "text": "output_contains.any: [HyperFrames 本 skill 代码动画 AI 视频生成]",
+          "passed": false,
+          "evidence": "output does not contain any of [HyperFrames 本 skill 代码动画 AI 视频生成]"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.3333333333333333,
+        "stddev": 0,
+        "min": 0.3333333333333333,
+        "max": 0.3333333333333333
+      },
+      "time_seconds": {
+        "mean": 47.154,
+        "stddev": 0,
+        "min": 47.154,
+        "max": 47.154
+      },
+      "tokens": {
+        "mean": 36415,
+        "stddev": 0,
+        "min": 36415,
+        "max": 36415
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

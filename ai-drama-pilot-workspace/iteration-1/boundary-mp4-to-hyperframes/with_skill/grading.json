@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "expect.must_not_contain",
+      "passed": true,
+      "evidence": "all checks passed"
+    },
+    {
+      "text": "failure: output_contains.any: [阶段 A 已完成 剧本已产出]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [阶段 A 已完成 剧本已产出]"
+    },
+    {
+      "text": "output_contains{any:[hyperframes]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[hyperframes])"
+    },
+    {
+      "text": "output_contains{any:[前期资料 离线资料 生产包]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[前期资料 离线资料 生产包])"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1
+  }
+}

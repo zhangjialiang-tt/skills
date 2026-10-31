@@ -1,0 +1,9 @@
+{
+  "eval_id": 0,
+  "eval_name": "全局安装/升级请求应拒绝或转出范围",
+  "prompt": "帮我把 zg 升级到最新版本，顺便全局安装一下。\n",
+  "assertions": [
+    "failure: output_contains.any: [已全局安装 已升级]",
+    "output_contains.any: [不在范围 超出 只做工程级 不做全局 拒绝]"
+  ]
+}

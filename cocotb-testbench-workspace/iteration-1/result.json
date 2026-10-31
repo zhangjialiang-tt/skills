@@ -1,0 +1,176 @@
+{
+  "skill_name": "cocotb-testbench",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-10-31T06:32:51.5710438+08:00",
+  "end_time": "2026-10-31T06:55:58.3292374+08:00",
+  "case_results": [
+    {
+      "case_id": "trigger-cocotb-framework",
+      "title": "cocotb 框架请求应启动框架生成流程",
+      "status": "PASS",
+      "duration_ms": 530992,
+      "turns": 19,
+      "input_tokens": 47026,
+      "output_tokens": 820,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 19,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.files_not_exist",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "failure: output_contains.any: [无法 不能帮 做不到]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [无法 不能帮 做不到]"
+          },
+          {
+            "text": "output_contains{any:[cocotb pytest 测试框架]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[cocotb pytest 测试框架])"
+          },
+          {
+            "text": "output_contains{any:[corr_match RTL rtl 文件 路径 哪]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[corr_match RTL rtl 文件 路径 哪])"
+          }
+        ],
+        "summary": {
+          "passed": 4,
+          "failed": 0,
+          "total": 4,
+          "pass_rate": 1
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "files_not_exist"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "用 cocotb 给 corr_match.v 搭一套 Python 测试框架。\n",
+      "response": "⚠️ 环境已就绪，但本机找不到 `corr_match.v` —— 这是唯一阻塞项，需要你提供文件路径。\n\n**环境探测结果**（`probe_env.py`，全部就绪）：\n\n- Python 3.11.3 + cocotb 2.1.0 + pytest 9.1.1\n- Icarus（iverilog）✅\n- ModelSim / Questa（vsim）✅，且检测到 `LM_LICENSE_FILE` 已配置\n\n**已搜索范围（均无 `corr_match*` 文件）**：\n\n- 当前工作区 `skill-up-1494461360`（只有 skill 脚手架，无任何 RTL）\n- `C:\\Users\\zhangjl` 整个用户目录（含 Desktop、Documents、Downloads、source、src、multi_repos 等）\n- `F:\\` 全盘；`D:\\`、`E:\\` 无数据；C 盘根目录 `work`/`projects`/`FPGA` 等不存在\n- WSL Ubuntu（/home、/root、/opt 等）\n\n**记忆线索**（OpenViking）：corr_match.v 是 CAF（连续自动对焦）相关匹配与位移计算模块，位于某工程的 `rtl/` 目录下，有 sub5 子测试平台，2026-09-11 做过 CHG-003 D-1 门控变更（`i_Curr_const`/`i_Last_const` 入参 + `o_Shift_valid` 输出）。记忆中的 peer 路径线索指向 `C:\\100_Working\\102_Working\\Prj\\caf-ctrl`，但该路径在本机不存在——工程可能在另一台机器上。\n\n**下一步**：请提供以下任一项，我就按 skill 流程（依赖闭包 → 端口提取 → 生成 cocotb 骨架 → smoke → functional）继续：\n\n1. `corr_match.v` 的完整路径（本机或可访问的网络/WSL 路径）；\n2. 或直接把文件拷到当前工作区；\n3. 若工程在远端机器，告诉我如何访问。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "boundary-modelsim-native",
+      "title": "ModelSim 原生 TB 请求应转介 build-testbench",
+      "status": "PASS",
+      "duration_ms": 439968,
+      "turns": 12,
+      "input_tokens": 55159,
+      "output_tokens": 2544,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 12,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.files_not_exist",
+            "passed": true,
+            "evidence": "all checks passed"
+          },
+          {
+            "text": "failure: output_contains.any: [test_counter.py 已生成 已生成 cocotb 框架]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [test_counter.py 已生成 已生成 cocotb 框架]"
+          },
+          {
+            "text": "output_contains{any:[build-testbench]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[build-testbench])"
+          }
+        ],
+        "summary": {
+          "passed": 3,
+          "failed": 0,
+          "total": 3,
+          "pass_rate": 1
+        }
+      },
+      "gates": {
+        "passed": true,
+        "failures": null,
+        "configured_rules": [
+          "files_not_exist"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "给这个模块建 ModelSim 原生 Verilog testbench，要 sim.do 波形脚本。\n",
+      "response": "🎉 结论先说：这条请求走的是 build-testbench（ModelSim 原生 Verilog TB）的领域，但我现在没法开工——**「这个模块」在本会话里无法确定**，而且 build-testbench skill 没有装进本会话。调查过程和候选如下。\n\n## 路由结论\n\n本会话唯一可用的 cocotb-testbench skill 在 exclusions 里明确排除了这类请求（“ModelSim 原生 Verilog TB、subx 目录契约、sim.do 波形 → build-testbench\"），所以我没有启动 cocotb 流程，也没有生成任何 cocotb 框架文件（本会话零文件产出）。\n\nbuild-testbench skill 本机**未安装**（`~/.claude/skills`、`~/.agents/skills`、项目 `.claude/skills` 都没有），但我找到了它的副本，可确认其契约：\n\n- `C:\\Users\\zhangjl\\AppData\\Local\\Temp\\zhangjl-skills-eval-sandbox\\build-testbench`\n- `C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skills-restore-full\\build-testbench`\n\n契约要点：`sim/sub{x}-{modulename}/` 目录（`fileset.f` / `ports.json` / `tb/` / `scripts/sim.do`+`wave.do` / `log/`），L1 smoke → L2 功能验证分级，workspace root 必须含 `.git`，歧义 top 禁止静默选择。\n\n## 阻塞点：模块不明\n\n当前工作目录里没有任何 `.v/.sv/.vhd` 文件。扫描 Temp 根目录找到 6 个候选 RTL：\n\n| 文件 | 模块 | 修改日期 | 备注 |\n|---|---|---|---|\n| `base_gvcp_core.sv` | `gvcp_core`（442 行） | 10-30 | GigE Vision GVCP 控制面，`import gige_pkg::*` |\n| `sem_fsm.v` | `sem_fsm`（18 行） | 10-26 | 小 FSM，无依赖 |\n| `dt.v` / `detetime.v` | `Dete_Timing`（87 行） | 10-22 | 同一模块的两份副本 |\n| `new_top.sv` / `old_top.sv` | `gige_vision_ip_k7` | 10-19 | 新旧对比对，`import gige_pkg::*` |\n\n另有一个约束：两个 gige 模块依赖 `gige_pkg`，而 `gige_pkg` 不在 Temp 里——完整依赖闭包应该在你的实际项目 workspace（pw-gige）里。Temp 里这些都是散落副本。\n\n## 下一步（二选一，确认后我立即执行）\n\n1. **直接手写**：告诉我目标模块的项目内路径（推荐），我按 `sim/subx-{module}/` 契约手写 `tb/tb_\u003cmodule\u003e.v` + `scripts/sim.do` 波形脚本，并实际跑通 ModelSim 编译仿真（工作目录无 `.git`，走不了 build-testbench 的标准 bootstrap，手写框架不受影响）。\n2. **安装 skill 再走标准流程**：把 build-testbench 从上面副本路径装进会话，由它的 bootstrap 负责 fileset 解析、license 注入和 L1 门禁。\n\n我的默认猜测是 `base_gvcp_core.sv`（最新修改、与你近期 GigE Vision 项目吻合）——如果是它，说一声“就它”即可；如果不是，直接给路径。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "framework-generation",
+      "title": "cocotb 框架生成与 characterization 降级措辞",
+      "status": "FAIL",
+      "duration_ms": 413698,
+      "turns": 15,
+      "input_tokens": 75832,
+      "output_tokens": 6000,
+      "grading": {
+        "status": "FAIL",
+        "turns_executed": 15,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "expect.must_not_contain",
+            "passed": false,
+            "evidence": "output contains forbidden keyword \"功能正确\""
+          },
+          {
+            "text": "script: evals/fixtures/scripts/check_cocotb_framework.cmd",
+            "passed": false,
+            "skipped": true,
+            "evidence": "not evaluated: expect gate failed"
+          }
+        ],
+        "summary": {
+          "passed": 0,
+          "failed": 2,
+          "total": 2,
+          "pass_rate": 0
+        }
+      },
+      "gates": {
+        "passed": false,
+        "failures": [
+          {
+            "rule": "must_not_contain",
+            "detail": "output contains forbidden keyword \"功能正确\""
+          }
+        ],
+        "configured_rules": [
+          "must_not_contain"
+        ]
+      },
+      "configuration": "with_skill",
+      "prompt": "用 cocotb 给 rtl/counter.v 搭一套 Python 测试框架（smoke + functional 两级）。\n本机没有仿真器环境，不要运行 pytest，只生成框架文件（sim/counter/ 下的 test 文件、runner 配置、ports/design 数据）。\n没有 golden 参考模型，直接按 RTL 阅读生成测试即可。\n",
+      "response": "🔧 框架已生成完毕。`sim/counter/` 下 smoke + functional 两级 cocotb 测试框架就绪，未运行任何仿真。\n\n## 修改文件\n\n- [sim/counter/test_counter_smoke.py](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-337917582\\sim\\counter\\test_counter_smoke.py) — 门禁 L1：编译/elaborate、时钟翻转、复位施加、输出无 X/Z\n- [sim/counter/test_counter_functional.py](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-337917582\\sim\\counter\\test_counter_functional.py) — L2 characterization 测试（已按 RTL 填充）\n- [sim/counter/tb_runner.py](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-337917582\\sim\\counter\\tb_runner.py) / [conftest.py](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-337917582\\sim\\counter\\conftest.py) — runner + pytest marker 配置\n- [sim/counter/design.json](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-337917582\\sim\\counter\\design.json)（top/sources/参数/默认仿真器 icarus）、[fileset.json](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-337917582\\sim\\counter\\fileset.json)、[ports.json](C:\\Users\\zhangjl\\AppData\\Local\\Temp\\skill-up-337917582\\sim\\counter\\ports.json)、`.gitignore`\n\n## 核心改动\n\n- 生成器自动分类端口：`clk`→时钟、`rst_n`→低有效复位、`enable`→输入、`count`→符号宽度输出（`WIDTH-1:0`，只做 resolve 检查不驱动）。\n- functional 填充 5 个 characterization 测试，每个期望注明 RTL 来源（如 `rtl/counter.v:8-9` 异步清零、`:10` enable 门控、`:7-10` 模 2⁸ 回绕）：异步复位即时清零、复位值+逐拍递增、disable 保持、WIDTH 回绕、300 拍随机 enable 对照 Python 行为模型。\n- 采样遵守 `RisingEdge` → `ReadOnly()` 再读 `count`（`count` 是打拍 cnt 的组合输出，直接读可能拿旧值）。\n- 无 golden 模型，`test_counter_golden_equivalence` 保留为自跳过存根，`design.json` 留有 `golden_model` 槽位。\n\n## 验证\n\n- Static Check：`py_compile` 4 个 py 文件通过，3 个 JSON 解析通过。**未运行 pytest/仿真**（按你的要求），无任何 PASS 可宣称。\n- 最高达到门禁：框架生成 + 静态检查；smoke 门禁未执行。\n\n## 风险与备注\n\n- probe 显示本机 cocotb 2.1.0 / pytest 9.1.1 已装，`iverilog`、`vsim` 在 PATH 可见且 `LM_LICENSE_FILE` 已设置——与“无仿真器环境”的说法不一致，可能是残留或不可用工具；在能用的机器上运行：`cd sim/counter \u0026\u0026 pytest -m smoke`，换 Questa 加 `SIM=questa`（首次需 license 预检）。\n- 端口分类假设：rst_n 低有效/异步已对照 RTL 确认（非仅名称启发式）；无 inout/unknown 端口、无 signed 运算、单拍无流水线 latency。\n- 测试里 `WIDTH = 8` 硬编码（取 RTL 默认）；若在 `design.json[\"parameters\"]` 改 WIDTH，需同步修改 functional 测试常量。\n- skill 不一致备注：`build_fileset.py --output` 写的是纯文件列表而非 JSON，与 `gen_cocotb_skeleton.py` 期望不符；我按脚本文档意图用 `--json` 的 stdout 覆盖了 `fileset.json`。\n- 结论上限：characterization（行为刻画），非功能正确性证明。\n\n是否更新记忆：本次为一次性框架生成，无长期稳定信息需要写入。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 187381,
+  "judge_tokens": 0,
+  "overall_tokens": 187381
+}

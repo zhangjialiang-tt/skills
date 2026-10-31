@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "expect.files_not_exist",
+      "passed": true,
+      "evidence": "all checks passed"
+    },
+    {
+      "text": "failure: output_contains.any: [无法 不能帮 做不到]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [无法 不能帮 做不到]"
+    },
+    {
+      "text": "output_contains{any:[cocotb pytest 测试框架]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[cocotb pytest 测试框架])"
+    },
+    {
+      "text": "output_contains{any:[corr_match RTL rtl 文件 路径 哪]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[corr_match RTL rtl 文件 路径 哪])"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1
+  }
+}

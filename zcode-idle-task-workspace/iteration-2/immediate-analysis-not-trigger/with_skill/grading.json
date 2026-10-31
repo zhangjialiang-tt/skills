@@ -1,0 +1,20 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [任务合同如下 已生成任务合同 闲时任务指令如下 夜间执行计划如下]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [任务合同如下 已生成任务合同 闲时任务指令如下 夜间执行计划如下]"
+    },
+    {
+      "text": "output_contains{any:[目录 结构 分析]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[目录 结构 分析])"
+    }
+  ],
+  "summary": {
+    "passed": 2,
+    "failed": 0,
+    "total": 2,
+    "pass_rate": 1
+  }
+}
