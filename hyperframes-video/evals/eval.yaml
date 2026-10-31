@@ -1,0 +1,30 @@
+# skill-up 评测配置：hyperframes-video
+# 触发/边界用例（rule_based）+ 内容三件套用例（script judge）。
+# 端到端渲染评测（需 FFmpeg/Chrome/TTS 全链路）不在本轮范围，见汇总报告豁免记录。
+schema_version: v1alpha1
+
+environment:
+  # 内容三件套只写文件，无需沙箱；不跑端到端渲染。
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+  # 转介目标技能同时挂载（同仓库兄弟目录），模拟真实环境。
+  - source: local_path
+    path: ../ai-drama-pilot
+
+engine:
+  name: claude_code
+
+cases:
+  files:
+    - evals/cases/trigger-video-production.yaml
+    - evals/cases/boundary-ai-video-gen.yaml
+    - evals/cases/content-three-files.yaml
+  defaults:
+    timeout_seconds: 600
+    max_turns: 10
+
+report:
+  formats: [json]

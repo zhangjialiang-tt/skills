@@ -1,0 +1,37 @@
+{
+  "skill_name": "ai-drama-pilot",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "帮我做一个 30 秒左右的 AI 短剧试播集前期资料，竖屏。题材：深夜末班地铁车厢，主角是个加班后回家的年轻女生，她收到一条来自已删除联系人的语音，语音里是她自己的声音，说'别在下一站下车'。就一个人，悬疑感。不用真的生成视频，先把能拿去生成的前期资料做全。故事基线里必须保留：语音来自已删除联系人、她自己的声音、不下车的警告，以及结尾要有一个新的信息。",
+      "expected_output": "完整六阶段生产包：3 版本剧本+评审矩阵、时长闭合 30.0s 的分镜（含 CSV 校验通过）、视觉合同（人物+风格必备；成片 ≤30s 允许按产物裁剪规则省略 location_bible 并登记原因）、逐镜中英双语提示词（含替代方案与待验证标注）、声音剪辑计划、试生成验收方案、四视角审查（成片 ≤30s 可合并为一份 review.md，四视角各一节）+修订记录、README 与 progress",
+      "files": [],
+      "assertions": [
+        "core-files-exist: 六阶段核心文件齐全（最终剧本、storyboard.md、shot_list.csv、≥2 份视觉合同、逐镜提示词、generation_manifest.csv、audio_plan、editing_plan、pilot_test_plan、README）",
+        "timeline-closed-30s: shot_list.csv 通过时长闭合校验且总时长在 29–31s",
+        "prompts-bilingual: 每镜提示词文件同时包含中文与英文提示词段落",
+        "fallback-per-shot: 每镜提示词包含替代实现方案段落",
+        "unverified-marked: 生产包中存在'待验证'标注，未宣称未经验证的模型能力",
+        "review-with-priorities: 存在独立审查文档且问题使用 P0/P1/P2 分级记录",
+        "no-premature-completion-claims: 全部文档不声称已生成/已测试视频"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "我想用 AI 做一个 45 秒的竖屏短片前期包，喜剧向：一个人发现家里的猫会说话，但只在他独处的时候说。预算有限，动态生成的镜头越少越好，总镜头数控制在 10 个以内。先不要生成任何视频，我要的是前期资料。",
+      "expected_output": "满足成本约束的生产包：静帧后期占比 ≥50%（10 镜内）、45.0s 时长闭合、动物角色视觉合同处理、逐镜提示词与替代方案、审查体现成本视角",
+      "files": [],
+      "assertions": [
+        "core-files-exist: 六阶段核心文件齐全（含动物角色的视觉合同处理）",
+        "timeline-closed-45s: shot_list.csv 通过时长闭合校验且总时长在 44–46s",
+        "shot-count-within-10: 分镜镜头数不超过 10",
+        "stills-majority: 静帧后期镜占比 ≥50% 或文档明确记录动态生成最小化的镜头级决策",
+        "prompts-bilingual: 每镜提示词文件同时包含中文与英文提示词段落",
+        "fallback-per-shot: 每镜提示词包含替代实现方案段落",
+        "unverified-marked: 生产包中存在'待验证'标注，未宣称未经验证的模型能力",
+        "review-with-priorities: 存在独立审查文档且问题使用 P0/P1/P2 分级记录",
+        "no-premature-completion-claims: 全部文档不声称已生成/已测试视频"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+# 端到端用例：45s/≤10镜 成本约束生产包（转译自 evals.json case 2 的自然语言断言）。
+id: e2e-45s-10shots
+title: 45 秒 ≤10 镜成本约束生产包端到端产出
+description: |
+  转译自 evals.json id2。验证完整六阶段生产包产出：核心文件齐全、45.0s 时长闭合、
+  ≤10 镜、静帧占比或动态生成最小化决策、逐镜中英提示词+替代方案、待验证标注、
+  审查分级、无提前完成宣称。断言由 evals/fixtures/scripts/check_e2e.py 判定。
+input:
+  # evals.json id2 prompt 原文。
+  prompt: |
+    我想用 AI 做一个 45 秒的竖屏短片前期包，喜剧向：一个人发现家里的猫会说话，但只在他独处的时候说。预算有限，动态生成的镜头越少越好，总镜头数控制在 10 个以内。先不要生成任何视频，我要的是前期资料。
+constraints:
+  # 生产包 20+ 文件，放宽超时与轮次。
+  timeout_seconds: 1800
+  max_turns: 40
+expect:
+  # 项目目录名 agent 自定（<项目名>/pilot-01/），根级 files_exist 检查不可行，
+  # 产物路径与内容契约全部由 script judge（check_e2e.py 的 find_root glob */pilot-01）判定。
+  must_not_contain:
+    - "已生成视频"
+    - "已渲染成片"
+judge:
+  # script judge：跑仓库校验脚本，逐项核对 evals.json id2 的断言。
+  type: script
+  script_path: evals/fixtures/scripts/check_e2e.cmd
+  timeout_seconds: 120

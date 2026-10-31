@@ -1,0 +1,136 @@
+<!--
+  ============ 范例场景 ex07：数据图表 + 组件复用 ============
+  出处：hyperframes-agent-video 项目 compositions/s07-components.html（2026-10-30 成片过 check + 抽帧目检）。
+
+  使用方式：
+  1. 复制到项目 video/compositions/，改 data-composition-id（三处必须一致：根 div / JS 选择器前缀 / __timelines 注册键）；
+  2. 在 index.html 宿主挂载，data-duration 与根 div 一致（本范例 8s）；
+  3. 按下方【必改】【可改】【勿动】注释调整。
+
+  教学点：同一柱状图组件出现两次——第二次只换数据和配色（.alt），不动结构。
+  "一次编写、反复使用"用画面本身证明，比旁白说更可信。
+-->
+<template id="ex07-chart-template">
+  <div
+    data-composition-id="ex07"
+    data-width="1920"
+    data-height="1080"
+    data-duration="8"
+  >
+    <div class="stage">
+      <div class="badge">EX07</div>
+      <!-- 左：组件实例 A -->
+      <div class="chart-card" id="chart-a">
+        <!-- 【必改】卡片标题 -->
+        <div class="cc-title">组件 · 实例 A</div>
+        <div class="chart">
+          <!-- 【必改】柱高 height 与数值；scaleY 生长，不动画 height -->
+          <div class="col" id="ca1"><div class="col-bar" style="height: 90px"></div><div class="col-val">12</div></div>
+          <div class="col" id="ca2"><div class="col-bar" style="height: 180px"></div><div class="col-val">24</div></div>
+          <div class="col" id="ca3"><div class="col-bar" style="height: 260px"></div><div class="col-val">36</div></div>
+        </div>
+      </div>
+      <!-- 中：变量标签 -->
+      <div class="var-chip" id="var-chip">
+        <!-- 【必改】属性名/取值示例，展示"同一组件不同配置" -->
+        <div class="vc-attr">data-chart-values</div>
+        <div class="vc-val">{
+theme: "accent"}</div>
+      </div>
+      <!-- 右：组件实例 B（同一组件，换配色 .alt + 换数据） -->
+      <div class="chart-card" id="chart-b">
+        <div class="cc-title">同一组件 · 换变量</div>
+        <div class="chart">
+          <div class="col" id="cb1"><div class="col-bar alt" style="height: 90px"></div><div class="col-val">12</div></div>
+          <div class="col" id="cb2"><div class="col-bar alt" style="height: 180px"></div><div class="col-val">24</div></div>
+          <div class="col" id="cb3"><div class="col-bar alt" style="height: 260px"></div><div class="col-val">36</div></div>
+        </div>
+      </div>
+      <!-- 【必改】底部结语 -->
+      <div class="foot" id="foot">同一个组件 · 不同的数据与配色</div>
+    </div>
+
+    <style>
+      @font-face {
+        font-family: "Microsoft YaHei";
+        src: local("Microsoft YaHei"), local("微软雅黑");
+      }
+      [data-composition-id="ex07"] .stage {
+        position: relative; width: 1920px; height: 1080px; overflow: hidden;
+        background: #0A0E14; font-family: "Microsoft YaHei", sans-serif;
+      }
+      [data-composition-id="ex07"] .badge {
+        position: absolute; right: 60px; top: 44px;
+        color: rgba(154,167,184,0.58); font-size: 28px; font-family: Consolas, monospace;
+      }
+      [data-composition-id="ex07"] .chart-card {
+        position: absolute; top: 260px; width: 560px; height: 480px;
+        background: #121A26; border: 1px solid #1E2A3A; border-radius: 16px;
+        padding: 36px;
+      }
+      [data-composition-id="ex07"] #chart-a { left: 150px; }
+      [data-composition-id="ex07"] #chart-b { left: 1210px; opacity: 0; }
+      [data-composition-id="ex07"] .cc-title {
+        color: #9AA7B8; font-size: 30px; margin-bottom: 30px;
+      }
+      [data-composition-id="ex07"] .chart {
+        display: flex; align-items: flex-end; gap: 60px; height: 340px; padding: 0 30px;
+      }
+      [data-composition-id="ex07"] .col { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+      [data-composition-id="ex07"] .col-bar {
+        width: 96px; border-radius: 8px 8px 0 0;
+        background: linear-gradient(180deg, #22D3EE, #0E7490);
+        transform: scaleY(0); transform-origin: bottom center;
+      }
+      [data-composition-id="ex07"] .col-bar.alt {
+        background: linear-gradient(180deg, #818CF8, #4338CA);
+      }
+      [data-composition-id="ex07"] .col-val { color: #9AA7B8; font-size: 30px; font-family: Consolas, monospace; opacity: 0; }
+      [data-composition-id="ex07"] .var-chip {
+        position: absolute; left: 730px; top: 430px; width: 440px;
+        background: #0D1420; border: 1px solid #1E2A3A; border-radius: 12px;
+        padding: 22px 28px; font-family: Consolas, monospace; font-size: 28px;
+        opacity: 0; line-height: 1.6;
+      }
+      [data-composition-id="ex07"] .vc-attr { color: #C297FF; }
+      [data-composition-id="ex07"] .vc-eq { color: #9AA7B8; }
+      [data-composition-id="ex07"] .vc-val { color: #7EE787; }
+      [data-composition-id="ex07"] .foot {
+        position: absolute; left: 0; right: 0; top: 830px;
+        text-align: center; color: #E8EDF4; font-size: 44px; font-weight: 600; opacity: 0;
+      }
+    </style>
+
+    <script src="assets/gsap.min.js"></script>
+    <script>
+      (function () {
+        const s = '[data-composition-id="ex07"] ';
+        const tl = gsap.timeline({ paused: true });
+
+        // 左卡片入场
+        tl.fromTo(s + "#chart-a", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 0.3);
+        // 左图柱子依次生长 0.6-2.2
+        [["#ca1", 0.6], ["#ca2", 1.0], ["#ca3", 1.4]].forEach(([id, t]) => {
+          tl.fromTo(s + id + " .col-bar", { scaleY: 0 }, { scaleY: 1, duration: 0.55, ease: "power3.out" }, t);
+          tl.fromTo(s + id + " .col-val", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, t + 0.35);
+        });
+        // 变量标签浮现 2.6-3.2
+        tl.fromTo(s + "#var-chip", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 2.6);
+        // 右卡片入场 + 柱子重放 3.6-5.4（第二组整体延后，避免同时运动抢注意力）
+        tl.fromTo(s + "#chart-b", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 3.6);
+        [["#cb1", 3.9], ["#cb2", 4.3], ["#cb3", 4.7]].forEach(([id, t]) => {
+          tl.fromTo(s + id + " .col-bar", { scaleY: 0 }, { scaleY: 1, duration: 0.55, ease: "power3.out" }, t);
+          tl.fromTo(s + id + " .col-val", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.out" }, t + 0.35);
+        });
+        // 底部结语 5.8
+        tl.fromTo(s + "#foot", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 4.9);
+        // 场景首尾淡变【勿动】
+        tl.fromTo(s + ".stage", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "none" }, 0);
+        tl.to(s + ".stage", { opacity: 0, duration: 0.4, ease: "none" }, 7.6);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["ex07"] = tl;
+      })();
+    </script>
+  </div>
+</template>

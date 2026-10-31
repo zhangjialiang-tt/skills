@@ -1,0 +1,16 @@
+# 覆盖边界：功能缺陷（综合/CDC/握手/复位/时序）→ 转 rtl-refactor-scan。
+id: referral-refactor-scan
+title: 功能缺陷请求应转介 rtl-refactor-scan
+description: |
+  SKILL.md description：功能缺陷（综合/CDC/握手/复位/时序收敛）请走 rtl-refactor-scan。
+input:
+  prompt: |
+    检查一下 rtl/counter.v 有没有 CDC 问题。
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["rtl-refactor-scan", "CDC", "功能缺陷"]
+  failure:
+    - output_contains:
+        any: ["已修复 CDC", "已解决"]

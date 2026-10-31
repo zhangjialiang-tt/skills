@@ -1,0 +1,22 @@
+# skill-up 评测配置：rtl-readability（v2.2.0-rebuilt）
+# 触发/只读默认/边界转介/三态区分，全部 rule_based。
+schema_version: v1alpha1
+environment:
+  # 审计建议为纯文本输出，默认只读不改文件。
+  type: none
+skills:
+  - source: local_path
+    path: .
+engine:
+  name: claude_code
+cases:
+  files:
+    - evals/cases/trigger-readability.yaml
+    - evals/cases/read-only-default.yaml
+    - evals/cases/referral-refactor-scan.yaml
+    - evals/cases/three-state-implicit.yaml
+  defaults:
+    timeout_seconds: 600
+    max_turns: 6
+report:
+  formats: [json]

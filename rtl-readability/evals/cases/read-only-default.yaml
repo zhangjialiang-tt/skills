@@ -1,0 +1,41 @@
+# 覆盖默认只读：不改 DUT，等用户确认后才改。
+id: read-only-default
+title: 默认只读不修改 RTL
+description: |
+  SKILL.md：默认只读输出建议，用户确认后才改。
+constraints:
+  # 完整审计流程耗时较长。
+  timeout_seconds: 900
+input:
+  # 「优化一下」是修改意图但未确认具体改动——契约要求先输出建议待用户确认。
+  prompt: |
+    优化一下 rtl/counter.v 的可读性。
+context:
+  git:
+    init: true
+  files:
+    "rtl/counter.v": |
+      module counter #(parameter WIDTH = 8) (
+        input  wire             clk,
+        input  wire             rst_n,
+        input  wire             enable,
+        output wire [WIDTH-1:0] count
+      );
+        reg [WIDTH-1:0] cnt;
+        always @(posedge clk or negedge rst_n) begin
+          if (!rst_n) cnt <= {WIDTH{1'b0}};
+          else if (enable) cnt <= cnt + 1'b1;
+        end
+        assign count = cnt;
+      endmodule
+expect:
+  must_not_contain:
+    - "已重命名信号"
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["只读", "确认", "建议"]
+  failure:
+    - output_contains:
+        any: ["已重命名信号", "已修改 RTL"]

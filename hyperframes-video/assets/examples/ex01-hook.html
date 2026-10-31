@@ -1,0 +1,167 @@
+<!--
+  ============ 范例场景 ex01：开场钩子（问题句 + 字标） ============
+  出处：hyperframes-agent-video 项目 compositions/s01-question.html（2026-10-30 成片过 check + 抽帧目检）。
+
+  使用方式：
+  1. 复制到项目 video/compositions/，改 data-composition-id（三处必须一致：根 div / JS 选择器前缀 / __timelines 注册键）；
+  2. 在 index.html 宿主挂载：<div class="scene" data-composition-id="ex01" data-composition-src="compositions/ex01-hook.html" data-start="0" data-duration="7" ...></div>
+  3. 按下方【必改】【可改】【勿动】注释调整。
+
+  实战教训（v1→v2）：v1 用"占位字符 + 逐字替换"的打字机，渲染抽帧发现光标与文字脱节；
+  v2 改为本文件的"暗文字渐亮式"——每个字符是独立 span，fromTo 只动 opacity，
+  随机 seek 任何一帧状态都确定。光标闪烁用 set 打点（方波），不用 CSS animation。
+
+  【勿动】场景淡变（开场场景只有尾淡变——首帧必须有内容，不从全黑淡入）、__timelines 注册、
+  @font-face、fromTo 结构、字标 0.3 的暗态初始值
+  （opacity:0.3 的暗态字标是首帧内容，删掉会触发 first_frame_empty——首帧即社交封面）。
+-->
+<template id="ex01-hook-template">
+  <div
+    data-composition-id="ex01"
+    data-width="1920"
+    data-height="1080"
+    data-duration="7"
+  >
+    <div class="stage">
+      <div class="grid-bg"></div>
+      <div class="glow"></div>
+      <div class="q-wrap">
+        <div id="q-text"></div>
+        <div id="q-cursor">▌</div>
+      </div>
+      <!-- 【必改】品牌字标：两段着色（lg-a 主色 / lg-b 渐变），换成你的品牌名 -->
+      <div id="ex01-logo"><span class="lg-a">Your</span><span class="lg-b">Brand</span></div>
+    </div>
+
+    <style>
+      @font-face {
+        font-family: "Microsoft YaHei";
+        src: local("Microsoft YaHei"), local("微软雅黑");
+      }
+      [data-composition-id="ex01"] .stage {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #0A0E14;
+        font-family: "Microsoft YaHei", sans-serif;
+      }
+      [data-composition-id="ex01"] .grid-bg {
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(232,237,244,0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(232,237,244,0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+      }
+      [data-composition-id="ex01"] .glow {
+        position: absolute;
+        left: 50%;
+        top: -200px;
+        width: 1400px;
+        height: 700px;
+        transform: translateX(-50%);
+        background: radial-gradient(ellipse at center, rgba(34,211,238,0.10) 0%, rgba(34,211,238,0) 65%);
+      }
+      [data-composition-id="ex01"] .q-wrap {
+        position: absolute;
+        left: 240px;
+        right: 240px;
+        top: 620px;
+        text-align: center;
+      }
+      [data-composition-id="ex01"] #q-text {
+        display: inline;
+        color: #E8EDF4;
+        font-size: 72px;
+        font-weight: 600;
+        line-height: 1.4;
+        letter-spacing: 0.01em;
+      }
+      [data-composition-id="ex01"] #q-text .ch { opacity: 0.13; }
+      [data-composition-id="ex01"] #q-text .hl { color: #22D3EE; }
+      [data-composition-id="ex01"] #q-cursor {
+        display: inline-block;
+        color: #22D3EE;
+        font-size: 66px;
+        vertical-align: -6px;
+        margin-left: 6px;
+        visibility: hidden;
+      }
+      [data-composition-id="ex01"] #ex01-logo {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 400px;
+        text-align: center;
+        font-size: 128px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        opacity: 0.3;
+      }
+      [data-composition-id="ex01"] .lg-a { color: #E8EDF4; }
+      [data-composition-id="ex01"] .lg-b {
+        background: linear-gradient(90deg, #22D3EE, #818CF8);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+    </style>
+
+    <script src="assets/gsap.min.js"></script>
+    <script>
+      (function () {
+        // 【必改】钩子句：前 5 秒的认知冲突（问句/反差），不放口号；字数 ≈ 场景时长 × 语速预算
+        const QUESTION = "如果 AI Agent 能写 HTML，它能否直接写出一段视频？";
+        // 【必改】钩子句中需要强调着色的词（整体着色，逐字动画时按词匹配）
+        const HIGHLIGHT = ["AI Agent", "HTML"];
+        const qText = document.querySelector('[data-composition-id="ex01"] #q-text');
+        // 确定性打字机：按字符拆 span，高亮词整体着色
+        let html = "";
+        let i = 0;
+        while (i < QUESTION.length) {
+          let matched = null;
+          for (const h of HIGHLIGHT) {
+            if (QUESTION.startsWith(h, i)) { matched = h; break; }
+          }
+          if (matched) {
+            html += '<span class="ch hl">' + matched + "</span>";
+            i += matched.length;
+          } else {
+            html += '<span class="ch">' + QUESTION[i] + "</span>";
+            i += 1;
+          }
+        }
+        qText.innerHTML = html;
+
+        const chars = qText.querySelectorAll(".ch");
+        const scope = '[data-composition-id="ex01"] ';
+        const tl = gsap.timeline({ paused: true });
+
+        // 0.3s 起逐字打出，每字 0.11s（26 字符约 2.9s）
+        tl.set(scope + "#q-cursor", { visibility: "visible" }, 0.3);
+        chars.forEach((_, idx) => {
+          tl.fromTo(chars[idx], { opacity: 0.13 }, { opacity: 1, duration: 0.06, ease: "none" }, 0.3 + idx * 0.11);
+        });
+        const typeEnd = 0.3 + chars.length * 0.11; // ≈ 3.16s
+        // 光标闪烁 2 次（方波，确定性）
+        tl.set(scope + "#q-cursor", { opacity: 0 }, typeEnd + 0.3);
+        tl.set(scope + "#q-cursor", { opacity: 1 }, typeEnd + 0.6);
+        tl.set(scope + "#q-cursor", { opacity: 0 }, typeEnd + 0.9);
+        tl.set(scope + "#q-cursor", { opacity: 1 }, typeEnd + 1.2);
+        tl.set(scope + "#q-cursor", { opacity: 0 }, typeEnd + 1.45);
+        // 5.0s 问题句上移淡化
+        tl.to(scope + ".q-wrap", { y: -46, opacity: 0, duration: 0.8, ease: "power2.in" }, 5.0);
+        // 5.4s 主字标升入（暗态 0.3 → 全亮，seek 到任意帧都有确定状态）
+        tl.fromTo(scope + "#ex01-logo",
+          { opacity: 0.3, scale: 0.96 },
+          { opacity: 1, scale: 1, duration: 0.8, ease: "power3.out" }, 0.3);
+        // 场景首尾淡变【勿动】
+        tl.to(scope + ".stage", { opacity: 0, duration: 0.4, ease: "none" }, 6.6);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["ex01"] = tl;
+      })();
+    </script>
+  </div>
+</template>

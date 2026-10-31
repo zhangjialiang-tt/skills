@@ -1,0 +1,26 @@
+# 覆盖 SKILL.md「硬边界」：屏幕文字一律后期制作，不依赖模型生成文字。
+id: screen-text-post-production
+title: 屏幕文字应建议后期制作而非模型直出
+description: |
+  SKILL.md「硬边界」声明：屏幕文字、字幕、片名、UI 一律后期制作，不依赖模型生成文字。
+  本用例在不启动完整流程的前提下验证 agent 传达该规则。
+input:
+  # 用户在自行整理前期资料时咨询单一做法，不应触发完整六阶段生产。
+  prompt: |
+    我正在自己整理一个 AI 短剧的前期资料（不用帮我生成完整生产包），想确认一个做法：
+    片名和台词字幕我打算直接让视频生成模型把文字生成在画面里，这样可行吗？
+expect:
+  # 单点咨询不应启动完整六阶段生产。
+  must_not_contain:
+    - "阶段 A 已完成"
+judge:
+  # 判定核心：指出屏幕文字后期制作 + 生成文字乱码风险。
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["后期"]
+    - output_contains:
+        any: ["乱码", "必然", "不可靠"]
+  failure:
+    - output_contains:
+        any: ["完全可行", "直接生成即可"]

@@ -1,0 +1,20 @@
+# 覆盖 Phase 3：内容三件套产出契约（语速预算/事实核查/时长闭合）。
+id: content-three-files
+title: 内容三件套产出（语速预算/事实核查/时长闭合）
+description: |
+  SKILL.md Phase 3：script.md 逐场景旁白+语速预算+事实核查表；storyboard.md 场景时长之和等于总时长；
+  design_system.md 从起始值套改。评测只生成内容三件套，不安装渲染环境。
+input:
+  # 明确不安装渲染环境，只产出三个内容文件。
+  prompt: |
+    只做内容三件套，不要安装渲染环境、不要 npx init：主题是给开源任务管理工具 TaskFlow 做 12 秒产品介绍短片，
+    深色科技风。产出 script.md（逐场景旁白 + 每句语速预算 + 事实核查表）、storyboard.md（各场景时长之和必须等于总时长 12s）、
+    design_system.md（色板/字阶/动画节奏），放到 project/ 目录。
+expect:
+  # 不应安装渲染环境。
+  files_not_exist:
+    - "node_modules"
+judge:
+  type: script
+  script_path: evals/fixtures/scripts/check_content.cmd
+  timeout_seconds: 120

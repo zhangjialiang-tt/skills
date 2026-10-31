@@ -1,0 +1,121 @@
+<!-- ============================================================
+  主合成骨架（index-template.html）
+  出处：hyperframes-agent-video 项目实战提炼（2026-10-30，CLI v0.8.216）
+  用法：复制为项目根 index.html，替换 <> 标注的占位内容；
+        场景文件从 assets/scene-template.html 生成。
+  契约速记：合成根须 data-composition-id/start/duration/width/height；
+        音频必须显式 data-duration；动画契约见 references/hf-contracts.md。
+============================================================ -->
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=<W>, height=<H>" />
+    <title><项目标题></title>
+    <script src="assets/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "<显示字体名>";           /* 使用列表里的每个名字都要有对应 @font-face */
+        src: local("<显示字体名>");
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        width: <W>px; height: <H>px;
+        overflow: hidden;
+        background: <背景色>;
+        font-family: "<显示字体名>", sans-serif;
+      }
+      .scene {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+      }
+      /* ---- 字幕合成样式（可按视觉系统调整数值） ---- */
+      .caption-wrapper {
+        position: absolute;
+        bottom: 70px;                        /* 字幕带下沿；安全区上下 ≥90px */
+        left: 120px; right: 120px;           /* 安全区左右 ≥120px */
+        display: flex;
+        justify-content: center;
+        pointer-events: none;
+      }
+      .caption-line {
+        position: absolute;
+        bottom: 0;
+        max-width: 1500px;
+        background: rgba(<底色RGBA>);        /* 例：rgba(10,14,20,0.72) */
+        border-radius: 12px;
+        padding: 18px 40px;
+        color: <主文字色>;
+        font-size: 46px;                     /* 1080p 字幕下限参考 */
+        line-height: 1.35;
+        text-align: center;
+        letter-spacing: 0.01em;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+        opacity: 0;                          /* 初态由时间线接管 */
+      }
+      .caption-line b { color: <强调色>; font-weight: 600; }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="<总时长秒>"
+      data-width="<W>"
+      data-height="<H>"
+    >
+      <!-- ===== 场景挂载：每个场景一个嵌套合成（文件见 compositions/），时长之和 = 总时长 ===== -->
+      <div id="scene-01" class="scene"
+        data-composition-id="<s01>" data-composition-src="compositions/<s01>.html"
+        data-start="0" data-duration="7" data-track-index="1" data-width="<W>" data-height="<H>"></div>
+      <!-- …按 storyboard 逐场景复制… -->
+
+      <!-- ===== 配音音频轨：data-start = 场景起点 + 0.4~0.5s；data-duration 必须显式（实测时长） ===== -->
+      <audio id="n01" src="assets/narration/n01.wav" data-start="0.4" data-duration="<实测>" data-track-index="0"></audio>
+      <!-- …逐段复制… -->
+
+      <!-- ===== 字幕合成（全片一条，独立时间轴） ===== -->
+      <div
+        id="captions-comp"
+        data-track-kind="captions"
+        data-composition-id="captions"
+        data-start="0"
+        data-duration="<总时长秒>"
+        data-track-index="2"
+        data-width="<W>"
+        data-height="<H>"
+      >
+        <div class="caption-wrapper">
+          <!-- 每条字幕一个元素；与大字同文的条目不进 CAPS 数组（画面内隐藏，SRT 保留） -->
+          <div class="caption-line" id="cap-01">…</div>
+        </div>
+        <script>
+          (function () {
+            // 时刻表（秒，全片基准）：[元素id, 入点, 出点] —— 由实测旁白时长校准
+            const CAPS = [
+              ["cap-01", 0.4, 6.3],
+            ];
+            const tl = gsap.timeline({ paused: true });
+            CAPS.forEach(([id, t0, t1]) => {
+              tl.fromTo("#" + id, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, t0);
+              tl.to("#" + id, { opacity: 0, y: -16, duration: 0.25, ease: "power2.in" }, t1);
+            });
+            window.__timelines = window.__timelines || {};
+            window.__timelines["captions"] = tl;
+          })();
+        </script>
+      </div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      // 主合成时间轴保持最小：场景进出淡变由各场景内部时间轴负责（经嵌套契约独立 seek）
+      const mainTl = gsap.timeline({ paused: true });
+      mainTl.set("#root", { opacity: 1 }, 0);
+      window.__timelines["main"] = mainTl;
+    </script>
+  </body>
+</html>

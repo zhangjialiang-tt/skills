@@ -1,0 +1,18 @@
+# 覆盖 v2.1 三态：implicit（源码可答未写）建议补注释，不误判为缺失。
+id: three-state-implicit
+title: implicit 契约建议补注释而非判缺失
+description: |
+  SKILL.md 隐含契约三态：implicit = 源码可答但未写进注释 → 建议 L0 补契约注释（不是"缺失"）。
+input:
+  prompt: |
+    测卷显示 camera 模块的 HANDSHAKE.data_hold 是 implicit 态，这算不算契约缺失？该怎么处理？
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["implicit", "不", "补注释", "契约注释"]
+    - output_contains:
+        any: ["L0", "注释"]
+  failure:
+    - output_contains:
+        any: ["属于缺失", "就是缺陷"]

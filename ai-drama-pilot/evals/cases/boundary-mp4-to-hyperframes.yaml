@@ -1,0 +1,28 @@
+# 覆盖 SKILL.md「与相邻 skill 的边界」：直接要 MP4 成片 → hyperframes-video，不走本 skill。
+id: boundary-mp4-to-hyperframes
+title: 直接要 MP4 成片时应转介 hyperframes-video
+description: |
+  SKILL.md「与相邻 skill 的边界」声明：要"能直接播放的成片 MP4"、画面由 HTML/CSS/代码动画构成 → 用 hyperframes-video，不走本 skill。
+constraints:
+  # 转介判断需通读相邻 skill 边界说明。
+  timeout_seconds: 900
+input:
+  # 明确要可直接播放的成片，非离线资料。
+  prompt: |
+    我要一条 30 秒可直接播放的 MP4 短片，画面全部用 HTML/CSS 动画实现。按你的 skill 边界判断：
+    这个请求该走哪条流程？说明归属与理由即可，先不要开始实际制作。
+expect:
+  # 本 skill 的六阶段流程不应启动。
+  must_not_contain:
+    - "01_script/screenplay_final.md"
+judge:
+  # 判定核心：转介 hyperframes-video 而非启动生产包流程。
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["hyperframes"]
+    - output_contains:
+        any: ["前期资料", "离线资料", "生产包"]
+  failure:
+    - output_contains:
+        any: ["阶段 A 已完成", "剧本已产出"]

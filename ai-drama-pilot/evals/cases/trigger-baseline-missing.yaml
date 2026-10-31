@@ -1,0 +1,26 @@
+# 覆盖 SKILL.md「输入参数」：缺少故事基线时先问一次——它决定全部下游产出。
+id: trigger-baseline-missing
+title: 正触发但缺故事基线时应先问一次
+description: |
+  SKILL.md 声明：缺少故事基线时先问一次，其余参数有合理默认、不用问题阻塞任务。
+  本用例发送缺基线的轻请求，验证 agent 先澄清基线而不直接开写剧本。
+input:
+  # 用户提到 pilot 前期生产资料但未给故事基线。
+  prompt: |
+    我想做一个 AI 短剧试播集（pilot）的前期生产资料，帮我开始。
+expect:
+  # 尚无基线，不应出现任何阶段产出文件名。
+  must_not_contain:
+    - "screenplay_final.md 已"
+    - "01_script/ 已"
+judge:
+  # 判定核心：agent 在动手前先提问澄清故事基线。
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["故事基线", "题材", "必须保留的情节点"]
+    - output_contains:
+        any: ["？", "?"]
+  failure:
+    - output_contains:
+        any: ["阶段 A 已完成", "剧本已产出"]

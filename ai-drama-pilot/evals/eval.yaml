@@ -1,0 +1,31 @@
+# skill-up 评测配置：ai-drama-pilot
+# 用例分为两层：3 个低成本行为用例（触发/边界/单点行为）+ 1 个端到端生产包用例。
+schema_version: v1alpha1
+
+environment:
+  # 纯文本产出型技能，无需沙箱。
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+  # 转介目标技能同时挂载（同仓库兄弟目录），模拟真实环境。
+  - source: local_path
+    path: ../hyperframes-video
+
+engine:
+  # 引擎与判定复用本机 claude CLI 登录态。
+  name: claude_code
+
+cases:
+  files:
+    - evals/cases/trigger-baseline-missing.yaml
+    - evals/cases/boundary-mp4-to-hyperframes.yaml
+    - evals/cases/screen-text-post-production.yaml
+    - evals/cases/e2e-45s-10shots.yaml
+  defaults:
+    timeout_seconds: 600
+    max_turns: 6
+
+report:
+  formats: [json]
