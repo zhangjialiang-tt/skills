@@ -1,6 +1,6 @@
 ---
 name: rtl-refactor-scan
-description: RTL 工程成熟化扫描与小步重构。对 Verilog/SystemVerilog 模块执行五大维度（可综合性/可实现性/时序/仿真上板一致性/EDA调试友好性）成熟度评估，输出结构化审计报告并制定最小安全重构计划。快速语法检查/注释增强类请求请走 rtl-annotator。触发：RTL代码评审、工程成熟度检查、综合/时序问题诊断、小步重构。
+description: RTL 工程成熟化扫描与小步重构。对 Verilog/SystemVerilog 模块执行五大维度（可综合性/可实现性/时序/仿真上板一致性/EDA调试友好性）成熟度评估，输出结构化审计报告并制定最小安全重构计划。快速语法检查/注释增强类请求不属于本 skill 范围（历史转介目标 rtl-annotator 已不存在，直接说明范围边界即可）。触发：RTL代码评审、工程成熟度检查、综合/时序问题诊断、小步重构。
 output_contract:
   artifacts:
     - "rtl_context.json — 工程上下文（模块/clocks/resets/files）"
