@@ -1,0 +1,26 @@
+# 覆盖 Standard Profile 模板：信息充分时输出含全部渲染标签的 /goal 契约。
+id: standard-goal-quality
+title: Standard Goal 契约含全部标准标签
+description: |
+  SKILL.md Standard Goal 契约输出模板标签：/goal + Verification（验证）/Constraints（约束）/Boundaries（边界）/Iteration policy（迭代策略）/Stop when（完成条件）/Pause if（暂停条件）。
+input:
+  # 信息充分（Sufficient）：明确功能、验收数字与范围。
+  prompt: |
+    帮我写一个 goal：给仓库里的 tools/report.py 增加一个 --format json 参数，
+    输出 JSON 格式报告。验收标准：python tools/report.py --format json 能输出合法 JSON
+    且现有文本模式不受影响；现有 tests/ 全部保持通过。范围只改 tools/report.py 与测试。
+expect:
+  must_contain:
+    - "/goal"
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        all: ["Verification（验证）", "Constraints（约束）", "Boundaries（边界）", "Stop when（完成条件）", "Pause if（暂停条件）"]
+    - output_contains:
+        any: ["report.py", "JSON"]
+    - output_contains:
+        any: ["现有", "回归", "tests"]
+  failure:
+    - output_contains:
+        any: ["已修改", "已实现", "已添加"]

@@ -1,0 +1,26 @@
+# skill-up 评测配置：cocotb-testbench
+# 触发/边界用例（rule_based）+ 框架生成用例（script judge 查 sim/<top>/ 契约与 characterization 措辞）。
+schema_version: v1alpha1
+
+environment:
+  # 框架生成只写文件，无需沙箱；不跑真实 cocotb 仿真（本机 cocotb 环境有已知问题）。
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+
+engine:
+  name: claude_code
+
+cases:
+  files:
+    - evals/cases/trigger-cocotb-framework.yaml
+    - evals/cases/boundary-modelsim-native.yaml
+    - evals/cases/framework-generation.yaml
+  defaults:
+    timeout_seconds: 900
+    max_turns: 30
+
+report:
+  formats: [json]

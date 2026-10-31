@@ -1,0 +1,23 @@
+# 膟盖显式提交门禁：仅当用户明确说"执行提交"时才运行 git commit。
+id: explicit-commit-gate
+title: 明确要求执行提交时才 commit
+description: |
+  SKILL.md description：仅当用户明确说"执行提交 / commit it / yes commit / 提交吧"时才运行 git commit。
+input:
+  prompt: |
+    我改了 calc.py，把它加入暂存区、生成 commit message，然后执行提交。
+context:
+  git:
+    init: true
+  files:
+    "calc.py": |
+      def add(a, b):
+          return a + b
+expect:
+  must_contain:
+    - "feat"
+judge:
+  # 判定核心：HEAD 计数 +1 且 message 以 feat 开头。
+  type: script
+  script_path: evals/fixtures/scripts/check_git_state.cmd
+  timeout_seconds: 180

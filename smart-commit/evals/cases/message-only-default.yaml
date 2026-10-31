@@ -1,0 +1,32 @@
+# 覆盖默认行为：生成 message 但不执行 commit；message 符合 <type>(<scope>): <emoji> <summary> 格式。
+id: message-only-default
+title: 生成 message 不执行 commit 且格式合规
+description: |
+  SKILL.md description：默认【只生成提交信息、不执行提交】；格式 <type>(<scope>): <emoji> <summary>。
+input:
+  # agent 先 add 再生成；要求不执行提交。
+  prompt: |
+    我改了 calc.py 和 docs.md，先帮我把这两个文件的改动加入暂存区，然后生成 commit message。不要执行 git commit。
+context:
+  git:
+    init: true
+  files:
+    "calc.py": |
+      def add(a, b):
+          return a + b
+
+
+      def mul(a, b):
+          return a * b
+    "docs.md": |
+      # Demo
+
+      hello
+expect:
+  must_not_contain:
+    - "已提交"
+judge:
+  # 判定核心：HEAD 计数不变 + 输出含合规 message。
+  type: script
+  script_path: evals/fixtures/scripts/check_git_state.cmd
+  timeout_seconds: 180

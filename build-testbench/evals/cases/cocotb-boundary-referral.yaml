@@ -1,0 +1,22 @@
+# 覆盖 description 边界：cocotb/Python testbench 请求不属于本 skill（走 cocotb-testbench）。
+id: cocotb-boundary-referral
+title: cocotb 请求应转介 cocotb-testbench
+description: |
+  SKILL.md description 定位：本 skill 面向 ModelSim/QuestaSim 原生 TB；Python/cocotb 流程属 cocotb-testbench。
+input:
+  prompt: |
+    我想用 Python 写 cocotb 测试平台来验证 RTL，不要 Tcl/Makefile 流程。
+expect:
+  # cocotb 请求不应启动 ModelSim 框架生成。
+  files_not_exist:
+    - "sim"
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["cocotb"]
+    - output_contains:
+        any: ["cocotb-testbench", "Python", "python"]
+  failure:
+    - output_contains:
+        any: ["[SIM_RESULT] L1 PASS"]

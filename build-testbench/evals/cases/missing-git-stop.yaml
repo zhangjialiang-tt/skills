@@ -1,0 +1,41 @@
+# 覆盖 Step 1 + Failure policy「缺失」：找不到 .git 时停止，不把 RTL 子目录默认为 workspace 根。
+id: missing-git-stop
+title: 无 .git 的 workspace 应停止并要求确认根目录
+description: |
+  SKILL.md Step 1：定位 workspace 根；找不到 .git 时停止，不要把 RTL 子目录默认为 workspace 根。
+input:
+  # workspace 无 .git，RTL 在子目录。
+  prompt: |
+    （背景：当前工作目录是一个临时目录，不是 git 仓库，没有 .git，也不是任何工程根。）
+    为 rtl/counter.v 搭建 ModelSim 仿真框架。
+context:
+  files:
+    "rtl/counter.v": |
+      module counter #(parameter WIDTH = 8) (
+        input  wire             clk,
+        input  wire             rst_n,
+        input  wire             enable,
+        output wire [WIDTH-1:0] count
+      );
+        reg [WIDTH-1:0] cnt;
+        always @(posedge clk or negedge rst_n) begin
+          if (!rst_n) cnt <= {WIDTH{1'b0}};
+          else if (enable) cnt <= cnt + 1'b1;
+        end
+        assign count = cnt;
+      endmodule
+expect:
+  # 未定位 workspace root 前不应生成 sim 目录。
+  files_not_exist:
+    - "sim"
+judge:
+  # 判定核心：停止并要求确认 workspace 根，不猜测。
+  type: rule_based
+  success:
+    - output_contains:
+        any: [".git", "workspace", "工作区", "根目录"]
+    - output_contains:
+        any: ["停止", "无法", "找不到", "未找到", "确认"]
+  failure:
+    - output_contains:
+        any: ["[SIM_RESULT] L1 PASS"]

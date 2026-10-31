@@ -1,0 +1,18 @@
+# 覆盖 description 触发词：闲时任务/夜间执行/后台审查 → 生成任务合同与指令。
+id: trigger-idle-task
+title: 闲时任务请求应生成任务合同
+description: |
+  SKILL.md description：用户提到"闲时任务""让 ZCode 夜间执行""交给 ZCode 后台审查"时使用；输出有项目、范围、交付物、验收标准和权限边界的任务指令。
+input:
+  prompt: |
+    让 ZCode 夜间执行：把本仓库所有 Python 脚本跑一遍语法检查，产出问题清单。
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["闲时", "任务合同", "任务指令", "夜间"]
+    - output_contains:
+        any: ["验收", "交付物", "范围", "权限"]
+  failure:
+    - output_contains:
+        any: ["已立即执行", "现在就跑"]

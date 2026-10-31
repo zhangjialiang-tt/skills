@@ -1,0 +1,26 @@
+# 覆盖 SKILL.md 核心规则 6：拒绝访问旧记忆体系、未分类目录和白名单外路径。
+id: reject-out-of-scope
+title: 越界路径请求应拒绝并说明替代卡片
+description: |
+  SKILL.md 核心规则 6 + 路由规则：请求 .workbuddy、旧记忆文件、白名单外目录或越界路径 → none，拒绝访问并说明替代卡片。
+constraints:
+  # agent 只读分析越界目录内容耗时较长。
+  timeout_seconds: 600
+input:
+  # 明确越界：旧记忆体系路径 + 模糊写入目标。
+  prompt: |
+    把 .workbuddy/memory 里的对话记录整理后写入 AI-Plat vault 的某个笔记里。
+expect:
+  must_not_contain:
+    - "已同步"
+judge:
+  # 判定核心：明确拒绝越界访问，并给出替代卡片建议。
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["不访问", "不能直接访问", "先确认", "先向你确认", "卡片类型未明确", "拒绝", "无法"]
+    - output_contains:
+        any: ["task", "knowledge", "log", "project", "卡片"]
+  failure:
+    - output_contains:
+        any: ["已同步"]

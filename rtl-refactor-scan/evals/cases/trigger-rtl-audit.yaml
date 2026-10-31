@@ -1,0 +1,22 @@
+# 覆盖模式表：扫描/评审/评估 → audit 模式（只读）。
+id: trigger-rtl-audit
+title: RTL 评审请求应进入只读 audit 模式
+description: |
+  SKILL.md 模式表：audit（默认）对应"扫描/评审/评估"，Phase 1→3 只读输出 findings.json + 报告。
+input:
+  prompt: |
+    评审一下这个仓库里 rtl/counter.v 的代码成熟度，只看不改。
+expect:
+  # 只读审计不应修改 DUT。
+  must_not_contain:
+    - "已修改 counter.v"
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["findings", "审计", "扫描"]
+    - output_contains:
+        any: ["只读", "不改", "audit"]
+  failure:
+    - output_contains:
+        any: ["已重构", "已修改 RTL"]

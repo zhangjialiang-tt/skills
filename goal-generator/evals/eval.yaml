@@ -1,0 +1,28 @@
+# skill-up 评测配置：goal-generator
+# 纯文本契约输出型技能：5 个 rule_based 用例覆盖触发/不触发/两 Profile 模板/baseline 规则。
+schema_version: v1alpha1
+
+environment:
+  # 契约生成为纯文本输出，无需沙箱与文件产出。
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+
+engine:
+  name: claude_code
+
+cases:
+  files:
+    - evals/cases/trigger-strong-explicit.yaml
+    - evals/cases/no-trigger-direct-bug.yaml
+    - evals/cases/standard-goal-quality.yaml
+    - evals/cases/diagnostic-goal-quality.yaml
+    - evals/cases/baseline-not-target.yaml
+  defaults:
+    timeout_seconds: 600
+    max_turns: 4
+
+report:
+  formats: [json]

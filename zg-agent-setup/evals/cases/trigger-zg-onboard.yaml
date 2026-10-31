@@ -1,0 +1,24 @@
+# 覆盖 description 触发：zg 接入/配置 zvec_grep/建索引 → 工程级 MCP 配置 + 索引。
+id: trigger-zg-onboard
+title: zg 接入请求应写工程级 MCP 配置并建索引
+description: |
+  SKILL.md description：写工程级 MCP 配置、建 workspace index、维护忽略规则、做分级验收；只做工程级。
+input:
+  prompt: |
+    给这个工程接入 zg（zvec_grep），写好工程级配置并把索引建起来。
+context:
+  git:
+    init: true
+  files:
+    "src/main.py": |
+      print("hello")
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["MCP", "mcp"]
+    - output_contains:
+        any: ["工程级", "索引", "index"]
+  failure:
+    - output_contains:
+        any: ["已全局安装", "pip install zg"]

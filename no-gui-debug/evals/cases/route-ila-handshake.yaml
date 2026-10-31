@@ -1,0 +1,23 @@
+# 覆盖链路决策树：内部握手/寄存器异常/时钟域活性 → ILA 链。
+id: route-ila-handshake
+title: 握手卡死症状应路由到 ILA 链
+description: |
+  SKILL.md 链路决策树：内部握手卡死（valid/ready 无应答）、寄存器读写异常、时钟域活性 → 首选 ILA 链（片内拍级波形）。
+input:
+  # 症状描述，咨询路由（不实际执行）。
+  prompt: |
+    pw-gige 板上 AR 通道握手卡死了，valid 拉高 ready 一直不应答，寄存器读不回来。
+    按无 GUI 调试流程，我应该用哪条证据链路？给一句话理由和第一条采集命令的样子即可，先别实际执行。
+expect:
+  must_not_contain:
+    - "JTAG programmed"
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["ILA", "ila"]
+    - output_contains:
+        any: ["波形", "CSV", "抓波", "探针"]
+  failure:
+    - output_contains:
+        any: ["打开 Vivado Hardware Manager", "GUI"]

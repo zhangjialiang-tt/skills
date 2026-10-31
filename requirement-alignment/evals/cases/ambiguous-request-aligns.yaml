@@ -1,0 +1,21 @@
+# 覆盖正触发：多种合理理解的请求 → 需求对齐摘要（先问后做）。
+id: ambiguous-request-aligns
+title: 歧义请求应产出需求对齐摘要
+description: |
+  SKILL.md description：请求存在多种合理理解、目标与手段混淆时触发，产出需求对齐摘要。
+input:
+  # 歧义请求：对象、目标、边界都不明。
+  prompt: |
+    帮我优化一下这个仓库的代码。
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["优化", "目标", "范围"]
+    - output_contains:
+        any: ["？", "?"]
+    - output_contains:
+        any: ["澄清", "确认", "先"]
+  failure:
+    - output_contains:
+        any: ["已完成优化", "修改完成"]

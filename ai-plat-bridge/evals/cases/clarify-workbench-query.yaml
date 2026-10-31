@@ -1,0 +1,23 @@
+# 覆盖 SKILL.md「工作流/路由请求」：宽泛请求先澄清，不访问 vault。
+id: clarify-workbench-query
+title: 宽泛"查工作台"请求应先澄清
+description: |
+  SKILL.md 路由规则：'查工作台''工作台同步'等宽泛请求且没有卡片线索 → clarify，不访问 vault。
+input:
+  # 宽泛请求，无卡片类型线索。
+  prompt: |
+    帮我查一下工作台。
+expect:
+  must_not_contain:
+    - "已同步"
+judge:
+  # 判定核心：要求澄清（卡片类型/具体卡名），而不是擅自扫描或给出猜测结果。
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["澄清", "请明确", "哪张", "哪个", "具体"]
+    - output_contains:
+        any: ["task", "knowledge", "log", "project", "哪一类", "卡片类型"]
+  failure:
+    - output_contains:
+        any: ["已同步"]

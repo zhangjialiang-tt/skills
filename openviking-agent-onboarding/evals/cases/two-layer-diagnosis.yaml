@@ -1,0 +1,21 @@
+# 覆盖「只做 MCP ≠ 接入」核心行为：MCP 能查但会话不落库 → 诊断缺 hooks 同步层。
+id: two-layer-diagnosis
+title: MCP 通但会话不落库应诊断缺 hooks 层
+description: |
+  SKILL.md 铁律：接入分只读层（MCP）与同步层（Hooks）；只做 MCP ≠ 接入；最常见半成品是 MCP 挂上、hooks 没挂。
+input:
+  prompt: |
+    我给一个 agent 挂了 OpenViking 的 MCP，模型能 search 到历史记忆，但新的对话就是不进 OV，
+    跨 agent 记忆也不互通。问题出在哪？按 skill 的框架说清楚。
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["hooks", "hook", "同步层"]
+    - output_contains:
+        any: ["MCP"]
+    - output_contains:
+        any: ["只读层", "两层", "分层", "只做 MCP"]
+  failure:
+    - output_contains:
+        any: ["重新安装 MCP 就能解决"]

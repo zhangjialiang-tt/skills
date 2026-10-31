@@ -1,0 +1,18 @@
+# 覆盖「sessions 分级保留」行为。
+id: sessions-tiered-retention
+title: sessions 处置应按分级保留
+description: |
+  SKILL.md description：sessions 分级保留（治理七步之一）。
+input:
+  prompt: |
+    OV 的 sessions 目录很大，这些历史会话怎么处理？给出分级处置方案即可，不要实际执行。
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["分级", "保留", "分层"]
+    - output_contains:
+        any: ["sessions"]
+  failure:
+    - output_contains:
+        any: ["全部删除"]

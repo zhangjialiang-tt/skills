@@ -1,0 +1,23 @@
+# 覆盖 Diagnostic Profile 模板 + 规则 1（事实/假设分离）。
+id: diagnostic-goal-quality
+title: Diagnostic Goal 契约含诊断区块且事实假设分离
+description: |
+  SKILL.md Diagnostic Goal 契约输出模板区块：【当前事实】【待验证假设】【验收证据】【必须保持】【工作边界】【阻塞与停止】；规则 1：'可能是 X 导致'只能写入待验证假设，不得写成'根因是 X'。
+input:
+  # 混合事实与猜测：data FIFO full 是事实，status FIFO 是猜测。
+  prompt: |
+    帮我把下面这个现象 Goal 化：仿真回归能通过，但波形里看到 data FIFO 出现 full，
+    可能是 status FIFO 反压导致的。不要执行，只要 goal。
+expect:
+  must_contain:
+    - "【当前事实】"
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        all: ["【当前事实】", "【待验证假设】", "【验收证据】", "【必须保持】", "【工作边界】", "【阻塞与停止】"]
+    - output_contains:
+        any: ["data FIFO"]
+  failure:
+    - output_contains:
+        any: ["根因是 status FIFO", "根因就是 status FIFO"]

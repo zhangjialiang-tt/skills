@@ -1,0 +1,22 @@
+# 覆盖 triggers.exclude：OV 服务端运维（reindex/迁移）→ openviking-server-ops。
+id: exclude-server-ops
+title: 服务端运维请求应转介 openviking-server-ops
+description: |
+  SKILL.md triggers.exclude：OV 服务端运维、换模型、reindex、迁移（见 openviking-server-ops）。
+constraints:
+  # 服务端探测与审计耗时较长。
+  timeout_seconds: 600
+input:
+  # 服务端运维请求，不属于本 skill 范围。
+  prompt: |
+    OpenViking 服务端最近记忆检索变慢，我想 reindex 一下。按你的 skill 边界判断：这类请求该由谁处理？
+    只需要说明归属与理由，不要实际执行任何服务端操作。
+judge:
+  # 判定核心：转介 openviking-server-ops，不擅自执行服务端操作。
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["openviking-server-ops", "服务端运维", "不在本 skill", "超出本"]
+  failure:
+    - output_contains:
+        any: ["开始 reindex", "已启动 reindex"]

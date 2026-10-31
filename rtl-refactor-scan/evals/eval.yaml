@@ -1,0 +1,27 @@
+# skill-up 评测配置：rtl-refactor-scan
+# audit 模式只读审计：触发/边界用例 + fixture 审计用例（script judge 查 findings.json 权威契约）。
+schema_version: v1alpha1
+
+environment:
+  # audit 只读产出 JSON/报告，无需沙箱；不跑真实综合/仿真。
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+
+engine:
+  name: claude_code
+
+cases:
+  files:
+    - evals/cases/trigger-rtl-audit.yaml
+    - evals/cases/audit-fixture-contract.yaml
+    - evals/cases/wording-no-golden.yaml
+    - evals/cases/referral-annotator.yaml
+  defaults:
+    timeout_seconds: 900
+    max_turns: 30
+
+report:
+  formats: [json]

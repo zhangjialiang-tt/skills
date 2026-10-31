@@ -1,0 +1,16 @@
+# 覆盖「在用户确认后输出供用户自行提交到 ZCode 界面」门禁。
+id: user-confirm-before-output
+title: 任务指令输出前应经用户确认
+description: |
+  SKILL.md description：在用户确认后输出供用户自行提交到 ZCode 界面；不操作 ZCode UI。
+input:
+  prompt: |
+    我想要一个闲时任务：定期审查本仓库的文档一致性。怎么做？
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["确认", "确认后", "自行提交", "ZCode 界面"]
+  failure:
+    - output_contains:
+        any: ["已自动创建任务", "已提交到 ZCode"]

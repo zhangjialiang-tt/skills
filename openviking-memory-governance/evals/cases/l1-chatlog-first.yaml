@@ -1,0 +1,18 @@
+# 覆盖「存量 events 瘦身（L1 去 ChatLog 是主收益）」。
+id: l1-chatlog-first
+title: events 瘦身应指出 L1 去 ChatLog 是主收益
+description: |
+  SKILL.md description：存量 events 瘦身（L1 去 ChatLog 是主收益，评审结论与用户裁定类事件是 L3 合并禁区）。
+input:
+  prompt: |
+    OV 的 events 列表已经几千条了。瘦身从哪里开始收益最大？给出方案与理由即可，不要实际执行。
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["ChatLog", "L1"]
+    - output_contains:
+        any: ["主收益", "收益", "大头"]
+  failure:
+    - output_contains:
+        any: ["直接全部清空"]

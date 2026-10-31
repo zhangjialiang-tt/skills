@@ -1,0 +1,16 @@
+# 覆盖 Level 0 直接通过：单一明确低风险修改 → 不启动对齐、直接执行或明确说无需对齐。
+id: clear-request-passes
+title: 明确低风险请求应直接通过不追问
+description: |
+  SKILL.md 对齐级别 Level 0：请求清楚、理解唯一、无高影响假设 → 直接进入回答/执行；triggers.exclude：单一明确低风险修改。
+input:
+  prompt: |
+    把 README.md 第一段的错别字"测式"改成"测试"。
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["直接", "无需", "不需要", "已", "明确"]
+  failure:
+    - output_contains:
+        any: ["问题 1", "问题1", "第 1 个问题", "请回答以下"]

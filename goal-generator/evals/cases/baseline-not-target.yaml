@@ -1,0 +1,21 @@
+# 覆盖规则 3：baseline 不得静默转换为目标（无用户目标数字时不得编造验收阈值）。
+id: baseline-not-target
+title: 用户给 baseline 未给目标时不得编造阈值
+description: |
+  SKILL.md 规则 3：Current baseline 只能写入事实，不能自动变成目标；Proposed target 必须携带推导依据或提出候选待确认。
+input:
+  # 只有 baseline（每周 3-5 例），无用户目标数字。
+  prompt: |
+    不要执行，只生成执行目标。我们的支付服务目前重复扣款每周 3-5 例，
+    帮我写一个 goal 处理这个问题。
+expect:
+  must_contain:
+    - "/goal"
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["baseline", "基线", "候选", "待确认", "先测量", "确认"]
+  failure:
+    - output_contains:
+        any: ["< 1 例/周", "低于 1 例", "降到 1 例"]

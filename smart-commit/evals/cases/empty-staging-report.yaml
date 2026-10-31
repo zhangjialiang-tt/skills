@@ -1,0 +1,17 @@
+# 覆盖核心行为：分析暂存区（git diff --cached）；暂存区为空应如实报告，不编造 message。
+id: empty-staging-report
+title: 暂存区为空应如实报告
+description: |
+  SKILL.md description：分析 git 暂存区（git diff --cached）变更生成 message；主动检查仓库状态。
+input:
+  # 仓库已 init 但无任何 staged 变更。
+  prompt: |
+    帮我生成一个 commit message。
+context:
+  git:
+    init: true
+judge:
+  # 判定核心：报告暂存区为空，不编造 message。
+  type: script
+  script_path: evals/fixtures/scripts/check_git_state.cmd
+  timeout_seconds: 120

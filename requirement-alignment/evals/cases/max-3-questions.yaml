@@ -1,0 +1,18 @@
+# 覆盖「每轮最多 3 个问题」契约。
+id: max-3-questions
+title: 对齐提问每轮不超过 3 个
+description: |
+  SKILL.md output_contract constraints：每轮最多 3 个问题，通常只进行一轮。
+input:
+  prompt: |
+    我们要做一个新工具，大概就是把数据从 A 系统搬到 B 系统，帮我先对齐一下需求。
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["1", "①", "一、"]
+    - output_contains:
+        any: ["最多 3", "≤3", "不超过 3", "至多 3", "3 个问题"]
+  failure:
+    - output_contains:
+        any: ["问题 4", "问题4", "4.", "④"]

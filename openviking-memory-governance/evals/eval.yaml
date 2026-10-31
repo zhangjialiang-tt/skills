@@ -1,0 +1,27 @@
+# skill-up 评测配置：openviking-memory-governance
+# 治理七步流程的咨询型用例：触发/L1 主收益/L3 禁区/sessions 分级，全部 rule_based。
+schema_version: v1alpha1
+
+environment:
+  # 治理方法咨询为纯文本回答，不真实操作记忆库。
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+
+engine:
+  name: claude_code
+
+cases:
+  files:
+    - evals/cases/trigger-governance-request.yaml
+    - evals/cases/l1-chatlog-first.yaml
+    - evals/cases/l3-merge-forbidden.yaml
+    - evals/cases/sessions-tiered-retention.yaml
+  defaults:
+    timeout_seconds: 600
+    max_turns: 4
+
+report:
+  formats: [json]

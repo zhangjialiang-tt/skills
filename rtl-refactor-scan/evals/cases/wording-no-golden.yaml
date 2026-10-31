@@ -1,0 +1,16 @@
+# 覆盖 L2-C 措辞纪律：无 golden/独立参考时不得宣称功能验证通过。
+id: wording-no-golden
+title: 无独立参考时不得宣称功能验证通过
+description: |
+  SKILL.md Stage gates：仅从 RTL 推导期望的 L2 属于行为刻画（L2-C），禁止宣称功能正确。
+input:
+  prompt: |
+    你从 RTL 推导了期望行为并生成了测试，仿真全过——现在能不能直接说"功能验证通过"？按 skill 的分级说明理由。
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["L2-C", "行为刻画", "characterization", "不能"]
+  failure:
+    - output_contains:
+        any: ["可以宣称功能验证通过", "就能说功能正确"]

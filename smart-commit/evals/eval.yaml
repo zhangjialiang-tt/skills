@@ -1,0 +1,21 @@
+# skill-up 评测配置：smart-commit
+# git 暂存区分析行为：空暂存/默认只生成不执行/显式执行提交，script judge 按 workspace 状态自适配判定。
+schema_version: v1alpha1
+environment:
+  # case workspace 内置 git fixture，agent 的 git 操作限于该隔离仓库。
+  type: none
+skills:
+  - source: local_path
+    path: .
+engine:
+  name: claude_code
+cases:
+  files:
+    - evals/cases/empty-staging-report.yaml
+    - evals/cases/message-only-default.yaml
+    - evals/cases/explicit-commit-gate.yaml
+  defaults:
+    timeout_seconds: 600
+    max_turns: 15
+report:
+  formats: [json]

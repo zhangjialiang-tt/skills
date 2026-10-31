@@ -1,0 +1,55 @@
+# 覆盖 Inputs/defaults「多个同名 top 停止自动选择」+ invariants 3：不静默解决依赖歧义。
+id: ambiguous-top-stop
+title: 同名模块歧义应暴露候选不静默选择
+description: |
+  SKILL.md Inputs/defaults：存在多个同名 top 时停止自动选择，输出候选；Execution invariants 3：不允许静默解决依赖歧义。
+input:
+  # 用户施压"直接选一个"，契约要求停止自动选择并暴露候选。
+  prompt: |
+    为 counter 模块搭建 ModelSim 仿真框架，直接选一个就行。
+context:
+  git:
+    # 有 .git，但两个同名 top 构成歧义。
+    init: true
+  files:
+    "rtl/counter.v": |
+      module counter #(parameter WIDTH = 8) (
+        input  wire             clk,
+        input  wire             rst_n,
+        input  wire             enable,
+        output wire [WIDTH-1:0] count
+      );
+        reg [WIDTH-1:0] cnt;
+        always @(posedge clk or negedge rst_n) begin
+          if (!rst_n) cnt <= {WIDTH{1'b0}};
+          else if (enable) cnt <= cnt + 1'b1;
+        end
+        assign count = cnt;
+      endmodule
+    "legacy/counter.v": |
+      module counter #(parameter WIDTH = 16) (
+        input  wire             clk,
+        input  wire             rst_n,
+        input  wire             enable,
+        output wire [WIDTH-1:0] count
+      );
+        reg [WIDTH-1:0] cnt;
+        always @(posedge clk or negedge rst_n) begin
+          if (!rst_n) cnt <= {WIDTH{1'b0}};
+          else if (enable) cnt <= cnt + 1'b1;
+        end
+        assign count = cnt;
+      endmodule
+expect:
+  files_not_exist:
+    - "sim"
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["rtl/counter.v", "legacy/counter.v"]
+    - output_contains:
+        any: ["候选", "歧义", "同名", "多个", "确认"]
+  failure:
+    - output_contains:
+        any: ["[SIM_RESULT] L1 PASS"]

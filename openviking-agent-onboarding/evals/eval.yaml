@@ -1,0 +1,29 @@
+# skill-up 评测配置：openviking-agent-onboarding
+# 两层接入模型（MCP 只读层 + Hooks 同步层）的行为与边界用例，全部 rule_based 低成本。
+schema_version: v1alpha1
+
+environment:
+  # 诊断/咨询型回答，不真实安装；探测脚本路径为只读探测。
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+  # 转介目标技能同时挂载，模拟真实环境（该技能部署于 workbuddy，不在本仓库）。
+  - source: local_path
+    path: C:/Users/zhangjl/.workbuddy/skills/openviking-server-ops
+
+engine:
+  name: claude_code
+
+cases:
+  files:
+    - evals/cases/two-layer-diagnosis.yaml
+    - evals/cases/probe-before-action.yaml
+    - evals/cases/exclude-server-ops.yaml
+  defaults:
+    timeout_seconds: 300
+    max_turns: 5
+
+report:
+  formats: [json]

@@ -1,0 +1,23 @@
+# 覆盖 SKILL.md 核心规则 4/5 +「准备写入」：显式写入授权与明确主目标前不写入，向用户列出主/联动目标。
+id: write-needs-authorization
+title: 写请求缺明确主目标卡时应先澄清且不写入
+description: |
+  SKILL.md「准备写入」：确认用户已明确要求主写入；向用户列出主目标和联动目标；目标不明确时暂停，不创建猜测性卡片。
+input:
+  # 有写入意图但无明确主目标卡，也未确认联动范围。
+  prompt: |
+    把"完成第一版架构方案"写进 AI-Plat vault。
+expect:
+  must_not_contain:
+    - "已同步"
+judge:
+  # 判定核心：澄清主目标/联动目标而不擅自写入。
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["主目标", "联动", "确认", "哪张", "请明确", "项目卡", "task"]
+    - output_contains:
+        any: ["确认", "先", "1.", "2.", "3."]
+  failure:
+    - output_contains:
+        any: ["已同步"]

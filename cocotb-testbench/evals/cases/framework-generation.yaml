@@ -1,0 +1,37 @@
+# 覆盖 Hard invariants 4 + Stage gates：cocotb 框架生成（无 golden → characterization 降级措辞）。
+id: framework-generation
+title: cocotb 框架生成与 characterization 降级措辞
+description: |
+  Hard invariants 4：golden 对拍是唯一功能验证依据，无 golden 一律 characterization 降级结论；
+  Stage gates：characterization PASS 不得称功能正确。本用例生成框架（不跑仿真）并检查措辞纪律。
+input:
+  # 无 golden 模型场景；明确不跑仿真，检查产出与措辞。
+  prompt: |
+    用 cocotb 给 rtl/counter.v 搭一套 Python 测试框架（smoke + functional 两级）。
+    本机没有仿真器环境，不要运行 pytest，只生成框架文件（sim/counter/ 下的 test 文件、runner 配置、ports/design 数据）。
+    没有 golden 参考模型，直接按 RTL 阅读生成测试即可。
+context:
+  git:
+    init: true
+  files:
+    "rtl/counter.v": |
+      module counter #(parameter WIDTH = 8) (
+        input  wire             clk,
+        input  wire             rst_n,
+        input  wire             enable,
+        output wire [WIDTH-1:0] count
+      );
+        reg [WIDTH-1:0] cnt;
+        always @(posedge clk or negedge rst_n) begin
+          if (!rst_n) cnt <= {WIDTH{1'b0}};
+          else if (enable) cnt <= cnt + 1'b1;
+        end
+        assign count = cnt;
+      endmodule
+expect:
+  # 契约要求的否定性解释（"不能宣称功能正确"）不构成违规；
+  # 宣告式宣称由 checker 的窄模式精确判定。
+judge:
+  type: script
+  script_path: evals/fixtures/scripts/check_cocotb_framework.cmd
+  timeout_seconds: 120

@@ -1,0 +1,27 @@
+# skill-up 评测配置：build-testbench
+# ModelSim 仿真框架编排器：触发/歧义/门禁用例（rule_based）+ L1 框架生成用例（script judge 查目录契约）。
+schema_version: v1alpha1
+
+environment:
+  # 框架生成只写文件，无需沙箱；不跑真实 ModelSim（判定查目录契约而非仿真结果）。
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+
+engine:
+  name: claude_code
+
+cases:
+  files:
+    - evals/cases/missing-git-stop.yaml
+    - evals/cases/ambiguous-top-stop.yaml
+    - evals/cases/l1-framework-generation.yaml
+    - evals/cases/cocotb-boundary-referral.yaml
+  defaults:
+    timeout_seconds: 900
+    max_turns: 30
+
+report:
+  formats: [json]

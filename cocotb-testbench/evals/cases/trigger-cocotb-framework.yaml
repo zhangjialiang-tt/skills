@@ -1,0 +1,24 @@
+# 覆盖 route_cases.json 正触发 family=core：cocotb 框架生成是核心场景。
+id: trigger-cocotb-framework
+title: cocotb 框架请求应启动框架生成流程
+description: |
+  route_cases.json should_trigger family=core 的转译：cocotb Python 测试框架请求 → 启动本 skill 流程。
+  无 RTL 上下文时 agent 应探测环境/询问 RTL 环境探测，而不是拒绝。
+input:
+  # route_cases.json 正触发原文。
+  prompt: |
+    用 cocotb 给 corr_match.v 搭一套 Python 测试框架。
+expect:
+  # 未定位到 RTL 前不应生成 sim 目录。
+  files_not_exist:
+    - "sim"
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["cocotb", "pytest", "测试框架"]
+    - output_contains:
+        any: ["corr_match", "RTL", "rtl", "文件", "路径", "哪"]
+  failure:
+    - output_contains:
+        any: ["无法", "不能帮", "做不到"]

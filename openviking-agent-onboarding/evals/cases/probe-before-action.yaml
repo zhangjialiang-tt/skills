@@ -1,0 +1,20 @@
+# 覆盖「先探测再选路径（只读零副作用）」：接入前先跑 ov-agent-probe。
+id: probe-before-action
+title: 接入前应先做只读探测
+description: |
+  SKILL.md 第一步：先探测，再选路径（只读零副作用）——node <SKILL>/scripts/ov-agent-probe.mjs <agent>。
+input:
+  # 接入请求；契约要求先只读探测再动手。
+  prompt: |
+    帮我把新装的 codex 接入 OpenViking 长期记忆。
+judge:
+  # 判定核心：先探测（ov-agent-probe）再改配置。
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["probe", "探测", "先", "分层验证", "接入状态", "活性", "已经完整接入"]
+    - output_contains:
+        any: ["ov-agent-probe", "配置", "hooks", "MCP"]
+  failure:
+    - output_contains:
+        any: ["已经接好了"]

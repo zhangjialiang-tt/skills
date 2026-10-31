@@ -1,0 +1,18 @@
+# 覆盖链路决策树：丢包/包序/帧率统计 → tshark 链。
+id: route-tshark-loss
+title: 丢包与帧率异常症状应路由到 tshark 链
+description: |
+  SKILL.md 链路决策树：丢包/包序/重传/帧率/吞吐统计、网络层异常 → tshark 链（pcapng + 逐包字段导出）。
+input:
+  prompt: |
+    相机帧率从 60fps 掉到 20fps，怀疑丢包或重传。按无 GUI 流程用哪条链路？先说路由结论和判据思路，不要真的开始抓包。
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["tshark", "dumpcap", "pcap"]
+    - output_contains:
+        any: ["丢包", "间隔", "block_id", "每帧包数", "重传"]
+  failure:
+    - output_contains:
+        any: ["打开 Wireshark GUI"]

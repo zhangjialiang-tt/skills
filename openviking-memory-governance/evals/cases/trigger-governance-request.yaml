@@ -1,0 +1,18 @@
+# 覆盖 description 触发：整理/体检/瘦身/治理 OpenViking memory → 七步流程。
+id: trigger-governance-request
+title: 治理请求应启动七步流程且体检基线先行
+description: |
+  SKILL.md description：当用户要求整理/体检/瘦身/治理 OpenViking memory 时使用；第一步是体检基线与写入侧成本账。
+input:
+  prompt: |
+    我的 OpenViking 记忆库感觉只增不减。按治理流程说明你会怎么做：先给方案与步骤顺序，不要实际执行任何治理操作。
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["体检", "基线", "七步"]
+    - output_contains:
+        any: ["events", "sessions", "peer", "写入侧"]
+  failure:
+    - output_contains:
+        any: ["已删除全部旧记忆", "开始批量删除"]

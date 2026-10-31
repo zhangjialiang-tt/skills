@@ -1,0 +1,23 @@
+# 覆盖 SKILL.md「执行读取」+「输出」：读取只访问已确定类型的目录、说明卡片类型与范围、不触发写入。
+id: task-list-read-only
+title: 明确 task 类型的 list 请求应只读列出并说明类型与范围
+description: |
+  SKILL.md「执行读取」：list/search/read 只访问已确定类型的目录，读取不触发任何写入或联动；「输出」：读取时说明卡片类型、范围和结果。
+input:
+  # 明确 task 类型 + list 动作。
+  prompt: |
+    帮我看看 AI-Plat vault 里最近的任务卡（task 卡）有哪些，列出来。
+expect:
+  must_not_contain:
+    - "已同步"
+judge:
+  # 判定核心：说明卡片类型与范围，如实列出或如实报告无数据；不出现写入动作。
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["task", "任务卡"]
+    - output_contains:
+        any: ["未找到", "没有", "无任务", "空", "以下是", "列表", "共", "条"]
+  failure:
+    - output_contains:
+        any: ["已同步"]

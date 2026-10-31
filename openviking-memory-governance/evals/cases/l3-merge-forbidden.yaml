@@ -1,0 +1,18 @@
+# 覆盖「评审结论与用户裁定类事件是 L3 合并禁区」。
+id: l3-merge-forbidden
+title: 评审结论/用户裁定类事件不得合并删减
+description: |
+  SKILL.md description：评审结论与用户裁定类事件是 L3 合并禁区。
+input:
+  prompt: |
+    events 里有不少"用户裁定类"和"评审结论类"的记录，能跟其他 events 合并压缩掉吗？说明你的判断与理由即可，不要实际执行。
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["L3", "禁区", "不能", "不建议", "不要合并"]
+    - output_contains:
+        any: ["评审结论", "用户裁定"]
+  failure:
+    - output_contains:
+        any: ["可以合并删除"]

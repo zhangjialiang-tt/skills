@@ -1,0 +1,28 @@
+# skill-up 评测配置：no-gui-debug
+# 咨询型低成本用例：症状路由（三链路决策树）+ 执行不变量。全部 rule_based，不碰真实板卡。
+schema_version: v1alpha1
+
+environment:
+  # 路由/判据咨询为纯文本回答；不触发真实板卡操作。
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+
+engine:
+  name: claude_code
+
+cases:
+  files:
+    - evals/cases/route-ila-handshake.yaml
+    - evals/cases/route-tshark-loss.yaml
+    - evals/cases/route-host-tearing.yaml
+    - evals/cases/mtime-invariant.yaml
+    - evals/cases/sim-green-board-red-methodology.yaml
+  defaults:
+    timeout_seconds: 300
+    max_turns: 4
+
+report:
+  formats: [json]

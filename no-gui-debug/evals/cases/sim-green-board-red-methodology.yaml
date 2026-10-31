@@ -1,0 +1,18 @@
+# 覆盖方法论：sim 全绿板上出错的差异系统化（多链路组合）。
+id: sim-green-board-red-methodology
+title: sim 全绿板上出错应给出多链路差异排查方案
+description: |
+  SKILL.md 链路决策树「复杂 bug → 多链路并行」+ references/methodology.md 的差异清单方法论。
+input:
+  prompt: |
+    同一段 RTL 仿真全绿，但板上成像错位。按 no-gui-debug 的方法论怎么系统化排查？给排查框架即可，不要执行。
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["ILA", "上位机", "tshark"]
+    - output_contains:
+        any: ["交叉", "组合", "多链路", "证据链"]
+  failure:
+    - output_contains:
+        any: ["仿真过了就没问题", "不用查了"]

@@ -1,0 +1,21 @@
+# skill-up 评测配置：zg-agent-setup
+# 工程级 zg 接入：正触发/全局边界/分级验收，rule_based 低成本。
+schema_version: v1alpha1
+environment:
+  # 接入配置写 case workspace，隔离安全；不真实安装 zg 工具链。
+  type: none
+skills:
+  - source: local_path
+    path: .
+engine:
+  name: claude_code
+cases:
+  files:
+    - evals/cases/trigger-zg-onboard.yaml
+    - evals/cases/no-global-install.yaml
+    - evals/cases/tiered-acceptance.yaml
+  defaults:
+    timeout_seconds: 600
+    max_turns: 15
+report:
+  formats: [json]

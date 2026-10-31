@@ -1,0 +1,39 @@
+# 覆盖 description 排除边界：快速语法检查/注释增强 → rtl-annotator。
+id: referral-annotator
+title: 注释增强请求应转介 rtl-annotator
+description: |
+  SKILL.md description（v改进后）：快速语法检查/注释增强类请求不属于本 skill 范围。
+input:
+  # 有真实文件可看；请求是纯注释增强，属 rtl-annotator 范围。
+  prompt: |
+    给 rtl/counter.v 的每个端口加一段中文注释，讲清楚每个信号干嘛的。
+context:
+  git:
+    init: true
+  files:
+    "rtl/counter.v": |
+      module counter #(parameter WIDTH = 8) (
+        input  wire             clk,
+        input  wire             rst_n,
+        input  wire             enable,
+        output wire [WIDTH-1:0] count
+      );
+        reg [WIDTH-1:0] cnt;
+        always @(posedge clk or negedge rst_n) begin
+          if (!rst_n) cnt <= {WIDTH{1'b0}};
+          else if (enable) cnt <= cnt + 1'b1;
+        end
+        assign count = cnt;
+      endmodule
+expect:
+  must_not_contain:
+    - "已为每个端口添加注释"
+judge:
+  # 判定核心：识别为注释增强请求并转介，不擅自开工。
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["不属于本 skill", "超出本 skill", "范围", "边界"]
+  failure:
+    - output_contains:
+        any: ["已为每个端口添加注释", "注释已添加"]

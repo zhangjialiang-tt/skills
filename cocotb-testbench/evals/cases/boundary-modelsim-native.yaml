@@ -1,0 +1,21 @@
+# 覆盖 route_cases.json near_neighbor：ModelSim 原生 Verilog TB + sim.do 属 build-testbench。
+id: boundary-modelsim-native
+title: ModelSim 原生 TB 请求应转介 build-testbench
+description: |
+  SKILL.md Non-goals + route_cases.json near_neighbor 转译：ModelSim 劶态归 build-testbench。
+input:
+  # route_cases.json near_neighbor 原文。
+  prompt: |
+    给这个模块建 ModelSim 原生 Verilog testbench，要 sim.do 波形脚本。
+expect:
+  # ModelSim 原生 TB 不应启动 cocotb 框架生成。
+  files_not_exist:
+    - "sim"
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["build-testbench"]
+  failure:
+    - output_contains:
+        any: ["test_counter.py 已生成", "已生成 cocotb 框架"]

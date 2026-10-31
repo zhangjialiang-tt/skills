@@ -1,0 +1,18 @@
+# 覆盖执行不变量 1：mtime 核对——改了 RTL 忘重编是最高频假结论来源。
+id: mtime-invariant
+title: 改 RTL 后直接烧旧 bit 应被提醒先重编
+description: |
+  SKILL.md 执行不变量 1：实验前检查 build/*.bit 的 mtime 对比 RTL mtime——改了 RTL 忘重编是最高频的假结论来源。
+input:
+  prompt: |
+    我刚改了 src 里的 RTL，直接把上次编译好的 bit 烧上去验证新逻辑，这样行吗？
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["mtime", "重新编译", "重编", "旧比特", "旧 bit"]
+    - output_contains:
+        any: ["假结论", "不", "风险", "错误", "先"]
+  failure:
+    - output_contains:
+        any: ["直接烧就行", "没有问题"]

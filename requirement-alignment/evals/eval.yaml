@@ -1,0 +1,26 @@
+# skill-up 评测配置：requirement-alignment
+# 对齐级别（L0 直接通过/L1 轻量对齐）与最多 3 问契约，全部 rule_based。
+schema_version: v1alpha1
+
+environment:
+  # 对齐咨询为纯文本输出，不写文件不输出 Plan。
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+
+engine:
+  name: claude_code
+
+cases:
+  files:
+    - evals/cases/ambiguous-request-aligns.yaml
+    - evals/cases/clear-request-passes.yaml
+    - evals/cases/max-3-questions.yaml
+  defaults:
+    timeout_seconds: 300
+    max_turns: 4
+
+report:
+  formats: [json]

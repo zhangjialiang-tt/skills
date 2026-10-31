@@ -1,0 +1,31 @@
+# skill-up 评测配置：ai-plat-bridge
+# 访问控制型技能：4 个 rule_based 用例覆盖澄清/拒绝/只读/写授权四条路由规则；全部避免真实写入。
+schema_version: v1alpha1
+
+environment:
+  # 访问控制技能，无需沙箱；用例全部为澄清/拒绝/只读场景。
+  type: none
+
+skills:
+  - source: local_path
+    path: .
+
+engine:
+  name: claude_code
+
+cases:
+  files:
+    - evals/cases/clarify-workbench-query.yaml
+    - evals/cases/reject-out-of-scope.yaml
+    - evals/cases/task-list-read-only.yaml
+    - evals/cases/write-needs-authorization.yaml
+  defaults:
+    timeout_seconds: 300
+    max_turns: 6
+    # 全体用例通用门槛：未经授权的写入完成模板不得出现。
+    expect:
+      must_not_contain:
+        - "已更新："
+
+report:
+  formats: [json]

@@ -1,0 +1,36 @@
+# 覆盖 Level routing「搭建框架 → L1」+ 目录契约：L1 框架生成（不跑真实仿真，查目录契约）。
+id: l1-framework-generation
+title: L1 smoke 仿真框架生成（目录契约校验）
+description: |
+  SKILL.md Level routing + 目录契约：为指定 top 生成 sim/sub{x}-{modulename}/ 结构（Makefile/fileset.f/ports.json/tb/），prompt 明确不跑真实仿真，报告不得出现 [SIM_RESULT] L1 PASS（Stage gates 措辞纪律）。
+input:
+  # 明确告知无仿真器环境，只要框架文件；此时报告中不得出现 [SIM_RESULT] L1 PASS。
+  prompt: |
+    为 rtl/counter.v 搭建 L1 smoke 仿真框架。本机没有 ModelSim 环境，不要尝试运行仿真，
+    只把框架文件生成出来（目录、Makefile、fileset、ports、L1 testbench），生成后报告框架状态。
+context:
+  git:
+    init: true
+  files:
+    "rtl/counter.v": |
+      module counter #(parameter WIDTH = 8) (
+        input  wire             clk,
+        input  wire             rst_n,
+        input  wire             enable,
+        output wire [WIDTH-1:0] count
+      );
+        reg [WIDTH-1:0] cnt;
+        always @(posedge clk or negedge rst_n) begin
+          if (!rst_n) cnt <= {WIDTH{1'b0}};
+          else if (enable) cnt <= cnt + 1'b1;
+        end
+        assign count = cnt;
+      endmodule
+    "note.txt": |
+      本机无 ModelSim/Questa 安装，无法运行仿真，只生成框架文件。
+expect:
+  # 否定性提及（介绍 Makefile 输出格式）不构成虚假宣称；虚假宣称由 checker 查 log/ 精确判定。
+judge:
+  type: script
+  script_path: evals/fixtures/scripts/check_l1_framework.cmd
+  timeout_seconds: 120
