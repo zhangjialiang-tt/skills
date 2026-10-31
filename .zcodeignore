@@ -1,0 +1,9 @@
+# ==== 同步自 .gitignore（勿在此标注线以下重复 Python/产物规则；自定义规则写在标注线以下）====
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+
+# skill-up 评测运行产物：agent transcript 等大体积 outputs 不入库，判定核心文件（result.json/grading.json）保留
+*-workspace/**/outputs/
+# ==== 同步区块结束；以下为 .zcodeignore 自定义规则 ====

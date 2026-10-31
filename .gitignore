@@ -2,3 +2,6 @@
 __pycache__/
 *.pyc
 *.pyo
+
+# skill-up 评测运行产物：agent transcript 等大体积 outputs 不入库，判定核心文件（result.json/grading.json）保留
+*-workspace/**/outputs/
