@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [仿真过了就没问题 不用查了]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [仿真过了就没问题 不用查了]"
+    },
+    {
+      "text": "output_contains{any:[ILA 上位机 tshark]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[ILA 上位机 tshark])"
+    },
+    {
+      "text": "output_contains{any:[交叉 组合 多链路 证据链]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[交叉 组合 多链路 证据链])"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1
+  }
+}

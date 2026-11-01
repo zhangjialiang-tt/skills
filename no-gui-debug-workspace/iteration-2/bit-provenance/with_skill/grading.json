@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [看时间就行 只看 mtime mtime 就够]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [看时间就行 只看 mtime mtime 就够]"
+    },
+    {
+      "text": "output_contains{any:[入口 verify-ip 平铺 ipverify]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[入口 verify-ip 平铺 ipverify])"
+    },
+    {
+      "text": "output_contains{any:[sha256 哈希 日志标记 工程名 provenance 溯源]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[sha256 哈希 日志标记 工程名 provenance 溯源])"
+    },
+    {
+      "text": "output_contains{any:[mtime 时间]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[mtime 时间])"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1
+  }
+}

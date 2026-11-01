@@ -1,0 +1,25 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [直接烧就行 没有问题]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [直接烧就行 没有问题]"
+    },
+    {
+      "text": "output_contains{any:[mtime 重新编译 重编 旧比特 旧 bit]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[mtime 重新编译 重编 旧比特 旧 bit])"
+    },
+    {
+      "text": "output_contains{any:[假结论 不 风险 错误 先]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[假结论 不 风险 错误 先])"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1
+  }
+}

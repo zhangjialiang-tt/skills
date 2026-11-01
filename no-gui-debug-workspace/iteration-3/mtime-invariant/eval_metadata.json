@@ -1,0 +1,10 @@
+{
+  "eval_id": 0,
+  "eval_name": "改 RTL 后直接烧旧 bit 应被提醒先重编",
+  "prompt": "我刚改了 src 里的 RTL，直接把上次编译好的 bit 烧上去验证新逻辑，这样行吗？\n",
+  "assertions": [
+    "failure: output_contains.any: [直接烧就行 没有问题]",
+    "output_contains{any:[mtime 重新编译 重编 旧比特 旧 bit]}",
+    "output_contains{any:[假结论 不 风险 错误 先]}"
+  ]
+}

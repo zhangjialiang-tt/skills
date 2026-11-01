@@ -1,0 +1,202 @@
+{
+  "metadata": {
+    "skill_name": "no-gui-debug",
+    "skill_path": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\no-gui-debug",
+    "timestamp": "2026-11-01T02:47:13Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "握手卡死症状应路由到 ILA 链",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "result": {
+        "pass_rate": 1,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 86.009,
+        "tokens": 40724,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "expect.must_not_contain",
+          "passed": true,
+          "evidence": "all checks passed"
+        },
+        {
+          "text": "failure: output_contains.any: [打开 Vivado Hardware Manager GUI]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [打开 Vivado Hardware Manager GUI]"
+        },
+        {
+          "text": "output_contains{any:[ILA ila]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[ILA ila])"
+        },
+        {
+          "text": "output_contains{any:[波形 CSV 抓波 探针]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[波形 CSV 抓波 探针])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "丢包与帧率异常症状应路由到 tshark 链",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 68.662,
+        "tokens": 39721,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [打开 Wireshark GUI]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [打开 Wireshark GUI]"
+        },
+        {
+          "text": "output_contains{any:[tshark dumpcap pcap]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[tshark dumpcap pcap])"
+        },
+        {
+          "text": "output_contains{any:[丢包 间隔 block_id 每帧包数 重传]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[丢包 间隔 block_id 每帧包数 重传])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "成像撕裂症状应路由到上位机链",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 98.115,
+        "tokens": 43948,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [打开 Wireshark GUI 打开 Vivado Hardware Manager]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [打开 Wireshark GUI 打开 Vivado Hardware Manager]"
+        },
+        {
+          "text": "output_contains{any:[上位机 gige_cli capture_frames RAW]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[上位机 gige_cli capture_frames RAW])"
+        },
+        {
+          "text": "output_contains{any:[对拍 counter dump manifest]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[对拍 counter dump manifest])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "改 RTL 后直接烧旧 bit 应被提醒先重编",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 65.836,
+        "tokens": 36999,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [直接烧就行 没有问题]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [直接烧就行 没有问题]"
+        },
+        {
+          "text": "output_contains{any:[mtime 重新编译 重编 旧比特 旧 bit]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[mtime 重新编译 重编 旧比特 旧 bit])"
+        },
+        {
+          "text": "output_contains{any:[假结论 不 风险 错误 先]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[假结论 不 风险 错误 先])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "sim 全绿板上出错应给出多链路差异排查方案",
+      "configuration": "with_skill",
+      "run_number": 3,
+      "result": {
+        "pass_rate": 1,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 82.552,
+        "tokens": 43177,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [仿真过了就没问题 不用查了]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [仿真过了就没问题 不用查了]"
+        },
+        {
+          "text": "output_contains{any:[ILA 上位机 tshark]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[ILA 上位机 tshark])"
+        },
+        {
+          "text": "output_contains{any:[交叉 组合 多链路 证据链]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[交叉 组合 多链路 证据链])"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1,
+        "stddev": 0,
+        "min": 1,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 80.2348,
+        "stddev": 11.82934905056064,
+        "min": 65.836,
+        "max": 98.115
+      },
+      "tokens": {
+        "mean": 40913.8,
+        "stddev": 2494.5099238126913,
+        "min": 36999,
+        "max": 43948
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

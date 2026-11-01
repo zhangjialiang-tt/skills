@@ -1,0 +1,10 @@
+{
+  "eval_id": 0,
+  "eval_name": "成像撕裂症状应路由到上位机链",
+  "prompt": "图像出现垂直撕裂，怀疑是帧数据错位。按无 GUI 流程该用哪条链路取证？给出思路即可，不要实际执行。\n",
+  "assertions": [
+    "failure: output_contains.any: [打开 Wireshark GUI 打开 Vivado Hardware Manager]",
+    "output_contains{any:[上位机 gige_cli capture_frames RAW]}",
+    "output_contains{any:[对拍 counter dump manifest]}"
+  ]
+}

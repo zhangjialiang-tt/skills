@@ -1,0 +1,111 @@
+{
+  "metadata": {
+    "skill_name": "no-gui-debug",
+    "skill_path": "C:\\100-Working\\105-Working-improvement\\github_lib\\zhangjl-skills\\no-gui-debug",
+    "timestamp": "2026-11-01T02:40:27Z",
+    "evals_run": [
+      0
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "打包 IP 上板 0 包应先把打包与前置分流",
+      "configuration": "with_skill",
+      "run_number": 2,
+      "result": {
+        "pass_rate": 1,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 101.924,
+        "tokens": 41245,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [打包肯定有问题 直接改 RTL 重打包就行]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [打包肯定有问题 直接改 RTL 重打包就行]"
+        },
+        {
+          "text": "output_contains{any:[等价 LUT WNS WHS]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[等价 LUT WNS WHS])"
+        },
+        {
+          "text": "output_contains{any:[bit 源 bit溯源 溯源 sha256 入口 verify-ip 平铺]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[bit 源 bit溯源 溯源 sha256 入口 verify-ip 平铺])"
+        },
+        {
+          "text": "output_contains{any:[TPG 校准 calib SCP0 复位]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[TPG 校准 calib SCP0 复位])"
+        }
+      ]
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "板测前应做 bit 溯源而不只看 mtime",
+      "configuration": "with_skill",
+      "run_number": 2,
+      "result": {
+        "pass_rate": 1,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 113.317,
+        "tokens": 40943,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "failure: output_contains.any: [看时间就行 只看 mtime mtime 就够]",
+          "passed": true,
+          "evidence": "failure rule did not match: output does not contain any of [看时间就行 只看 mtime mtime 就够]"
+        },
+        {
+          "text": "output_contains{any:[入口 verify-ip 平铺 ipverify]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[入口 verify-ip 平铺 ipverify])"
+        },
+        {
+          "text": "output_contains{any:[sha256 哈希 日志标记 工程名 provenance 溯源]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[sha256 哈希 日志标记 工程名 provenance 溯源])"
+        },
+        {
+          "text": "output_contains{any:[mtime 时间]}",
+          "passed": true,
+          "evidence": "output satisfies all contains checks (any:[mtime 时间])"
+        }
+      ]
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1,
+        "stddev": 0,
+        "min": 1,
+        "max": 1
+      },
+      "time_seconds": {
+        "mean": 107.62049999999999,
+        "stddev": 5.696499999999993,
+        "min": 101.924,
+        "max": 113.317
+      },
+      "tokens": {
+        "mean": 41094,
+        "stddev": 151,
+        "min": 40943,
+        "max": 41245
+      }
+    },
+    "without_skill": null,
+    "delta": null
+  }
+}

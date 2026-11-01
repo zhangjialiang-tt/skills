@@ -1,0 +1,10 @@
+{
+  "eval_id": 0,
+  "eval_name": "sim 全绿板上出错应给出多链路差异排查方案",
+  "prompt": "同一段 RTL 仿真全绿，但板上成像错位。按 no-gui-debug 的方法论怎么系统化排查？给排查框架即可，不要执行。\n",
+  "assertions": [
+    "failure: output_contains.any: [仿真过了就没问题 不用查了]",
+    "output_contains{any:[ILA 上位机 tshark]}",
+    "output_contains{any:[交叉 组合 多链路 证据链]}"
+  ]
+}

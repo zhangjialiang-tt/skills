@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "failure: output_contains.any: [打包肯定有问题 直接改 RTL 重打包就行]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [打包肯定有问题 直接改 RTL 重打包就行]"
+    },
+    {
+      "text": "output_contains{any:[等价 LUT WNS WHS]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[等价 LUT WNS WHS])"
+    },
+    {
+      "text": "output_contains{any:[bit 源 bit溯源 溯源 sha256 入口 verify-ip 平铺]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[bit 源 bit溯源 溯源 sha256 入口 verify-ip 平铺])"
+    },
+    {
+      "text": "output_contains{any:[TPG 校准 calib SCP0 复位]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[TPG 校准 calib SCP0 复位])"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1
+  }
+}

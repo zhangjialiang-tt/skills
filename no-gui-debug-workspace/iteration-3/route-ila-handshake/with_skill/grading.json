@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "expect.must_not_contain",
+      "passed": true,
+      "evidence": "all checks passed"
+    },
+    {
+      "text": "failure: output_contains.any: [打开 Vivado Hardware Manager GUI]",
+      "passed": true,
+      "evidence": "failure rule did not match: output does not contain any of [打开 Vivado Hardware Manager GUI]"
+    },
+    {
+      "text": "output_contains{any:[ILA ila]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[ILA ila])"
+    },
+    {
+      "text": "output_contains{any:[波形 CSV 抓波 探针]}",
+      "passed": true,
+      "evidence": "output satisfies all contains checks (any:[波形 CSV 抓波 探针])"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1
+  }
+}

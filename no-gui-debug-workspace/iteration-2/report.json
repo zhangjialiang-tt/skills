@@ -1,0 +1,118 @@
+{
+  "skill_name": "no-gui-debug",
+  "schema_version": "v1alpha1",
+  "engine_name": "claude_code",
+  "model_name": "",
+  "requested_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "applied_configuration": {
+    "role": "runner",
+    "engine": "claude_code",
+    "protocol": "anthropic"
+  },
+  "observed_configuration": {
+    "version": "2.1.286"
+  },
+  "start_time": "2026-11-01T10:36:50.1450472+08:00",
+  "end_time": "2026-11-01T10:40:27.2865081+08:00",
+  "case_results": [
+    {
+      "case_id": "route-packaged-ip-verify",
+      "title": "打包 IP 上板 0 包应先把打包与前置分流",
+      "status": "PASS",
+      "duration_ms": 101924,
+      "turns": 3,
+      "input_tokens": 37694,
+      "output_tokens": 3551,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 3,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [打包肯定有问题 直接改 RTL 重打包就行]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [打包肯定有问题 直接改 RTL 重打包就行]"
+          },
+          {
+            "text": "output_contains{any:[等价 LUT WNS WHS]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[等价 LUT WNS WHS])"
+          },
+          {
+            "text": "output_contains{any:[bit 源 bit溯源 溯源 sha256 入口 verify-ip 平铺]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[bit 源 bit溯源 溯源 sha256 入口 verify-ip 平铺])"
+          },
+          {
+            "text": "output_contains{any:[TPG 校准 calib SCP0 复位]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[TPG 校准 calib SCP0 复位])"
+          }
+        ],
+        "summary": {
+          "passed": 4,
+          "failed": 0,
+          "total": 4,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "我们把交付壳打包成 Vivado IP 后上板，GVCP 全部 PASS、开流也成功，但上位机收 0 包。\n怎么判断是打包把功能改坏了，还是板级/前置的问题？给排查顺序即可，不要执行。\n",
+      "response": "🎭 按项目 no-gui-debug skill 的分流结论：这类「控制面全 PASS、开流成功、0 包」最高频的根因不是打包改坏功能，而是**烧错了 bit** 或**数据面前置条件没满足**。排查顺序如下（只给顺序，均未执行）：\n\n## 第 0 步：bit 溯源——先定「烧的到底是哪份逻辑」\n\n这是本项目真实发生过的最大假结论来源，必须最先做：\n\n1. 登记四件套：**构建入口 + 工程名 + 日志标记 + sha256**。`make build`（平铺，`build/top.bit`）与 `make verify-ip`（打包 IP，`build/ipverify/top.bit`）同名不同物，mtime 只能挡「改了 RTL 没重编」，挡不住同名混烧。\n2. 打包 IP 的构建日志应含 `packaged IP pwgige:gige:gige_vision_ip_wrap:1.0 已入工程` 标记，见到临时改脚本的标记（`board sources=N...`）则该 bit 不可复现。\n3. 快速旁证：`ping 192.168.1.128` 应通（ICMP 已实现）；ping 不通 = 烧的是旧镜像。\n\n## 第 1 步：打包正确性静态核对（不上板，先排除低级错）\n\n- `component.xml` 端口数/名称/方向与 wrapper 逐项一致（当前 131 个）；\n- 三个 aximm 的 portMap 全指向真实端口，时钟 ASSOCIATED_BUSIF/RESET、复位极性齐全；\n- `pkg/src/*` 与工作树逐字节一致；未打包文件必须能说清 IP 不引用它（注意 `DC_FIFO.v` 板级在用）；\n- MODELPARAM 缺省 == 板级有效值（`TARGET=XILINX`、`SLOT_COUNT=4` 等）；\n- stub 位宽与 RTL 一致（`wdata[255:0]`、`araddr[31:0]`、`awid[3:0]`、`cfg_w/h[16:0]`）；\n- `ipx::check_integrity` 无 ERROR，父级综合无 `8-439`（黑盒）。\n\n## 第 2 步：过一遍 IP 化特有的「静默差异」清单\n\n- **参数不转发**：shim/wrapper 例化没写 `#(...)` 时父级参数被静默忽略（k7base 的 `BUFR` 恰好等于打包缺省，掩盖了这个坑）；\n- **位宽截断**：综合日志确认 `8-689`/`8-2900` 已清零（实测踩过 `m_axi_arregion` 1 bit 接 4 bit）；\n- **OOC**：确认没给 OOC 挂 `create_clock`、没开 `-retiming`。\n\n## 第 3 步：数据面出流前提读数（每步都要有读数）\n\n1. MIG 校准完成（`mig_calib_done=1` 且 `mig_ui_rst=0`）；\n2. TPG 未被复位压住（`tpg_rst34 = rst34 | ~mig_calib_done | ~tpg_pattern_valid`，任一项为 0 整链不出帧）；\n3. 先写 `SCP0=0` 干净关流再开流——残留开流态会「开流成功但线上无包」；\n4. 复位前置：`rst -system` 本机不可用，替代 = 重烧 bit + 固件重传（`BOOT_MODE_SELECT=0`，每次 JTAG 重配后固件必须重传，否则 MDIO 不初始化）+ 干净关流。\n\n## 第 4 步：等价性对拍——直接回答「是不是打包的锅」\n\n- **同脚本同窗口烧平铺 bit 再跑一遍**：两侧同为 0 包 ⇒ 不是打包的锅，回第 3 步/启动窗口差异继续查，别再浪费轮次加「打包假设」；症状不一致（平铺出流、IP 0 包）⇒ 打包引入，回第 1/2 步对照。\n- 静态佐证：两入口 LUT 相差 \u003c0.1%（实测 25767 vs 25778）、WNS/WHS 一致、黑盒为 0。\n\n## 第 5 步：以上全排除后才上 ILA\n\n- 注意 **IP bit 无 ILA**（`dbg_*` 不进 IP），要 ILA 只能用平铺 bit；要在 IP bit 上定位数据面得先加调试口重新打包。\n- 触发选 TX 计数/握手位/几何序号，判据：good≥submit 无差、desc 握手数与 seq 自洽。\n\n**一句话判据**：先确认没烧错 bit（第 0 步），再做等价性对拍（第 4 步，平铺 vs IP 症状一致即排除打包）——中间的静态核对和出流前提是给这两种结局准备证据的。",
+      "observed_version": "2.1.286"
+    },
+    {
+      "case_id": "bit-provenance",
+      "title": "板测前应做 bit 溯源而不只看 mtime",
+      "status": "PASS",
+      "duration_ms": 113317,
+      "turns": 2,
+      "input_tokens": 38623,
+      "output_tokens": 2320,
+      "grading": {
+        "status": "PASS",
+        "turns_executed": 2,
+        "turns_total": 1,
+        "assertion_results": [
+          {
+            "text": "failure: output_contains.any: [看时间就行 只看 mtime mtime 就够]",
+            "passed": true,
+            "evidence": "failure rule did not match: output does not contain any of [看时间就行 只看 mtime mtime 就够]"
+          },
+          {
+            "text": "output_contains{any:[入口 verify-ip 平铺 ipverify]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[入口 verify-ip 平铺 ipverify])"
+          },
+          {
+            "text": "output_contains{any:[sha256 哈希 日志标记 工程名 provenance 溯源]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[sha256 哈希 日志标记 工程名 provenance 溯源])"
+          },
+          {
+            "text": "output_contains{any:[mtime 时间]}",
+            "passed": true,
+            "evidence": "output satisfies all contains checks (any:[mtime 时间])"
+          }
+        ],
+        "summary": {
+          "passed": 4,
+          "failed": 0,
+          "total": 4,
+          "pass_rate": 1
+        }
+      },
+      "configuration": "with_skill",
+      "prompt": "改完 RTL 准备上板验证，怎么确认板上跑的就是刚改过的那份逻辑？说清检查项即可，不要执行。\n",
+      "response": "🍀 只列检查项，不执行。核心思路：**mtime 只能挡「改了 RTL 忘重编」，挡不住「同名 bit 来自另一条入口」**——后者在本仓库真实发生过（`build/top.bit` 与 `build/ipverify/top.bit` 同名不同物），所以溯源要按「入口 → 构建 → 烧写 → 板上行为」四段闭环。\n\n## 一、构建侧：bit 确实出自改过的 RTL\n\n1. **登记四件套**：构建入口（`make build` 平铺 / `make verify-ip` 打包 IP）+ 工程名 + 日志标记 + bit 的 sha256。先确认本次改的 RTL 属于哪条入口的逻辑来源（平铺改 `rtl/` 源对应 `make build`；改的是打包 IP 内的源必须走 `verify-ip`），入口和改动必须同源。\n2. **mtime 是必要条件**：bit 生成时间晚于最后一次 RTL 修改时间。只挡「忘重编」，不充分。\n3. **sha256 比对**：对将要烧写的 bit 文件现场算 hash，与登记值一致；如果两个入口的 bit hash 完全相同，反而要警惕——说明改动没进设计（被旧 OOC DCP / checkpoint 缓存吃掉）。\n4. **日志标记认源**（比文件路径可靠）：在构建日志里找认源标记，如 verify-ip 的 `packaged IP pwgige:gige:gige_vision_ip_wrap:1.0 已入工程`。若见到临时改过 `create_project.tcl` 的标记（`board sources=N...`），该 bit 不可复现，不能当验证基线。\n5. **OOC 产物新鲜度**：改动落在 OOC 综合的 IP/子模块内时，确认对应 DCP/OOC run 已随本次重新生成，不是父级链接的旧 checkpoint。\n6. **时序/资源基线**：登记本次 `reports/*timing_summary_routed.rpt` 的 WNS/WHS 与 LUT 数，与上一版对照。\n\n## 二、烧写侧：烧进板的确实是这份 bit\n\n7. **program 输出留档**：`program_jtag.tcl` 成功应恰一行 `OK  : JTAG programmed ...`；核对脚本里指定的 bit 是登记的绝对路径，防止脚本写死旧路径或相对路径指到另一入口产物。\n8. **启动方式匹配**：JTAG 直配还是 Flash/QSPI 启动。走 Flash 时确认镜像确实重写并校验通过，避免「板上跑的是 Flash 里的旧镜像」。\n9. **bit 与 .ltx 成对**：`DEBUG_ILA=1` 构建时 bit 和 `.ltx` 必须同一次构建产出，烧后确认 `.ltx` 关联成功（`PROBES.FILE` + `refresh_hw_device`），否则探针属于旧逻辑。\n\n## 三、板上侧：行为上能区分新旧\n\n10. **强溯源探针**：板上读出一个只有新逻辑才有的值——版本/git-hash 寄存器、新加的计数器/状态位非零等。这是最硬的证据；若本次改动没预留，至少走一条「旧逻辑必然不出现、新逻辑必然出现」的行为路径。\n11. **快速签名（本仓库口径）**：`ping 192.168.1.128` 应通（ICMP 只在新镜像里实现）——ping 不通大概率是旧镜像，但先和「固件没跑」区分开。\n12. **固件重传**：`BOOT_MODE_SELECT=0`，每次 JTAG 重配/掉电后必须重传 neorv32 固件，否则 MDIO 不初始化、GVCP 无应答，极易被误判成「烧错 bit」或「新逻辑坏了」。\n\n## 四、过程纪律\n\n13. **每轮实验串行并登记**：bit hash → program 输出 → 固件重传 → 现象读数，逐轮记录，防止两轮之间 bit 混用；Vivado 与 ModelSim 别并行跑（MIG IP 文件锁）。\n14. **结论标注证据层级**：板上看到的行为是事实，log 标记是推导，mtime/sha256 匹配只是必要条件——最终「板上跑的就是新逻辑」的结论应至少由「入口对应 + hash 一致 + 烧写留档 + 板上签名命中」共同支撑，缺一段就在报告里标为待验证。\n\n其中第 10 项（版本寄存器/可观测探针）是唯一能在板上直接自证的机制，如果还没有，建议趁这次验证加一个；其余项都是流程性防线。无需更新记忆。",
+      "observed_version": "2.1.286"
+    }
+  ],
+  "total_tokens": 82188,
+  "judge_tokens": 0,
+  "overall_tokens": 82188
+}
