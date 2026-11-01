@@ -5,30 +5,38 @@
 > `scripts/catch_*.tcl` 无 GUI 抓波脚本。所有命令在 Git Bash 里执行，
 > vivado 一律走 `cmd //c` 直调 .bat。
 
-## 1. 探针定义（pw-gige 板顶 ifdef DBG_ILA，时钟 mig_ui_clk）
+## 1. 探针定义（pw-gige 板顶 `ifdef DBG_ILA`，8 探针 / 深度 4096 / mig_ui_clk 同域）
 
-| probe | 信号 | 位宽 | 观测内容 |
+位宽单一事实源是 `scripts/create_ila.tcl`（改了要先对这里和 CSV 表头）。2026-10-25
+帧源链收进交付壳后，帧源类探针经壳的 `dbg_*` 口引出；**当前版本不含地址/数据探针**。
+
+| probe | 宽 | 内容 | 用途 |
 |---|---|---|---|
-| 0 | fs_aw_addr | 32 | frame_source 写地址流（应 +32 严格线性） |
-| 1 | core_araddr | 32 | packer 读地址流（AR 碎片化/跳变判据） |
-| 2 | fs_w_data[63:0] | 64 | 写数据（counter 图案：小端 16-bit 帧内索引） |
-| 3 | core_rdata[63:0] | 64 | 读数据（撕裂 = 值跳变） |
-| 4 | 控制位组 | 10 | aw/w/ar/r 握手 + mig_calib_done + mig_ui_rst |
-| 5 | fs_desc_data_c 切片 | 64 | desc 交付内容（注意 desc_t 位图，见 §6-4） |
+| 0 | 32 | `dbg_tx_submit_count` | core 提交发包数 |
+| 1 | 32 | `dbg_tx_good_count` | MAC TX FIFO 收下的包数 |
+| 2 | 32 | `{dbg_tx_overflow_count, dbg_tx_bad_count}` | FIFO 溢出 / 坏包 |
+| 3 | 32 | `{dbg_tx_user_count, dbg_tx_underflow_count}` | user 侧错误 / 下溢 |
+| 4 | 10 | `{dbg_wr_ctrl[4:0], core_arvalid, core_arready, core_rvalid, mig_calib_done, mig_ui_rst}` | 握手活性 + 校准/复位前提 |
+| 5 | 66 | `{cfg_vend_act_seq[31:0], vend_act_w[15:0], vend_act_h[15:0], dbg_desc_valid, dbg_desc_ready}` | 几何生效序号与 desc 握手对账 |
+| 6 | 22 | `dbg_loss_state` | 帧源丢帧 sticky 状态 |
+| 7 | 1 | `dbg_loss_event_seen` | loss 事件粘滞位（`catch_ila.tcl` 触发源） |
 
-**counter 图案 = 地址示踪器**：像素值 n = 帧内索引（v·320+h 截 16 位），
-因此 DDR/payload 内容的值 = 它所在的帧内偏移——读出的值直接暴露实际读写的
-位置。撕裂帧表现 = 每包起始索引随机（非 pid×每包像素数）。
+**地址/数据示踪器不再在片内**：counter 图案对拍走上位机链（host-capture §5）。
+**打包 IP 版（`gige_vision_ip_wrap`）不引出 `dbg_*`，IP bit 挂不了 ILA**——
+要在 IP bit 上定位，需先在 wrapper 加观测口再重打包（见 ip-delivery-verify.md）。
 
 ## 2. 构建含 ILA 的比特流
 
 ```bash
 # DEBUG_ILA=1 → create_project.tcl source create_ila.tcl（生成 dbg_ila IP）
 #              并对 sources_1 设 verilog_define DBG_ILA=1 → 板顶 ifdef 生效
-TOP=gige_vision_ip_k7 NEED_MIG=1 DEBUG_ILA=1 cmd //c \
-  "C:\Software\Xilinx\Vivado\2021.1\bin\vivado.bat -mode batch -nojournal -nolog -notrace -source scripts/build.tcl"
+cmd //c "make build DEBUG_ILA=1"
+# 等价直调（Git Bash 裸跑 make 会崩，必须 cmd）：
+#   cmd //c "C:\Software\Xilinx\Vivado\2021.1\bin\vivado.bat -mode batch \
+#     -nojournal -nolog -notrace -source scripts/build.tcl"
 ```
 
+- `TOP` 缺省 `top`、`NEED_MIG` 缺省 1（不要再用已删除的 `TOP=gige_vision_ip_k7`）。
 - 产物：`build/<top>.bit` + `<top>.ltx`（probes 文件，抓波必需；若 build.tcl
   未自动拷贝，从 `proj/...runs/impl_1/*.ltx` 手动 cp 到 build/）。
 - **mtime 核对**：bit 时间必须晚于全部改动 RTL 的时间。
@@ -36,8 +44,8 @@ TOP=gige_vision_ip_k7 NEED_MIG=1 DEBUG_ILA=1 cmd //c \
 ## 3. 烧板
 
 ```bash
-TOP=gige_vision_ip_k7 cmd //c \
-  "C:\Software\Xilinx\Vivado\2021.1\bin\vivado.bat -mode batch -nojournal -nolog -notrace -source scripts/program_jtag.tcl"
+cmd //c "make jtag"
+# 直调等价：cmd //c "...vivado.bat ... -source scripts/program_jtag.tcl"
 # 成功输出恰 1 行 "OK  : JTAG programmed <top>.bit -> xc7k325t_0"
 ```
 
@@ -67,12 +75,16 @@ cmd //c "C:\Software\Xilinx\Vivado\2021.1\bin\vivado.bat -mode batch -nojournal 
 
 深度 4096 拍：ui_clk 100 MHz = 41 µs 窗口。持续现象（撕裂每帧都有）任意窗口
 即可；事件稀疏（如 desc 交付是 ctrl 域 8ns 窄脉冲）用 ui 域 ILA 采样会漏——
-改用事件同域或高频信号触发（如 core_arvalid）。
+改用事件同域或高频信号触发（现成触发源见下）。
 
-触发 probe 选择经验：
-- `core_arvalid`：读活动触发（配流后必触发）——通用首选。
-- `fs_desc_valid_c`：desc 交付触发（窄脉冲可能漏采，等不到属正常）。
-- 无条件立即：链路活性/时钟域判活（calib_done、写通路静默检查）。
+触发源现状（2026-11 实测，别照抄旧口径）：
+
+- `catch_ila.tcl`：**`dbg_loss_event` 触发**，TRIGGER_POSITION 2048，循环 3 次导出；
+  找不到该探针会直接 error（不再是 core_arvalid）。
+- `catch_now.tcl`：无触发立即捕获——链路活性/时钟域判活（calib_done、写通路静默）。
+- `catch_ar.tcl`：仍按 `core_arvalid` 过滤，**但该信号已并入 probe4 位段，不再是独立探针**，
+  `get_hw_probes` 返回空 → 触发设置失败并静默退化为立即捕获。要按 AR 活动触发，
+  得改脚本按 probe4 的 `core_arvalid` 位段判，或抓 `catch_now` 后离线筛。
 
 ## 5. 状态判活（ILA 属性）
 
@@ -89,29 +101,25 @@ CSV 结构：行 1 = 表头（列名含探针位段，**以实际表头为准**�
 行 2 = Radix、行 3 起 = 数据（HEX）。注意 `wc -l` 对无换行结尾的文件会少计，
 用 csv.reader 数。
 
-判据（counter = 地址示踪器）：
+判据（按 §1 探针语义；计数类只取关流后稳定值）：
 
-1. **写地址流**：aw_valid=1 拍的 addr 应 +32 严格线性（bank 翻转处跳
-  BANK_BYTES）。乱序 = 写侧问题。
-2. **读地址流**：arvalid=1 拍的 addr 按 chunk/页钳位碎片化是正常的；异常 =
-   地址与 desc.base + 帧内偏移不符。
-3. **读数据**：rvalid=1 拍的 rdata 低 16 位（小端）应 = 读取位置的帧内像素
-   索引；beat 间 +16（32B/2）为正常推进；跳变 = 撕裂点。
-   ⚠ **期望值公式必须含 bank 基址**：counter 值 = 帧内偏移/2 = (DDR 地址 −
-   bank_base)/2，**不是 DDR 绝对地址/2**——漏算 bank 基址会得到恒偏 +
-   BANK_BYTES/2（本项目 +49152px）的「全部 BAD」假象（2026-09-28 实测 4/4 假
-   BAD，修正公式后 4/4 dx=0）。
-   ⚠ ILA 时钟若不是被测数据域时钟（如用 clk125 采 ui_clk 数据），跨域采样
-   混叠，内容分析不可靠——只可看握手存在性，不可对拍内容。
-   ⚠ 探针组没有 rready 时，AR↔R 配对只能用「rvalid + rdata 变化边沿」近似
-   （rvalid 可在 rready=0 时长期驻留——正好是滞后缺陷的形态），结论要标注
-   该近似。
-4. **desc 交付**：valid && ready 拍的 data 按 desc_t 位图解码（pw-gige：
-   base_addr=desc[296:265]、frame_bytes=desc[264:233]，**packed struct 首字段
-   在 MSB**——切片前先对位图，实测切 [264:201] 会切到 frame_bytes+tag）。
-5. **原始逐拍 dump**：定位精确时序时不要用"变化点压缩"，直接打印窗口内
-   每拍的 (rv, px0, arv, addr)——变化点合并会掩盖"重复拍驻留 N 拍"这类
+1. **TX 提交 vs 收下**：probe0 与 probe1，`good < submit` ⇒ MAC TX FIFO 丢包；
+   差值随流量线性放大才是最硬的证据（单帧差 1 可能是边界效应）。
+2. **TX 错误计数**：probe2/probe3 的 overflow / bad / underflow / user 应恒 0 且平直；
+   非 0 先修发送侧（反压、带宽令牌、包长），别急着查读通路。
+3. **握手活性 + 出流前提**：probe4 的 `core_arvalid/arready` 有翻转 ⇒ 读通路在跑；
+   `mig_calib_done=1`、`mig_ui_rst=0` 是出帧前提——两者不满足时「0 包」与 RTL 无关，
+   先查 DDR 校准/复位时序（本机 JTAG 重配后未软复位就会命中这一条）。
+4. **几何生效对账**：probe5 的 `cfg_vend_act_seq[31:0]` 必须与 `vend_act_w/h`
+   同拍自洽（seq 已变而 act_* 未跟随 = 几何错位，壳内 CDC 会整帧丢弃）；
+   `dbg_desc_valid && dbg_desc_ready` 的拍数应与提交帧数一致。
+5. **丢帧面**：probe6 的 22 bit 是帧源 sticky 状态，probe7 是 loss 事件粘滞位；
+   probe7 触发后回看前后 4096 拍里 probe5 的 desc 握手是否中断、probe4 的 AR 是否停摆。
+6. **原始逐拍 dump**：定位精确时序时不要用"变化点压缩"，直接打印窗口内每拍的
+   (arvalid, arready, ctrl 位, desc 握手)——变化点合并会掩盖"重复拍驻留 N 拍"这类
    关键细节（MIG 滞后一拍的实锤就是这么拿到的）。
+7. **通用注意**：内容级（地址/像素）判据已不在片内，走 host-capture §5；ILA 时钟不是
+   被测数据域时钟时只可看握手存在性；探针位段一旦改动，先重读 §1 与 CSV 表头。
 
 ## 7. 已知坑清单（全部实测踩过）
 
@@ -135,3 +143,5 @@ CSV 结构：行 1 = 表头（列名含探针位段，**以实际表头为准**�
   的正常状态，不是异常）。
 - 配流参数（pw-gige）：SCDA=192.168.1.3、SCPS=1500、SCPD=0、host_port=49152；
   IP 值必须转 int（socket.inet_aton 大端），writereg 不接受字符串。
+- **开流前先写 `SCP0=0`**（`stream_and_catch.py` 已内置）：设备残留「开流态」时
+  表现是「开流成功但线上 0 包」，会被误判成 RTL 缺陷。

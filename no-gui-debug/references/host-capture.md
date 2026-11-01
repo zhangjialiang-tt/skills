@@ -12,7 +12,7 @@
 | 子命令 | 参数 | 说明 |
 |---|---|---|
 | nic | 无 | 枚举网卡（过滤 loopback/未启用/无 IPv4）。**先跑它**——Tailscale/蓝牙/Meta 虚拟口会干扰自动选择 |
-| discover | [--nic i] [--timeout ms] [--camera ip] | 广播或定向发现；设备无 ICMP，discover 才是活性行话 |
+| discover | [--nic i] [--timeout ms] [--camera ip] | 广播或定向发现；ICMP 现镜像可实现 `ping` 探活，discover 是协议级活性判据 |
 | readreg / writereg | --camera ip --addr hex [--value n] | 单寄存器读写 |
 | heartbeat | --camera ip [--seconds n] | 取控制权 + 心跳保活 |
 | stream | --camera ip [--seconds n] [--resend-to-trailer] | 只计数不落盘（帧率/重传统计） |
@@ -70,7 +70,12 @@ VERDICT: PASS
 - **discovery 超时**：先 `gige_cli nic` 枚举，`--nic <序号>` 显式指定业务网卡
   （Tailscale/Meta/蓝牙虚拟口排前面时自动选择会选错）。pw-gige 侧
   `tools/gvcp_discover.py` 可交叉验证设备活性。
-- 设备无 ICMP：ping 不通是预期，活性判定用 discover。
+- **ICMP**：现镜像实现 Echo Reply（`rtl/net/icmp_echo.sv`），`ping 192.168.1.128` 应通；
+  不通说明烧的是旧镜像（旧镜像才以 discover 判活）。注意 ARP 未命中时回包会造成约 22 s
+  UDP 全停（`ip_arb_mux` 被占），别把这 22 s 判成链路故障。
+- **只写寄存器不可读**：`0xA014`（APPLY 邮箱）读回必报 WRITE_PROT/INVALID_ADDRESS 属设计行为；
+  写生效判据看 `CONFIG_STATUS.busy`。多地址批量 READREG 会串位，判读一律单字逐读并对设计缺省值
+  （`SCPS0=1500<<16`、`SCDA0=192.168.1.3`）。
 - 烧板后短暂失联：PHY/ARP 收敛瞬态，等 8-10s 重试。
 
 ## 4. capture_frames.py（pw-gige tools/，UDP 直收对拍）

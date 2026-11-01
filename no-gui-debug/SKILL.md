@@ -29,20 +29,20 @@ description: >-
 
 | 项 | 值 |
 |---|---|
-| 仓库脚本 | pw-gige 仓库 tools/（catch_ila.tcl、capture_frames.py、gvcp_cli.py 等）。ILA 链脚本（catch_\*.tcl、capture_frames.py、stream_and_catch.py）在 feature/mig 分支（4d8fda3 起），合入主线前请在 .worktrees/mig 下执行 |
+| 仓库脚本 | pw-gige 仓库 tools/（catch_ila.tcl、catch_ar.tcl、catch_now.tcl、capture_frames.py、stream_and_catch.py、gvcp_cli.py、cc_board_check.py 等）。ILA 链脚本自 4d8fda3 起已在主线，直接在当前分支执行，不再需要 .worktrees/mig |
 | Vivado | C:\Software\Xilinx\Vivado\2021.1\bin\vivado.bat（必须 .bat，无扩展名会解析到缺 DLL 的 unwrapped） |
 | Python | C:/Software/Python/Python311/python.exe（pyserial + scapy 已装） |
 | tshark/dumpcap | C:\Program Files\Wireshark\（4.6.9，不在 PATH，需全路径；dumpcap 抓包需管理员） |
 | 上位机 CLI | gigev-host-demo build\vs2022-x64\src\cli\Release\gige_cli.exe（子命令全表见 references/host-capture.md） |
-| 设备缺省 | IP 192.168.1.128:3956，无 ICMP（ping 不通是预期），GVSP host_port 动态配置 |
+| 设备缺省 | IP 192.168.1.128:3956，GVSP host_port 由配流决定（仓库脚本缺省 49152）。**ICMP 已实现**（`rtl/net/icmp_echo.sv`）：`ping 192.168.1.128` 应通，**ping 不通 = 烧的是旧镜像**。代价：回包目的 MAC 不在 ARP 缓存时 `ip_arb_mux` 被占约 22 s（2s×4 次重试 + 16s 超时），期间 GVCP/GVSP/后续 ping 全停 |
 | 板 | Kintex-7 Base（xc7k325tffg676-2），JTAG=FT232HL，调试串口 CH340E |
-| 固件 | `BOOT_MODE_SELECT=0` ⇒ bit 里只有 bootrom，**每次 JTAG 重配/掉电后必须重传**（`make neorv32_phy_flash`，bootrom 台固定 19200，发 `h` 有菜单即台活着）。固件没跑 = MDIO 从不初始化 = GVCP 必然无应答；口径见 `docs/neorv32_firmware_build_uart.md` |
+| 固件 | `BOOT_MODE_SELECT=0` ⇒ bit 里只有 bootrom，**每次 JTAG 重配/掉电后必须重传**（`cmd //c "make neorv32_upload PORT=COM6"`；bootrom 固定 19200、应用 115200，脚本自动切速；发 `h` 有菜单即台活着）。固件没跑 = MDIO 从不初始化 = GVCP 必然无应答；口径见 `docs/neorv32_firmware_build_uart.md` |
 
 ## 链路决策树（症状 → 链路 → 证据 → 判据）
 
 | 症状/疑点 | 首选链路 | 证据类型 | 判据示例 |
 |---|---|---|---|
-| 内部握手卡死（valid/ready 无应答）、寄存器读写异常、时钟域活性 | **ILA 链** | 片内拍级波形（握手/地址/数据/状态机） | AR↔首R 配对 dx=0；写地址 +beat 线性；calib_done=1 |
+| 内部握手卡死（valid/ready 无应答）、寄存器读写异常、时钟域活性 | **ILA 链** | 片内拍级波形（TX 计数/握手位/几何序号/loss 状态） | `mig_calib_done=1` 且 `mig_ui_rst=0`；good≥submit 无差；desc 握手数与 seq 自洽 |
 | 成像撕裂/花屏/错位、需要完整帧或单帧字节级证据 | **上位机链** | 帧文件（RAW）+ 原始 wire dump + manifest | counter 图案值=帧内索引，逐字节对拍；manifest 连续无缺号 |
 | 丢包/包序/重传/帧率/吞吐统计、网络层异常 | **tshark 链** | pcapng + 逐包字段导出 | Leader 间隔分布、每帧包数、block_id 连续性 |
 | 复杂 bug（一层证据说不清） | **多链路并行** | 交叉印证 | 见 references/methodology.md 的 MIG 撕裂案例 |
@@ -87,6 +87,10 @@ MIG 撕裂完整案例的链路组合（2026-09-27/28 实战）：tshark 抓包�
 | capture_frames 组装 0 完整帧 | GVSP pid 在头 bytes[6:8]（不是 5:7）；先裸收后组装；SO_RCVBUF 32MB |
 | dumpcap 权限 | 权限不足才提权；本机实测非管理员可直接抓；不在 PATH 用全路径 |
 | 后台复合命令变量为空 | `a && V=x && cmd &` 整链进 subshell，前台 $V 为空——固定文件名或分两次调用 |
+| `rst -system` 两条路都不通 | Vivado hw-manager Tcl 无 `reset_hw_target`、xsdb `rst -system` 报 `Invalid reset type`（K7+FT2 实测）；替代 = 重烧 bit + 固件重传 + 开流前写 `SCP0=0`，并在报告登记「未做系统软复位」 |
+| `0xA014` 读回报错 | APPLY 是**只写**邮箱，读回必拒属设计；生效判据看 `CONFIG_STATUS.busy` 清零 |
+| 批量 READREG 串位 | 多地址一次读会串位/回陈旧值，别据此判「写序列错位」；一律单字逐读再对设计缺省值 |
+| 控制台/工具输出乱码 | Git Bash 按 GBK 解码设备输出，乱码行不是读数现场；判据用数字/正则抽取后再下结论 |
 
 ## 工作流（按链路展开）
 
