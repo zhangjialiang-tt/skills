@@ -1,0 +1,21 @@
+# 覆盖：执行不变量 1「bit 溯源」——mtime 不足以确认烧的是哪份逻辑。
+id: bit-provenance
+title: 板测前应做 bit 溯源而不只看 mtime
+description: |
+  SKILL.md 执行不变量 1 + references/ip-delivery-verify.md §1/§2：同名 bit 多入口、
+  日志标记与 sha256 登记。
+input:
+  prompt: |
+    改完 RTL 准备上板验证，怎么确认板上跑的就是刚改过的那份逻辑？说清检查项即可，不要执行。
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["入口", "verify-ip", "平铺", "ipverify"]
+    - output_contains:
+        any: ["sha256", "哈希", "日志标记", "工程名", "provenance", "溯源"]
+    - output_contains:
+        any: ["mtime", "时间"]
+  failure:
+    - output_contains:
+        any: ["看时间就行", "只看 mtime", "mtime 就够"]

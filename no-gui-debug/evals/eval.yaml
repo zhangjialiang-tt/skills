@@ -20,6 +20,8 @@ cases:
     - evals/cases/route-host-tearing.yaml
     - evals/cases/mtime-invariant.yaml
     - evals/cases/sim-green-board-red-methodology.yaml
+    - evals/cases/route-packaged-ip-verify.yaml
+    - evals/cases/bit-provenance.yaml
   defaults:
     timeout_seconds: 300
     max_turns: 4

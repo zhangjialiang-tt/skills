@@ -113,8 +113,10 @@ MIG 案例 shim sim 第一轮的"丢命令"是 **TB 自己的 bug**（响应分�
 
 ## 8. 工程纪律（事故换来的）
 
-- **mtime 核对**：RTL 改动后必须确认 bit 重建（qoder 声称修复但只跑了 sim，
-  bit 还是旧的——测的是旧硬件）。
+- **bit 溯源**：不只核 mtime——先确认 bit 出自哪条构建入口（平铺 `make build` 与
+  打包 `make verify-ip` 同名不同物，见 ip-delivery-verify.md §1/§2），并登记
+  「入口 + 工程名 + 日志标记 + sha256」。RTL 改动后必须确认 bit 重建（qoder 声称
+  修复但只跑了 sim，bit 还是旧的——测的是旧硬件）。
 - **IP 目录文件锁**：Vivado 与 ModelSim 并行 → MIG IP `_tmp` rename 失败；
   串行 + kill 残留进程。删 `.gen` IP 目录会丢 OOC 产物，须先
   `reset_run/launch_run mig_7series_0_synth_1`。

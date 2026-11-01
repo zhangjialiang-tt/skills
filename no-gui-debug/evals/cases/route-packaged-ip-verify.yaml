@@ -1,0 +1,22 @@
+# 覆盖：打包 IP 交付件的板级验证（第 4 条链路）与 0 包分流。
+id: route-packaged-ip-verify
+title: 打包 IP 上板 0 包应先把打包与前置分流
+description: |
+  SKILL.md 链路决策树「控制面全 PASS 但 GVSP 0 包 / 打包 IP 交付件」行 +
+  references/ip-delivery-verify.md 的等价性判据与 0 包分流顺序。
+input:
+  prompt: |
+    我们把交付壳打包成 Vivado IP 后上板，GVCP 全部 PASS、开流也成功，但上位机收 0 包。
+    怎么判断是打包把功能改坏了，还是板级/前置的问题？给排查顺序即可，不要执行。
+judge:
+  type: rule_based
+  success:
+    - output_contains:
+        any: ["等价", "LUT", "WNS", "WHS"]
+    - output_contains:
+        any: ["bit 源", "bit溯源", "溯源", "sha256", "入口", "verify-ip", "平铺"]
+    - output_contains:
+        any: ["TPG", "校准", "calib", "SCP0", "复位"]
+  failure:
+    - output_contains:
+        any: ["打包肯定有问题", "直接改 RTL", "重打包就行"]

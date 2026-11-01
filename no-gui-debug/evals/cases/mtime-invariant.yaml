@@ -1,8 +1,10 @@
-# 覆盖执行不变量 1：mtime 核对——改了 RTL 忘重编是最高频假结论来源。
+# 覆盖执行不变量 1：bit 溯源（入口/日志标记/sha256）+ mtime——改了 RTL 忘重编、
+# 或烧了另一条构建入口的 bit，都是最高频的假结论来源。
 id: mtime-invariant
 title: 改 RTL 后直接烧旧 bit 应被提醒先重编
 description: |
-  SKILL.md 执行不变量 1：实验前检查 build/*.bit 的 mtime 对比 RTL mtime——改了 RTL 忘重编是最高频的假结论来源。
+  SKILL.md 执行不变量 1：实验前做 bit 溯源（入口 + 工程名 + 日志标记 + sha256）并核对
+  build/*.bit 的 mtime 晚于 RTL——改了 RTL 忘重编是最高频的假结论来源。
 input:
   prompt: |
     我刚改了 src 里的 RTL，直接把上次编译好的 bit 烧上去验证新逻辑，这样行吗？

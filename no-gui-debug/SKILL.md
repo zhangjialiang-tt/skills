@@ -4,8 +4,10 @@ description: >-
   pw-gige 无 GUI 板级调试完整链路：不打开 Vivado Hardware Manager / Wireshark GUI，
   全程命令行完成「构建含 ILA 的比特流 → 烧板 → 抓波形 → 导出 CSV 分析」、
   「上位机 gige_cli 录帧/单帧 snap/原始 wire dump」、「dumpcap/tshark 网络抓包与
-  逐包分析」三条证据链路的采集、分析与对拍。用户提到：定位板上 bug、板级调试、
+  逐包分析」三条证据链路，外加「打包 IP 交付件验证（package-ip/verify-ip、
+  与平铺构建等价性、bit 溯源）」的采集、分析与对拍。用户提到：定位板上 bug、板级调试、
   ILA 抓波/看波形/看信号、上位机录帧/抓帧/拍快照/snap、tshark/抓包/pcap 分析、
+  打包 IP/verify-ip 上板验证、烧错 bit/同名 bit、控制面全 PASS 但 GVSP 0 包、
   无 GUI 调试/命令行调试，或报告成像撕裂/花屏/丢帧/错位/帧率异常等设备侧异常
   需要定位时使用。核心价值：按症状路由到正确的证据链路，给出每条链路的采集
   命令、分析判据与实测坑清单，并把「sim 全绿、板上出错」的差异系统化为可
@@ -13,7 +15,7 @@ description: >-
   capture_frames.py 等）——脚本单一事实源在仓库，本 skill 只引用不复制。
 ---
 
-# no-gui-debug — 无 GUI 板级调试三链路
+# no-gui-debug — 无 GUI 板级调试三链路（+ 打包 IP 交付验证）
 
 目的：板级 bug 定位的全部证据采集与分析都可在命令行完成。本 skill 回答
 三个问题：**用哪条链路采证据**（决策树）、**命令怎么敲**（references 细节）、
@@ -45,6 +47,7 @@ description: >-
 | 内部握手卡死（valid/ready 无应答）、寄存器读写异常、时钟域活性 | **ILA 链** | 片内拍级波形（TX 计数/握手位/几何序号/loss 状态） | `mig_calib_done=1` 且 `mig_ui_rst=0`；good≥submit 无差；desc 握手数与 seq 自洽 |
 | 成像撕裂/花屏/错位、需要完整帧或单帧字节级证据 | **上位机链** | 帧文件（RAW）+ 原始 wire dump + manifest | counter 图案值=帧内索引，逐字节对拍；manifest 连续无缺号 |
 | 丢包/包序/重传/帧率/吞吐统计、网络层异常 | **tshark 链** | pcapng + 逐包字段导出 | Leader 间隔分布、每帧包数、block_id 连续性 |
+| **控制面全 PASS 但 GVSP 0 包**；或上板的是**打包 IP 交付件** | **交付/前置分流**（先定 bit 来源，再谈现象） | bit 溯源（入口+日志标记+sha256）、打包核对与等价性、出流前提读数 | 见 references/ip-delivery-verify.md |
 | 复杂 bug（一层证据说不清） | **多链路并行** | 交叉印证 | 见 references/methodology.md 的 MIG 撕裂案例 |
 
 MIG 撕裂完整案例的链路组合（2026-09-27/28 实战）：tshark 抓包定性（发送侧
@@ -54,8 +57,10 @@ MIG 撕裂完整案例的链路组合（2026-09-27/28 实战）：tshark 抓包�
 
 ## 执行不变量（每轮实验必须遵守）
 
-1. **mtime 核对**：实验前检查 build/*.bit 的 mtime 对比 RTL mtime——改了 RTL
-   忘重编是最高频的假结论来源（实测 qoder 踩过）。
+1. **bit 溯源（mtime 不够用）**：先确认烧的 bit 出自哪条入口——`make build`
+   （平铺，`build/top.bit`）与 `make verify-ip`（打包 IP，`build/ipverify/top.bit`）
+   同名不同物；登记「入口 + 工程名 + 日志标记 + sha256」，再看 mtime 是否晚于 RTL。
+   改了 RTL 忘重编、以及烧了另一条入口的 bit，是最高频的两类假结论来源。
 2. **板/JTAG 状态先行**：每轮记录 program_jtag.tcl 输出（成功恰 1 行
    "OK  : JTAG programmed ..."）；板不可达 → 降级 sim 模式并在报告登记待验证
    清单，不无限等待硬件。
@@ -63,11 +68,12 @@ MIG 撕裂完整案例的链路组合（2026-09-27/28 实战）：tshark 抓包�
    ... permission denied）；撞了先 taskkill //F vivado.exe 与 hw_server.exe。
 4. **区分证据层级**：事实（实测输出）/ 观察（数据现象）/ 推导（未直接验证）/
    未验证——报告与结论必须标注。
-5. **构建三入口**（Git Bash 裸跑 make 必崩，msys64 缺 sh.exe，一律 cmd 直调
-   vivado.bat）：
-   - 构建：TOP=gige_vision_ip_k7 NEED_MIG=1 [DEBUG_ILA=1] cmd //c
-     "...vivado.bat -mode batch -nojournal -nolog -notrace -source scripts/build.tcl"
-   - 烧板：cmd //c "...vivado.bat ... -source scripts/program_jtag.tcl"
+5. **构建三入口**（Git Bash 裸跑 make 必崩，msys64 缺 sh.exe；一律
+   `cmd //c "make ..."` 或 cmd 直调 vivado.bat）：
+   - 构建：`cmd //c "make build"`——`TOP` 缺省 `top`、`NEED_MIG` 缺省 1、
+     `BOARD` 缺省 k7base；带 ILA 加 `DEBUG_ILA=1`（同时产出 top.bit + top.ltx）
+   - 烧板：`cmd //c "make jtag"`（scripts/program_jtag.tcl）
+   - 固件：`cmd //c "make neorv32_upload PORT=COM6"`
    - 含 IP 顶层不做 elaborate_check（synth_design 直调无法解析 IP OOC 产物），
      以 build 为准。
 
@@ -100,9 +106,11 @@ MIG 撕裂完整案例的链路组合（2026-09-27/28 实战）：tshark 抓包�
    capture_frames.py 对拍）：读 references/host-capture.md。
 3. **tshark 链**（dumpcap 采集、tshark 字段导出、scapy 逐包重建、**帧率 bug
    双端同窗分流**——§6 先做这个再谈根因）：读 references/tshark-workflow.md。
-4. **方法论**（多链路组合、地址示踪器、sim 全绿板上错的差异清单、修复闭环）：
+4. **打包 IP 交付验证**（bit 溯源、打包核对四件套、与平铺构建的等价性判据、
+   OOC/参数/观测面坑、0 包分流顺序）：读 references/ip-delivery-verify.md。
+5. **方法论**（多链路组合、地址示踪器、sim 全绿板上错的差异清单、修复闭环）：
    读 references/methodology.md。
-5. **脚本索引**（tools/ 脚本→功能映射，单一事实源说明）：
+6. **脚本索引**（tools/ 脚本→功能映射，单一事实源说明）：
    读 scripts/README.md。
 
 ## 交付纪律
