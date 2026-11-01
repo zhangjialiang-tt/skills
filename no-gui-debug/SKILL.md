@@ -76,6 +76,9 @@ MIG 撕裂完整案例的链路组合（2026-09-27/28 实战）：tshark 抓包�
    - 固件：`cmd //c "make neorv32_upload PORT=COM6"`
    - 含 IP 顶层不做 elaborate_check（synth_design 直调无法解析 IP OOC 产物），
      以 build 为准。
+   - 直调 `scripts/*.tcl`（不经 make）：必须显式 `set TOP=top`——
+     `project_config.tcl` 无 TOP 环境变量时默认 `gige_vision_core`，
+     找错 bit 报 `missing build/gige_vision_core.bit`。
 
 ## 坑速查（全部实测踩过，细节见 references）
 
@@ -92,6 +95,8 @@ MIG 撕裂完整案例的链路组合（2026-09-27/28 实战）：tshark 抓包�
 | gige_cli discovery 超时 | 先 `gige_cli nic` 枚举 + `Get-NetAdapter` 看 Status：期望业务口缺席/Disconnected 属物理链路，先查线再换网卡；--nic 序号显式指定，且插拔后序号会漂移 |
 | capture_frames 组装 0 完整帧 | GVSP pid 在头 bytes[6:8]（不是 5:7）；先裸收后组装；SO_RCVBUF 32MB |
 | dumpcap 权限 | 权限不足才提权；本机实测非管理员可直接抓；不在 PATH 用全路径 |
+| dumpcap -D 报 Operation aborted | Git Bash 下实测复现；换 cmd 调用，或改 python 裸 UDP 探针二分（host-capture.md §4） |
+| GVCP 全通但 GVSP rx=0（设备在发） | 防火墙按 exe 拦**入向** UDP：GVCP 回包属已建出向流放行，GVSP 是设备主动新入向流被拦（python 放行、gige_cli 未放行实测复现）；修 = 管理员 netsh 加 gige_cli_udp_in 规则，二分见 ip-delivery-verify.md §6 |
 | 后台复合命令变量为空 | `a && V=x && cmd &` 整链进 subshell，前台 $V 为空——固定文件名或分两次调用 |
 | `rst -system` 两条路都不通 | Vivado hw-manager Tcl 无 `reset_hw_target`、xsdb `rst -system` 报 `Invalid reset type`（K7+FT2 实测）；替代 = 重烧 bit + 固件重传 + 开流前写 `SCP0=0`，并在报告登记「未做系统软复位」 |
 | `0xA014` 读回报错 | APPLY 是**只写**邮箱，读回必拒属设计；生效判据看 `CONFIG_STATUS.busy` 清零 |

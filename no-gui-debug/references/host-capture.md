@@ -77,6 +77,11 @@ VERDICT: PASS
   写生效判据看 `CONFIG_STATUS.busy`。多地址批量 READREG 会串位，判读一律单字逐读并对设计缺省值
   （`SCPS0=1500<<16`、`SCDA0=192.168.1.3`）。
 - 烧板后短暂失联：PHY/ARP 收敛瞬态，等 8-10s 重试。
+- **GVCP 通但 stream/snap rx=0**：按 ip-delivery-verify.md §6 分流，先用 python
+  裸 UDP 探针二分「设备没发 vs 主机拦截」——能收到即防火墙按 exe 拦入向 UDP
+  （`gige_cli.exe` 需管理员 netsh 放行，规则名 `gige_cli_udp_in`）。
+- **紧接裸收探针后 CLI 首跑 STALL**：探针收尾写 `SCP0=0` 关流与 CLI 开流存在竞态
+  （实测 250 帧＝5s @50fps 后停），复跑干净即瞬态，不追。
 
 ## 4. capture_frames.py（pw-gige tools/，UDP 直收对拍）
 
@@ -97,6 +102,9 @@ capture_frames.py 裸 UDP 直收（轻量、可改、组装逻辑透明），适
   pid 恒 0、一帧都组不出来的假象就是这么来的）。fmt：0x01 Leader / 0x02
   Trailer / 0x03 Payload；完整帧 = 1+112+1（SCPS=1500、320×256 Mono16 几何）。
 - host_port 等寄存器值：IP 必须转 int（socket.inet_aton 大端）。
+- **0 完整帧 ≠ 链路异常**：每帧 114 包 / `FRAME_BYTES=163840` 是老 320×256 几何
+  写死校验，新几何（如 638×512 mono16，649 包/帧）下永远凑不满。判「设备是否
+  在发流」只看裸收包数与 block_id 计数，组装结果作废。
 
 ## 5. 对拍判据（counter 图案 = 地址示踪器）
 

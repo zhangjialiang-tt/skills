@@ -80,10 +80,18 @@ mtime 只能挡住「改了 RTL 没重编」，挡不住「同名 bit 来自另�
    `tpg_rst34 = rst34 | ~mig_calib_done | ~tpg_pattern_valid`，任一为 0 就整链不出帧）。
 2. **设备残留开流态**：先写 `SCP0=0` 干净关流再开流（残留 `0x77770000` 一类写值会
    造成「开流成功但线上无包」）。
-3. **复位前置**：JTAG 重配后 `rst -system` 在本机不可用（Vivado Tcl 无
+3. **主机防火墙按 exe 拦入向 UDP**（2026-11-01 baseline 板测实测根因）：Windows
+   防火墙有状态——GVCP 是 host 先发的出向流，ACK 属已建流回包放行；GVSP 是设备
+   主动向 host_port 发的**新入向流**，未放行的 exe 默认拦。签名：同一端口 python
+   （已放行）能收包、CLI 收 0 包。二分：python 裸 UDP bind `0.0.0.0:<host_port>`
+   统计包数/block_id（`tools/capture_frames.py` 即可，只看 block_id 计数、忽略其
+   组装结果，见 host-capture.md §4）。修：管理员
+   `netsh advfirewall firewall add rule name=gige_cli_udp_in dir=in action=allow
+   program="<gige_cli.exe 全路径>" protocol=udp`。
+4. **复位前置**：JTAG 重配后 `rst -system` 在本机不可用（Vivado Tcl 无
    `reset_hw_target`、xsdb 报 `Invalid reset type`）；替代 = 重烧 bit + 固件重传 +
    干净关流，并在报告登记「未做系统软复位」。
-4. 以上都排除后才回到 RTL/IP，此时 ILA 才有意义。
+5. 以上都排除后才回到 RTL/IP，此时 ILA 才有意义。
 
 ## 7. 交付前门（打包方自查）
 
