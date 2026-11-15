@@ -69,7 +69,9 @@ MIG 撕裂完整案例的链路组合（2026-09-27/28 实战）：tshark 抓包�
 4. **区分证据层级**：事实（实测输出）/ 观察（数据现象）/ 推导（未直接验证）/
    未验证——报告与结论必须标注。
 5. **构建三入口**（Git Bash 裸跑 make 必崩，msys64 缺 sh.exe；一律
-   `cmd //c "make ..."` 或 cmd 直调 vivado.bat）：
+   `cmd //c "make ..."` 或 cmd 直调 vivado.bat。例外：omp 内置 bash 5.3 自带
+   sh/coreutils，可直跑 `cd <msys 路径> && make …`——2026-11-15 build 全链实测通过；
+   用户侧 msys64 Git Bash 仍须 cmd //c）：
    - 构建：`cmd //c "make build"`——`TOP` 缺省 `top`、`NEED_MIG` 缺省 1、
      `BOARD` 缺省 k7base；带 ILA 加 `DEBUG_ILA=1`（同时产出 top.bit + top.ltx）
    - 烧板：`cmd //c "make jtag"`（scripts/program_jtag.tcl）
@@ -98,7 +100,10 @@ MIG 撕裂完整案例的链路组合（2026-09-27/28 实战）：tshark 抓包�
 | dumpcap -D 报 Operation aborted | Git Bash 下实测复现；换 cmd 调用，或改 python 裸 UDP 探针二分（host-capture.md §4） |
 | GVCP 全通但 GVSP rx=0（设备在发） | 防火墙按 exe 拦**入向** UDP：GVCP 回包属已建出向流放行，GVSP 是设备主动新入向流被拦（python 放行、gige_cli 未放行实测复现）；修 = 管理员 netsh 加 gige_cli_udp_in 规则，二分见 ip-delivery-verify.md §6 |
 | 后台复合命令变量为空 | `a && V=x && cmd &` 整链进 subshell，前台 $V 为空——固定文件名或分两次调用 |
-| `rst -system` 两条路都不通 | Vivado hw-manager Tcl 无 `reset_hw_target`、xsdb `rst -system` 报 `Invalid reset type`（K7+FT2 实测）；替代 = 重烧 bit + 固件重传 + 开流前写 `SCP0=0`，并在报告登记「未做系统软复位」 |
+| `rst -system` 两条路都不通 | Vivado hw-manager Tcl 无 `reset_hw_target`、xsdb `rst -system` 报 `Invalid reset type`（K7+FT2 实测）；2026-11-15 补：2021.1 batch hw tcl 里 `rst`/`xreset` 均 `invalid command name`（`info commands *rst*` 枚举为空实证）；且 PROGRAM_B 类复位从 **flash 重载**——JTAG 易失流程下 flash 是旧 bit，强复位 = 回退旧设计。替代 = 重烧 bit + 固件重传 + 开流前写 `SCP0=0`，并在报告登记「未做系统软复位」 |
+| 监督服务/后台 shell 跑 make/vivado | 服务 shell 的 `cwd` 参数不生效（落 $HOME）、`C:/` 盘符与 `/c/` 深路径 cd 都可能被吃（pwd 实证）、POSIX sh 无 `pipefail`（`set -o pipefail` 秒退 exit 2）；一律普通会话 + **命令体内显式 cd**（2026-11-15 build 连败 4 次全为此类环境问题） |
+| `make …` 管道接 tail | 退出码被 tail 吃成 0，假成功（本轮实锤：exit 0 但 bit 未产出）；改 `make … > log 2>&1; echo X_EXIT=$?; tail -N log`，产物复核 = `top.bit` mtime 必须晚于会话开始 |
+| `gvcp_cli --auto` 当全链板测 | 它只覆盖控制面 30 项（bootstrap/CCP/心跳/保护/邮箱读写），APPLY 快照与 GVSP 流帧不在内，需菜单交互另行验证（register-control-rebuild 基线另做 gear1 APPLY 408 帧 @135.70 Hz） |
 | `0xA014` 读回报错 | APPLY 是**只写**邮箱，读回必拒属设计；生效判据看 `CONFIG_STATUS.busy` 清零 |
 | 批量 READREG 串位 | 多地址一次读会串位/回陈旧值，别据此判「写序列错位」；一律单字逐读再对设计缺省值 |
 | 控制台/工具输出乱码 | Git Bash 按 GBK 解码设备输出，乱码行不是读数现场；判据用数字/正则抽取后再下结论 |
