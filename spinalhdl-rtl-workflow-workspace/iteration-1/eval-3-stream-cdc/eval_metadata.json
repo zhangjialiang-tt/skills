@@ -1,0 +1,11 @@
+{
+  "eval_id": 3,
+  "eval_name": "stream-cdc",
+  "prompt": "已有 SpinalHDL 项目要改 Stream 流水级。别人用 factor=1.0/0.2/0.8 跑完就说覆盖通过，scoreboard 还剩 3 笔；生成 RTL 有 when_Filter_l42，建议重写 build.sbt 升级插件；跨域多 bit 配置准备加 crossClockDomain。请给审查与最小验证计划，保留当前依赖，仅输出建议。",
+  "assertions": [
+    "scoreboard 剩余不能通过，要求非零事务和有界排空",
+    "分别控制 valid/ready，检查停顿稳定与定向覆盖",
+    "内部 when 名不是插件失效证据，保留依赖并核对有效配置",
+    "crossClockDomain 标签不实现同步，多 bit 更新需一致性协议"
+  ]
+}

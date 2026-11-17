@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "作用域错误不使用 BufferCC 修复，说明合法声明/使用范围",
+      "passed": true,
+      "evidence": "Inline review of full review.md; supporting excerpt: 将声明移到这些位置共同的合法作用域"
+    },
+    {
+      "text": "全精度和保留 9 bit，不以截断或 + 替换 +^ 消除错误",
+      "passed": true,
+      "evidence": "Inline review of full review.md; supporting excerpt: 需要 9 bit"
+    },
+    {
+      "text": "检查上下游并安排展开及算术边界测试",
+      "passed": true,
+      "evidence": "Inline review of full review.md; supporting excerpt: 255+1=256"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "eval_feedback": {
+    "suggestions": [
+      "Advice-only cases have ceiling effects; add fixture-based implementation, zero-test and undrained-scoreboard execution cases before claiming practical improvement."
+    ]
+  }
+}

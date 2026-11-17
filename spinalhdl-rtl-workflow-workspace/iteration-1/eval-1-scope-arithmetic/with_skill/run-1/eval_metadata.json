@@ -1,0 +1,10 @@
+{
+  "eval_id": 1,
+  "eval_name": "scope-arithmetic",
+  "prompt": "SpinalHDL 项目把 when 分支内部声明的 tmp 在外面赋值，报 SCOPE VIOLATION。同事建议加 BufferCC；另一个 8 bit 输出接 a +^ b 报 WIDTH MISMATCH，规范要求保留进位。同事说改 (a+b).resized。请复核并给最小修复和验证计划，只输出建议，不修改文件。",
+  "assertions": [
+    "作用域错误不使用 BufferCC 修复，说明合法声明/使用范围",
+    "全精度和保留 9 bit，不以截断或 + 替换 +^ 消除错误",
+    "检查上下游并安排展开及算术边界测试"
+  ]
+}

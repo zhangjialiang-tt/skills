@@ -1,0 +1,35 @@
+{
+  "expectations": [
+    {
+      "text": "scoreboard 剩余不能通过，要求非零事务和有界排空",
+      "passed": true,
+      "evidence": "Inline review of full review.md; supporting excerpt: 输入事务数大于 0"
+    },
+    {
+      "text": "分别控制 valid/ready，检查停顿稳定与定向覆盖",
+      "passed": true,
+      "evidence": "Inline review of full review.md; supporting excerpt: source 的事务发起意愿与 sink 的 ready 使用独立控制"
+    },
+    {
+      "text": "内部 when 名不是插件失效证据，保留依赖并核对有效配置",
+      "passed": true,
+      "evidence": "Inline review of full review.md; supporting excerpt: 本身不是故障证据"
+    },
+    {
+      "text": "crossClockDomain 标签不实现同步，多 bit 更新需一致性协议",
+      "passed": true,
+      "evidence": "Inline review of full review.md; supporting excerpt: 该标签只豁免检查"
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 0,
+    "total": 4,
+    "pass_rate": 1.0
+  },
+  "eval_feedback": {
+    "suggestions": [
+      "Advice-only cases have ceiling effects; add fixture-based implementation, zero-test and undrained-scoreboard execution cases before claiming practical improvement."
+    ]
+  }
+}

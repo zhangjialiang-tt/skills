@@ -1,0 +1,278 @@
+{
+  "metadata": {
+    "skill_name": "spinalhdl-rtl-workflow",
+    "skill_path": "<path/to/skill>",
+    "executor_model": "<model-name>",
+    "analyzer_model": "<model-name>",
+    "timestamp": "2026-11-13T00:53:59Z",
+    "evals_run": [
+      1,
+      2,
+      3
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "作用域错误不使用 BufferCC 修复，说明合法声明/使用范围",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: 将声明移到这些位置共同的合法作用域"
+        },
+        {
+          "text": "全精度和保留 9 bit，不以截断或 + 替换 +^ 消除错误",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: 需要 9 bit"
+        },
+        {
+          "text": "检查上下游并安排展开及算术边界测试",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: 255+1=256"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "识别 App 应使用 Test / runMain，并拒绝零测试成功判据",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: Test / runMain demo.PacketSim"
+        },
+        {
+          "text": "SimTimeout 为仿真时间，区分周期进展与墙钟预算",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: 区分三层超时"
+        },
+        {
+          "text": "不默认添加 --no-timing，要求非零事务与检查排空/完成证据",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: scoreboard 剩余量为 0"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "scoreboard 剩余不能通过，要求非零事务和有界排空",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: 输入事务数大于 0"
+        },
+        {
+          "text": "分别控制 valid/ready，检查停顿稳定与定向覆盖",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: source 的事务发起意愿与 sink 的 ready 使用独立控制"
+        },
+        {
+          "text": "内部 when 名不是插件失效证据，保留依赖并核对有效配置",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: 本身不是故障证据"
+        },
+        {
+          "text": "crossClockDomain 标签不实现同步，多 bit 更新需一致性协议",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: 该标签只豁免检查"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "作用域错误不使用 BufferCC 修复，说明合法声明/使用范围",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: 所有使用位置的共同外层"
+        },
+        {
+          "text": "全精度和保留 9 bit，不以截断或 + 替换 +^ 消除错误",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: 结果必须具有 9 bit 信息容量"
+        },
+        {
+          "text": "检查上下游并安排展开及算术边界测试",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: 255+1=256"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 3,
+        "failed": 0,
+        "total": 3,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "识别 App 应使用 Test / runMain，并拒绝零测试成功判据",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: Test / runMain demo.PacketSim"
+        },
+        {
+          "text": "SimTimeout 为仿真时间，区分周期进展与墙钟预算",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: 还需要仿真时间及墙钟兜底"
+        },
+        {
+          "text": "不默认添加 --no-timing，要求非零事务与检查排空/完成证据",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: 计分板无未匹配项"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 4,
+        "failed": 0,
+        "total": 4,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "scoreboard 剩余不能通过，要求非零事务和有界排空",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: 停止激励并完成排空后，outstanding 必须为 0"
+        },
+        {
+          "text": "分别控制 valid/ready，检查停顿稳定与定向覆盖",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: 输入有空隙而下游持续接收"
+        },
+        {
+          "text": "内部 when 名不是插件失效证据，保留依赖并核对有效配置",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: 单凭名字无法判断"
+        },
+        {
+          "text": "crossClockDomain 标签不实现同步，多 bit 更新需一致性协议",
+          "passed": true,
+          "evidence": "Inline review of full review.md; supporting excerpt: 标签本身不能消除亚稳态"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0.0,
+        "max": 0.0
+      },
+      "tokens": {
+        "mean": 0.0,
+        "stddev": 0.0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.00",
+      "time_seconds": "+0.0",
+      "tokens": "+0"
+    }
+  },
+  "notes": [
+    "Advice-only initial checks; both arms satisfy all 10 assertions. No demonstrated gain; ceiling effect.",
+    "Baseline prompts were paraphrases of the skill-arm prompts, not byte-identical; not a controlled benchmark.",
+    "Timing/token telemetry was not supplied in completion notifications. Zero defaults in aggregates mean unavailable, not measured zero.",
+    "Scala template not compiled or simulated; no DUT functional result is represented."
+  ]
+}

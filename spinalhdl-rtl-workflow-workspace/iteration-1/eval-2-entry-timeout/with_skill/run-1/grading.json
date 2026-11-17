@@ -1,0 +1,30 @@
+{
+  "expectations": [
+    {
+      "text": "识别 App 应使用 Test / runMain，并拒绝零测试成功判据",
+      "passed": true,
+      "evidence": "Inline review of full review.md; supporting excerpt: Test / runMain demo.PacketSim"
+    },
+    {
+      "text": "SimTimeout 为仿真时间，区分周期进展与墙钟预算",
+      "passed": true,
+      "evidence": "Inline review of full review.md; supporting excerpt: 区分三层超时"
+    },
+    {
+      "text": "不默认添加 --no-timing，要求非零事务与检查排空/完成证据",
+      "passed": true,
+      "evidence": "Inline review of full review.md; supporting excerpt: scoreboard 剩余量为 0"
+    }
+  ],
+  "summary": {
+    "passed": 3,
+    "failed": 0,
+    "total": 3,
+    "pass_rate": 1.0
+  },
+  "eval_feedback": {
+    "suggestions": [
+      "Advice-only cases have ceiling effects; add fixture-based implementation, zero-test and undrained-scoreboard execution cases before claiming practical improvement."
+    ]
+  }
+}
