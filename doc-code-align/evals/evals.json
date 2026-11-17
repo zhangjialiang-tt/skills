@@ -1,0 +1,39 @@
+{
+  "skill_name": "doc-code-align",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "清理 evals/files/sample_doc.md：以 evals/files/sample_module.sv 代码为准，删除历史口径与不一致描述，文档需准确且唯一表达系统设计，交付裁定清单。",
+      "expected_output": "重写后的 sample_doc.md（现在时契约口吻）+ 两张裁定清单（事实核对 F / 历史口径 H，每条含 file:line 锚点）+ 四类统计。",
+      "files": [
+        "evals/files/sample_doc.md",
+        "evals/files/sample_module.sv"
+      ],
+      "expectations": [
+        "FSM 状态名改写为代码实际值 M_IDLE/M_RUN/M_DONE（原文 S0/S1/S2 是错的）",
+        "flush 的「待实现」注记删除，正文按已实现描述并引用代码行",
+        "「变更记录」「实测记录」章节被删除（历史口径）",
+        "DEPTH 改写为 16、RESET_WAIT 改写为 4（锚点为参数定义行）",
+        "数据通路的字节序改写为「新字节从低位移入」（原文高位移入是错的）",
+        "STALL_WARN_CYCLES 被标注为「有定义无消费点」而非当作活性契约保留",
+        "表格内未转义竖线（st_q 行）已修复，渲染不破版",
+        "裁定清单每条含 evals/files/sample_module.sv:N 形式锚点"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "先不要修改文档：只对照 evals/files/sample_module.sv 核对 evals/files/sample_doc.md，输出逐条裁定清单给我确认。",
+      "expected_output": "只读核查：仅输出裁定清单（含锚点与建议处理），不修改 sample_doc.md。",
+      "files": [
+        "evals/files/sample_doc.md",
+        "evals/files/sample_module.sv"
+      ],
+      "expectations": [
+        "sample_doc.md 内容未被修改",
+        "裁定清单指出 RESET_WAIT 文档写 8、代码是 4",
+        "裁定清单指出 flush 已实现、文档「待实现」注记过时",
+        "清单中区分了「改写」「删除」「历史口径清理」三类处理建议"
+      ]
+    }
+  ]
+}
