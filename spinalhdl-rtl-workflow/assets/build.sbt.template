@@ -1,0 +1,21 @@
+ThisBuild / version := "0.1.0"
+ThisBuild / scalaVersion := "2.13.12"
+ThisBuild / organization := "com.example"
+
+val spinalVersion = "1.15.1"
+
+lazy val root = (project in file("."))
+  .settings(
+    name := "spinal-rtl-project",
+    libraryDependencies ++= Seq(
+      "com.github.spinalhdl" %% "spinalhdl-core" % spinalVersion,
+      "com.github.spinalhdl" %% "spinalhdl-lib" % spinalVersion,
+      "com.github.spinalhdl" %% "spinalhdl-sim" % spinalVersion % Test,
+      compilerPlugin("com.github.spinalhdl" %% "spinalhdl-idsl-plugin" % spinalVersion)
+    ),
+    // Isolate native simulation libraries from the sbt JVM.
+    Test / fork := true,
+    // Serializes framework tests within this sbt instance, not other processes.
+    Test / parallelExecution := false,
+    scalacOptions ++= Seq("-deprecation", "-feature", "-language:reflectiveCalls")
+  )

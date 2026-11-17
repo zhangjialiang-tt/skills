@@ -1,0 +1,39 @@
+{
+  "skill_name": "spinalhdl-rtl-workflow",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "SpinalHDL 项目把 when 分支内部声明的 tmp 在外面赋值，报 SCOPE VIOLATION。同事建议加 BufferCC；另一个 8 bit 输出接 a +^ b 报 WIDTH MISMATCH，规范要求保留进位。同事说改 (a+b).resized。请复核并给最小修复和验证计划，只输出建议，不修改文件。",
+      "expected_output": "区分作用域和 CDC，保留 9 bit 全精度，检查上下游并展开/边界仿真。",
+      "files": [],
+      "assertions": [
+        "作用域错误不使用 BufferCC 修复，说明合法声明/使用范围",
+        "全精度和保留 9 bit，不以截断或 + 替换 +^ 消除错误",
+        "检查上下游并安排展开及算术边界测试"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "src/test/scala/demo/PacketSim.scala 是 object PacketSim extends App。sbt testOnly demo.PacketSim 返回 0，但没有事务日志。测试写了 SimTimeout(1000)，作者说就是 1000 周期；准备套 timeout 60s，并给所有 Verilator 加 --no-timing。请判断是否通过并提供正确执行、超时与收尾判据，只输出建议。",
+      "expected_output": "Test / runMain，拒绝零测试假通过，区分三类超时，条件化 timing 选项。",
+      "files": [],
+      "assertions": [
+        "识别 App 应使用 Test / runMain，并拒绝零测试成功判据",
+        "SimTimeout 为仿真时间，区分周期进展与墙钟预算",
+        "不默认添加 --no-timing，要求非零事务与检查排空/完成证据"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "已有 SpinalHDL 项目要改 Stream 流水级。别人用 factor=1.0/0.2/0.8 跑完就说覆盖通过，scoreboard 还剩 3 笔；生成 RTL 有 when_Filter_l42，建议重写 build.sbt 升级插件；跨域多 bit 配置准备加 crossClockDomain。请给审查与最小验证计划，保留当前依赖，仅输出建议。",
+      "expected_output": "独立 valid/ready 覆盖和排空，名字不是故障证据，CDC 标签不实现同步，保持配置。",
+      "files": [],
+      "assertions": [
+        "scoreboard 剩余不能通过，要求非零事务和有界排空",
+        "分别控制 valid/ready，检查停顿稳定与定向覆盖",
+        "内部 when 名不是插件失效证据，保留依赖并核对有效配置",
+        "crossClockDomain 标签不实现同步，多 bit 更新需一致性协议"
+      ]
+    }
+  ]
+}
